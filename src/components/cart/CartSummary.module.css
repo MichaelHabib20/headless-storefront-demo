@@ -1,0 +1,167 @@
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-text);
+}
+
+@media (min-width: 1024px) {
+  .summary {
+    position: sticky;
+    top: calc(var(--header-height) + 48px + var(--space-4));
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.row dt,
+.row dd {
+  margin: 0;
+}
+.row dd {
+  white-space: nowrap;
+}
+
+.discount {
+  color: var(--color-sale);
+}
+
+.total {
+  margin-block-start: var(--space-2);
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--color-text);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* The numbers are the previous API answer until the update comes back. */
+.pending .rows,
+.pending .minimum {
+  opacity: 0.45;
+}
+
+.note {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+
+.minimum {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+}
+
+.minimumRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.minimumDone {
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bar {
+  position: relative;
+  height: 6px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+/*
+ * Visual only: the filled share is (minimum - remaining) / minimum, taken from the two
+ * backend values in custom properties. It is never shown as a number.
+ */
+.fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: clamp(0%, calc(100% - 100% * var(--cart-remaining, 0) / var(--cart-minimum, 1)), 100%);
+  background: var(--color-text);
+}
+.barDone .fill {
+  width: 100%;
+}
+
+.prescription {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.blockers {
+  padding: var(--space-3);
+  border-inline-start: 3px solid var(--color-sale);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.blockersTitle {
+  margin: 0 0 var(--space-1);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.blockerList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding-inline-start: var(--space-4);
+}
+
+.checkout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  height: 56px;
+  padding-inline: var(--space-5);
+  border: 0;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.checkout:hover:not(:disabled) {
+  color: var(--color-muted);
+}
+.checkout:disabled {
+  background: var(--color-border);
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
