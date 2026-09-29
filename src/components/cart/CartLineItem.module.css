@@ -1,0 +1,191 @@
+.line {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .line {
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+.media {
+  aspect-ratio: 1;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.image,
+.placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  padding: var(--space-2);
+}
+
+.unavailable .media {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.brand {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.name {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.name a {
+  text-decoration: none;
+}
+.name a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.unitPrice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: 0.875rem;
+}
+.sale,
+.discount {
+  color: var(--color-sale);
+}
+.discount {
+  font-weight: 700;
+}
+.compareAt {
+  color: var(--color-muted);
+}
+
+.lineTotal {
+  flex-shrink: 0;
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Until the API answers, the old prices are the only truth we have: show them as stale. */
+.pending .unitPrice,
+.pending .lineTotal {
+  opacity: 0.45;
+}
+
+.badge {
+  align-self: flex-start;
+  margin: 0;
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-text);
+}
+
+.availability {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 3px solid var(--color-sale);
+  background: var(--color-surface);
+  color: var(--color-sale);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-start: auto;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-text);
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.step:hover:not(:disabled) {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+.step:disabled {
+  color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.quantity {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.remove {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.remove:hover:not(:disabled) {
+  text-decoration-thickness: 2px;
+}
+.remove:disabled {
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
