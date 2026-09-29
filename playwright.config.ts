@@ -1,4 +1,8 @@
+import { loadEnvConfig } from '@next/env';
 import { defineConfig, devices } from '@playwright/test';
+
+// Same env files as Next (.env.local holds the staging test account for live runs; never committed).
+loadEnvConfig(process.cwd());
 
 /**
  * E2E runs the production build against the mock API (recorded staging responses).
