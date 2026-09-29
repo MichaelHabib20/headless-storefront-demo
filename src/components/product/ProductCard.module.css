@@ -1,16 +1,18 @@
 .card {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  border: 1px solid transparent;
+}
+.card:hover {
+  border-color: var(--color-text);
 }
 
 .link {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  height: 100%;
   text-decoration: none;
-  border: 1px solid transparent;
-}
-.link:hover {
-  border-color: var(--color-text);
 }
 
 .media {

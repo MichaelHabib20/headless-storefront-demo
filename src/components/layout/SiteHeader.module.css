@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  min-width: 0;
   height: 100%;
   padding-block: var(--space-2);
   text-decoration: none;
@@ -125,4 +126,23 @@
   place-items: center;
   width: 40px;
   height: 40px;
+}
+
+@media (max-width: 479px) {
+  /* Account plus up to four shopper icons must fit next to the logo on small phones. */
+  .inner {
+    gap: var(--space-2);
+  }
+  .actions {
+    gap: 0;
+  }
+  .logo {
+    flex-shrink: 1;
+  }
+  .logoImage {
+    max-width: 100%;
+  }
+  .icon {
+    width: 34px;
+  }
 }
