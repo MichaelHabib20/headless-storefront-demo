@@ -7,8 +7,8 @@
 | Types | `npm run typecheck` | Using fields the contract doesn't have, wrong shapes |
 | Lint | `npm run lint` | React/Next mistakes, importing SDK internals, `any` |
 | Architecture rules | `npm run check:rules` | Calling the API outside the SDK, legacy fields, building URLs from slugs or hardcoding `/en`/`/ar` paths, price math or price-based rules in the UI, hardcoded UI text in components (must be in i18n), env vars in client code, raw HTML, hardcoded store hosts |
-| Contract | `npm run contract:check` | Recorded API responses vs `contract/openapi.yaml`; stale generated types; contract out of sync with the backend |
-| Unit + component | `npm run test` | Logic (`src/lib`, `src/sdk`) and components rendered with real recorded data |
+| Contract | `npm run contract:check` | Recorded API responses and shopper fixtures vs `contract/openapi.yaml`; stale generated types; contract out of sync with the backend |
+| Unit + component | `npm run test` | Logic (`src/lib`, `src/sdk`, helpers), components rendered with real data, the mock API vs the contract (`scripts/mock-shopper.test.mjs`) |
 | Build | `npm run build` | Anything that breaks the production build |
 | E2E | `npm run test:e2e` | The real app in a browser (desktop + mobile, EN + AR) against the mock API |
 
@@ -16,20 +16,73 @@ CI runs the same command (`.github/workflows/verify.yml`), so a failing change c
 
 ## Writing tests
 
-- **Logic** (`src/lib/*.ts`, `src/sdk/**`): `*.test.ts` next to the file, Node environment.
+- **Logic** (`src/lib/*.ts`, `src/sdk/**`, helpers next to components): `*.test.ts` next to the file, Node environment.
 - **Components**: `*.test.tsx` next to the component, first line `/** @vitest-environment jsdom */`.
-  Render with real data: `homeFixture(locale)` / `layoutFixture(locale)` from `@/test/fixtures`.
+  Render with real data from `@/test/fixtures`: `homeFixture`, `layoutFixture`, and for shopper
+  pages `meFixture`, `anonymousMeFixture`, `cartFixture`, `emptyCartFixture`, `wishlistFixture`,
+  `compareFixture`, `notificationsFixture` (all take `locale`).
   On large trees (the real menu has ~300 items) prefer `container.querySelector` / `getByLabelText`
   over `getByRole` (slow).
-- **E2E**: `e2e/*.spec.ts`. Use roles/labels/test ids, not CSS classes. Mobile-only specs go in
-  `mobile.spec.ts`.
+- **Server actions in component tests**: pass the actions as props and give `vi.fn()` in tests
+  (see `NotificationsView.test.tsx`). `<form action={fn}>` works in jsdom; clicking a `next/link`
+  tries to navigate, so stop anchor clicks with a `document` click listener that calls `preventDefault()`.
+- **E2E**: `e2e/*.spec.ts`, one spec per area. Use roles/labels/test ids, not CSS classes.
+  Mobile-only specs go in `mobile.spec.ts`.
 - Test both `en` and `ar` when you touch text or layout.
+
+## E2E specs
+
+| Spec | Covers |
+|---|---|
+| `home.spec.ts` | Chrome, home content, links, language switch, 404, cookie notice, API down |
+| `mobile.spec.ts` | Mobile menu and layout (mobile project only) |
+| `notifications.spec.ts` | List + unread state, mark one, mark all, opening marks read, reading never marks read, pagination, Arabic, no guest for anonymous visitors |
+| `cart.spec.ts`, `wishlist.spec.ts`, `compare.spec.ts` | Shopper areas (same patterns as below) |
+
+## The mock API (e2e + `npm run dev` without a backend)
+
+`scripts/mock-api.mjs` on `http://127.0.0.1:4010`. `layout`/`home` are the recorded fixtures; the
+shopper endpoints are an in-memory store (`scripts/mock/shopper.mjs`) that follows the contract
+(checked by `scripts/mock-shopper.test.mjs`).
+
+| State | Value |
+|---|---|
+| Seeded customer | `Bearer test-customer`: cart 2 lines (below the 300 EGP minimum → `minimum_order` blocker), wishlist 3, compare 2 (max 4), 25 notifications with #903 read (24 unread) |
+| Guests | `POST /session/guest` → `guest-1`, `guest-2`, …; guests only get broadcast notifications |
+| Clock | Fixed at `2026-09-29T10:00Z` for notification dates |
+| `POST /__reset` | Fresh state (seeded customer back, guests gone) |
+| `POST /__mode {"fail": true}` | Every API call answers 500 until `{"fail": false}` |
+
+State is shared by all tests (one server, one worker): **reset in `beforeEach`**, and skip
+state-dependent specs on the live API.
+
+```ts
+const live = process.env.E2E_LIVE === '1';
+const MOCK_API = 'http://127.0.0.1:4010';
+test.skip(live, 'needs the mock API state');
+
+test.beforeEach(async ({ request, page, context }) => {
+  await request.post(`${MOCK_API}/__reset`);
+  await page.addInitScript(() => window.localStorage.setItem('sc_cookie_consent', 'accepted'));
+  // Signed in as the seeded customer (httpOnly cookie, like the real sign-in sets it):
+  await context.addCookies([{ name: 'sc_token', value: 'test-customer', domain: '127.0.0.1', path: '/', httpOnly: true, sameSite: 'Lax' }]);
+});
+```
+
+- **Check what the backend stored**, not only the page: `request.get(`${MOCK_API}/api/customer/v3/me`,
+  { headers: { Authorization: 'Bearer test-customer' } })` → `data.counts`.
+- **"GET never writes"**: load the page, reload, then assert the `/me` counts didn't change.
+- **Guests**: without cookies, a page view must not set `sc_guest` (`(await context.cookies())`);
+  the first write must.
+- Shopper fixtures come from the mock: after changing `scripts/mock/shopper.mjs`, run
+  `node scripts/build-shopper-fixtures.mjs` (until they are recorded live with `npm run fixtures:record`).
 
 ## Other commands
 
 | Command | Use |
 |---|---|
 | `npm run dev` | Local dev against the API in `.env.local` |
+| `node scripts/mock-api.mjs` | Mock API on :4010 (set `SC_API_URL=http://127.0.0.1:4010`) |
 | `npm run fixtures:record` | Re-record `src/test/fixtures/v3` from the API (after backend changes) |
 | `npm run contract:sync` | Copy the backend contract and regenerate SDK types |
 | `npm run contract:check:live` | Validate the live API against the contract |

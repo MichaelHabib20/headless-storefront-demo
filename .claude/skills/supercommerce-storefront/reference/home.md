@@ -64,8 +64,10 @@ interface ProductCard {
   `discountPercent` as the discount. Use `formatPrice(price, locale)`. **No arithmetic.**
 - `price: null` → show no price (do not show 0).
 - Badges with `text: null` get a translated label from i18n (`preorder`, `comingSoonBadge`).
-- There is no add-to-cart API in v3 yet: don't add a working "Add to cart" button. If asked,
-  report "needs backend support (cart API)".
+- "Add to cart" / heart / compare buttons: enable from `purchase.canAddToCart`, write through a
+  server action (`ensureShopperContext` → `setCartItem` / `addToWishlist` / `addToCompare`), and mark
+  "in cart"/"in wishlist" from `getMe`. See [session.md](session.md), [cart.md](cart.md),
+  [wishlist-compare.md](wishlist-compare.md).
 
 ## Promo banners
 
