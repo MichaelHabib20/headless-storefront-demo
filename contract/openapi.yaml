@@ -11,6 +11,18 @@ info:
     - Success: `{"data": ...}` with HTTP 200. Failure: `{"error": {"code", "message"}}` with a real HTTP status.
     - Everything clickable carries a `Target`. Storefronts map targets to their own URLs.
     - Within v3, changes are additive only. Storefronts must ignore unknown fields and skip unknown `Target.type` / `layout` values.
+
+    Shopper session:
+    - Personal endpoints (cart, wishlist, compare, notifications) need `Authorization: Bearer <token>`.
+      The token belongs to a signed-in customer or to a guest.
+    - A guest token is created ONLY by `POST /session/guest` (no GET ever creates data). Storefronts
+      create one the first time a visitor without a token adds something.
+    - `GET /me` works without a token (all counts 0) so the header can render for every visitor.
+    - Signing in with a guest token merges the guest's cart, wishlist and compare into the customer (existing behavior).
+    - GET requests never change data.
+
+    Error codes: `unauthenticated` (401), `not_found` (404), `validation_failed` (422, with `fields`),
+    `quantity_not_allowed` (422), `compare_full` (409), `rate_limited` (429), `server_error` (500).
 servers:
   - url: https://staging-seif.witheldokan.com/api/customer/v3
     description: seif staging
@@ -52,29 +64,298 @@ paths:
                   data: { $ref: '#/components/schemas/Home' }
         default: { $ref: '#/components/responses/Error' }
 
+  /session/guest:
+    post:
+      operationId: createGuestSession
+      summary: Start a guest session (only way to get a guest token)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '201':
+          description: Guest session
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GuestSessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /me:
+    get:
+      operationId: getMe
+      summary: Who is shopping and the header counts. Works without a token.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Shopper summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /cart:
+    get:
+      operationId: getCart
+      summary: The shopper's cart with backend-computed totals and checkout rules
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Cart
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CartResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: clearCart
+      summary: Remove every item
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Empty cart
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CartResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /cart/items/{productId}:
+    parameters:
+      - $ref: '#/components/parameters/ProductId'
+      - $ref: '#/components/parameters/Locale'
+    put:
+      operationId: setCartItem
+      summary: Set the quantity of a product in the cart (adds it if missing). Quantity 0 removes it.
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              additionalProperties: false
+              properties:
+                quantity: { type: number, minimum: 0, maximum: 200 }
+      responses:
+        '200':
+          description: Updated cart
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CartResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: removeCartItem
+      summary: Remove a product from the cart
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Updated cart
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CartResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /wishlist:
+    get:
+      operationId: getWishlist
+      summary: Paginated wishlist, newest first
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: Wishlist page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WishlistResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /wishlist/items/{productId}:
+    parameters:
+      - $ref: '#/components/parameters/ProductId'
+      - $ref: '#/components/parameters/Locale'
+    put:
+      operationId: addToWishlist
+      summary: Add a product (idempotent)
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Wishlist state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListStateResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: removeFromWishlist
+      summary: Remove a product (idempotent)
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Wishlist state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListStateResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /wishlist/items/{productId}/move-to-cart:
+    parameters:
+      - $ref: '#/components/parameters/ProductId'
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: moveWishlistItemToCart
+      summary: Add one unit to the cart and remove the product from the wishlist
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: New cart and wishlist state
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                additionalProperties: false
+                properties:
+                  data:
+                    type: object
+                    required: [cart, wishlist]
+                    additionalProperties: false
+                    properties:
+                      cart: { $ref: '#/components/schemas/Cart' }
+                      wishlist: { $ref: '#/components/schemas/ListState' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /compare:
+    get:
+      operationId: getCompare
+      summary: Compared products and the comparison table
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Comparison
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CompareResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /compare/items/{productId}:
+    parameters:
+      - $ref: '#/components/parameters/ProductId'
+      - $ref: '#/components/parameters/Locale'
+    put:
+      operationId: addToCompare
+      summary: Add a product (idempotent). 409 compare_full when the backend maximum is reached.
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Compare state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListStateResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: removeFromCompare
+      summary: Remove a product (idempotent)
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Compare state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ListStateResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /notifications:
+    get:
+      operationId: getNotifications
+      summary: Paginated notifications, newest first. Read-only (never marks anything as read).
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: Notifications page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NotificationsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /notifications/{notificationId}/read:
+    post:
+      operationId: markNotificationRead
+      summary: Mark one notification as read for this shopper only
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: notificationId
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Unread count after the change
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UnreadCountResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      summary: Mark every notification as read for this shopper only
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Unread count after the change (0)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UnreadCountResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
 components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+
   parameters:
     Locale:
       name: locale
       in: query
       required: false
       schema: { $ref: '#/components/schemas/Locale' }
+    ProductId:
+      name: productId
+      in: path
+      required: true
+      description: ProductCard.id
+      schema: { type: integer, minimum: 1 }
+    Page:
+      name: page
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, default: 1 }
+    PerPage:
+      name: perPage
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
 
   responses:
     Error:
       description: Error
       content:
         application/json:
-          schema:
-            type: object
-            required: [error]
-            properties:
-              error:
-                type: object
-                required: [code, message]
-                properties:
-                  code: { type: string, example: server_error }
-                  message: { type: string }
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
 
   schemas:
     Locale:
@@ -529,3 +810,280 @@ components:
         popups:
           type: array
           items: { $ref: '#/components/schemas/Popup' }
+
+    # ---------------------------------------------------------------- shopper
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      additionalProperties: false
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          additionalProperties: false
+          properties:
+            code: { type: string, example: server_error }
+            message: { type: string, description: Localized, safe to show }
+            fields:
+              description: Per-field messages (validation_failed)
+              type: object
+              additionalProperties:
+                type: array
+                items: { type: string }
+
+    Money:
+      description: An amount computed by the backend. Display it; never do arithmetic on it.
+      type: object
+      required: [amount, currency]
+      additionalProperties: false
+      properties:
+        amount: { type: number }
+        currency: { type: string, nullable: true }
+
+    Pagination:
+      type: object
+      required: [page, perPage, total, totalPages]
+      additionalProperties: false
+      properties:
+        page: { type: integer, minimum: 1 }
+        perPage: { type: integer, minimum: 1 }
+        total: { type: integer, minimum: 0 }
+        totalPages: { type: integer, minimum: 0 }
+
+    GuestSessionResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [token, isGuest]
+          additionalProperties: false
+          properties:
+            token: { type: string, description: 'Send as Authorization: Bearer <token>. Keep it server-side (httpOnly cookie).' }
+            isGuest: { type: boolean, enum: [true] }
+
+    Me:
+      type: object
+      required: [authenticated, isGuest, customer, counts, cartQuantities, wishlistProductIds, compareProductIds]
+      additionalProperties: false
+      properties:
+        authenticated: { type: boolean, description: False when no valid token was sent }
+        isGuest: { type: boolean }
+        customer:
+          type: object
+          nullable: true
+          required: [firstName]
+          additionalProperties: false
+          properties:
+            firstName: { type: string }
+        counts:
+          description: Header badges. `cart` follows the store's counting mode (lines or units).
+          type: object
+          required: [cart, wishlist, compare, unreadNotifications]
+          additionalProperties: false
+          properties:
+            cart: { type: integer, minimum: 0 }
+            wishlist: { type: integer, minimum: 0 }
+            compare: { type: integer, minimum: 0 }
+            unreadNotifications: { type: integer, minimum: 0 }
+        cartQuantities:
+          description: productId (as string) → quantity in cart, to mark "in cart" on product cards
+          type: object
+          additionalProperties: { type: number }
+        wishlistProductIds:
+          type: array
+          items: { type: integer }
+        compareProductIds:
+          type: array
+          items: { type: integer }
+    MeResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Me' }
+
+    CartItemAvailability:
+      description: Whether this line can be checked out as is, decided by the backend.
+      type: object
+      required: [status, message, minQuantity, maxQuantity]
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          enum: [available, out_of_stock, unavailable, coming_soon, exceeds_limit, below_minimum]
+        message: { type: string, nullable: true, description: Localized explanation; null when available }
+        minQuantity: { type: number, minimum: 1 }
+        maxQuantity: { type: number, nullable: true, description: Most the shopper may have in the cart; null = no limit }
+
+    CartItem:
+      type: object
+      required: [product, quantity, quantityStep, unitPrice, lineTotal, availability]
+      additionalProperties: false
+      properties:
+        product: { $ref: '#/components/schemas/ProductCard' }
+        quantity: { type: number, minimum: 0 }
+        quantityStep: { type: number, description: 'Allowed increment (1, or e.g. 0.5 for weighed products)' }
+        unitPrice: { $ref: '#/components/schemas/Price' }
+        lineTotal:
+          description: What this line costs after item promotions
+          allOf: [{ $ref: '#/components/schemas/Money' }]
+        availability: { $ref: '#/components/schemas/CartItemAvailability' }
+
+    Cart:
+      type: object
+      required: [items, summary, checkout, requiresPrescription]
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/CartItem' }
+        summary:
+          type: object
+          required: [itemCount, subtotal, discount, total]
+          additionalProperties: false
+          properties:
+            itemCount: { type: number, minimum: 0, description: Total units }
+            subtotal: { $ref: '#/components/schemas/Money' }
+            discount:
+              description: Cart-level promotion discount; null when none
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Money' }]
+            total:
+              description: Before delivery, which is calculated at checkout
+              allOf: [{ $ref: '#/components/schemas/Money' }]
+        checkout:
+          type: object
+          required: [allowed, blockers, minimumOrder]
+          additionalProperties: false
+          properties:
+            allowed: { type: boolean, description: Enable the checkout button only when true }
+            blockers:
+              description: Why checkout is not allowed (empty when allowed)
+              type: array
+              items:
+                type: object
+                required: [code, message]
+                additionalProperties: false
+                properties:
+                  code: { type: string, enum: [empty_cart, minimum_order, unavailable_items] }
+                  message: { type: string }
+            minimumOrder:
+              description: Null when the store has no minimum
+              type: object
+              nullable: true
+              required: [amount, remaining]
+              additionalProperties: false
+              properties:
+                amount: { $ref: '#/components/schemas/Money' }
+                remaining:
+                  description: How much more to add; amount 0 when reached
+                  allOf: [{ $ref: '#/components/schemas/Money' }]
+        requiresPrescription: { type: boolean }
+    CartResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Cart' }
+
+    ListState:
+      description: Same shape for every add/remove on the wishlist or compare list.
+      type: object
+      required: [count, productIds, maxItems]
+      additionalProperties: false
+      properties:
+        count: { type: integer, minimum: 0 }
+        productIds:
+          type: array
+          items: { type: integer }
+        maxItems: { type: integer, nullable: true, description: Null = no limit }
+    ListStateResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/ListState' }
+
+    WishlistResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/ProductCard' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+
+    CompareResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [products, attributes, maxItems]
+          additionalProperties: false
+          properties:
+            products:
+              type: array
+              items: { $ref: '#/components/schemas/ProductCard' }
+            attributes:
+              description: Comparison rows. `values[i]` belongs to `products[i]`; null = product has no value.
+              type: array
+              items:
+                type: object
+                required: [name, values]
+                additionalProperties: false
+                properties:
+                  name: { type: string }
+                  values:
+                    type: array
+                    items: { type: string, nullable: true }
+            maxItems: { type: integer, nullable: true }
+
+    Notification:
+      type: object
+      required: [id, title, body, image, target, createdAt, read]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        body: { type: string, nullable: true }
+        image: { type: string, nullable: true }
+        target: { $ref: '#/components/schemas/NullableTarget' }
+        createdAt: { type: string, format: date-time }
+        read: { type: boolean, description: Read by THIS shopper }
+    NotificationsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination, unreadCount]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Notification' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+            unreadCount: { type: integer, minimum: 0 }
+    UnreadCountResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [unreadCount]
+          additionalProperties: false
+          properties:
+            unreadCount: { type: integer, minimum: 0 }

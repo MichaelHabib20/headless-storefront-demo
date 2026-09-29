@@ -40,6 +40,23 @@ for (const endpoint of Object.keys(SCHEMA)) {
   }
 }
 
+// 1b. shopper fixtures (whole response bodies)
+const RESPONSE_SCHEMA = {
+  me: 'MeResponse',
+  cart: 'CartResponse',
+  'cart-empty': 'CartResponse',
+  wishlist: 'WishlistResponse',
+  compare: 'CompareResponse',
+  notifications: 'NotificationsResponse',
+};
+for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
+  const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');
+  if (!RESPONSE_SCHEMA[name]) continue;
+  const errors = validate(RESPONSE_SCHEMA[name], JSON.parse(fs.readFileSync(path.join(root, 'src/test/fixtures/v3', file), 'utf8')));
+  if (errors.length) failures.push(`fixture ${file}:\n    ${errors.slice(0, 15).join('\n    ')}`);
+  else console.log(`✓ fixture ${file} matches the contract`);
+}
+
 // 2. live API
 if (live) {
   const base = (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com').replace(/\/+$/, '');

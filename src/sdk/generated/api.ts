@@ -38,6 +38,234 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/session/guest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start a guest session (only way to get a guest token) */
+        post: operations["createGuestSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Who is shopping and the header counts. Works without a token. */
+        get: operations["getMe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The shopper's cart with backend-computed totals and checkout rules */
+        get: operations["getCart"];
+        put?: never;
+        post?: never;
+        /** Remove every item */
+        delete: operations["clearCart"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/items/{productId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Set the quantity of a product in the cart (adds it if missing). Quantity 0 removes it. */
+        put: operations["setCartItem"];
+        post?: never;
+        /** Remove a product from the cart */
+        delete: operations["removeCartItem"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/wishlist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Paginated wishlist, newest first */
+        get: operations["getWishlist"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/wishlist/items/{productId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Add a product (idempotent) */
+        put: operations["addToWishlist"];
+        post?: never;
+        /** Remove a product (idempotent) */
+        delete: operations["removeFromWishlist"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/wishlist/items/{productId}/move-to-cart": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add one unit to the cart and remove the product from the wishlist */
+        post: operations["moveWishlistItemToCart"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Compared products and the comparison table */
+        get: operations["getCompare"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/compare/items/{productId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Add a product (idempotent). 409 compare_full when the backend maximum is reached. */
+        put: operations["addToCompare"];
+        post?: never;
+        /** Remove a product (idempotent) */
+        delete: operations["removeFromCompare"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Paginated notifications, newest first. Read-only (never marks anything as read). */
+        get: operations["getNotifications"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications/{notificationId}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark one notification as read for this shopper only */
+        post: operations["markNotificationRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/notifications/read-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark every notification as read for this shopper only */
+        post: operations["markAllNotificationsRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -329,6 +557,163 @@ export interface components {
             featuredBrands: components["schemas"]["Tile"][];
             popups: components["schemas"]["Popup"][];
         };
+        ErrorResponse: {
+            error: {
+                /** @example server_error */
+                code: string;
+                /** @description Localized */
+                message: string;
+                /** @description Per-field messages (validation_failed) */
+                fields?: {
+                    [key: string]: string[];
+                };
+            };
+        };
+        /** @description An amount computed by the backend. Display it; never do arithmetic on it. */
+        Money: {
+            amount: number;
+            currency: string | null;
+        };
+        Pagination: {
+            page: number;
+            perPage: number;
+            total: number;
+            totalPages: number;
+        };
+        GuestSessionResponse: {
+            data: {
+                /** @description Send as Authorization: Bearer <token>. Keep it server-side (httpOnly cookie). */
+                token: string;
+                /** @enum {boolean} */
+                isGuest: true;
+            };
+        };
+        Me: {
+            /** @description False when no valid token was sent */
+            authenticated: boolean;
+            isGuest: boolean;
+            customer: {
+                firstName: string;
+            } | null;
+            /** @description Header badges. `cart` follows the store's counting mode (lines or units). */
+            counts: {
+                cart: number;
+                wishlist: number;
+                compare: number;
+                unreadNotifications: number;
+            };
+            /** @description productId (as string) → quantity in cart, to mark "in cart" on product cards */
+            cartQuantities: {
+                [key: string]: number;
+            };
+            wishlistProductIds: number[];
+            compareProductIds: number[];
+        };
+        MeResponse: {
+            data: components["schemas"]["Me"];
+        };
+        /** @description Whether this line can be checked out as is, decided by the backend. */
+        CartItemAvailability: {
+            /** @enum {string} */
+            status: "available" | "out_of_stock" | "unavailable" | "coming_soon" | "exceeds_limit" | "below_minimum";
+            /** @description Localized explanation; null when available */
+            message: string | null;
+            minQuantity: number;
+            /** @description Most the shopper may have in the cart; null = no limit */
+            maxQuantity: number | null;
+        };
+        CartItem: {
+            product: components["schemas"]["ProductCard"];
+            quantity: number;
+            /** @description Allowed increment (1, or e.g. 0.5 for weighed products) */
+            quantityStep: number;
+            unitPrice: components["schemas"]["Price"];
+            /** @description What this line costs after item promotions */
+            lineTotal: components["schemas"]["Money"];
+            availability: components["schemas"]["CartItemAvailability"];
+        };
+        Cart: {
+            items: components["schemas"]["CartItem"][];
+            summary: {
+                /** @description Total units */
+                itemCount: number;
+                subtotal: components["schemas"]["Money"];
+                /** @description Cart-level promotion discount; null when none */
+                discount: components["schemas"]["Money"] | null;
+                /** @description Before delivery, which is calculated at checkout */
+                total: components["schemas"]["Money"];
+            };
+            checkout: {
+                /** @description Enable the checkout button only when true */
+                allowed: boolean;
+                /** @description Why checkout is not allowed (empty when allowed) */
+                blockers: {
+                    /** @enum {string} */
+                    code: "empty_cart" | "minimum_order" | "unavailable_items";
+                    message: string;
+                }[];
+                /** @description Null when the store has no minimum */
+                minimumOrder: {
+                    amount: components["schemas"]["Money"];
+                    /** @description How much more to add; amount 0 when reached */
+                    remaining: components["schemas"]["Money"];
+                } | null;
+            };
+            requiresPrescription: boolean;
+        };
+        CartResponse: {
+            data: components["schemas"]["Cart"];
+        };
+        /** @description Same shape for every add/remove on the wishlist or compare list. */
+        ListState: {
+            count: number;
+            productIds: number[];
+            /** @description Null = no limit */
+            maxItems: number | null;
+        };
+        ListStateResponse: {
+            data: components["schemas"]["ListState"];
+        };
+        WishlistResponse: {
+            data: {
+                items: components["schemas"]["ProductCard"][];
+                pagination: components["schemas"]["Pagination"];
+            };
+        };
+        CompareResponse: {
+            data: {
+                products: components["schemas"]["ProductCard"][];
+                /** @description Comparison rows. `values[i]` belongs to `products[i]`; null = product has no value. */
+                attributes: {
+                    name: string;
+                    values: (string | null)[];
+                }[];
+                maxItems: number | null;
+            };
+        };
+        Notification: {
+            id: number;
+            title: string;
+            body: string | null;
+            image: string | null;
+            target: components["schemas"]["NullableTarget"];
+            /** Format: date-time */
+            createdAt: string;
+            /** @description Read by THIS shopper */
+            read: boolean;
+        };
+        NotificationsResponse: {
+            data: {
+                items: components["schemas"]["Notification"][];
+                pagination: components["schemas"]["Pagination"];
+                unreadCount: number;
+            };
+        };
+        UnreadCountResponse: {
+            data: {
+                unreadCount: number;
+            };
+        };
     };
     responses: {
         /** @description Error */
@@ -337,18 +722,16 @@ export interface components {
                 [name: string]: unknown;
             };
             content: {
-                "application/json": {
-                    error: {
-                        /** @example server_error */
-                        code: string;
-                        message: string;
-                    };
-                };
+                "application/json": components["schemas"]["ErrorResponse"];
             };
         };
     };
     parameters: {
         Locale: components["schemas"]["Locale"];
+        /** @description ProductCard.id */
+        ProductId: number;
+        Page: number;
+        PerPage: number;
     };
     requestBodies: never;
     headers: never;
@@ -401,6 +784,412 @@ export interface operations {
                     "application/json": {
                         data: components["schemas"]["Home"];
                     };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    createGuestSession: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Guest session */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GuestSessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getMe: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Shopper summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getCart: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cart */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    clearCart: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Empty cart */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    setCartItem: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    quantity: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated cart */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    removeCartItem: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Updated cart */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getWishlist: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: components["parameters"]["Page"];
+                perPage?: components["parameters"]["PerPage"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Wishlist page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WishlistResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    addToWishlist: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Wishlist state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListStateResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    removeFromWishlist: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Wishlist state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListStateResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    moveWishlistItemToCart: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description New cart and wishlist state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            cart: components["schemas"]["Cart"];
+                            wishlist: components["schemas"]["ListState"];
+                        };
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getCompare: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Comparison */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompareResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    addToCompare: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Compare state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListStateResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    removeFromCompare: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Compare state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListStateResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getNotifications: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: components["parameters"]["Page"];
+                perPage?: components["parameters"]["PerPage"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Notifications page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    markNotificationRead: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                notificationId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Unread count after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadCountResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    markAllNotificationsRead: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Unread count after the change (0) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadCountResponse"];
                 };
             };
             default: components["responses"]["Error"];

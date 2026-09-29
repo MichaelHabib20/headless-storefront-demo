@@ -1,0 +1,28 @@
+{
+ "data": {
+  "authenticated": true,
+  "isGuest": false,
+  "customer": {
+   "firstName": "Test"
+  },
+  "counts": {
+   "cart": 2,
+   "wishlist": 3,
+   "compare": 2,
+   "unreadNotifications": 24
+  },
+  "cartQuantities": {
+   "7346": 1,
+   "36480": 2
+  },
+  "wishlistProductIds": [
+   8412,
+   8658,
+   33594
+  ],
+  "compareProductIds": [
+   36480,
+   8412
+  ]
+ }
+}

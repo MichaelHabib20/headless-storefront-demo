@@ -1,0 +1,84 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 33594,
+    "slug": "-1754482110",
+    "name": "J&J Baby Bath 500ml",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/251465-1754482083.webp",
+     "alt": "J&J Baby Bath 500ml"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 200,
+     "compareAt": null,
+     "discountPercent": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "-1754482110"
+    }
+   },
+   {
+    "id": 8658,
+    "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+    "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+     "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 200,
+     "compareAt": null,
+     "discountPercent": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+    }
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 2,
+   "total": 3,
+   "totalPages": 2
+  }
+ }
+}

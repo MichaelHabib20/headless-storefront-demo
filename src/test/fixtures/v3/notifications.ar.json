@@ -1,0 +1,124 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 901,
+    "title": "طلبك في الطريق",
+    "body": "خرج الطلب رقم 10231 من الصيدلية وسيصل اليوم.",
+    "image": null,
+    "target": null,
+    "createdAt": "2026-09-29T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 902,
+    "title": "أسبوع العناية بالطفل",
+    "body": "خصم حتى 20٪ على منتجات مختارة للعناية بالطفل.",
+    "image": null,
+    "target": {
+     "type": "list",
+     "slug": null,
+     "id": 125
+    },
+    "createdAt": "2026-09-28T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 903,
+    "title": "ارفع روشتتك",
+    "body": "نجهز أدويتك ونوصلها لباب بيتك.",
+    "image": null,
+    "target": {
+     "type": "form",
+     "slug": "prescriptions"
+    },
+    "createdAt": "2026-09-26T10:00:00.000Z",
+    "read": true
+   },
+   {
+    "id": 910,
+    "title": "عرض اليوم رقم 1",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-25T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 911,
+    "title": "عرض اليوم رقم 2",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-24T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 912,
+    "title": "عرض اليوم رقم 3",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-23T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 913,
+    "title": "عرض اليوم رقم 4",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-22T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 914,
+    "title": "عرض اليوم رقم 5",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-21T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 915,
+    "title": "عرض اليوم رقم 6",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-20T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 916,
+    "title": "عرض اليوم رقم 7",
+    "body": "عروض جديدة في انتظارك.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-19T10:00:00.000Z",
+    "read": false
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 10,
+   "total": 25,
+   "totalPages": 3
+  },
+  "unreadCount": 24
+ }
+}

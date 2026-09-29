@@ -1,0 +1,124 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 901,
+    "title": "Your order is on its way",
+    "body": "Order #10231 left our pharmacy and will arrive today.",
+    "image": null,
+    "target": null,
+    "createdAt": "2026-09-29T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 902,
+    "title": "Baby care week",
+    "body": "Up to 20% off selected baby care products.",
+    "image": null,
+    "target": {
+     "type": "list",
+     "slug": null,
+     "id": 125
+    },
+    "createdAt": "2026-09-28T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 903,
+    "title": "Upload your prescription",
+    "body": "We prepare your medicines and deliver them to your door.",
+    "image": null,
+    "target": {
+     "type": "form",
+     "slug": "prescriptions"
+    },
+    "createdAt": "2026-09-26T10:00:00.000Z",
+    "read": true
+   },
+   {
+    "id": 910,
+    "title": "Offer of the day #1",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-25T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 911,
+    "title": "Offer of the day #2",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-24T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 912,
+    "title": "Offer of the day #3",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-23T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 913,
+    "title": "Offer of the day #4",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-22T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 914,
+    "title": "Offer of the day #5",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-21T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 915,
+    "title": "Offer of the day #6",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-20T10:00:00.000Z",
+    "read": false
+   },
+   {
+    "id": 916,
+    "title": "Offer of the day #7",
+    "body": "New deals are waiting for you.",
+    "image": null,
+    "target": {
+     "type": "deals"
+    },
+    "createdAt": "2026-09-19T10:00:00.000Z",
+    "read": false
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 10,
+   "total": 25,
+   "totalPages": 3
+  },
+  "unreadCount": 24
+ }
+}

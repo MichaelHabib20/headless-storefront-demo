@@ -17,6 +17,10 @@ export type ApiErrorKind =
   | 'network'
   | 'not_found'
   | 'invalid_response'
+  | 'unauthenticated'
+  | 'quantity_not_allowed'
+  | 'compare_full'
+  | 'conflict'
   | 'unknown';
 
 export class ApiError extends Error {

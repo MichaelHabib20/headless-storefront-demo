@@ -1,0 +1,37 @@
+{
+ "data": {
+  "items": [],
+  "summary": {
+   "itemCount": 0,
+   "subtotal": {
+    "amount": 0,
+    "currency": "EGP"
+   },
+   "discount": null,
+   "total": {
+    "amount": 0,
+    "currency": "EGP"
+   }
+  },
+  "checkout": {
+   "allowed": false,
+   "blockers": [
+    {
+     "code": "empty_cart",
+     "message": "سلة التسوق فارغة."
+    }
+   ],
+   "minimumOrder": {
+    "amount": {
+     "amount": 300,
+     "currency": "EGP"
+    },
+    "remaining": {
+     "amount": 300,
+     "currency": "EGP"
+    }
+   }
+  },
+  "requiresPrescription": false
+ }
+}

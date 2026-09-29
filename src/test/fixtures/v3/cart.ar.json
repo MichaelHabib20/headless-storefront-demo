@@ -1,0 +1,150 @@
+{
+ "data": {
+  "items": [
+   {
+    "product": {
+     "id": 36480,
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+     "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+     "image": {
+      "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+      "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل"
+     },
+     "brand": {
+      "name": "JOHNSON & JOHNSON",
+      "slug": "johnson-johnson",
+      "target": {
+       "type": "brand",
+       "slug": "johnson-johnson"
+      }
+     },
+     "price": {
+      "currency": "EGP",
+      "amount": 18,
+      "compareAt": null,
+      "discountPercent": null
+     },
+     "inStock": true,
+     "badges": [],
+     "rating": null,
+     "requiresPrescription": false,
+     "purchase": {
+      "canAddToCart": true,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     },
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+     }
+    },
+    "quantity": 2,
+    "quantityStep": 1,
+    "unitPrice": {
+     "currency": "EGP",
+     "amount": 18,
+     "compareAt": null,
+     "discountPercent": null
+    },
+    "lineTotal": {
+     "amount": 36,
+     "currency": "EGP"
+    },
+    "availability": {
+     "status": "available",
+     "message": null,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    }
+   },
+   {
+    "product": {
+     "id": 7346,
+     "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب",
+     "name": "جونسون اند جونسون كيدز لاتشابك بلسم سبراي 200 مل",
+     "image": {
+      "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+      "alt": "جونسون اند جونسون كيدز لاتشابك بلسم سبراي 200 مل"
+     },
+     "brand": {
+      "name": "JOHNSON & JOHNSON",
+      "slug": "johnson-johnson",
+      "target": {
+       "type": "brand",
+       "slug": "johnson-johnson"
+      }
+     },
+     "price": {
+      "currency": "EGP",
+      "amount": 160,
+      "compareAt": null,
+      "discountPercent": null
+     },
+     "inStock": true,
+     "badges": [],
+     "rating": null,
+     "requiresPrescription": false,
+     "purchase": {
+      "canAddToCart": true,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     },
+     "target": {
+      "type": "product",
+      "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب"
+     }
+    },
+    "quantity": 1,
+    "quantityStep": 1,
+    "unitPrice": {
+     "currency": "EGP",
+     "amount": 160,
+     "compareAt": null,
+     "discountPercent": null
+    },
+    "lineTotal": {
+     "amount": 160,
+     "currency": "EGP"
+    },
+    "availability": {
+     "status": "available",
+     "message": null,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    }
+   }
+  ],
+  "summary": {
+   "itemCount": 3,
+   "subtotal": {
+    "amount": 196,
+    "currency": "EGP"
+   },
+   "discount": null,
+   "total": {
+    "amount": 196,
+    "currency": "EGP"
+   }
+  },
+  "checkout": {
+   "allowed": false,
+   "blockers": [
+    {
+     "code": "minimum_order",
+     "message": "أضف 104 ج.م للوصول للحد الأدنى للطلب."
+    }
+   ],
+   "minimumOrder": {
+    "amount": {
+     "amount": 300,
+     "currency": "EGP"
+    },
+    "remaining": {
+     "amount": 104,
+     "currency": "EGP"
+    }
+   }
+  },
+  "requiresPrescription": false
+ }
+}

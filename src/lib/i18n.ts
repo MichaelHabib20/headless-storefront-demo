@@ -1,4 +1,9 @@
 import type { Locale } from '@/sdk';
+import { cartMessages } from './messages/cart';
+import { compareMessages } from './messages/compare';
+import { notificationsMessages } from './messages/notifications';
+import { shopperMessages } from './messages/shopper';
+import { wishlistMessages } from './messages/wishlist';
 
 /**
  * UI strings owned by the storefront (buttons, headings, labels). Content text
@@ -60,9 +65,7 @@ const en = {
   rights: 'All rights reserved.',
 };
 
-export type MessageKey = keyof typeof en;
-
-const ar: Record<MessageKey, string> = {
+const coreAr: Record<keyof typeof en, string> = {
   skipToContent: 'تخطى إلى المحتوى',
   menu: 'القائمة',
   closeMenu: 'إغلاق القائمة',
@@ -118,7 +121,16 @@ const ar: Record<MessageKey, string> = {
   rights: 'جميع الحقوق محفوظة.',
 };
 
-const dictionaries: Record<Locale, Record<MessageKey, string>> = { en, ar };
+/*
+ * Each area owns its strings in src/lib/messages/<area>.ts ({en, ar} with the same keys,
+ * enforced by defineMessages). Add new areas here.
+ */
+const dictionaries = {
+  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en },
+  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar },
+} satisfies Record<Locale, Record<string, string>>;
+
+export type MessageKey = keyof typeof dictionaries.en;
 
 export type Translator = (key: MessageKey) => string;
 

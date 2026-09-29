@@ -1,0 +1,16 @@
+{
+ "data": {
+  "authenticated": false,
+  "isGuest": false,
+  "customer": null,
+  "counts": {
+   "cart": 0,
+   "wishlist": 0,
+   "compare": 0,
+   "unreadNotifications": 0
+  },
+  "cartQuantities": {},
+  "wishlistProductIds": [],
+  "compareProductIds": []
+ }
+}

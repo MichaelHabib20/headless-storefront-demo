@@ -1,0 +1,102 @@
+{
+ "data": {
+  "products": [
+   {
+    "id": 36480,
+    "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+    "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+     "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 18,
+     "compareAt": null,
+     "discountPercent": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+    }
+   },
+   {
+    "id": 8412,
+    "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new",
+    "name": "جونسون اند جونسون شامبو للاطفال وقت النوم طبيعي هادئ 200 مل",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+     "alt": "جونسون اند جونسون شامبو للاطفال وقت النوم طبيعي هادئ 200 مل"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 105,
+     "compareAt": null,
+     "discountPercent": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+    }
+   }
+  ],
+  "attributes": [
+   {
+    "name": "الماركة",
+    "values": [
+     "JOHNSON & JOHNSON",
+     "JOHNSON & JOHNSON"
+    ]
+   },
+   {
+    "name": "النوع",
+    "values": [
+     "BEAUTY STORES",
+     "BEAUTY STORES"
+    ]
+   },
+   {
+    "name": "الخامة",
+    "values": [
+     null,
+     "Ref 8412"
+    ]
+   }
+  ],
+  "maxItems": 4
+ }
+}
