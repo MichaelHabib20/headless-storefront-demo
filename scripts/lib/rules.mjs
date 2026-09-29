@@ -31,6 +31,8 @@ export const RULES = [
       // building a URL out of a slug/path: `/p/${x.slug}` or '/p/' + x.slug
       /`[^`]*\/[^`]*\$\{[^}]*\.(slug|path)\b/,
       /['"]\/[^'"]*['"]\s*\+\s*[\w.?]*\.(slug|path)\b/,
+      // hardcoded locale paths ('/en/...', "/ar") — the locale comes from the route
+      /['"`]\/(en|ar)(\/|['"`])/,
     ],
     message: 'Never branch on target.type or build URLs from slugs. Render <TargetLink target={...}> or call resolveTarget() from @/lib/routing.',
   },
@@ -42,8 +44,22 @@ export const RULES = [
       /[-+*/]\s*[\w.?]*\.(amount|compareAt|discountPercent)\b/,
       /discountPercent\s*[:=][^=]/,
       /Math\.(round|floor|ceil)\([^)]*(price|amount|compareAt)/,
+      // business rules on prices ("free delivery above 500") belong to the backend
+      /\.(amount|compareAt|discountPercent)\s*[<>]=?\s*\d/,
+      /\d\s*[<>]=?\s*[\w.?]*\.(amount|compareAt|discountPercent)\b/,
     ],
-    message: 'Prices, discounts and totals come computed from the backend (Price.amount / compareAt / discountPercent). Display them with formatPrice(); never compute them.',
+    message: 'Prices, discounts, totals and price-based rules come from the backend (Price.amount / compareAt / discountPercent, badges, purchase). Display them with formatPrice(); never compute or compare them. Missing data → "needs backend support".',
+  },
+  {
+    id: 'ui-text-in-i18n',
+    applies: (f) => /^src\/components\/.*\.tsx$/.test(f) && !isTest(f),
+    patterns: [
+      // JSX text with words: >You save<  or  >Free delivery {x}<
+      />[^<>{}=]*\b[A-Za-z]{3,}\b[^<>{}]*(<|\{)/,
+      // a JSX line that is only words:     Free delivery
+      /^\s+[A-Za-z][A-Za-z ,.'!?&-]{3,}$/,
+    ],
+    message: 'UI text must come from src/lib/i18n.ts (English AND Arabic) via t("key"); content text comes translated from the API.',
   },
   {
     id: 'no-env-in-client',
