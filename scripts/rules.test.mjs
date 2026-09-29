@@ -29,6 +29,19 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/P.tsx', 'formatPrice(product.price, locale)')).toEqual([]);
   });
 
+  it('catches business rules on prices (regression from the AI guardrail trial)', () => {
+    expect(rulesHit('src/components/P.tsx', 'const freeDelivery = product.price.amount > 500;')).toContain('no-price-math');
+    expect(rulesHit('src/components/P.tsx', 'if (1000 <= price.compareAt) {')).toContain('no-price-math');
+    expect(rulesHit('src/components/P.tsx', 'price.compareAt !== null')).toEqual([]);
+  });
+
+  it('catches hardcoded UI text and locale paths', () => {
+    expect(rulesHit('src/components/P.tsx', '<span className={s.save}>You save {amount}</span>')).toContain('ui-text-in-i18n');
+    expect(rulesHit('src/components/P.tsx', '          Free delivery')).toContain('ui-text-in-i18n');
+    expect(rulesHit('src/components/P.tsx', '<span>{t("freeDelivery")}</span>')).toEqual([]);
+    expect(rulesHit('src/components/P.tsx', '<a href="/en/deals">')).toContain('links-via-routing');
+  });
+
   it('catches env reads in client components', () => {
     expect(rulesHit('src/components/C.tsx', "'use client';\nconst key = process.env.SC_API_KEY;")).toContain('no-env-in-client');
     expect(rulesHit('src/lib/storefront.server.ts', 'const key = process.env.SC_API_KEY;')).toEqual([]);

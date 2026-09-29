@@ -11,6 +11,7 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { TopBar } from '@/components/layout/TopBar';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { direction, translator } from '@/lib/i18n';
+import { routes } from '@/lib/routing';
 import { loadLayout } from '@/lib/storefront.server';
 import '../globals.css';
 
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: { default: layout?.store.name ?? 'Store', template: `%s | ${layout?.store.name ?? 'Store'}` },
     description: layout?.store.slogan ?? undefined,
     icons: layout?.store.favicon ? [{ url: layout.store.favicon }] : undefined,
-    alternates: { languages: { en: '/en', ar: '/ar' } },
+    alternates: { languages: { en: routes.home('en'), ar: routes.home('ar') } },
   };
 }
 
