@@ -1,0 +1,891 @@
+{
+ "data": {
+  "promoBanners": [
+   {
+    "id": 1,
+    "placement": "top-ad",
+    "image": {
+     "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/41545-1777463410.jpeg",
+     "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/140045-1777463396.jpeg",
+     "alt": null
+    },
+    "title": null,
+    "target": {
+     "type": "form",
+     "slug": "prescriptions"
+    }
+   },
+   {
+    "id": 2,
+    "placement": "bottom-ad",
+    "image": {
+     "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/41545-1777463427.jpeg",
+     "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/140045-1777463434.jpeg",
+     "alt": null
+    },
+    "title": null,
+    "target": {
+     "type": "form",
+     "slug": "prescriptions"
+    }
+   }
+  ],
+  "featuredCategories": [
+   {
+    "id": 1,
+    "name": "Skin Care",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin-Care-1749731184.webp",
+     "alt": "Skin Care"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "skin-care"
+     ]
+    }
+   },
+   {
+    "id": 2,
+    "name": "Mom & Baby",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+     "alt": "Mom & Baby"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   },
+   {
+    "id": 3,
+    "name": "Medicine",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medicine.1-1749729303.webp",
+     "alt": "Medicine"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "medicine"
+     ]
+    }
+   },
+   {
+    "id": 4,
+    "name": "Cosmetics",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cosmetics-1749731148.webp",
+     "alt": "Cosmetics"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "cosmetics"
+     ]
+    }
+   },
+   {
+    "id": 5,
+    "name": "Every Day Essentials",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Every%20Day%20Essentials-1749731084.webp",
+     "alt": "Every Day Essentials"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "every-day-essentials"
+     ]
+    }
+   },
+   {
+    "id": 6,
+    "name": "Hair Care",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%20Care-1749731119.webp",
+     "alt": "Hair Care"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "hair-care"
+     ]
+    }
+   },
+   {
+    "id": 7,
+    "name": "Sexual Health",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sexual%20Health-1749730982.webp",
+     "alt": "Sexual Health"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "sexual-health"
+     ]
+    }
+   },
+   {
+    "id": 8,
+    "name": "Medical Equipment & Supplies",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%20Equipment%20%26%20Supplies-1749731006.webp",
+     "alt": "Medical Equipment & Supplies"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "medical-equipment-supplies"
+     ]
+    }
+   }
+  ],
+  "sections": [
+   {
+    "id": 122,
+    "title": null,
+    "layout": "wide_banner",
+    "banners": [
+     {
+      "id": 205,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/21-1774360261.jpeg",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/20-1774360274.jpeg",
+       "alt": null
+      },
+      "title": null,
+      "target": {
+       "type": "form",
+       "slug": "prescriptions"
+      }
+     }
+    ],
+    "products": [],
+    "viewAll": null
+   },
+   {
+    "id": 36,
+    "title": "Baby Care",
+    "layout": "banner_grid",
+    "banners": [
+     {
+      "id": 272,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/4004004-1783495845.jpg",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/8003503-1783495892.jpg",
+       "alt": "Divol"
+      },
+      "title": null,
+      "target": {
+       "type": "list",
+       "slug": null,
+       "id": 176
+      }
+     },
+     {
+      "id": 273,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/4005-1786525846.png",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/8003505-1786525850.png",
+       "alt": "J&J BABY"
+      },
+      "title": null,
+      "target": {
+       "type": "list",
+       "slug": null,
+       "id": 125
+      }
+     },
+     {
+      "id": 274,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/4004006-1783496287.jpeg",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/8003500-1783496814.png",
+       "alt": "Penduline"
+      },
+      "title": null,
+      "target": {
+       "type": "list",
+       "slug": null,
+       "id": 331
+      }
+     }
+    ],
+    "products": [
+     {
+      "id": 36480,
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+      "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+       "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 18,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     {
+      "id": 7346,
+      "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new",
+      "name": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+       "alt": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 160,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+      }
+     },
+     {
+      "id": 8412,
+      "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new",
+      "name": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+       "alt": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 105,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+      }
+     },
+     {
+      "id": 8658,
+      "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+      "name": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+       "alt": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 200,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     },
+     {
+      "id": 33594,
+      "slug": "jj-baby-bath-500ml",
+      "name": "J&J Baby Bath 500Ml",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/251465-1754482083.webp",
+       "alt": "J&J Baby Bath 500Ml"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 200,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bath-500ml"
+      }
+     },
+     {
+      "id": 9822,
+      "slug": "jj-baby-cologne-100ml-dream-احلام",
+      "name": "J&J Baby Cologne 100Ml Dream احلام",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+       "alt": "J&J Baby Cologne 100Ml Dream احلام"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 135,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-dream-احلام"
+      }
+     },
+     {
+      "id": 14400,
+      "slug": "jj-baby-cologne-100ml-morning-dew",
+      "name": "J&J Baby Cologne 100Ml Morning Dew",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+       "alt": "J&J Baby Cologne 100Ml Morning Dew"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 135,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-morning-dew"
+      }
+     },
+     {
+      "id": 14482,
+      "slug": "jj-baby-cologne-100ml-lemon-fresh",
+      "name": "J&J Baby Cologne 100Ml Lemon Fresh",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/365763.webp",
+       "alt": "J&J Baby Cologne 100Ml Lemon Fresh"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 110,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-lemon-fresh"
+      }
+     },
+     {
+      "id": 36510,
+      "slug": "jj-baby-cologne-200ml-dream-ahlam",
+      "name": "J&J Baby Cologne 200Ml Dream احلام",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/366631-1760536568.webp",
+       "alt": "J&J Baby Cologne 200Ml Dream احلام"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 75,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-200ml-dream-ahlam"
+      }
+     },
+     {
+      "id": 15472,
+      "slug": "jj-baby-sleep-time-bath-300ml-lavender-new",
+      "name": "J&J Baby Sleep Time Bath 300Ml Lavender (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp",
+       "alt": "J&J Baby Sleep Time Bath 300Ml Lavender (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 160,
+       "compareAt": null,
+       "discountPercent": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-bath-300ml-lavender-new"
+      }
+     }
+    ],
+    "viewAll": {
+     "type": "list",
+     "slug": null,
+     "id": 125
+    }
+   }
+  ],
+  "featuredBrands": [
+   {
+    "id": 758,
+    "name": "BIODERMA",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/bioderma-logo-png_seeklogo-19622.png",
+     "alt": "BIODERMA"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "bioderma"
+    }
+   },
+   {
+    "id": 21,
+    "name": "BOBAI",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/BOBAI.webp",
+     "alt": "BOBAI"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "bobai"
+    }
+   },
+   {
+    "id": 27,
+    "name": "CAPIXY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CAPIXY.webp",
+     "alt": "CAPIXY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "capixy"
+    }
+   },
+   {
+    "id": 170,
+    "name": "CERAVE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CERAVE.webp",
+     "alt": "CERAVE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "cerave"
+    }
+   },
+   {
+    "id": 31,
+    "name": "CLARY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CLARY-LOGO-454x454.png-1755121350.webp",
+     "alt": "CLARY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "clary"
+    }
+   },
+   {
+    "id": 619,
+    "name": "DARIVIKA",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/تصميم بدون عنوان (7)-1762330370.png",
+     "alt": "DARIVIKA"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "darivika"
+    }
+   },
+   {
+    "id": 369,
+    "name": "GLAMYLAB",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/GLAMYLAB.webp",
+     "alt": "GLAMYLAB"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "glamylab"
+    }
+   },
+   {
+    "id": 516,
+    "name": "JOHNSON & JOHNSON",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/JOHNSON-&-JOHNSON.webp",
+     "alt": "JOHNSON & JOHNSON"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "id": 519,
+    "name": "KOLAGRA",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/KOLAGRA.webp",
+     "alt": "KOLAGRA"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "kolagra"
+    }
+   },
+   {
+    "id": 719,
+    "name": "LA ROCHE-POSAY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/la roche posay webp-1754388497.webp",
+     "alt": "LA ROCHE-POSAY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "LA ROCHE-POSAY"
+    }
+   },
+   {
+    "id": 229,
+    "name": "LISTERINE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/LISTERINE.webp",
+     "alt": "LISTERINE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "listerine"
+    }
+   },
+   {
+    "id": 82,
+    "name": "LOREAL",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/LOREAL.webp",
+     "alt": "LOREAL"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "loreal"
+    }
+   },
+   {
+    "id": 240,
+    "name": "MOLFIX",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/MOLFIX.webp",
+     "alt": "MOLFIX"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "molfix"
+    }
+   },
+   {
+    "id": 540,
+    "name": "MOVELEX",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/MOVELEX.webp",
+     "alt": "MOVELEX"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "movelex"
+    }
+   },
+   {
+    "id": 99,
+    "name": "OGX",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/OGX.webp",
+     "alt": "OGX"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "ogx"
+    }
+   },
+   {
+    "id": 557,
+    "name": "PENDULINE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/PENDULINE.webp",
+     "alt": "PENDULINE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "penduline"
+    }
+   },
+   {
+    "id": 109,
+    "name": "PENTAJ",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/PENTAJ.webp",
+     "alt": "PENTAJ"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "pentaj"
+    }
+   },
+   {
+    "id": 123,
+    "name": "SEROPIPE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SEROPIPE-1749989062.webp",
+     "alt": "SEROPIPE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "seropipe"
+    }
+   },
+   {
+    "id": 124,
+    "name": "SHAAN",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SHAAN -1750168073.webp",
+     "alt": "SHAAN"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "shaan"
+    }
+   },
+   {
+    "id": 577,
+    "name": "SORALONE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SORALONE.webp",
+     "alt": "SORALONE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "soralone"
+    }
+   },
+   {
+    "id": 278,
+    "name": "STARVILLE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/STARVILLE.webp",
+     "alt": "STARVILLE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "starville"
+    }
+   },
+   {
+    "id": 424,
+    "name": "STRONGVILLE ",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/STRONGVILLE .webp",
+     "alt": "STRONGVILLE "
+    },
+    "target": {
+     "type": "brand",
+     "slug": "strongville"
+    }
+   },
+   {
+    "id": 426,
+    "name": "SUPERKIDS",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SUPERKIDS.webp",
+     "alt": "SUPERKIDS"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "superkids"
+    }
+   },
+   {
+    "id": 436,
+    "name": "VACATION",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/VACATION.webp",
+     "alt": "VACATION"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "vacation"
+    }
+   },
+   {
+    "id": 598,
+    "name": "VICHY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/VICHY.webp",
+     "alt": "VICHY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "vichy"
+    }
+   }
+  ],
+  "popups": []
+ }
+}

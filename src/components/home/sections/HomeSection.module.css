@@ -1,0 +1,7 @@
+.section {
+  margin-block: var(--space-7);
+}
+
+.products {
+  margin-top: var(--space-5);
+}

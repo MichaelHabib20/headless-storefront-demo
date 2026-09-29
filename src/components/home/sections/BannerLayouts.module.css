@@ -1,0 +1,44 @@
+.banner {
+  display: block;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s ease;
+}
+.banner:hover .image {
+  transform: scale(1.02);
+}
+
+.stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(var(--columns), 1fr);
+    gap: var(--space-4);
+  }
+}
+
+.rows {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .rows {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}

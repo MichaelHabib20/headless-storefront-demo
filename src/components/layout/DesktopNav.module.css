@@ -1,0 +1,114 @@
+.nav {
+  display: none;
+  height: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .nav {
+    display: block;
+  }
+}
+
+.list {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.topLink {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-inline: clamp(6px, 0.7vw, 12px);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+}
+.item:hover .topLink,
+.topLink:focus-visible {
+  border-bottom-color: var(--color-text);
+}
+
+.toggle {
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+}
+.toggle:focus-visible {
+  width: auto;
+  height: auto;
+  padding: 0 var(--space-1);
+  overflow: visible;
+}
+
+.panel {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  z-index: 50;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 16px 24px rgb(0 0 0 / 8%);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-6) var(--space-5);
+  padding-block: var(--space-6);
+}
+
+.groupLink {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.groupLink:hover,
+.leafLink:hover {
+  text-decoration: underline;
+}
+
+.subList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leafLink {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+.leafLink:hover {
+  color: var(--color-text);
+}

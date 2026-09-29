@@ -1,0 +1,42 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  width: min(100%, 520px);
+}
+
+.input {
+  flex: 1 1 220px;
+  min-width: 0;
+  height: 48px;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--color-bg);
+  background: transparent;
+  color: var(--color-bg);
+  font: inherit;
+}
+.input::placeholder {
+  color: rgb(255 255 255 / 70%);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding-inline: var(--space-5);
+  border: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.status {
+  flex-basis: 100%;
+  margin: 0;
+  min-height: 1.5em;
+  font-size: 0.875rem;
+}

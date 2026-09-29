@@ -1,0 +1,100 @@
+/* Auth pages (sign in, sign up, account) */
+.auth-page {
+  max-width: 440px;
+  margin: var(--space-7) auto;
+  padding-inline: var(--gutter);
+}
+.auth-page h1 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.auth-page .lead {
+  margin: 0 0 var(--space-5);
+  color: var(--color-muted);
+}
+.auth-page .card {
+  padding: var(--space-5);
+  border: 1px solid var(--color-text);
+}
+.auth-page form {
+  display: grid;
+  gap: var(--space-4);
+}
+.auth-page .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.auth-page label {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.auth-page label .hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-muted);
+}
+.auth-page input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-muted);
+  font: inherit;
+  font-size: 1rem;
+}
+.auth-page input[aria-invalid='true'] {
+  border-color: var(--color-sale);
+}
+.auth-page .field-error {
+  color: var(--color-sale);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.auth-page .alert {
+  padding: var(--space-3);
+  border-inline-start: 4px solid var(--color-sale);
+  background: #fdecea;
+  font-size: 0.875rem;
+}
+.auth-page button {
+  height: 48px;
+  border: 0;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.auth-page button:disabled {
+  opacity: 0.6;
+}
+.auth-page .switch {
+  margin-top: var(--space-4);
+  text-align: center;
+  font-size: 0.875rem;
+}
+.auth-page dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-5);
+}
+.auth-page dt {
+  color: var(--color-muted);
+}
+.auth-page dd {
+  margin: 0;
+}

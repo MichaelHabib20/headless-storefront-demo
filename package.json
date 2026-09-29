@@ -1,0 +1,49 @@
+{
+  "name": "headless-storefront-demo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "check:rules": "node scripts/check-rules.mjs",
+    "contract:sync": "node -e \"require('fs').copyFileSync('../saas-ecommerce-backend/docs/headless/openapi.yaml','contract/openapi.yaml')\" && npm run contract:types",
+    "contract:types": "openapi-typescript contract/openapi.yaml -o src/sdk/generated/api.ts",
+    "contract:check": "node scripts/contract-check.mjs",
+    "contract:check:live": "node scripts/contract-check.mjs --live",
+    "fixtures:record": "node scripts/record-fixtures.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:live": "cross-env E2E_LIVE=1 playwright test",
+    "verify": "npm run typecheck && npm run lint && npm run check:rules && npm run contract:check && npm run test && npm run build && npm run test:e2e"
+  },
+  "dependencies": {
+    "next": "^15.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
+    "@playwright/test": "^1.63.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.26",
+    "jsdom": "^29.1.1",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.2.7",
+    "yaml": "^2.9.1"
+  }
+}

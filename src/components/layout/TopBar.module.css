@@ -1,0 +1,47 @@
+.bar {
+  display: none;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 1024px) {
+  .bar {
+    display: block;
+  }
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 36px;
+}
+
+.message {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+.link:hover {
+  text-decoration: underline;
+}

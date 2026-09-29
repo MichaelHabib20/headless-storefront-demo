@@ -1,0 +1,128 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--header-height);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 100%;
+  padding-block: var(--space-2);
+  text-decoration: none;
+}
+
+.logoImage {
+  height: 40px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+@media (min-width: 1024px) {
+  .logoImage {
+    height: 48px;
+    max-width: 180px;
+  }
+}
+
+.logoText {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-start: auto;
+}
+
+.search {
+  display: none;
+  align-items: center;
+  background: var(--color-surface);
+}
+
+@media (min-width: 1024px) {
+  .search {
+    display: flex;
+  }
+}
+
+.searchInput {
+  width: clamp(200px, 22vw, 320px);
+  height: 36px;
+  padding-inline: var(--space-3);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.875rem;
+}
+.searchInput:focus {
+  outline: none;
+}
+.search:focus-within {
+  outline: 2px solid var(--color-focus);
+}
+
+.searchButton {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.navRow {
+  display: none;
+  border-top: 1px solid var(--color-surface);
+}
+
+@media (min-width: 1024px) {
+  .navRow {
+    display: block;
+    height: 48px;
+  }
+}
+
+.shortcut {
+  display: none;
+  white-space: nowrap;
+  padding-inline: var(--space-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.shortcut:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 1280px) {
+  .shortcut {
+    display: inline;
+  }
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}

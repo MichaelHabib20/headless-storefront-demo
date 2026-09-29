@@ -1,0 +1,33 @@
+.section {
+  margin-block: var(--space-7);
+}
+
+.brand {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 2;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+}
+.brand:hover {
+  border-color: var(--color-text);
+}
+
+.logo {
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(1);
+  transition: filter 0.2s ease;
+}
+.brand:hover .logo {
+  filter: none;
+}
+
+.name {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  text-align: center;
+}
