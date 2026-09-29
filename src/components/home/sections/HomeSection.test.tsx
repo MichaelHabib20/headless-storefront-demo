@@ -26,6 +26,13 @@ describe('HomeSection', () => {
     expect(screen.getByRole('link', { name: 'View all' })).toHaveAttribute('href', expect.stringMatching(/^\/en\/lists\//));
   });
 
+  it('shows 4 products per row on desktop', () => {
+    const withProducts = homeFixture('en').sections.find((s) => s.products.length > 0)!;
+    render(<HomeSection section={withProducts} locale="en" />);
+    const rail = screen.getByTestId('home-section').querySelector<HTMLElement>('[style*="--per-view"]')!;
+    expect(rail.style.getPropertyValue('--per-view')).toBe('4');
+  });
+
   it('has no heading when the merchant hid the title', () => {
     const untitled = homeFixture('en').sections.find((s) => s.title === null)!;
     render(<HomeSection section={untitled} locale="en" />);

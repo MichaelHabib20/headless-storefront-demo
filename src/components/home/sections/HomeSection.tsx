@@ -34,7 +34,7 @@ export function HomeSection({ section, locale, priority }: HomeSectionProps) {
       {section.banners.length > 0 && <Banners banners={section.banners} locale={locale} label={label} priority={priority} />}
       {section.products.length > 0 && (
         <div className={section.banners.length > 0 ? styles.products : undefined}>
-          <Rail label={label} previousLabel={t('previous')} nextLabel={t('next')} perView={5}>
+          <Rail label={label} previousLabel={t('previous')} nextLabel={t('next')} perView={4}>
             {section.products.map((product) => (
               <RailItem key={product.id}>
                 <ProductCard product={product} locale={locale} />

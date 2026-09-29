@@ -8,16 +8,21 @@ interface SectionHeadingProps {
   viewAll?: Target | null;
   viewAllLabel: string;
   id?: string;
+  /** Optional short line under the title */
+  subtitle?: string;
 }
 
-export function SectionHeading({ title, locale, viewAll, viewAllLabel, id }: SectionHeadingProps) {
+export function SectionHeading({ title, locale, viewAll, viewAllLabel, id, subtitle }: SectionHeadingProps) {
   if (!title && !viewAll) return null;
   return (
     <div className={styles.heading}>
       {title ? (
-        <h2 id={id} className={styles.title}>
-          {title}
-        </h2>
+        <div className={styles.titles}>
+          <h2 id={id} className={styles.title}>
+            {title}
+          </h2>
+          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+        </div>
       ) : (
         <span />
       )}

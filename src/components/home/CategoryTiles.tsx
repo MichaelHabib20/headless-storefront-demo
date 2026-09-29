@@ -13,7 +13,7 @@ export function CategoryTiles({ tiles, locale }: { tiles: Tile[]; locale: Locale
 
   return (
     <section className={`container ${styles.section}`} aria-labelledby="shop-by-category">
-      <SectionHeading id="shop-by-category" title={t('shopByCategory')} locale={locale} viewAllLabel={t('viewAll')} />
+      <SectionHeading id="shop-by-category" title={t('shopByCategory')} subtitle={t('shopByCategorySubtitle')} locale={locale} viewAllLabel={t('viewAll')} />
       <Rail label={t('shopByCategory')} previousLabel={t('previous')} nextLabel={t('next')} perView={4}>
         {tiles.map((tile) => (
           <RailItem key={tile.id}>

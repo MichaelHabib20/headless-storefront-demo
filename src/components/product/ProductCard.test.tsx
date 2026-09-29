@@ -28,7 +28,7 @@ describe('ProductCard', () => {
     expect(within(card).getByRole('link')).toHaveAttribute('href', '/en/p/jj-bath');
     expect(card).toHaveTextContent('EGP 150');
     expect(card).toHaveTextContent('EGP 200');
-    expect(card).toHaveTextContent('-25%');
+    expect(within(card).getByTestId('discount')).toHaveTextContent('-25%');
     expect(card).toHaveTextContent('JOHNSON & JOHNSON');
   });
 
@@ -37,6 +37,7 @@ describe('ProductCard', () => {
     const card = screen.getByTestId('product-card');
     expect(card).toHaveTextContent('EGP 18');
     expect(card.querySelector('s')).toBeNull();
+    expect(within(card).queryByTestId('discount')).toBeNull();
   });
 
   it('hides the price when the store hides prices', () => {

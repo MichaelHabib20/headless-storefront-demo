@@ -42,7 +42,8 @@
   background: var(--color-bg);
 }
 .discount {
-  color: var(--color-sale);
+  background: var(--color-sale);
+  color: var(--color-inverse-text);
 }
 .soldOut {
   top: auto;

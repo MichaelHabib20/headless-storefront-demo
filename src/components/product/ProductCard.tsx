@@ -27,7 +27,7 @@ export function ProductCard({ product, locale }: ProductCardProps) {
           ) : (
             <div className={styles.placeholder} aria-hidden="true" />
           )}
-          {price?.discount && <span className={styles.discount}>{price.discount}</span>}
+          {price?.discount && <span className={styles.discount} data-testid="discount">{price.discount}</span>}
           {!product.inStock && <span className={styles.soldOut}>{t('outOfStock')}</span>}
         </div>
 

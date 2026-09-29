@@ -33,10 +33,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <h1 className="visually-hidden">{t('shopNow')}</h1>
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.top)} locale={locale} priority />
       <CategoryTiles tiles={home.featuredCategories} locale={locale} />
+      <BrandRail brands={home.featuredBrands} locale={locale} />
       {home.sections.map((section, index) => (
         <HomeSection key={section.id} section={section} locale={locale} priority={index === 0} />
       ))}
-      <BrandRail brands={home.featuredBrands} locale={locale} />
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.bottom)} locale={locale} />
       <PopupHost popups={home.popups} locale={locale} closeLabel={t('close')} />
     </>

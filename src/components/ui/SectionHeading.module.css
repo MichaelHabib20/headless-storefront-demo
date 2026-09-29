@@ -16,6 +16,20 @@
   text-transform: uppercase;
 }
 
+.titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
 .viewAll {
   flex-shrink: 0;
   font-size: 0.8125rem;

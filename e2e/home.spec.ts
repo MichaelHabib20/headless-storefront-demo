@@ -26,6 +26,7 @@ test.describe('home page', () => {
     await expect(page.getByTestId('announcement')).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Skin Care', exact: true })).toHaveAttribute('href', '/en/c/skin-care');
     await expect(page.getByRole('heading', { name: 'Shop by category' })).toBeVisible();
+    await expect(page.getByText('Find what you need, fast')).toBeVisible();
     await expect(page.getByTestId('promo-top-ad')).toBeVisible();
 
     const sections = page.getByTestId('home-section');
@@ -47,9 +48,23 @@ test.describe('home page', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
     await expect(page.getByRole('heading', { name: 'تسوق حسب الفئة' })).toBeVisible();
+    await expect(page.getByText('اعثر على ما تحتاجه بسرعة')).toBeVisible();
     await expect(page.getByTestId('promo-top-ad')).toBeVisible();
     await expect(page.getByTestId('product-card').first()).toContainText('ج.م');
     expect(errors).toEqual([]);
+  });
+
+  test('places brands right after categories, before the merchant sections', async ({ page }) => {
+    await acceptCookies(page);
+    await page.goto('/en');
+
+    const categories = await page.getByRole('region', { name: 'Shop by category' }).elementHandle();
+    const brands = await page.getByRole('region', { name: 'Brands' }).elementHandle();
+    const firstSection = await page.getByTestId('home-section').first().elementHandle();
+
+    const precedes = ([a, b]: (Element | null)[]) => Boolean(a && b && a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(await page.evaluate(precedes, [categories, brands])).toBe(true);
+    expect(await page.evaluate(precedes, [brands, firstSection])).toBe(true);
   });
 
   test('product and banner links lead to the planned pages', async ({ page }) => {
