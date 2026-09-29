@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Barlow, Barlow_Condensed, Cairo } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { isLocale, type Layout, type Locale } from '@/sdk';
+import { getMe, isLocale, type Layout, type Locale, type Me } from '@/sdk';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 import { WhatsAppButton } from '@/components/layout/FloatingActions';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
@@ -10,9 +10,11 @@ import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { TopBar } from '@/components/layout/TopBar';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
+import { ShopperStateProvider } from '@/components/shopper/ShopperStateProvider';
 import { direction, translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { loadLayout } from '@/lib/storefront.server';
+import { shopperContext } from '@/lib/shopper.server';
+import { loadLayout, storefrontClient } from '@/lib/storefront.server';
 import '../globals.css';
 
 const barlow = Barlow({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-barlow', display: 'swap' });
@@ -29,6 +31,16 @@ async function safeLayout(locale: Locale): Promise<Layout | null> {
     return await loadLayout(locale);
   } catch (error) {
     console.error('layout failed to load', error);
+    return null;
+  }
+}
+
+/** Who is shopping + header counts. Never creates a guest; null when it fails (header renders without badges). */
+async function safeMe(locale: Locale): Promise<Me | null> {
+  try {
+    return await getMe(storefrontClient(), await shopperContext(locale));
+  } catch (error) {
+    console.error('me failed to load', error);
     return null;
   }
 }
@@ -50,7 +62,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!isLocale(locale)) notFound();
 
   const t = translator(locale);
-  const layout = await safeLayout(locale);
+  const [layout, me] = await Promise.all([safeLayout(locale), safeMe(locale)]);
 
   return (
     <html lang={locale} dir={direction(locale)} className={`${barlow.variable} ${barlowCondensed.variable} ${cairo.variable}`}>
@@ -62,8 +74,11 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           <>
             <AnnouncementBar announcement={layout.announcement} />
             <TopBar layout={layout} locale={locale} />
-            <SiteHeader layout={layout} locale={locale} />
-            <main id="main">{children}</main>
+            <SiteHeader layout={layout} locale={locale} me={me} />
+            {/* Product cards on any page read the shopper's cart/wishlist/compare state from here. */}
+            <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
+              <main id="main">{children}</main>
+            </ShopperStateProvider>
             <SiteFooter layout={layout} locale={locale} />
             <WhatsAppButton whatsapp={layout.whatsapp} label={t('chatOnWhatsapp')} />
             {layout.features.cookieConsent && <CookieConsent labels={{ text: t('cookieText'), accept: t('cookieAccept') }} />}

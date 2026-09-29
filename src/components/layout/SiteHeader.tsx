@@ -1,14 +1,22 @@
 import Link from 'next/link';
-import type { Layout, Locale } from '@/sdk';
+import type { Layout, Locale, Me } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
+import { HeaderBadges } from '../shopper/HeaderBadges';
 import { Icon } from '../ui/Icon';
 import { TargetLink } from '../ui/TargetLink';
 import { DesktopNav } from './DesktopNav';
 import { MobileMenu } from './MobileMenu';
 import styles from './SiteHeader.module.css';
 
-export function SiteHeader({ layout, locale }: { layout: Layout; locale: Locale }) {
+interface SiteHeaderProps {
+  layout: Layout;
+  locale: Locale;
+  /** The shopper's `GET /me` for the header counts. Missing/null → icons without badges. */
+  me?: Me | null;
+}
+
+export function SiteHeader({ layout, locale, me = null }: SiteHeaderProps) {
   const t = translator(locale);
   const { store, header, navigation, features } = layout;
 
@@ -46,14 +54,7 @@ export function SiteHeader({ layout, locale }: { layout: Layout; locale: Locale 
           <Link href={routes.account(locale)} className={styles.icon} aria-label={t('account')}>
             <Icon name="user" />
           </Link>
-          {features.wishlist && (
-            <Link href={routes.wishlist(locale)} className={styles.icon} aria-label={t('wishlist')}>
-              <Icon name="heart" />
-            </Link>
-          )}
-          <Link href={routes.cart(locale)} className={styles.icon} aria-label={t('cart')}>
-            <Icon name="bag" />
-          </Link>
+          <HeaderBadges locale={locale} me={me} features={features} />
         </div>
       </div>
       <div className={styles.navRow}>

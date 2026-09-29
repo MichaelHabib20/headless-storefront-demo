@@ -1,0 +1,127 @@
+import { revalidatePath } from 'next/cache';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { addToCartAction, toggleCompareAction, toggleWishlistAction } from './shopper.actions';
+import { ensureShopperContext, forgetGuest } from './shopper.server';
+
+/** Cookie jar + backend stand-ins: the session helpers and the SDK's fetch. */
+const env = vi.hoisted(() => ({
+  customer: null as string | null,
+  guest: null as string | null,
+  guests: 0,
+  fetch: undefined as unknown as Mock<typeof fetch>,
+}));
+
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
+
+vi.mock('./shopper.server', () => ({
+  ensureShopperContext: vi.fn(async (locale: 'en' | 'ar') => {
+    if (!env.customer && !env.guest) env.guest = `guest-${++env.guests}`;
+    return { locale, token: env.customer ?? env.guest };
+  }),
+  guestToken: vi.fn(async () => env.guest),
+  forgetGuest: vi.fn(async () => {
+    env.guest = null;
+  }),
+}));
+
+vi.mock('./storefront.server', async () => {
+  const { createStorefrontClient } = await import('@/sdk');
+  return { storefrontClient: () => createStorefrontClient({ baseUrl: 'https://api.test', fetch: (input, init) => env.fetch(input, init) }) };
+});
+
+const listState = { data: { count: 1, productIds: [8412], maxItems: 4 } };
+
+function reply(status: number, body: unknown) {
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+}
+
+function calls() {
+  return env.fetch.mock.calls.map(([url, init]) => ({
+    url: String(url).replace('https://api.test/api/customer/v3/', ''),
+    method: (init as RequestInit).method,
+    auth: ((init as RequestInit).headers as Record<string, string>).Authorization,
+    body: (init as RequestInit).body ? JSON.parse(String((init as RequestInit).body)) : undefined,
+  }));
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  env.customer = null;
+  env.guest = null;
+  env.guests = 0;
+  env.fetch = vi.fn<typeof fetch>(async () => reply(200, listState));
+});
+
+describe('shopper server actions', () => {
+  it('starts a guest session on the first action, sets the quantity and revalidates the layout', async () => {
+    env.fetch = vi.fn<typeof fetch>(async () => reply(200, { data: {} }));
+
+    await expect(addToCartAction('en', 7346, 1)).resolves.toEqual({ ok: true, message: 'Added to cart.' });
+
+    expect(ensureShopperContext).toHaveBeenCalledWith('en');
+    expect(calls()).toEqual([{ url: 'cart/items/7346', method: 'PUT', auth: 'Bearer guest-1', body: { quantity: 1 } }]);
+    expect(revalidatePath).toHaveBeenCalledWith('/[locale]', 'layout');
+  });
+
+  it('uses the signed-in customer token when there is one', async () => {
+    env.customer = 'test-customer';
+    await toggleWishlistAction('en', 8412, true);
+    expect(calls()).toEqual([{ url: 'wishlist/items/8412', method: 'PUT', auth: 'Bearer test-customer', body: undefined }]);
+  });
+
+  it('adds and removes wishlist and compare items, with localized messages', async () => {
+    await expect(toggleWishlistAction('ar', 8412, false)).resolves.toEqual({ ok: true, message: 'تمت الإزالة من المفضلة.' });
+    await expect(toggleCompareAction('en', 8412, true)).resolves.toEqual({ ok: true, message: 'Added to compare.' });
+    await expect(toggleCompareAction('en', 8412, false)).resolves.toEqual({ ok: true, message: 'Removed from compare.' });
+    expect(calls().map(({ method, url }) => `${method} ${url}`)).toEqual([
+      'DELETE wishlist/items/8412',
+      'PUT compare/items/8412',
+      'DELETE compare/items/8412',
+    ]);
+  });
+
+  it('returns the backend message when the compare list is full, without revalidating', async () => {
+    env.fetch = vi.fn<typeof fetch>(async () => reply(409, { error: { code: 'compare_full', message: 'You can compare up to 4 products.' } }));
+
+    await expect(toggleCompareAction('en', 9822, true)).resolves.toEqual({ ok: false, message: 'You can compare up to 4 products.' });
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it('starts a fresh guest session once when the backend forgot the guest', async () => {
+    env.guest = 'guest-expired';
+    env.fetch = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(reply(401, { error: { code: 'unauthenticated', message: 'Please start a session first.' } }))
+      .mockResolvedValueOnce(reply(200, listState));
+
+    await expect(toggleWishlistAction('en', 8412, true)).resolves.toMatchObject({ ok: true });
+    expect(forgetGuest).toHaveBeenCalledOnce();
+    expect(calls().map((c) => c.auth)).toEqual(['Bearer guest-expired', 'Bearer guest-1']);
+  });
+
+  it('does not retry for a signed-in customer', async () => {
+    env.customer = 'stale-customer';
+    env.fetch = vi.fn<typeof fetch>(async () => reply(401, { error: { code: 'unauthenticated', message: 'Please sign in again.' } }));
+
+    await expect(addToCartAction('en', 7346, 1)).resolves.toEqual({ ok: false, message: 'Please sign in again.' });
+    expect(forgetGuest).not.toHaveBeenCalled();
+    expect(env.fetch).toHaveBeenCalledOnce();
+  });
+
+  it('shows its own translated message when the store cannot be reached', async () => {
+    env.fetch = vi.fn<typeof fetch>(async () => {
+      throw new TypeError('fetch failed');
+    });
+    await expect(addToCartAction('ar', 7346, 1)).resolves.toEqual({ ok: false, message: 'حدث خطأ ما. حاول مرة أخرى.' });
+  });
+
+  it('rejects malformed input without calling the backend', async () => {
+    await expect(addToCartAction('en', -1, 1)).resolves.toMatchObject({ ok: false });
+    await expect(addToCartAction('en', 7346, 0)).resolves.toMatchObject({ ok: false });
+    await expect(toggleWishlistAction('en', 1.5, true)).resolves.toMatchObject({ ok: false });
+    await expect(toggleCompareAction('en', 8412, 'yes' as unknown as boolean)).resolves.toMatchObject({ ok: false });
+    await expect(toggleCompareAction('xx' as 'en', 8412, true)).resolves.toMatchObject({ ok: true, message: 'Added to compare.' });
+    expect(env.fetch).toHaveBeenCalledOnce();
+    expect(ensureShopperContext).toHaveBeenCalledOnce();
+  });
+});

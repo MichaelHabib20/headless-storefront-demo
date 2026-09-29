@@ -5,6 +5,7 @@ import { isLocale, signup } from '@/sdk';
 import { field, toFormState, type FormState } from '@/lib/form';
 import { routes } from '@/lib/routing';
 import { saveSession } from '@/lib/session';
+import { forgetGuest, guestToken } from '@/lib/shopper.server';
 import { storeClient } from '@/lib/store';
 
 export async function signUpAction(_previous: FormState, formData: FormData): Promise<FormState> {
@@ -25,7 +26,11 @@ export async function signUpAction(_previous: FormState, formData: FormData): Pr
   }
 
   try {
-    await saveSession(await signup(storeClient(locale), { ...values, password }));
+    // Signing up with the guest's token makes the backend merge the guest cart, wishlist and compare.
+    const guest = await guestToken();
+    const client = storeClient(locale);
+    await saveSession(await signup(guest ? client.withToken(guest) : client, { ...values, password }));
+    if (guest) await forgetGuest();
   } catch (error) {
     return toFormState(error, values);
   }

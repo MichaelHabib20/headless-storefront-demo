@@ -1,0 +1,93 @@
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+  padding-block-end: var(--space-3);
+}
+
+.add,
+.inCart {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+  height: 40px;
+  padding-inline: var(--space-2);
+  border: 1px solid var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.add {
+  background: var(--color-text);
+  color: var(--color-bg);
+  cursor: pointer;
+}
+.add:hover:not(:disabled) {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+.add:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.inCart {
+  background: var(--color-bg);
+  text-decoration: none;
+}
+.inCart:hover {
+  background: var(--color-surface);
+}
+
+.toggle {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  cursor: pointer;
+}
+.toggle:hover {
+  border-color: var(--color-text);
+}
+.toggle[aria-pressed='true'] {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+.heart[aria-pressed='true'] {
+  background: var(--color-bg);
+  color: var(--color-sale);
+}
+
+.add[aria-disabled='true'],
+.toggle[aria-disabled='true'] {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+/* Empty until an action finishes; stays in the tree so screen readers announce updates. */
+.status {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+.status:empty {
+  margin-block-start: calc(var(--space-2) * -1);
+}
+.error {
+  color: var(--color-sale);
+}

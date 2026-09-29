@@ -2,6 +2,7 @@ import type { Locale, ProductCard as ProductCardData } from '@/sdk';
 import { formatPrice } from '@/lib/format';
 import { translator } from '@/lib/i18n';
 import { TargetLink } from '../ui/TargetLink';
+import { ProductActions } from './ProductActions';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -10,8 +11,9 @@ interface ProductCardProps {
 }
 
 /**
- * Shows what the backend decided: price, discount, stock, badges. It never computes
- * a price or an eligibility rule itself.
+ * Shows what the backend decided: price, discount, stock, badges, whether it can be added to
+ * the cart. It never computes a price or an eligibility rule itself. The shopper's own state
+ * (in cart / wishlist / compare) reaches ProductActions through ShopperStateProvider.
  */
 export function ProductCard({ product, locale }: ProductCardProps) {
   const t = translator(locale);
@@ -50,6 +52,20 @@ export function ProductCard({ product, locale }: ProductCardProps) {
           </ul>
         </div>
       </TargetLink>
+      <ProductActions
+        productId={product.id}
+        productName={product.name}
+        locale={locale}
+        canAddToCart={product.purchase.canAddToCart}
+        addQuantity={product.purchase.minQuantity}
+        labels={{
+          addToCart: t('addToCart'),
+          inCart: t('cardInCart'),
+          wishlist: t('cardWishlist'),
+          compare: t('cardCompare'),
+          failed: t('statusActionFailed'),
+        }}
+      />
     </article>
   );
 }
