@@ -25,9 +25,9 @@ icons, pages). Never re-implement the rule behind them.
 | Feature | UI effect |
 |---|---|
 | `signup` | Show "Create account" links |
-| `compare` | Compare icon/links (not built yet) |
-| `wishlist` | Heart icon in the header |
-| `notifications` | Notification icon (not built yet) |
+| `compare` | Compare icon/links → `routes.compare`, badge `me.counts.compare` ([wishlist-compare.md](wishlist-compare.md)) |
+| `wishlist` | Heart icon in the header, badge `me.counts.wishlist` |
+| `notifications` | Bell icon → `routes.notifications`, badge `me.counts.unreadNotifications` ([notifications.md](notifications.md)) |
 | `orderTracking` | "Track order" link in the footer |
 | `contactPage` | "Contact us" link |
 | `branches` | "Branches" link |
