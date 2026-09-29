@@ -1,0 +1,88 @@
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-7);
+}
+
+.pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.page,
+.gap {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  padding-inline: var(--space-2);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.page {
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.page:hover {
+  border-color: var(--color-text);
+}
+.page[aria-current='page'] {
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-color: var(--color-text);
+}
+
+.gap {
+  color: var(--color-muted);
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 44px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.step:not(.disabled):hover {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+.disabled {
+  opacity: 0.3;
+}
+
+/* "Previous" chevron points back: left in LTR, right in RTL */
+.back {
+  transform: scaleX(-1);
+}
+:global([dir='rtl']) .back {
+  transform: none;
+}
+
+@media (max-width: 479px) {
+  .step > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .step {
+    padding-inline: var(--space-2);
+  }
+}
