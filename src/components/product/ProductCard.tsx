@@ -1,7 +1,6 @@
 import type { Locale, ProductCard as ProductCardData } from '@/sdk';
 import { formatPrice } from '@/lib/format';
 import { translator } from '@/lib/i18n';
-import { TargetLink } from '../ui/TargetLink';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -16,10 +15,12 @@ interface ProductCardProps {
 export function ProductCard({ product, locale }: ProductCardProps) {
   const t = translator(locale);
   const price = product.price ? formatPrice(product.price, locale) : null;
+  const youSave = product.price && product.price.compareAt ? product.price.compareAt - product.price.amount : null;
+  const freeDelivery = product.price ? product.price.amount > 500 : false;
 
   return (
     <article className={styles.card} data-testid="product-card">
-      <TargetLink target={product.target} locale={locale} className={styles.link}>
+      <a href={`/en/product/${product.slug}`} className={styles.link}>
         <div className={styles.media}>
           {product.image ? (
             // eslint-disable-next-line @next/next/no-img-element -- merchant images come from any CDN per store
@@ -36,10 +37,12 @@ export function ProductCard({ product, locale }: ProductCardProps) {
             <p className={styles.price}>
               <span className={product.price?.compareAt ? styles.sale : undefined}>{price.amount}</span>
               {price.compareAt && <s className={styles.compareAt}>{price.compareAt}</s>}
+              {youSave !== null && <span className={styles.compareAt}>You save {youSave} EGP</span>}
             </p>
           )}
           <h3 className={styles.name}>{product.name}</h3>
           {product.brand && <p className={styles.brand}>{product.brand.name}</p>}
+          {freeDelivery && <p className={styles.badge}>Free delivery</p>}
           <ul className={styles.badges}>
             {product.requiresPrescription && <li className={styles.badge}>{t('prescription')}</li>}
             {product.badges.map((badge, i) => (
@@ -49,7 +52,7 @@ export function ProductCard({ product, locale }: ProductCardProps) {
             ))}
           </ul>
         </div>
-      </TargetLink>
+      </a>
     </article>
   );
 }
