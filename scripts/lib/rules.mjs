@@ -108,6 +108,29 @@ export const RULES = [
     message: 'UI text must come from src/lib/i18n.ts (English AND Arabic) via t("key"); content text comes translated from the API.',
   },
   {
+    // What a shopper may do with an order is `order.actions` (canCancel, canReorder). Deciding it from the
+    // status code or the order's age ("cancel while pending", "within 24 hours") drifts from the backend.
+    id: 'order-actions-from-api',
+    applies: (f) => inUi(f) && !isTest(f),
+    patterns: [
+      /\bstatus\??\.code\s*[!=]==?/,
+      /[!=]==?\s*[\w.?]*status\??\.code\b/,
+      /switch\s*\(\s*[\w.?]*status\??\.code\s*\)/,
+      /\[\s*['"`][\w-]+['"`]\s*(?:,\s*['"`][\w-]+['"`]\s*)*\]\s*\.includes\s*\(\s*[\w.?]*status\??\.code\b/,
+      /\bplacedAt\b[^;]*(?:getTime|Date\.now|valueOf)|(?:getTime|Date\.now)[^;]*\bplacedAt\b/,
+    ],
+    message:
+      'What the shopper may do with an order comes from the API: show "cancel" only when order.actions.canCancel and "order again" only when order.actions.canReorder. status.code is for styling only (statusTone() in src/components/account/status.ts); never decide from it or from the order date.',
+  },
+  {
+    // The address form is described by the API (CheckoutSettings.addressForm): no field list of our own.
+    id: 'address-form-from-api',
+    applies: (f) => /^src\/(app|components)\//.test(f) && !isTest(f),
+    patterns: [/\bname=["'{`]+(?:field\.)?(street|building|floor|apartment|flat|landmark|block|zip|postal_?code|postcode)["'`}]/i],
+    message:
+      'Address inputs come from CheckoutSettings.addressForm.fields (label, required, kind), drawn by <AddressForm>. Don\'t add address fields of your own: a missing field is a store setting ("needs backend support").',
+  },
+  {
     id: 'no-env-in-client',
     applies: (f) => !isTest(f),
     when: (source) => /^\s*['"]use client['"]/.test(source),
