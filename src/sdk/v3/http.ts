@@ -62,7 +62,8 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
   const doFetch = options.fetch ?? fetch;
 
   async function request<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, body, query }: RequestOptions): Promise<T> {
-    const headers: Record<string, string> = { Accept: 'application/json', 'Accept-Language': locale };
+    // device-type: web → the store applies its website rules (e.g. default area for new guests).
+    const headers: Record<string, string> = { Accept: 'application/json', 'Accept-Language': locale, 'device-type': 'web' };
     if (options.apiKey) headers['api-key'] = options.apiKey;
     if (token) headers.Authorization = `Bearer ${token}`;
     if (body !== undefined) headers['Content-Type'] = 'application/json';

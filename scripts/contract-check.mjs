@@ -60,12 +60,42 @@ for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
 // 2. live API
 if (live) {
   const base = (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com').replace(/\/+$/, '');
+  const headers = (locale, token) => ({ Accept: 'application/json', 'Accept-Language': locale, 'device-type': 'web', ...(token ? { Authorization: `Bearer ${token}` } : {}) });
   for (const endpoint of Object.keys(SCHEMA)) {
     for (const locale of ['en', 'ar']) {
-      const res = await fetch(`${base}/api/customer/v3/${endpoint}`, { headers: { Accept: 'application/json', 'Accept-Language': locale } });
+      const res = await fetch(`${base}/api/customer/v3/${endpoint}`, { headers: headers(locale) });
       if (!res.ok) failures.push(`live ${endpoint}.${locale}: HTTP ${res.status}`);
       else check(`live ${endpoint}.${locale}`, endpoint, await res.json());
     }
+  }
+
+  // Shopper endpoints (read-only), signed in as the staging test account when available.
+  const liveResponse = async (label, schema, path, token, locale = 'en', expected = 200) => {
+    const res = await fetch(`${base}/api/customer/v3/${path}`, { headers: headers(locale, token) });
+    const body = await res.json().catch(() => null);
+    if (res.status !== expected) return failures.push(`live ${label}: HTTP ${res.status}, expected ${expected}`);
+    const errors = validate(schema, body);
+    if (errors.length) failures.push(`live ${label}:\n    ${errors.slice(0, 15).join('\n    ')}`);
+    else console.log(`✓ live ${label} matches the contract`);
+  };
+  await liveResponse('me (anonymous)', 'MeResponse', 'me');
+  await liveResponse('cart without a session → 401', 'ErrorResponse', 'cart', null, 'en', 401);
+  const { E2E_PHONE: phone, E2E_PASSWORD: password } = process.env;
+  if (phone && password) {
+    const login = await (await fetch(`${base}/api/customer/auth`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json', lang: '1' }, body: JSON.stringify({ phone, password }) })).json();
+    const token = login?.data?.token;
+    if (!token) failures.push('live sign-in with E2E_PHONE/E2E_PASSWORD failed');
+    else {
+      for (const locale of ['en', 'ar']) {
+        await liveResponse(`me.${locale}`, 'MeResponse', 'me', token, locale);
+        await liveResponse(`cart.${locale}`, 'CartResponse', 'cart', token, locale);
+        await liveResponse(`wishlist.${locale}`, 'WishlistResponse', 'wishlist?perPage=5', token, locale);
+        await liveResponse(`compare.${locale}`, 'CompareResponse', 'compare', token, locale);
+        await liveResponse(`notifications.${locale}`, 'NotificationsResponse', 'notifications?perPage=5', token, locale);
+      }
+    }
+  } else {
+    console.log('(skipping signed-in live checks: set E2E_PHONE / E2E_PASSWORD)');
   }
 }
 

@@ -20,6 +20,8 @@ info:
     - `GET /me` works without a token (all counts 0) so the header can render for every visitor.
     - Signing in with a guest token merges the guest's cart, wishlist and compare into the customer (existing behavior).
     - GET requests never change data.
+    - Web storefronts send `device-type: web` (as the legacy website does): the store's default-area
+      rules for new guests — and so which inventory and prices they see — depend on it.
 
     Error codes: `unauthenticated` (401), `not_found` (404), `validation_failed` (422, with `fields`),
     `quantity_not_allowed` (422), `compare_full` (409), `rate_limited` (429), `server_error` (500).
