@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   const headers = new Headers(request.headers);
   headers.delete(RESOLUTION_HEADER);
   const answer = await answerUnknownPath(first as Locale, request.nextUrl);
-  if (answer?.kind === 'redirect') return new NextResponse(null, { status: answer.status, headers: { Location: answer.location } });
+  if (answer?.kind === 'redirect') return NextResponse.redirect(new URL(answer.location, request.nextUrl), answer.status);
   if (answer?.kind === 'gone') {
     headers.set(RESOLUTION_HEADER, 'gone');
     return NextResponse.next({ status: 410, request: { headers } });

@@ -205,6 +205,19 @@
   }
 }
 
+/* Without JavaScript the drawer cannot open: the panel shows in the page, above the results. */
+@media (scripting: none) {
+  .panel {
+    display: block;
+    margin-bottom: var(--space-5);
+  }
+  .filterToggle,
+  .panelClose,
+  .panelFoot {
+    display: none;
+  }
+}
+
 /* Filter groups */
 .facets {
   display: flex;

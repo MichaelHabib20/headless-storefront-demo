@@ -16,7 +16,7 @@ const DrawerContext = createContext<DrawerState | null>(null);
 /**
  * The filters are a sidebar on wide screens and a drawer on phones. This holds the drawer's
  * state for the toggle button (next to the sort control) and the panel (the sidebar column).
- * Without JavaScript the panel simply shows above the results (see <FilterPanel>).
+ * Without JavaScript the panel simply shows above the results (`@media (scripting: none)` in the CSS).
  */
 export function FilterDrawer({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -35,7 +35,7 @@ function useDrawer(): DrawerState {
 export function FilterToggle({ label }: { label: string }) {
   const { open, setOpen, panelId, toggle } = useDrawer();
   return (
-    <button ref={toggle} type="button" className={styles.filterToggle} aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(true)} data-filters-js>
+    <button ref={toggle} type="button" className={styles.filterToggle} aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(true)}>
       <Icon name="filter" size={18} />
       <span>{label}</span>
     </button>
@@ -43,9 +43,6 @@ export function FilterToggle({ label }: { label: string }) {
 }
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([type="hidden"]), summary, [tabindex]:not([tabindex="-1"])';
-
-// Without JavaScript the drawer cannot open: show the panel in the page instead.
-const NO_SCRIPT_CSS = '[data-filters-panel]{display:block!important;position:static!important;inset:auto!important}[data-filters-js]{display:none!important}';
 
 interface FilterPanelProps {
   labels: { title: string; close: string; done: string };
@@ -102,27 +99,23 @@ export function FilterPanel({ labels, children }: FilterPanelProps) {
         role={open ? 'dialog' : undefined}
         aria-modal={open ? true : undefined}
         aria-labelledby={titleId}
-        data-filters-panel=""
         data-testid="listing-filters"
       >
         <div className={styles.panelHead}>
           <h2 id={titleId} className={styles.panelTitle}>
             {labels.title}
           </h2>
-          <button type="button" className={styles.panelClose} aria-label={labels.close} onClick={() => setOpen(false)} data-autofocus data-filters-js>
+          <button type="button" className={styles.panelClose} aria-label={labels.close} onClick={() => setOpen(false)} data-autofocus>
             <Icon name="close" size={20} />
           </button>
         </div>
         <div className={styles.panelBody}>{children}</div>
-        <div className={styles.panelFoot} data-filters-js>
+        <div className={styles.panelFoot}>
           <button type="button" className={styles.done} onClick={() => setOpen(false)}>
             {labels.done}
           </button>
         </div>
       </div>
-      <noscript>
-        <style>{NO_SCRIPT_CSS}</style>
-      </noscript>
     </>
   );
 }

@@ -49,6 +49,5 @@ function redirectTo(href: string | null | undefined, status: 301 | 302, requeste
   const location = destination.pathname + destination.search + destination.hash;
   const same = destination.pathname + destination.search === requested.pathname + requested.search;
   if (same || !isStorefrontPath(destination.pathname)) return NOT_FOUND;
-  // On this site the Location stays relative: correct behind any proxy or host name.
   return { kind: 'redirect', location, status };
 }
