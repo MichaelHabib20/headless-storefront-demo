@@ -55,6 +55,14 @@ describe('architecture rules', () => {
     expect(rulesHit('src/lib/x.ts', "const base = 'https://staging-seif.witheldokan.com';")).toContain('no-hardcoded-store');
   });
 
+  it('catches writes on page load (regression from the second AI guardrail trial)', () => {
+    const onLoad = "'use client';\nuseEffect(() => {\n  void markAllNotificationsReadAction(locale);\n}, [locale]);";
+    expect(rulesHit('src/components/notifications/MarkAllReadOnLoad.tsx', onLoad)).toContain('no-write-on-load');
+    // a write in a click handler is fine; an effect without a server action is fine
+    expect(rulesHit('src/components/N.tsx', "'use client';\nconst onClick = () => markAllNotificationsReadAction(locale);")).toEqual([]);
+    expect(rulesHit('src/components/N.tsx', "'use client';\nuseEffect(() => { window.addEventListener('resize', update); }, []);")).toEqual([]);
+  });
+
   it('ignores tests and comments', () => {
     expect(rulesHit('src/components/X.test.tsx', "fetch('/api/customer/x')")).toEqual([]);
     expect(rulesHit('src/components/X.tsx', '// never call fetch( here')).toEqual([]);
