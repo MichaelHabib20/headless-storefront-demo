@@ -1,0 +1,11 @@
+{
+  "about": "sha256 of every file in src/money (SuperCommerce money components). Checked by `npm run check:rules`. Regenerated only by SuperCommerce maintainers with `npm run money:lock`.",
+  "files": {
+    "src/money/Money.tsx": "357787369f8ee54fa1b90dede3c3a384a048a493af343ec8dcb7643c655fe8ad",
+    "src/money/Price.tsx": "74336c5451ee05ebd88a2d9c5798b5cf2aa04bfee8c6af48acbf33e4752eafa5",
+    "src/money/README.md": "be7318da79a63304a7d0cd9f0c205f66bce747e98120c5554443980c595a30b0",
+    "src/money/index.ts": "2387e563c98e46452c7f2b4e53b8398fe6881aa54e0635a3420e0b93cbb17bf1",
+    "src/money/messages.ts": "64cc286038511489611bb1003e6cd3df7644ee0f413ced49406b231f0ffaa579",
+    "src/money/money.test.tsx": "8478955c0dfc26715ed8879260b23b14ccd8b0e81d9bdbcedb7985e4bb425177"
+  }
+}

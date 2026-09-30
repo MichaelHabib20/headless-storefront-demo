@@ -8,6 +8,9 @@ import { CartEmpty } from './CartEmpty';
 import { CartView } from './CartView';
 import type { CartActionResult } from './types';
 
+/** The seeded cart as the API sent it: its texts are what the page must show. */
+const fixture = cartFixture('en');
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((r) => (resolve = r));
@@ -17,8 +20,8 @@ function deferred<T>() {
 /** What the API answers after the second line goes to 2. The totals are the API's, never ours. */
 function cartAfterIncrease(): Cart {
   const cart = cartFixture('en');
-  cart.items[1] = { ...cart.items[1], quantity: 2, lineTotal: { amount: 320, currency: 'EGP' } };
-  cart.summary = { ...cart.summary, itemCount: 4, subtotal: { amount: 356, currency: 'EGP' }, total: { amount: 356, currency: 'EGP' } };
+  cart.items[1] = { ...cart.items[1], quantity: 2, lineTotal: { amount: 320, currency: 'EGP', display: 'LINE-TOTAL-320' } };
+  cart.summary = { ...cart.summary, itemCount: 4, subtotal: { amount: 356, currency: 'EGP', display: 'SUBTOTAL-356' }, total: { amount: 356, currency: 'EGP', display: 'TOTAL-356' } };
   cart.checkout = { ...cart.checkout, allowed: true, blockers: [] };
   return cart;
 }
@@ -39,16 +42,17 @@ describe('CartView', () => {
     const lines = screen.getAllByTestId('cart-line');
     expect(lines).toHaveLength(2);
     expect(lines[0]).toHaveTextContent('J&J Baby Bedtime Bath 125Ml Lavender&Camomile');
-    expect(lines[1]).toHaveTextContent('EGP 160');
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 196');
+    expect(lines[1]).toHaveTextContent(fixture.items[1].lineTotal.display);
+    expect(screen.getByTestId('cart-total')).toHaveTextContent(fixture.summary.total.display);
     expect(screen.getByRole('button', { name: 'Checkout' })).toBeDisabled();
     expect(screen.getByRole('heading', { name: 'Your items' })).toBeVisible();
   });
 
   it('renders in Arabic', () => {
-    setup(cartFixture('ar'), 'ar');
+    const cart = cartFixture('ar');
+    setup(cart, 'ar');
     expect(screen.getAllByTestId('cart-line')).toHaveLength(2);
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('١٩٦ ج.م');
+    expect(screen.getByTestId('cart-total').textContent).toBe(cart.summary.total.display);
     expect(screen.getByRole('button', { name: 'إفراغ السلة' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'إتمام الطلب' })).toBeDisabled();
   });
@@ -65,14 +69,14 @@ describe('CartView', () => {
     expect(within(second).getByTestId('cart-quantity')).toHaveTextContent('2');
     expect(second).toHaveAttribute('aria-busy', 'true');
     // still the last API answer while the request is on its way
-    expect(within(second).getByTestId('cart-line-total')).toHaveTextContent('EGP 160');
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 196');
+    expect(within(second).getByTestId('cart-line-total')).toHaveTextContent(fixture.items[1].lineTotal.display);
+    expect(screen.getByTestId('cart-total')).toHaveTextContent(fixture.summary.total.display);
     expect(screen.getByRole('button', { name: 'Checkout' })).toBeDisabled();
 
     answer.resolve({ ok: true, cart: cartAfterIncrease() });
 
-    await waitFor(() => expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 356'));
-    expect(within(screen.getAllByTestId('cart-line')[1]).getByTestId('cart-line-total')).toHaveTextContent('EGP 320');
+    await waitFor(() => expect(screen.getByTestId('cart-total')).toHaveTextContent('TOTAL-356'));
+    expect(within(screen.getAllByTestId('cart-line')[1]).getByTestId('cart-line-total')).toHaveTextContent('LINE-TOTAL-320');
     expect(screen.queryByTestId('checkout-blockers')).toBeNull();
     expect(screen.getByRole('link', { name: 'Checkout' })).toHaveAttribute('href', '/en/checkout');
   });
@@ -86,21 +90,21 @@ describe('CartView', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('This quantity is not allowed.');
     expect(within(first).getByTestId('cart-quantity')).toHaveTextContent('2');
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 196');
+    expect(screen.getByTestId('cart-total')).toHaveTextContent(fixture.summary.total.display);
   });
 
   it('removes a line with the cart the API returns', async () => {
     const { user, removeItemAction } = setup();
     const after = cartFixture('en');
     after.items = [after.items[1]];
-    after.summary = { itemCount: 1, subtotal: { amount: 160, currency: 'EGP' }, discount: null, total: { amount: 160, currency: 'EGP' } };
+    after.summary = { itemCount: 1, subtotal: { amount: 160, currency: 'EGP', display: 'SUBTOTAL-160' }, discount: null, total: { amount: 160, currency: 'EGP', display: 'TOTAL-160' } };
     removeItemAction.mockResolvedValue({ ok: true, cart: after });
 
     await user.click(within(screen.getAllByTestId('cart-line')[0]).getByRole('button', { name: 'Remove' }));
 
     expect(removeItemAction).toHaveBeenCalledWith('en', 36480);
     await waitFor(() => expect(screen.getAllByTestId('cart-line')).toHaveLength(1));
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 160');
+    expect(screen.getByTestId('cart-total')).toHaveTextContent('TOTAL-160');
   });
 
   it('clears the cart after confirmation and shows the empty state', async () => {
@@ -134,7 +138,7 @@ describe('CartView', () => {
   it('follows a fresh server render', () => {
     const { rerender, setQuantityAction, removeItemAction, clearCartAction } = setup();
     rerender(<CartView cart={cartAfterIncrease()} locale="en" setQuantityAction={setQuantityAction} removeItemAction={removeItemAction} clearCartAction={clearCartAction} />);
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 356');
+    expect(screen.getByTestId('cart-total')).toHaveTextContent('TOTAL-356');
   });
 });
 

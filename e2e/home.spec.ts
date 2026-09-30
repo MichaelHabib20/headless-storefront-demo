@@ -1,6 +1,16 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 
 const live = process.env.E2E_LIVE === '1';
+const API = live ? (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com').replace(/\/+$/, '') : 'http://127.0.0.1:4010';
+
+/** The price text the API sends for the first product on the home page (mock or live). */
+async function firstPriceText(request: APIRequestContext, locale: 'en' | 'ar'): Promise<string> {
+  const response = await request.get(`${API}/api/customer/v3/home`, { headers: { Accept: 'application/json', 'Accept-Language': locale } });
+  const home = (await response.json()).data as { sections: { products: { price: { display: string } | null }[] }[] };
+  const price = home.sections.flatMap((section) => section.products)[0]?.price;
+  if (!price) throw new Error('the first product on the home page has no price');
+  return price.display;
+}
 
 function collectErrors(page: Page) {
   const errors: string[] = [];
@@ -16,7 +26,7 @@ async function acceptCookies(page: Page) {
 }
 
 test.describe('home page', () => {
-  test('renders the store chrome and content in English', async ({ page }) => {
+  test('renders the store chrome and content in English', async ({ page, request }) => {
     const errors = collectErrors(page);
     await acceptCookies(page);
     await page.goto('/en');
@@ -32,14 +42,15 @@ test.describe('home page', () => {
     await expect(sections.first()).toBeVisible();
     expect(await sections.count()).toBeGreaterThan(0);
     expect(await page.getByTestId('product-card').count()).toBeGreaterThan(0);
-    await expect(page.getByTestId('product-card').first()).toContainText(/EGP \d/);
+    // the card shows the API's price text as it is, whatever its format
+    await expect(page.getByTestId('product-card').first().getByTestId('product-price')).toHaveText(await firstPriceText(request, 'en'));
 
     await expect(page.locator('footer')).toContainText('About Us');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(errors).toEqual([]);
   });
 
-  test('renders right-to-left Arabic', async ({ page }) => {
+  test('renders right-to-left Arabic', async ({ page, request }) => {
     const errors = collectErrors(page);
     await acceptCookies(page);
     await page.goto('/ar');
@@ -48,7 +59,7 @@ test.describe('home page', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
     await expect(page.getByRole('heading', { name: 'تسوق حسب الفئة' })).toBeVisible();
     await expect(page.getByTestId('promo-top-ad')).toBeVisible();
-    await expect(page.getByTestId('product-card').first()).toContainText('ج.م');
+    await expect(page.getByTestId('product-card').first().getByTestId('product-price')).toHaveText(await firstPriceText(request, 'ar'));
     expect(errors).toEqual([]);
   });
 

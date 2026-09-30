@@ -6,6 +6,10 @@
 const isTest = (file) => /\.test\.(ts|tsx|mjs)$/.test(file) || file.startsWith('src/test/');
 const inSdk = (file) => file.startsWith('src/sdk/');
 const inUi = (file) => /^src\/(app|components|lib)\//.test(file);
+/** SuperCommerce's money components (locked: scripts/lib/money-lock.mjs). */
+const inMoney = (file) => file.startsWith('src/money/');
+
+const SHOW_MONEY = 'Render <Money value={...} /> or <Price price={...} locale={locale} /> from @/money (style them with className / classNames).';
 
 const TARGET_TYPES = 'product|category|brand|list|page|landing_page|form|deals|home|url';
 
@@ -38,17 +42,58 @@ export const RULES = [
   },
   {
     id: 'no-price-math',
-    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/lib/format.ts',
+    applies: (f) => inUi(f) && !isTest(f),
     patterns: [
-      /(amount|compareAt|discountPercent)\s*[-+*/]\s*[\w(]/,
-      /[-+*/]\s*[\w.?]*\.(amount|compareAt|discountPercent)\b/,
+      /(amount|compareAt|discountPercent|progressPercent)\s*[-+*/%]\s*[\w(]/,
+      /[-+*/%]\s*[\w.?]*\.(amount|compareAt|discountPercent|progressPercent)\b/,
       /discountPercent\s*[:=][^=]/,
-      /Math\.(round|floor|ceil)\([^)]*(price|amount|compareAt)/,
-      // business rules on prices ("free delivery above 500") belong to the backend
-      /\.(amount|compareAt|discountPercent)\s*[<>]=?\s*\d/,
-      /\d\s*[<>]=?\s*[\w.?]*\.(amount|compareAt|discountPercent)\b/,
+      /Math\.(round|floor|ceil|trunc|min|max|abs)\([^)]*(price|amount|compareAt|discountPercent|progressPercent)/,
+      // business rules on prices ("free delivery above 500", "reached when nothing is left")
+      // belong to the backend: a money number is never compared with anything
+      /\.(amount|compareAt|discountPercent|progressPercent)\s*[<>]=?/,
+      /(?<!=)[<>]=?\s*[\w.?]*\.(amount|compareAt|discountPercent|progressPercent)\b/, // (not an arrow `=>`)
+      /\.(amount|compareAt|discountPercent|progressPercent)\s*[!=]==?\s*-?\d/,
+      /\d\s*[!=]==?\s*[\w.?]*\.(amount|compareAt|discountPercent|progressPercent)\b/,
     ],
-    message: 'Prices, discounts, totals and price-based rules come from the backend (Price.amount / compareAt / discountPercent, badges, purchase). Display them with formatPrice(); never compute or compare them. Missing data → "needs backend support".',
+    message: `Prices, discounts, totals, the minimum-order progress and price-based rules come from the backend (Price, Money, checkout, badges, purchase): never compute or compare them. ${SHOW_MONEY} Missing data → "needs backend support".`,
+  },
+  {
+    // The backend writes money as text in the shopper's language; only src/money shows it.
+    id: 'money-via-components',
+    applies: (f) => f.startsWith('src/') && !inMoney(f) && !isTest(f),
+    patterns: [
+      // price.display, total?.display — but not CSS: style.display, styles.display, getComputedStyle(el).display
+      /(?<!\b(?:style|styles|css)\??|getComputedStyle\([^)]*\))\.display\b/,
+      /\b(compareAtDisplay|discountLabel)\b/,
+      /\[\s*['"`](display|compareAtDisplay|discountLabel)['"`]\s*\]/,
+      // destructuring: const { display } = total;  ({ amount, display }) => …;  ({ display }: Money)
+      /\{\s*(?:[\w$]+\s*,\s*)*display\s*(?:,[^}]*)?\}\s*(?:=[^=>]|:|\)\s*=>)/,
+    ],
+    message: `Money text (display, compareAtDisplay, discountLabel) is shown only by the components in src/money. ${SHOW_MONEY}`,
+  },
+  {
+    // Money formatted here would disagree with the backend (rounding, digits, currency).
+    // Numbers that are not money are formatted in one place: src/lib/numbers.ts.
+    id: 'no-money-formatting',
+    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/lib/numbers.ts',
+    patterns: [
+      /\bformat(?:Money|Prices?|Currency|Amount)\w*/,
+      /\bIntl\s*\.\s*NumberFormat\b/,
+      /\.toFixed\s*\(/,
+      /\.toLocaleString\s*\(/,
+      /\bstyle\s*:\s*['"]currency['"]|\bcurrencyDisplay\b/,
+      // text built from the numbers: `${price.currency} ${price.amount}`, 'EGP ' + total.amount, String(x.amount)
+      /\$\{[^}]*\.(amount|compareAt|discountPercent|currency)\b[^}]*\}/,
+      /['"`]\s*\+\s*[\w.?]*\.(amount|compareAt|discountPercent|currency)\b/,
+      /\.(amount|compareAt|discountPercent|currency)\s*\+\s*['"`]/,
+      /\bString\s*\([^)]*\.(amount|compareAt|discountPercent)\b/,
+      /\.(amount|compareAt|discountPercent)\??\.toString\s*\(/,
+      // a money number handed to any formatter: formatNumber(price.amount), nf.format(total.amount)
+      /\bformat\w*\s*\([^)]*\.(amount|compareAt|discountPercent)\b/,
+      // a money number or currency printed in JSX: <span>{price.amount}</span> (props like value={…} are fine)
+      /(?<!=\s*)\{\s*[\w.?]*\.(amount|compareAt|discountPercent|currency)\s*\}/,
+    ],
+    message: `Money is formatted by the backend (Money.display; Price.display, compareAtDisplay, discountLabel). ${SHOW_MONEY} Never format or print amount, compareAt, discountPercent or currency yourself (no Intl.NumberFormat, toFixed, toLocaleString, currency strings). Counts and quantities (not money): formatNumber() from src/lib/numbers.ts.`,
   },
   {
     id: 'ui-text-in-i18n',

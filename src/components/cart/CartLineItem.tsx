@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import type { CartItem, Locale } from '@/sdk';
-import { formatMoney, formatPrice } from '@/lib/format';
 import { translator } from '@/lib/i18n';
+import { Money, Price } from '@/money';
 import { TargetLink } from '../ui/TargetLink';
 import { canChangeQuantity, formatQuantity, limitsFor, stepDown, stepUp } from './quantity';
 import styles from './CartLineItem.module.css';
@@ -27,7 +27,6 @@ export function CartLineItem({ item, locale, quantity = item.quantity, pending =
   const t = translator(locale);
   const nameId = useId();
   const { product, availability } = item;
-  const unitPrice = formatPrice(item.unitPrice, locale);
   const available = availability.status === 'available';
   const limits = limitsFor(item);
   const adjustable = canChangeQuantity(availability) && !disabled && Boolean(onQuantityChange);
@@ -58,14 +57,17 @@ export function CartLineItem({ item, locale, quantity = item.quantity, pending =
             </h3>
             <p className={styles.unitPrice}>
               <span className="visually-hidden">{t('cartUnitPrice')}</span>
-              <span className={item.unitPrice.compareAt !== null ? styles.sale : undefined}>{unitPrice.amount}</span>
-              {unitPrice.compareAt && <s className={styles.compareAt}>{unitPrice.compareAt}</s>}
-              {unitPrice.discount && <span className={styles.discount}>{unitPrice.discount}</span>}
+              <Price
+                price={item.unitPrice}
+                locale={locale}
+                className={styles.priceParts}
+                classNames={{ sale: styles.sale, compareAt: styles.compareAt, discount: styles.discount }}
+              />
             </p>
           </div>
           <p className={styles.lineTotal} data-testid="cart-line-total">
             <span className="visually-hidden">{t('cartLineTotal')}</span>
-            {formatMoney(item.lineTotal.amount, item.lineTotal.currency, locale)}
+            <Money value={item.lineTotal} />
           </p>
         </div>
 

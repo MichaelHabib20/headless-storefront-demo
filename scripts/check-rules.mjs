@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-/** Fails (exit 1) when code breaks the storefront's architecture rules. */
+/** Fails (exit 1) when code breaks the storefront's architecture rules or src/money was changed. */
 import fs from 'node:fs';
 import path from 'node:path';
+import { checkMoneyLock, LOCK_MESSAGE } from './lib/money-lock.mjs';
 import { checkSource } from './lib/rules.mjs';
 
 const root = process.cwd();
@@ -23,11 +24,18 @@ for (const full of walk(path.join(root, 'src'))) {
   violations.push(...checkSource(file, fs.readFileSync(full, 'utf8')));
 }
 
+const lockChanges = checkMoneyLock(root);
+
 if (violations.length) {
   console.error(`✗ ${violations.length} rule violation(s):\n`);
   for (const v of violations) {
     console.error(`  ${v.file}:${v.line}  [${v.rule}]\n    ${v.text}\n    → ${v.message}\n`);
   }
-  process.exit(1);
 }
-console.log('✓ Architecture rules passed.');
+if (lockChanges.length) {
+  console.error(`✗ src/money is locked [money-lock]:\n`);
+  for (const c of lockChanges) console.error(`  ${c.change.padEnd(8)} ${c.file}`);
+  console.error(`\n    → ${LOCK_MESSAGE}\n`);
+}
+if (violations.length || lockChanges.length) process.exit(1);
+console.log('✓ Architecture rules passed (src/money unchanged).');

@@ -50,7 +50,8 @@ interface CompareData {
 5. **Pagination comes from `pagination`.** Prev/next from `page` and `totalPages`; don't count items.
 6. **Writes are server actions** (`withShopper` → SDK → `revalidatePath('/[locale]', 'layout')`)
    so the header counts update. Reads use `shopperContext`; no token → empty state, no call.
-7. **No prices math** on the cards — same rules as the product card ([home.md](home.md)).
+7. **Prices only through `ProductCard`** (which uses `<Price>` from `@/money`) — no price math or
+   formatting on these pages, same rules as the product card ([home.md](home.md)).
 
 ## Recipes
 

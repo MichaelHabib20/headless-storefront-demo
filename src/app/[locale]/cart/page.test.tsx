@@ -31,7 +31,7 @@ describe('cart page', () => {
     expect(getCart).toHaveBeenCalledWith(expect.anything(), { locale: 'en', token: 'test-customer' });
     expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
     expect(screen.getAllByTestId('cart-line')).toHaveLength(2);
-    expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 196');
+    expect(screen.getByTestId('cart-total').textContent).toBe(cartFixture('en').summary.total.display);
   });
 
   it('shows the empty cart to visitors without a session and never starts one', async () => {

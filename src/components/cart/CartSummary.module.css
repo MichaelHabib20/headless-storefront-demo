@@ -95,19 +95,13 @@
   overflow: hidden;
 }
 
-/*
- * Visual only: the filled share is (minimum - remaining) / minimum, taken from the two
- * backend values in custom properties. It is never shown as a number.
- */
+/* The filled share is the backend's `progressPercent` (set on .bar as --cart-progress). */
 .fill {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
-  width: clamp(0%, calc(100% - 100% * var(--cart-remaining, 0) / var(--cart-minimum, 1)), 100%);
+  inline-size: var(--cart-progress, 0%);
   background: var(--color-text);
-}
-.barDone .fill {
-  width: 100%;
 }
 
 .prescription {

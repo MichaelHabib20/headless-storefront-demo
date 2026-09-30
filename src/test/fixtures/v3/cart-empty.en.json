@@ -5,12 +5,14 @@
    "itemCount": 0,
    "subtotal": {
     "amount": 0,
-    "currency": "EGP"
+    "currency": "EGP",
+    "display": "0.00 EGP"
    },
    "discount": null,
    "total": {
     "amount": 0,
-    "currency": "EGP"
+    "currency": "EGP",
+    "display": "0.00 EGP"
    }
   },
   "checkout": {
@@ -24,12 +26,15 @@
    "minimumOrder": {
     "amount": {
      "amount": 300,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "300.00 EGP"
     },
     "remaining": {
      "amount": 300,
-     "currency": "EGP"
-    }
+     "currency": "EGP",
+     "display": "300.00 EGP"
+    },
+    "progressPercent": 0
    }
   },
   "requiresPrescription": false

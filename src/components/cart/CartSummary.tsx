@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import type { Cart, Locale, Money } from '@/sdk';
-import { formatMoney } from '@/lib/format';
+import type { Cart, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
+import { Money } from '@/money';
 import { Icon } from '../ui/Icon';
 import { CheckoutBlockers } from './CheckoutBlockers';
 import { MinimumOrderProgress } from './MinimumOrderProgress';
@@ -25,7 +25,6 @@ interface CartSummaryProps {
 export function CartSummary({ cart, locale, pending = false }: CartSummaryProps) {
   const t = translator(locale);
   const { summary, checkout } = cart;
-  const money = (value: Money) => formatMoney(value.amount, value.currency, locale);
   const canCheckout = checkout.allowed && !pending;
 
   return (
@@ -46,17 +45,17 @@ export function CartSummary({ cart, locale, pending = false }: CartSummaryProps)
         </div>
         <div className={styles.row}>
           <dt>{t('cartSubtotal')}</dt>
-          <dd data-testid="cart-subtotal">{money(summary.subtotal)}</dd>
+          <Money value={summary.subtotal} as="dd" data-testid="cart-subtotal" />
         </div>
         {summary.discount && (
           <div className={`${styles.row} ${styles.discount}`}>
             <dt>{t('cartDiscount')}</dt>
-            <dd data-testid="cart-discount">{money(summary.discount)}</dd>
+            <Money value={summary.discount} as="dd" data-testid="cart-discount" />
           </div>
         )}
         <div className={`${styles.row} ${styles.total}`}>
           <dt>{t('cartTotal')}</dt>
-          <dd data-testid="cart-total">{money(summary.total)}</dd>
+          <Money value={summary.total} as="dd" data-testid="cart-total" />
         </div>
       </dl>
       <p className={styles.note}>{t('cartDeliveryNote')}</p>

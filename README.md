@@ -11,7 +11,8 @@ popups) in English and Arabic (RTL), with a black-and-white editorial theme.
 |---|---|---|
 | Contract | `contract/openapi.yaml` (copy of the backend's `docs/headless/openapi.yaml`) | Source of truth for every field |
 | SDK | `src/sdk` (types generated from the contract) | The only code that talks to the API |
-| Logic | `src/lib` | Routing (Target → URL), i18n, display formatting, popup rules — pure and unit-tested |
+| Money | `src/money` | `<Money>`, `<Price>`, `<DiscountLabel>`: the only code that shows money (the backend's text). SuperCommerce's, locked |
+| Logic | `src/lib` | Routing (Target → URL), i18n, number formatting for counts, popup rules — pure and unit-tested |
 | Components | `src/components` | Reusable UI; render what the API returns |
 | Pages | `src/app/[locale]` | Compose components; decide *where* things go |
 | Skill | `.claude/skills/supercommerce-storefront`, `CLAUDE.md`, `AGENTS.md` | How humans and AI agents change this repo safely |

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Locale, WishlistPage } from '@/sdk';
 import { translator } from '@/lib/i18n';
+import { formatNumber } from '@/lib/numbers';
 import { routes } from '@/lib/routing';
 import { ProductCard } from '../product/ProductCard';
 import { Pagination } from '../ui/Pagination';
@@ -23,7 +24,7 @@ export function WishlistView({ state, locale, pageQuery, onRemove, onMoveToCart 
   const t = translator(locale);
   const wishlist = state.status === 'ok' ? state.wishlist : null;
   const total = wishlist?.pagination.total ?? 0;
-  const count = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG').format(total);
+  const count = formatNumber(total, locale);
 
   return (
     <div className={`container ${styles.page}`} data-testid="wishlist">

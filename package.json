@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
     "check:rules": "node scripts/check-rules.mjs",
+    "money:lock": "node scripts/money-lock.mjs",
     "contract:sync": "node -e \"require('fs').copyFileSync('../saas-ecommerce-backend/docs/headless/openapi.yaml','contract/openapi.yaml')\" && npm run contract:types",
     "contract:types": "openapi-typescript contract/openapi.yaml -o src/sdk/generated/api.ts",
     "contract:check": "node scripts/contract-check.mjs",

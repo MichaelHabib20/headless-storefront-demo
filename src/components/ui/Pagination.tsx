@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Locale, Pagination as PaginationData } from '@/sdk';
+import { formatNumber } from '@/lib/numbers';
 import { Icon } from './Icon';
 import styles from './Pagination.module.css';
 
@@ -68,7 +69,6 @@ export function Pagination({ pagination, baseHref, query, locale, labels }: Pagi
   const { page, totalPages } = pagination;
   if (totalPages <= 1) return null;
 
-  const number = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG');
   const href = (n: number) => pageHref(baseHref, n, query);
   const hasPrevious = page > 1;
   const hasNext = page < totalPages;
@@ -98,10 +98,10 @@ export function Pagination({ pagination, baseHref, query, locale, labels }: Pagi
               <Link
                 href={href(item)}
                 className={styles.page}
-                aria-label={`${labels.page} ${number.format(item)}`}
+                aria-label={`${labels.page} ${formatNumber(item, locale)}`}
                 aria-current={item === page ? 'page' : undefined}
               >
-                {number.format(item)}
+                {formatNumber(item, locale)}
               </Link>
             )}
           </li>

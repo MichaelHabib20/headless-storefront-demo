@@ -20,6 +20,12 @@ async function signIn(context: BrowserContext) {
   await context.addCookies([{ name: 'sc_token', value: 'test-customer', domain: '127.0.0.1', path: '/' }]);
 }
 
+/** The price text the mock API sends for the newest wishlist item. */
+async function firstWishlistPrice(request: APIRequestContext, locale: 'en' | 'ar'): Promise<string> {
+  const response = await request.get(`${API}/api/customer/v3/wishlist`, { headers: { Authorization: 'Bearer test-customer', 'Accept-Language': locale } });
+  return (await response.json()).data.items[0].price.display;
+}
+
 /** What the mock API holds for the seeded customer right now. */
 async function customerState(request: APIRequestContext) {
   const response = await request.get(`${API}/api/customer/v3/me`, { headers: { Authorization: 'Bearer test-customer' } });
@@ -37,7 +43,7 @@ test.describe('wishlist and compare', () => {
   test.describe('signed in', () => {
     test.beforeEach(async ({ context }) => signIn(context));
 
-    test('wishlist shows the saved products', async ({ page }) => {
+    test('wishlist shows the saved products', async ({ page, request }) => {
       const errors = collectErrors(page);
       await page.goto('/en/wishlist');
 
@@ -45,7 +51,7 @@ test.describe('wishlist and compare', () => {
       await expect(page.getByText('Saved items: 3')).toBeVisible();
       const items = page.getByTestId('wishlist-item');
       await expect(items).toHaveCount(3);
-      await expect(items.first().getByTestId('product-card')).toContainText(/EGP \d/);
+      await expect(items.first().getByTestId('product-price')).toHaveText(await firstWishlistPrice(request, 'en'));
       await expect(items.first().getByRole('link')).toHaveAttribute('href', /^\/en\/p\/.+/);
       await expect(page.getByTestId('pagination')).toHaveCount(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -151,14 +157,14 @@ test.describe('wishlist and compare', () => {
       await expect(page.getByRole('table')).toHaveCount(0);
     });
 
-    test('Arabic pages are right-to-left', async ({ page }) => {
+    test('Arabic pages are right-to-left', async ({ page, request }) => {
       const errors = collectErrors(page);
       await page.goto('/ar/wishlist');
       await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
       await expect(page.getByRole('heading', { level: 1, name: 'قائمة المفضلة' })).toBeVisible();
       await expect(page.getByTestId('wishlist-item')).toHaveCount(3);
       await expect(page.getByTestId('wishlist-item').first().getByRole('button', { name: /^نقل إلى السلة/ })).toBeVisible();
-      await expect(page.getByTestId('wishlist-item').first()).toContainText('ج.م');
+      await expect(page.getByTestId('wishlist-item').first().getByTestId('product-price')).toHaveText(await firstWishlistPrice(request, 'ar'));
 
       // the remove button sits in the top-left corner of the card in RTL
       const item = await page.getByTestId('wishlist-item').first().boundingBox();

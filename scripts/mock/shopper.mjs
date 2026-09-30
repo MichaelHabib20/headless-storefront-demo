@@ -14,7 +14,7 @@ const CURRENCY = 'EGP';
 const MESSAGES = {
   en: {
     empty_cart: 'Your cart is empty.',
-    minimum_order: (remaining) => `Add EGP ${remaining} more to reach the minimum order.`,
+    minimum_order: (minimum, remaining) => `The minimum order is ${minimum}. Add ${remaining} more to check out.`,
     unavailable_items: 'Remove or update the items that are not available.',
     out_of_stock: 'Out of stock',
     exceeds_limit: (max) => `You can buy up to ${max} of this item.`,
@@ -25,7 +25,7 @@ const MESSAGES = {
   },
   ar: {
     empty_cart: 'سلة التسوق فارغة.',
-    minimum_order: (remaining) => `أضف ${remaining} ج.م للوصول للحد الأدنى للطلب.`,
+    minimum_order: (minimum, remaining) => `الحد الأدنى للطلب ${minimum}. أضف ${remaining} لإتمام الطلب.`,
     unavailable_items: 'احذف أو عدّل المنتجات غير المتوفرة.',
     out_of_stock: 'غير متوفر',
     exceeds_limit: (max) => `يمكنك شراء ${max} قطع كحد أقصى من هذا المنتج.`,
@@ -54,7 +54,37 @@ function loadCatalog() {
   return catalog;
 }
 
-const money = (amount) => ({ amount: Math.round(amount * 100) / 100, currency: CURRENCY });
+/*
+ * Ready-to-show money text, written like the backend's MoneyFormatter: number, a space, the
+ * currency label ("EGP" / "جنية"); western digits, "," thousands. Prices drop trailing zeros
+ * ("18 EGP", "139.5 EGP"); totals and the minimum order always have 2 decimals ("196.00 EGP");
+ * the discount label is "10 %". The format is the backend's business; the storefront only shows it.
+ */
+const CURRENCY_LABEL = { en: 'EGP', ar: 'جنية' };
+const round2 = (amount) => Math.round(amount * 100) / 100;
+const number = (value, decimals) =>
+  new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+
+export const priceText = (amount, locale) => `${number(amount, 2).replace(/\.?0+$/, '')} ${CURRENCY_LABEL[locale]}`;
+export const totalText = (amount, locale) => `${number(amount, 2)} ${CURRENCY_LABEL[locale]}`;
+
+/** A price-like Money (a cart line total): "36 EGP". */
+const money = (amount, locale) => ({ amount: round2(amount), currency: CURRENCY, display: priceText(amount, locale) });
+/** A total (cart summary, minimum order): "196.00 EGP". */
+const total = (amount, locale) => ({ amount: round2(amount), currency: CURRENCY, display: totalText(amount, locale) });
+
+/** A product Price with its texts (the recorded catalog already carries them). */
+export function priceWithText({ currency = CURRENCY, amount, compareAt = null, discountPercent = null }, locale) {
+  return {
+    currency,
+    amount,
+    compareAt,
+    discountPercent,
+    display: priceText(amount, locale),
+    compareAtDisplay: compareAt === null ? null : priceText(compareAt, locale),
+    discountLabel: discountPercent ? `${number(discountPercent, 0)} %` : null,
+  };
+}
 
 export function createShopperStore({ now = () => new Date('2026-09-29T10:00:00Z') } = {}) {
   const catalog = loadCatalog();
@@ -91,28 +121,34 @@ export function createShopperStore({ now = () => new Date('2026-09-29T10:00:00Z'
       let message = null;
       if (!card.inStock) [status, message] = ['out_of_stock', t.out_of_stock];
       else if (max !== null && quantity > max) [status, message] = ['exceeds_limit', t.exceeds_limit(max)];
-      const unit = card.price ?? { currency: CURRENCY, amount: 0, compareAt: null, discountPercent: null };
+      const unit = card.price ?? priceWithText({ amount: 0 }, locale);
       items.push({
         product: card,
         quantity,
         quantityStep: 1,
         unitPrice: unit,
-        lineTotal: money(unit.amount * quantity),
+        lineTotal: money(unit.amount * quantity, locale),
         availability: { status, message, minQuantity: card.purchase.minQuantity, maxQuantity: max },
       });
     }
     const subtotal = items.reduce((sum, item) => sum + item.lineTotal.amount, 0);
-    const remaining = Math.max(0, MINIMUM_ORDER - subtotal);
+    const remaining = Math.max(0, round2(MINIMUM_ORDER - subtotal));
+    // like the backend: floor, 100 only when the minimum is reached
+    const progressPercent = remaining <= 0 ? 100 : Math.max(0, Math.min(99, Math.floor((subtotal / MINIMUM_ORDER) * 100)));
     const blockers = [];
     if (!items.length) blockers.push({ code: 'empty_cart', message: t.empty_cart });
     else {
-      if (remaining > 0) blockers.push({ code: 'minimum_order', message: t.minimum_order(remaining) });
+      if (remaining > 0) blockers.push({ code: 'minimum_order', message: t.minimum_order(totalText(MINIMUM_ORDER, locale), totalText(remaining, locale)) });
       if (items.some((item) => item.availability.status !== 'available')) blockers.push({ code: 'unavailable_items', message: t.unavailable_items });
     }
     return {
       items,
-      summary: { itemCount: items.reduce((n, item) => n + item.quantity, 0), subtotal: money(subtotal), discount: null, total: money(subtotal) },
-      checkout: { allowed: blockers.length === 0, blockers, minimumOrder: { amount: money(MINIMUM_ORDER), remaining: money(remaining) } },
+      summary: { itemCount: items.reduce((n, item) => n + item.quantity, 0), subtotal: total(subtotal, locale), discount: null, total: total(subtotal, locale) },
+      checkout: {
+        allowed: blockers.length === 0,
+        blockers,
+        minimumOrder: { amount: total(MINIMUM_ORDER, locale), remaining: total(remaining, locale), progressPercent },
+      },
       requiresPrescription: items.some((item) => item.product.requiresPrescription),
     };
   }

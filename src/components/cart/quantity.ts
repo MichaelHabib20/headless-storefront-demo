@@ -1,4 +1,5 @@
 import type { CartItem, CartItemAvailability, Locale } from '@/sdk';
+import { formatNumber } from '@/lib/numbers';
 
 /**
  * Quantity stepper arithmetic (units, never money). The limits come from the backend:
@@ -45,11 +46,11 @@ export function canChangeQuantity(availability: CartItemAvailability): boolean {
 }
 
 export function formatQuantity(quantity: number, locale: Locale): string {
-  return new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG', { maximumFractionDigits: 3 }).format(quantity);
+  return formatNumber(quantity, locale);
 }
 
 /** 0.1 + 0.2 must show as 0.3: keep as many decimals as the step has. */
 function roundToStep(value: number, step: number): number {
-  const decimals = (String(step).split('.')[1] ?? '').length;
-  return Number(value.toFixed(decimals));
+  const factor = 10 ** (String(step).split('.')[1] ?? '').length;
+  return Math.round(value * factor) / factor;
 }

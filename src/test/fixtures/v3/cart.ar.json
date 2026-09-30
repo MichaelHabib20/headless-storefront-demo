@@ -22,7 +22,10 @@
       "currency": "EGP",
       "amount": 18,
       "compareAt": null,
-      "discountPercent": null
+      "discountPercent": null,
+      "display": "18 جنية",
+      "compareAtDisplay": null,
+      "discountLabel": null
      },
      "inStock": true,
      "badges": [],
@@ -44,11 +47,15 @@
      "currency": "EGP",
      "amount": 18,
      "compareAt": null,
-     "discountPercent": null
+     "discountPercent": null,
+     "display": "18 جنية",
+     "compareAtDisplay": null,
+     "discountLabel": null
     },
     "lineTotal": {
      "amount": 36,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "36 جنية"
     },
     "availability": {
      "status": "available",
@@ -78,7 +85,10 @@
       "currency": "EGP",
       "amount": 160,
       "compareAt": null,
-      "discountPercent": null
+      "discountPercent": null,
+      "display": "160 جنية",
+      "compareAtDisplay": null,
+      "discountLabel": null
      },
      "inStock": true,
      "badges": [],
@@ -100,11 +110,15 @@
      "currency": "EGP",
      "amount": 160,
      "compareAt": null,
-     "discountPercent": null
+     "discountPercent": null,
+     "display": "160 جنية",
+     "compareAtDisplay": null,
+     "discountLabel": null
     },
     "lineTotal": {
      "amount": 160,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "160 جنية"
     },
     "availability": {
      "status": "available",
@@ -118,12 +132,14 @@
    "itemCount": 3,
    "subtotal": {
     "amount": 196,
-    "currency": "EGP"
+    "currency": "EGP",
+    "display": "196.00 جنية"
    },
    "discount": null,
    "total": {
     "amount": 196,
-    "currency": "EGP"
+    "currency": "EGP",
+    "display": "196.00 جنية"
    }
   },
   "checkout": {
@@ -131,18 +147,21 @@
    "blockers": [
     {
      "code": "minimum_order",
-     "message": "أضف 104 ج.م للوصول للحد الأدنى للطلب."
+     "message": "الحد الأدنى للطلب 300.00 جنية. أضف 104.00 جنية لإتمام الطلب."
     }
    ],
    "minimumOrder": {
     "amount": {
      "amount": 300,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "300.00 جنية"
     },
     "remaining": {
      "amount": 104,
-     "currency": "EGP"
-    }
+     "currency": "EGP",
+     "display": "104.00 جنية"
+    },
+    "progressPercent": 65
    }
   },
   "requiresPrescription": false

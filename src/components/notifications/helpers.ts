@@ -1,4 +1,5 @@
 import type { Locale } from '@/sdk';
+import { formatNumber } from '@/lib/numbers';
 import { routes } from '@/lib/routing';
 
 /**
@@ -58,7 +59,7 @@ export function formatNotificationDate(
 
 /** A count from the API (e.g. `unreadCount`) in the shopper's digits. */
 export function formatCount(value: number, locale: Locale): string {
-  return new Intl.NumberFormat(INTL_LOCALE[locale]).format(value);
+  return formatNumber(value, locale);
 }
 
 /** Fills `{name}` placeholders of a UI string from src/lib/messages. */

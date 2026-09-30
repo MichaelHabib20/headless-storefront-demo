@@ -465,7 +465,10 @@ export interface components {
                 [key: string]: boolean;
             };
         };
-        /** @description Computed by the backend. Display as-is; never recompute. */
+        /**
+         * @description Computed and formatted by the backend. Show `display`, `compareAtDisplay` and `discountLabel`
+         *     as they are. The numbers are for sorting and analytics only: never format or recompute them.
+         */
         Price: {
             currency: string | null;
             /** @description What the shopper pays */
@@ -473,6 +476,21 @@ export interface components {
             /** @description Original price when discounted */
             compareAt: number | null;
             discountPercent: number | null;
+            /**
+             * @description Ready-to-show text for `amount` in the request language, e.g. "176 EGP", "1,260 جنية"
+             * @example 176 EGP
+             */
+            display: string;
+            /**
+             * @description Ready-to-show text for `compareAt`; null when not discounted
+             * @example 196 EGP
+             */
+            compareAtDisplay: string | null;
+            /**
+             * @description Ready-to-show discount text, e.g. "10 %" (store settings may add decimals or "OFF"); null when not discounted
+             * @example 10 %
+             */
+            discountLabel: string | null;
         };
         ProductCard: {
             id: number;
@@ -569,10 +587,18 @@ export interface components {
                 };
             };
         };
-        /** @description An amount computed by the backend. Display it; never do arithmetic on it. */
+        /**
+         * @description An amount computed and formatted by the backend. Show `display` as it is. `amount` is for
+         *     analytics only: never format it and never do arithmetic on it.
+         */
         Money: {
             amount: number;
             currency: string | null;
+            /**
+             * @description Ready-to-show text in the request language, e.g. "36 EGP"; totals always have 2 decimals, e.g. "196.00 EGP"
+             * @example 196.00 EGP
+             */
+            display: string;
         };
         Pagination: {
             page: number;
@@ -657,6 +683,8 @@ export interface components {
                     amount: components["schemas"]["Money"];
                     /** @description How much more to add; amount 0 when reached */
                     remaining: components["schemas"]["Money"];
+                    /** @description How far the cart is towards the minimum (for a progress bar); 100 when reached */
+                    progressPercent: number;
                 } | null;
             };
             requiresPrescription: boolean;

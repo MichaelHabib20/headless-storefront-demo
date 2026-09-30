@@ -1,7 +1,8 @@
 # Cart
 
-The backend computes everything in the cart: line totals, subtotal, discount, total, what can be
-checked out and why not. The storefront displays it. Session rules: [session.md](session.md).
+The backend computes everything in the cart: line totals, subtotal, discount, total, the minimum
+order progress, what can be checked out and why not — and writes every amount as ready-to-show
+text. The storefront displays it. Session rules: [session.md](session.md).
 
 ## Data
 
@@ -20,8 +21,8 @@ interface Cart {
     product: ProductCard;
     quantity: number;
     quantityStep: number;              // 1, or e.g. 0.5 for weighed products
-    unitPrice: Price;                  // { currency, amount, compareAt, discountPercent }
-    lineTotal: Money;                  // after item promotions — NOT unitPrice × quantity
+    unitPrice: Price;                  // { display, compareAtDisplay, discountLabel, + numbers }
+    lineTotal: Money;                  // { display: '36 EGP', amount, currency } — after item promotions, NOT unitPrice × quantity
     availability: {
       status: 'available' | 'out_of_stock' | 'unavailable' | 'coming_soon' | 'exceeds_limit' | 'below_minimum';
       message: string | null;          // localized; null when available
@@ -33,7 +34,7 @@ interface Cart {
   checkout: {
     allowed: boolean;                  // the ONLY switch for the checkout button
     blockers: { code: 'empty_cart' | 'minimum_order' | 'unavailable_items'; message: string }[];
-    minimumOrder: { amount: Money; remaining: Money } | null;   // null = no minimum
+    minimumOrder: { amount: Money; remaining: Money; progressPercent: number } | null;   // null = no minimum; progress 0–100
   };
   requiresPrescription: boolean;
 }
@@ -45,19 +46,23 @@ interface Cart {
 |---|---|
 | `lineTotal`, `subtotal`, `discount`, `total` | Layout, where the summary sits, sticky or not |
 | Whether checkout is allowed, and the blocker messages | Button style; where blocker messages show |
-| `minimumOrder.amount` / `remaining` | Showing them as text (no progress math) |
+| `minimumOrder.amount` / `remaining` / `progressPercent` | How the text and the bar look (the bar is `progressPercent` wide) |
+| Every money text (`display`) | Its look: `className` / `as` on `<Money>` / `<Price>` |
 | Availability status + message, min/max quantity, step | Quantity control (stepper, select), message styling |
 | `requiresPrescription` | The prescription notice design |
 | Delivery (calculated at checkout, not in the cart) | — |
 
 ## Rules
 
-1. **Never compute totals.** Show `summary.total`, `summary.subtotal`, `summary.discount`,
-   `item.lineTotal` with `formatMoney(m.amount, m.currency, locale)` from `src/lib/format.ts`. No
-   `reduce` over amounts, no `unitPrice.amount * quantity`, no "you save" subtraction
-   (`no-price-math` rule).
-2. **Never compute remaining / discounts.** "Add X more" is `checkout.minimumOrder.remaining` or the
-   `minimum_order` blocker message. Cart-level savings are `summary.discount` (null = none).
+1. **Never compute or format totals.** Show `summary.total`, `summary.subtotal`, `summary.discount`,
+   `item.lineTotal` with `<Money value={...} />` and `item.unitPrice` with
+   `<Price price={...} locale={locale} />` from `@/money`. No `reduce` over amounts, no
+   `unitPrice.amount * quantity`, no "you save" subtraction, no `Intl.NumberFormat` / `toFixed`
+   (`no-price-math`, `no-money-formatting`, `money-via-components` rules).
+2. **Never compute remaining / progress / discounts.** "Add X more" is
+   `<Money value={checkout.minimumOrder.remaining} />` or the `minimum_order` blocker message. The bar
+   is `checkout.minimumOrder.progressPercent` wide (a CSS custom property), never
+   `(minimum - remaining) / minimum`. Cart-level savings are `summary.discount` (null = none).
 3. **Checkout button enabled only by `checkout.allowed`.** Never enable/disable it from your own
    checks (item count, minimum, stock). When it's false, show every `blockers[].message` as given.
    Use `code` for styling / test ids only, never to write your own text.
@@ -83,8 +88,10 @@ interface Cart {
 
 - **"Show a free-delivery progress bar"** → only with a backend field (none in v3) → report
   "needs backend support". Don't hardcode a threshold.
-- **"Minimum order progress bar"** → needs a backend ratio field; today show `remaining` as text.
-- **"Compute the cart total"** → forbidden; use `summary.total`.
+- **"Minimum order progress bar"** → `progressPercent` as the width (see `MinimumOrderProgress.tsx`
+  and `.fill` in `CartSummary.module.css`); restyle freely, never recompute it.
+- **"Compute the cart total"** → forbidden; use `<Money value={summary.total} />`.
+- **"Show the total bigger / bold"** → `<Money value={summary.total} as="strong" className={styles.total} />`.
 - **"Grey out checkout when an item is out of stock"** → already handled: the backend adds the
   `unavailable_items` blocker and sets `allowed: false`.
 - **"Quantity dropdown 1–10"** → build options from `minQuantity`, `maxQuantity`, `quantityStep`.
@@ -93,6 +100,8 @@ interface Cart {
 
 ## Tests to update
 
-- Components: `cartFixture(locale)` (2 lines, `minimum_order` blocker, `allowed: false`) and
-  `emptyCartFixture(locale)` (`empty_cart` blocker) from `@/test/fixtures`, `en` + `ar`.
+- Components: `cartFixture(locale)` (2 lines, `minimum_order` blocker, `allowed: false`,
+  `progressPercent` 65) and `emptyCartFixture(locale)` (`empty_cart` blocker) from `@/test/fixtures`,
+  `en` + `ar`. Assert the `display` text the data carries (e.g. `cart.summary.total.display`), never
+  a format you expect the storefront to produce.
 - E2E: `e2e/cart.spec.ts` against the mock (seeded customer's cart is below the 300 EGP minimum).

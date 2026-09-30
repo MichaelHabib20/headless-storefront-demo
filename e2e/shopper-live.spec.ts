@@ -1,5 +1,4 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
-import { formatMoney } from '../src/lib/format';
 import { acceptCookies, customerToken, live, signInAsCustomer } from './support';
 
 /**
@@ -22,7 +21,8 @@ async function api<T>(path: string, token: string | null, locale = 'en', init: R
   return body.data;
 }
 
-type Cart = { items: { product: { id: number }; quantity: number }[]; summary: { total: { amount: number; currency: string | null }; subtotal: { amount: number; currency: string | null } }; checkout: { allowed: boolean } };
+type Money = { amount: number; display: string };
+type Cart = { items: { product: { id: number }; quantity: number }[]; summary: { total: Money; subtotal: Money }; checkout: { allowed: boolean } };
 type Me = { counts: { cart: number; wishlist: number; compare: number; unreadNotifications: number } };
 
 async function guestCookie(context: BrowserContext): Promise<string | null> {
@@ -49,14 +49,14 @@ test.describe('live: guest shopper', () => {
     expect(cart.items.length).toBe(1);
     await open(page, '/en/cart');
     await expect(page.getByTestId('cart-line')).toHaveCount(1);
-    await expect(page.getByTestId('cart-total')).toHaveText(formatMoney(cart.summary.total.amount, cart.summary.total.currency, 'en'));
+    await expect(page.getByTestId('cart-total')).toHaveText(cart.summary.total.display);
     await expect(page.getByRole('banner')).toContainText('1');
 
     // Quantity +1: the new total on the page is the API's new total.
     await page.getByTestId('cart-line').first().getByRole('button', { name: 'Increase quantity' }).click();
     await expect(page.getByTestId('cart-quantity').first()).toHaveText('2');
     const after = await api<Cart>('cart', guest);
-    await expect(page.getByTestId('cart-total')).toHaveText(formatMoney(after.summary.total.amount, after.summary.total.currency, 'en'));
+    await expect(page.getByTestId('cart-total')).toHaveText(after.summary.total.display);
 
     await page.getByTestId('cart-line').first().getByRole('button', { name: 'Remove' }).click();
     await expect(page.getByTestId('cart-empty')).toBeVisible();
@@ -105,8 +105,8 @@ test.describe('live: signed-in customer', () => {
       await expect(page.locator('html')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr');
       await expect(page.getByTestId('cart-line')).toHaveCount(cart.items.length);
       if (cart.items.length) {
-        await expect(page.getByTestId('cart-subtotal')).toHaveText(formatMoney(cart.summary.subtotal.amount, cart.summary.subtotal.currency, locale));
-        await expect(page.getByTestId('cart-total')).toHaveText(formatMoney(cart.summary.total.amount, cart.summary.total.currency, locale));
+        await expect(page.getByTestId('cart-subtotal')).toHaveText(cart.summary.subtotal.display);
+        await expect(page.getByTestId('cart-total')).toHaveText(cart.summary.total.display);
       }
       const checkoutName = locale === 'ar' ? 'إتمام الطلب' : 'Checkout';
       if (cart.checkout.allowed) await expect(page.getByRole('link', { name: checkoutName })).toBeVisible();
@@ -122,14 +122,14 @@ test.describe('live: signed-in customer', () => {
 
     await open(page, '/en/cart');
     try {
-      const beforeText = formatMoney(before.summary.total.amount, before.summary.total.currency, 'en');
+      const beforeText = before.summary.total.display;
       await page.getByTestId('cart-line').first().getByRole('button', { name: 'Increase quantity' }).click();
       await expect(page.getByTestId('cart-quantity').first()).toHaveText(String(line.quantity + 1));
       // The quantity changes at once; the total changes only when the backend answered with the new cart.
       await expect(page.getByTestId('cart-total')).not.toHaveText(beforeText, { timeout: 20_000 });
       const after = await api<Cart>('cart', token);
       expect(after.summary.total.amount).toBeGreaterThan(before.summary.total.amount);
-      await expect(page.getByTestId('cart-total')).toHaveText(formatMoney(after.summary.total.amount, after.summary.total.currency, 'en'));
+      await expect(page.getByTestId('cart-total')).toHaveText(after.summary.total.display);
     } finally {
       await api<Cart>(`cart/items/${line.product.id}`, token, 'en', { method: 'PUT', body: JSON.stringify({ quantity: line.quantity }) });
     }

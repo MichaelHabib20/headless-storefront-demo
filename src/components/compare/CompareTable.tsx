@@ -2,6 +2,7 @@
 
 import { useOptimistic, useState, useTransition, type ReactNode } from 'react';
 import type { Locale } from '@/sdk';
+import { formatNumber } from '@/lib/numbers';
 import { Icon } from '../ui/Icon';
 import styles from './Compare.module.css';
 
@@ -59,10 +60,9 @@ export function CompareTable({ columns, rows, maxItems, locale, labels, onRemove
   const [pending, startTransition] = useTransition();
 
   const visible = columns.map((column, index) => ({ ...column, index })).filter((column) => !hidden.includes(column.productId));
-  const number = new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG');
   const note = (maxItems === null ? labels.noteUnlimited : labels.note)
-    .replace('{count}', number.format(visible.length))
-    .replace('{max}', maxItems === null ? '' : number.format(maxItems));
+    .replace('{count}', formatNumber(visible.length, locale))
+    .replace('{max}', maxItems === null ? '' : formatNumber(maxItems, locale));
 
   function remove(productId: number) {
     setStatus(null);

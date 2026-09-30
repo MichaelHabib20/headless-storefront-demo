@@ -22,7 +22,10 @@
       "currency": "EGP",
       "amount": 18,
       "compareAt": null,
-      "discountPercent": null
+      "discountPercent": null,
+      "display": "18 EGP",
+      "compareAtDisplay": null,
+      "discountLabel": null
      },
      "inStock": true,
      "badges": [],
@@ -44,11 +47,15 @@
      "currency": "EGP",
      "amount": 18,
      "compareAt": null,
-     "discountPercent": null
+     "discountPercent": null,
+     "display": "18 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
     },
     "lineTotal": {
      "amount": 36,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "36 EGP"
     },
     "availability": {
      "status": "available",
@@ -78,7 +85,10 @@
       "currency": "EGP",
       "amount": 160,
       "compareAt": null,
-      "discountPercent": null
+      "discountPercent": null,
+      "display": "160 EGP",
+      "compareAtDisplay": null,
+      "discountLabel": null
      },
      "inStock": true,
      "badges": [],
@@ -100,11 +110,15 @@
      "currency": "EGP",
      "amount": 160,
      "compareAt": null,
-     "discountPercent": null
+     "discountPercent": null,
+     "display": "160 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
     },
     "lineTotal": {
      "amount": 160,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "160 EGP"
     },
     "availability": {
      "status": "available",
@@ -118,12 +132,14 @@
    "itemCount": 3,
    "subtotal": {
     "amount": 196,
-    "currency": "EGP"
+    "currency": "EGP",
+    "display": "196.00 EGP"
    },
    "discount": null,
    "total": {
     "amount": 196,
-    "currency": "EGP"
+    "currency": "EGP",
+    "display": "196.00 EGP"
    }
   },
   "checkout": {
@@ -131,18 +147,21 @@
    "blockers": [
     {
      "code": "minimum_order",
-     "message": "Add EGP 104 more to reach the minimum order."
+     "message": "The minimum order is 300.00 EGP. Add 104.00 EGP more to check out."
     }
    ],
    "minimumOrder": {
     "amount": {
      "amount": 300,
-     "currency": "EGP"
+     "currency": "EGP",
+     "display": "300.00 EGP"
     },
     "remaining": {
      "amount": 104,
-     "currency": "EGP"
-    }
+     "currency": "EGP",
+     "display": "104.00 EGP"
+    },
+    "progressPercent": 65
    }
   },
   "requiresPrescription": false

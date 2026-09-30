@@ -21,7 +21,10 @@
      "currency": "EGP",
      "amount": 18,
      "compareAt": null,
-     "discountPercent": null
+     "discountPercent": null,
+     "display": "18 جنية",
+     "compareAtDisplay": null,
+     "discountLabel": null
     },
     "inStock": true,
     "badges": [],
@@ -57,7 +60,10 @@
      "currency": "EGP",
      "amount": 105,
      "compareAt": null,
-     "discountPercent": null
+     "discountPercent": null,
+     "display": "105 جنية",
+     "compareAtDisplay": null,
+     "discountLabel": null
     },
     "inStock": true,
     "badges": [],

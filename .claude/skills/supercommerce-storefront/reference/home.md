@@ -21,7 +21,7 @@ interface Home {
 | Which banners/products a section has | How many items are visible per row (`Rail perView`) |
 | Section `layout` (the merchant's choice) | How each layout is drawn (`BannerLayouts.tsx`) |
 | Every link (`target`, `viewAll`) | Link styling, labels like "View all" (i18n) |
-| Prices, discount %, stock, `purchase.canAddToCart` | How they look |
+| Prices and their texts, discount label, stock, `purchase.canAddToCart` | How they look (`className` / `classNames` on `<Price>`) |
 | Popup `frequency` | How the popup looks |
 
 ## Sections
@@ -50,7 +50,10 @@ interface Section {
 interface ProductCard {
   id, slug, name, image: {url, alt} | null,
   brand: { name, slug, target } | null,
-  price: { currency, amount, compareAt, discountPercent } | null,   // null = store hides prices
+  price: {                                                         // null = store hides prices
+    display, compareAtDisplay, discountLabel,                      // texts to show: '176 EGP', '196 EGP', '10 %'
+    currency, amount, compareAt, discountPercent,                  // numbers: never shown, never used for math
+  } | null,
   inStock: boolean,
   badges: { kind: 'label'|'promotion'|'preorder'|'coming_soon', text, color }[],
   rating: { average, count } | null,
@@ -60,9 +63,11 @@ interface ProductCard {
 }
 ```
 
-- Show `price.amount` (what the shopper pays). If `compareAt` is set, show it struck through and
-  `discountPercent` as the discount. Use `formatPrice(price, locale)`. **No arithmetic.**
-- `price: null` → show no price (do not show 0).
+- Render `<Price price={product.price} locale={locale} />` from `@/money`: the price, the old price
+  struck through and the discount, exactly as the backend wrote them. The card shows the discount
+  as a badge on the image with `<DiscountLabel price={product.price} />` and `showDiscount={false}`
+  on `<Price>`. Style both with `className` / `classNames`. **No arithmetic, no formatting.**
+- `price: null` → `<Price>` renders nothing (do not show 0).
 - Badges with `text: null` get a translated label from i18n (`preorder`, `comingSoonBadge`).
 - "Add to cart" / heart / compare buttons: enable from `purchase.canAddToCart`, write through a
   server action (`withShopper` → `setCartItem` / `addToWishlist` / `addToCompare`), and mark

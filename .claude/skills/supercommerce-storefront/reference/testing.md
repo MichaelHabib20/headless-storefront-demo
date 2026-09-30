@@ -6,7 +6,7 @@
 |---|---|---|
 | Types | `npm run typecheck` | Using fields the contract doesn't have, wrong shapes |
 | Lint | `npm run lint` | React/Next mistakes, importing SDK internals, `any` |
-| Architecture rules | `npm run check:rules` | Calling the API outside the SDK, legacy fields, building URLs from slugs or hardcoding `/en`/`/ar` paths, price math or price-based rules in the UI, hardcoded UI text in components (must be in i18n), writes on page load (server actions in `useEffect`), env vars in client code, raw HTML, hardcoded store hosts |
+| Architecture rules | `npm run check:rules` | Calling the API outside the SDK, legacy fields, building URLs from slugs or hardcoding `/en`/`/ar` paths, price math or price-based rules in the UI, money shown outside `src/money` or formatted in the storefront, any change to the locked `src/money` folder, hardcoded UI text in components (must be in i18n), writes on page load (server actions in `useEffect`), env vars in client code, raw HTML, hardcoded store hosts |
 | Contract | `npm run contract:check` | Recorded API responses and shopper fixtures vs `contract/openapi.yaml`; stale generated types; contract out of sync with the backend |
 | Unit + component | `npm run test` | Logic (`src/lib`, `src/sdk`, helpers), components rendered with real data, the mock API vs the contract (`scripts/mock-shopper.test.mjs`) |
 | Build | `npm run build` | Anything that breaks the production build |
@@ -29,6 +29,21 @@ CI runs the same command (`.github/workflows/verify.yml`), so a failing change c
 - **E2E**: `e2e/*.spec.ts`, one spec per area. Use roles/labels/test ids, not CSS classes.
   Mobile-only specs go in `mobile.spec.ts`.
 - Test both `en` and `ar` when you touch text or layout.
+- **Money in tests**: give data with a `display` text and assert the page shows exactly that text
+  (unit tests use odd texts like `'PRICE-TEXT-1'`; fixtures and the mock use the backend's format,
+  e.g. `176 EGP`, `196.00 EGP`, `176 جنية`, `10 %`).
+  Never assert a format the storefront would produce — it produces none.
+
+## The locked money folder
+
+`src/money` (`Money`, `Price`, `DiscountLabel`) belongs to SuperCommerce and will become an npm
+package. `scripts/money.lock.json` holds a sha256 of every file in it (line endings ignored);
+`npm run check:rules` fails if a file there is changed, added or removed. The fix is always to undo
+the change and style money from your own components (`className`, `classNames`, `as`).
+
+`npm run money:lock` rewrites the lock — **SuperCommerce maintainers only**, after they changed the
+components. Never run it to make a check pass. The lock itself is tested in
+`scripts/money-lock.test.mjs` with temporary folders.
 
 ## E2E specs
 
@@ -56,6 +71,7 @@ shopper endpoints are an in-memory store (`scripts/mock/shopper.mjs`) that follo
 | Seeded customer | `Bearer test-customer`: cart 2 lines (below the 300 EGP minimum → `minimum_order` blocker), wishlist 3, compare 2 (max 4), 25 notifications with #903 read (24 unread) |
 | Guests | `POST /session/guest` → `guest-1`, `guest-2`, …; guests only get broadcast notifications |
 | Clock | Fixed at `2026-09-29T10:00Z` for notification dates |
+| Money | Texts written like the backend's MoneyFormatter (`priceText()` / `totalText()`): prices `18 EGP` / `18 جنية`, totals and the minimum `196.00 EGP`, discount `10 %`; the seeded cart is 65% of the 300 EGP minimum |
 | `POST /__reset` | Fresh state (seeded customer back, guests gone) |
 | `POST /__mode {"fail": true}` | Every API call answers 500 until `{"fail": false}` |
 
@@ -92,4 +108,5 @@ test.beforeEach(async ({ request, page, context }) => {
 | `npm run fixtures:record` | Re-record `src/test/fixtures/v3` from the API (after backend changes) |
 | `npm run contract:sync` | Copy the backend contract and regenerate SDK types |
 | `npm run contract:check:live` | Validate the live API against the contract |
+| `npm run money:lock` | SuperCommerce maintainers only: re-pin `src/money` after changing it |
 | `npm run test:e2e:live` | Run e2e against the real API in `SC_API_URL` |

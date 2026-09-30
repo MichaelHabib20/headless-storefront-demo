@@ -1,6 +1,6 @@
 import type { Locale, ProductCard as ProductCardData } from '@/sdk';
-import { formatPrice } from '@/lib/format';
 import { translator } from '@/lib/i18n';
+import { DiscountLabel, Price } from '@/money';
 import { TargetLink } from '../ui/TargetLink';
 import { ProductActions } from './ProductActions';
 import styles from './ProductCard.module.css';
@@ -19,7 +19,6 @@ interface ProductCardProps {
  */
 export function ProductCard({ product, locale, showActions = true }: ProductCardProps) {
   const t = translator(locale);
-  const price = product.price ? formatPrice(product.price, locale) : null;
 
   return (
     <article className={styles.card} data-testid="product-card">
@@ -31,17 +30,20 @@ export function ProductCard({ product, locale, showActions = true }: ProductCard
           ) : (
             <div className={styles.placeholder} aria-hidden="true" />
           )}
-          {price?.discount && <span className={styles.discount}>{price.discount}</span>}
+          <DiscountLabel price={product.price} className={styles.discount} />
           {!product.inStock && <span className={styles.soldOut}>{t('outOfStock')}</span>}
         </div>
 
         <div className={styles.body}>
-          {price && (
-            <p className={styles.price}>
-              <span className={product.price?.compareAt ? styles.sale : undefined}>{price.amount}</span>
-              {price.compareAt && <s className={styles.compareAt}>{price.compareAt}</s>}
-            </p>
-          )}
+          <Price
+            price={product.price}
+            locale={locale}
+            as="p"
+            className={styles.price}
+            classNames={{ sale: styles.sale, compareAt: styles.compareAt }}
+            showDiscount={false}
+            data-testid="product-price"
+          />
           <h3 className={styles.name}>{product.name}</h3>
           {product.brand && <p className={styles.brand}>{product.brand.name}</p>}
           <ul className={styles.badges}>

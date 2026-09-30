@@ -236,7 +236,10 @@
        "currency": "EGP",
        "amount": 18,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "18 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -272,7 +275,10 @@
        "currency": "EGP",
        "amount": 160,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "160 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -308,7 +314,10 @@
        "currency": "EGP",
        "amount": 105,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "105 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -344,7 +353,10 @@
        "currency": "EGP",
        "amount": 200,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "200 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -380,7 +392,10 @@
        "currency": "EGP",
        "amount": 200,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "200 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -416,7 +431,10 @@
        "currency": "EGP",
        "amount": 135,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "135 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -452,7 +470,10 @@
        "currency": "EGP",
        "amount": 135,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "135 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -488,7 +509,10 @@
        "currency": "EGP",
        "amount": 110,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "110 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -524,7 +548,10 @@
        "currency": "EGP",
        "amount": 75,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "75 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],
@@ -560,7 +587,10 @@
        "currency": "EGP",
        "amount": 160,
        "compareAt": null,
-       "discountPercent": null
+       "discountPercent": null,
+       "display": "160 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
       },
       "inStock": true,
       "badges": [],

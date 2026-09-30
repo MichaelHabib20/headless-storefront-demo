@@ -2,7 +2,9 @@ import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
 /**
  * Cart page against the stateful mock API (scripts/mock/shopper.mjs): "test-customer" has
- * 2 lines (EGP 18 × 2 and EGP 160 × 1 = EGP 196) and the store minimum order is EGP 300.
+ * 2 lines (18 × 2 and 160 × 1 = 196 EGP) and the store minimum order is 300 EGP.
+ * The money texts ("196.00 EGP", "196.00 جنية"), the messages and the progress (65%) are the mock
+ * backend's, written like the real one: the page must show them as they are.
  */
 const MOCK_API = 'http://127.0.0.1:4010';
 
@@ -37,10 +39,11 @@ test.describe('cart page', () => {
     await expect(lines.first().getByTestId('cart-quantity')).toHaveText('2');
     await expect(lines.first().getByRole('link', { name: /J&J Baby Bedtime Bath/ })).toHaveAttribute('href', /^\/en\/p\/.+/);
 
-    await expect(page.getByTestId('cart-subtotal')).toHaveText('EGP 196');
-    await expect(page.getByTestId('cart-total')).toHaveText('EGP 196');
-    await expect(page.getByTestId('checkout-blockers')).toContainText('Add EGP 104 more to reach the minimum order.');
-    await expect(page.getByTestId('cart-minimum-remaining')).toHaveText('EGP 104');
+    await expect(page.getByTestId('cart-subtotal')).toHaveText('196.00 EGP');
+    await expect(page.getByTestId('cart-total')).toHaveText('196.00 EGP');
+    await expect(page.getByTestId('checkout-blockers')).toContainText('The minimum order is 300.00 EGP. Add 104.00 EGP more to check out.');
+    await expect(page.getByTestId('cart-minimum-remaining')).toHaveText('104.00 EGP');
+    await expect(page.getByTestId('cart-minimum-bar')).toHaveAttribute('style', /--cart-progress:\s*65%/);
     await expect(page.getByRole('button', { name: 'Checkout' })).toBeDisabled();
     await expect(page.getByRole('link', { name: 'Checkout' })).toHaveCount(0);
     expect(errors).toEqual([]);
@@ -55,14 +58,14 @@ test.describe('cart page', () => {
     await second.getByRole('button', { name: 'Increase quantity' }).click();
 
     await expect(second.getByTestId('cart-quantity')).toHaveText('2');
-    await expect(page.getByTestId('cart-total')).toHaveText('EGP 356');
-    await expect(second.getByTestId('cart-line-total')).toContainText('EGP 320');
+    await expect(page.getByTestId('cart-total')).toHaveText('356.00 EGP');
+    await expect(second.getByTestId('cart-line-total')).toContainText('320 EGP');
     await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Checkout' })).toHaveAttribute('href', '/en/checkout');
 
     // The change lives in the backend, not just in the page.
     await page.reload();
-    await expect(page.getByTestId('cart-total')).toHaveText('EGP 356');
+    await expect(page.getByTestId('cart-total')).toHaveText('356.00 EGP');
   });
 
   test('removes an item', async ({ page, context }) => {
@@ -74,7 +77,7 @@ test.describe('cart page', () => {
 
     await expect(lines).toHaveCount(1);
     await expect(lines.first()).toContainText('No More Tangles');
-    await expect(page.getByTestId('cart-total')).toHaveText('EGP 160');
+    await expect(page.getByTestId('cart-total')).toHaveText('160.00 EGP');
   });
 
   test('clears the cart after confirmation', async ({ page, context }) => {
@@ -109,13 +112,13 @@ test.describe('cart page', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
     await expect(page.getByRole('heading', { level: 1, name: 'سلة التسوق' })).toBeVisible();
     await expect(page.getByTestId('cart-line')).toHaveCount(2);
-    await expect(page.getByTestId('cart-total')).toHaveText('١٩٦ ج.م');
-    await expect(page.getByTestId('checkout-blockers')).toContainText('أضف 104 ج.م للوصول للحد الأدنى للطلب.');
+    await expect(page.getByTestId('cart-total')).toHaveText('196.00 جنية');
+    await expect(page.getByTestId('checkout-blockers')).toContainText('الحد الأدنى للطلب 300.00 جنية. أضف 104.00 جنية لإتمام الطلب.');
     await expect(page.getByRole('button', { name: 'إتمام الطلب' })).toBeDisabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
     await page.getByTestId('cart-line').nth(1).getByRole('button', { name: 'زيادة الكمية' }).click();
-    await expect(page.getByTestId('cart-total')).toHaveText('٣٥٦ ج.م');
+    await expect(page.getByTestId('cart-total')).toHaveText('356.00 جنية');
     await expect(page.getByRole('link', { name: 'إتمام الطلب' })).toHaveAttribute('href', '/ar/checkout');
   });
 

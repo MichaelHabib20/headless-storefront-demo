@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { Cart, Locale } from '@/sdk';
-import { formatMoney } from '@/lib/format';
 import { translator } from '@/lib/i18n';
+import { Money } from '@/money';
 import styles from './CartSummary.module.css';
 
 type MinimumOrder = NonNullable<Cart['checkout']['minimumOrder']>;
@@ -14,21 +14,20 @@ interface MinimumOrderProgressProps {
 }
 
 /**
- * The store's minimum order and how much is left, both as the backend sent them. The bar's
- * width is drawn by CSS from those two values (see `.fill`); no money value is computed here.
+ * The store's minimum order and how much is left, both as the backend sent them. The bar is
+ * filled to the backend's `progressPercent` (see `.fill`); nothing is computed here.
  */
 export function MinimumOrderProgress({ minimumOrder, reached, locale }: MinimumOrderProgressProps) {
   const t = translator(locale);
-  const { amount: minimum, remaining } = minimumOrder;
-  const bar = { '--cart-minimum': minimum.amount, '--cart-remaining': remaining.amount } as CSSProperties;
+  const bar = { '--cart-progress': `${minimumOrder.progressPercent}%` } as CSSProperties;
 
   return (
     <div className={styles.minimum} data-testid="cart-minimum-order">
       <div className={styles.minimumRow}>
         <span>{t('cartMinimumOrder')}</span>
-        <span>{formatMoney(minimum.amount, minimum.currency, locale)}</span>
+        <Money value={minimumOrder.amount} />
       </div>
-      <div className={`${styles.bar} ${reached ? styles.barDone : ''}`} style={bar} aria-hidden="true">
+      <div className={styles.bar} style={bar} aria-hidden="true" data-testid="cart-minimum-bar">
         <span className={styles.fill} />
       </div>
       {reached ? (
@@ -36,7 +35,7 @@ export function MinimumOrderProgress({ minimumOrder, reached, locale }: MinimumO
       ) : (
         <div className={styles.minimumRow}>
           <span>{t('cartMinimumRemaining')}</span>
-          <strong data-testid="cart-minimum-remaining">{formatMoney(remaining.amount, remaining.currency, locale)}</strong>
+          <Money value={minimumOrder.remaining} as="strong" data-testid="cart-minimum-remaining" />
         </div>
       )}
     </div>

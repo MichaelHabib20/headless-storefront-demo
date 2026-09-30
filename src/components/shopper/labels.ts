@@ -1,8 +1,9 @@
 import type { Locale } from '@/sdk';
+import { formatNumber } from '@/lib/numbers';
 
-/** A count as the page shows numbers (Arabic uses Arabic-Indic digits, like prices). */
+/** A count as the page shows numbers (Arabic uses Arabic-Indic digits). */
 export function formatCount(count: number, locale: Locale): string {
-  return new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG').format(count);
+  return formatNumber(count, locale);
 }
 
 /** Fills `{count}` in a translated template. */

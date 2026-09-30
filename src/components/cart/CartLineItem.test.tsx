@@ -22,20 +22,20 @@ describe('CartLineItem', () => {
 
     expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/en/p/${item.product.slug}`);
     expect(line).toHaveTextContent('JOHNSON & JOHNSON');
-    expect(line).toHaveTextContent('EGP 18');
-    expect(within(line).getByTestId('cart-line-total')).toHaveTextContent('EGP 36');
+    expect(line).toHaveTextContent(item.unitPrice.display);
+    expect(within(line).getByTestId('cart-line-total')).toHaveTextContent(item.lineTotal.display);
     expect(within(line).getByTestId('cart-quantity')).toHaveTextContent('2');
     expect(line).toHaveAttribute('data-status', 'available');
     expect(within(line).queryByTestId('cart-line-availability')).toBeNull();
   });
 
-  it('renders in Arabic with Arabic digits and currency', () => {
+  it('renders in Arabic: the API texts, Arabic digits for the quantity', () => {
     const item = firstLine('ar');
     render(<CartLineItem item={item} locale="ar" onQuantityChange={vi.fn()} onRemove={vi.fn()} />);
     const line = screen.getByTestId('cart-line');
 
     expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/ar/p/${item.product.slug}`);
-    expect(within(line).getByTestId('cart-line-total')).toHaveTextContent('٣٦ ج.م');
+    expect(within(line).getByTestId('cart-line-total')).toHaveTextContent(item.lineTotal.display);
     expect(within(line).getByTestId('cart-quantity')).toHaveTextContent('٢');
     expect(within(line).getByRole('button', { name: 'زيادة الكمية' })).toBeEnabled();
     expect(within(line).getByRole('button', { name: 'حذف' })).toBeEnabled();
@@ -102,9 +102,21 @@ describe('CartLineItem', () => {
 
     expect(within(line).getByTestId('cart-quantity')).toHaveTextContent('3');
     // the line total is still the API's last answer, never recomputed for the new quantity
-    expect(within(line).getByTestId('cart-line-total')).toHaveTextContent('EGP 36');
+    expect(within(line).getByTestId('cart-line-total')).toHaveTextContent(firstLine().lineTotal.display);
     expect(line).toHaveAttribute('aria-busy', 'true');
     for (const button of within(line).getAllByRole('button')) expect(button).toBeDisabled();
+  });
+
+  it('shows a discounted unit price exactly as the API wrote it', () => {
+    const item = firstLine();
+    const unitPrice = { ...item.unitPrice, compareAt: 999, discountPercent: 1, display: 'PRICE-TEXT-1', compareAtDisplay: 'OLD-PRICE-TEXT-1', discountLabel: 'DISCOUNT-TEXT-1' };
+    render(<CartLineItem item={{ ...item, unitPrice }} locale="en" />);
+    const line = screen.getByTestId('cart-line');
+
+    expect(line).toHaveTextContent('PRICE-TEXT-1');
+    expect(line.querySelector('s')).toHaveTextContent('OLD-PRICE-TEXT-1');
+    expect(line.querySelector('[class*="discount"]')).toHaveTextContent('DISCOUNT-TEXT-1');
+    expect(line).not.toHaveTextContent('999');
   });
 
   it('marks products that need a prescription', () => {
