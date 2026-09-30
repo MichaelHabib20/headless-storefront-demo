@@ -64,19 +64,19 @@ test.describe('home page', () => {
     expect(errors).toEqual([]);
   });
 
-  test('product and banner links lead to the planned pages', async ({ page }) => {
+  test('product links lead to the product page', async ({ page }) => {
     await acceptCookies(page);
     await page.goto('/en');
 
-    const productLink = page.getByTestId('product-card').first().getByRole('link');
+    const card = page.getByTestId('product-card').first();
+    const name = (await card.getByRole('heading').textContent())?.trim() ?? '';
+    const productLink = card.getByRole('link');
     const href = await productLink.getAttribute('href');
     expect(href).toMatch(/^\/en\/p\/.+/);
     await productLink.click();
-    await expect(page).toHaveURL(new RegExp(`${href}$`));
-    await expect(page.getByRole('heading', { name: 'Coming soon' })).toBeVisible();
-
-    await page.getByRole('link', { name: 'Back to home' }).click();
-    await expect(page).toHaveURL(/\/en$/);
+    // rendered on demand: allow for a slow first render
+    await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: 30_000 });
+    await expect(page.getByRole('heading', { level: 1, name })).toBeVisible();
   });
 
   test('switches language on the same page', async ({ page }) => {

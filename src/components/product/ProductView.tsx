@@ -56,7 +56,7 @@ export function ProductView({ details, locale, notifyMeAction, recommendations, 
           }}
         />
 
-        <div className={styles.info}>
+        <div className={styles.info} data-testid="product-info">
           <header className={styles.header}>
             {product.brand && (
               <TargetLink target={product.brand.target} locale={locale} className={styles.brand}>

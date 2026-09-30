@@ -83,6 +83,7 @@ them and **blocks the deploy** when one is broken.
 | Cart page, quantities, totals, checkout button, minimum order | [reference/cart.md](reference/cart.md) |
 | Wishlist, compare, hearts, move to cart | [reference/wishlist-compare.md](reference/wishlist-compare.md) |
 | Notifications page, bell badge, mark as read | [reference/notifications.md](reference/notifications.md) |
+| Product page, options, gallery, notify-me, reviews, recommendations | [reference/product.md](reference/product.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 
 ## Common requests → how
@@ -106,6 +107,8 @@ them and **blocks the deploy** when one is broken.
 | "Add to cart / heart for guests" | Server action with `withShopper` | Create a guest while rendering; token in the browser |
 | "Add a new text/button" | Add the key to `en` **and** `ar` in `src/lib/i18n.ts` or `src/lib/messages/<area>.ts` | Hardcode English |
 | "Link the logo somewhere else" | `routes.*` in `src/lib/routing.ts` | Write `'/en/...'` strings |
+| "Clicking a size opens the matching variant" | Already: each option value is a `<TargetLink target={value.target}>` | Work out the variant from the chosen values |
+| "Product quantity limit 10" | `purchase.maxQuantity` / `quantityStep` from the API → `ProductActions` `quantity` | Hardcode limits |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
 
 ## Before you say "done"

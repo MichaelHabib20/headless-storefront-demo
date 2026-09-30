@@ -56,7 +56,8 @@ describe('ProductActions with a quantity picker (product page)', () => {
 
     await user.click(within(group).getByRole('button', { name: 'Add to cart' }));
     expect(addToCartAction).toHaveBeenCalledWith('en', 9822, 3);
-    expect(within(group).getByRole('status')).toHaveTextContent('Added to cart.');
+    // two live regions: the quantity (<output>) and the action result
+    expect(within(group).getByText('Added to cart.')).toHaveAttribute('role', 'status');
     const link = within(group).getByRole('link', { name: 'In cart (3)' });
     expect(link).toHaveFocus();
     expect(within(group).getByRole('button', { name: 'Update cart' })).toBeDisabled();
@@ -99,7 +100,7 @@ describe('ProductActions with a quantity picker (product page)', () => {
 
     await user.click(within(group).getByRole('button', { name: 'Increase quantity' }));
     await user.click(within(group).getByRole('button', { name: 'Add to cart' }));
-    expect(within(group).getByRole('status')).toHaveTextContent('This quantity is not allowed.');
+    expect(within(group).getByText('This quantity is not allowed.')).toHaveAttribute('role', 'status');
     expect(within(group).getByTestId('product-quantity')).toHaveTextContent('2');
     expect(within(group).queryByRole('link')).toBeNull();
   });

@@ -21,6 +21,18 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 type Loaded = { status: 'ok'; details: ProductDetails } | { status: 'not_found' } | { status: 'error' };
 
 /**
+ * The slug as the backend wrote it. Next hands dynamic segments over percent-encoded
+ * (`%D8%A7…` for an Arabic slug); the SDK encodes the slug itself.
+ */
+function slugParam(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
+/**
  * The product, read once per request (metadata and page share it). With a shopper token the
  * prices and limits are the shopper's; reading never creates a guest session.
  */
@@ -37,7 +49,7 @@ const loadProduct = cache(async (locale: Locale, slug: string): Promise<Loaded> 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const loaded = await loadProduct(locale, slug);
+  const loaded = await loadProduct(locale, slugParam(slug));
   if (loaded.status === 'not_found') return { title: translator(locale)('notFoundTitle'), robots: { index: false } };
   if (loaded.status !== 'ok' || loaded.details.redirect) return {};
   return seoMetadata(loaded.details.seo, locale);
@@ -47,7 +59,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
 
-  const loaded = await loadProduct(locale, slug);
+  const loaded = await loadProduct(locale, slugParam(slug));
   if (loaded.status === 'not_found') notFound();
   if (loaded.status === 'error') return <StoreUnavailable locale={locale} />;
 

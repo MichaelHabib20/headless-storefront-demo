@@ -54,6 +54,7 @@ components. Never run it to make a check pass. The lock itself is tested in
 | `notifications.spec.ts` | List + unread state, mark one, mark all, opening marks read, reading never marks read, pagination, Arabic, no guest for anonymous visitors |
 | `cart.spec.ts` | Cart lines, quantity changes (totals from the API), remove, blockers, guest empty cart, Arabic |
 | `wishlist-compare.spec.ts` | Wishlist grid, remove, move to cart, pagination, compare table, remove, Arabic, guest empty states |
+| `product.spec.ts` | Product page: options as links, add with quantity, wishlist/compare, notify-me (email asked by the API, 409), coming soon, discount, gallery keyboard + video, redirect, reviews pages, 404, API down, Arabic, 360 px |
 | `shopper-actions.spec.ts` | Card buttons on the home page (add to cart as a guest, wishlist/compare toggles, `compare_full`), header counts |
 | `shopper-live.spec.ts` | The same flows against real staging as a guest and as the test customer (`E2E_LIVE=1`) |
 

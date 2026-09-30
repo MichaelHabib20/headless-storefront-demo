@@ -36,12 +36,9 @@ export function ProductOptions({ options, locale, labels }: ProductOptionsProps)
 function OptionPicker({ option, locale, labels }: { option: ProductOption; locale: Locale; labels: ProductOptionsLabels }) {
   const look = optionLook(option);
   const selected = option.values.find((value) => value.state === 'selected');
-  const nameId = `option-${option.id}`;
   const heading = (
     <>
-      <span className={styles.name} id={nameId}>
-        {option.name}
-      </span>
+      <span className={styles.name}>{option.name}</span>
       {selected && <span className={styles.current}>{selected.label}</span>}
     </>
   );
@@ -50,7 +47,7 @@ function OptionPicker({ option, locale, labels }: { option: ProductOption; local
     return (
       <details className={styles.dropdown} data-testid="product-option" data-look={look}>
         <summary className={styles.summary}>{heading}</summary>
-        <ul className={styles.menu} aria-labelledby={nameId}>
+        <ul className={styles.menu} aria-label={option.name}>
           {option.values.map((value) => (
             <li key={value.id}>
               <OptionValue value={value} look={look} locale={locale} labels={labels} />
@@ -62,7 +59,7 @@ function OptionPicker({ option, locale, labels }: { option: ProductOption; local
   }
 
   return (
-    <div className={styles.option} role="group" aria-labelledby={nameId} data-testid="product-option" data-look={look}>
+    <div className={styles.option} role="group" aria-label={option.name} data-testid="product-option" data-look={look}>
       <p className={styles.heading}>{heading}</p>
       <ul className={`${styles.values} ${styles[look]}`}>
         {option.values.map((value) => (
@@ -113,9 +110,13 @@ function OptionValue({ value, look, locale, labels }: { value: ProductOptionValu
   // Clickable only when the backend gave it somewhere to go (never for `unavailable`).
   if (value.state !== 'unavailable' && value.target) {
     return (
-      <TargetLink target={value.target} locale={locale} className={classes}>
+      <TargetLink
+        target={value.target}
+        locale={locale}
+        className={classes}
+        aria-label={value.state === 'out_of_stock' ? `${value.label}, ${labels.outOfStock}` : value.label}
+      >
         {face}
-        {value.state === 'out_of_stock' && <span className="visually-hidden">, {labels.outOfStock}</span>}
       </TargetLink>
     );
   }
