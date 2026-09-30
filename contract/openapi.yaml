@@ -25,6 +25,22 @@ info:
 
     Error codes: `unauthenticated` (401), `not_found` (404), `validation_failed` (422, with `fields`),
     `quantity_not_allowed` (422), `compare_full` (409), `rate_limited` (429), `server_error` (500).
+    Shopping: `already_available` (409). Checkout and orders: `total_changed` (409), `checkout_incomplete` (409),
+    `payment_change_needs_consent` (409), `order_in_progress` (409), `cannot_cancel` (409),
+    `guest_checkout_disabled` (403), `phone_in_use` (409), `payment_provider_error` (502).
+
+    Money: every amount is a `Money` or a `Price` with ready-to-show text. Storefronts show that text and
+    never format, add up or compare the numbers.
+
+    Listing links: sort options, filter values and "remove filter" chips carry a `query` string written by
+    the backend. Storefronts use it as the query of their own listing URL and send the same parameters back
+    to `GET /products`. They never build filter parameters themselves.
+
+    Checkout: the storefront sends the shopper's choices and no prices. `POST /checkout` answers with
+    everything to show (options, what is missing, the price lines and the total). `POST /orders` must send
+    back the total that was shown (`expectedTotal`); the backend refuses the order if its own total differs.
+    After an online payment the shopper returns to the storefront's own `returnUrl` with `?checkout=<reference>`;
+    the real result comes from `GET /checkout/result`, never from the URL.
 servers:
   - url: https://staging-seif.witheldokan.com/api/customer/v3
     description: seif staging
@@ -323,6 +339,529 @@ paths:
               schema: { $ref: '#/components/schemas/UnreadCountResponse' }
         default: { $ref: '#/components/responses/Error' }
 
+  # ---------------------------------------------------------------- shopping
+
+  /products:
+    get:
+      operationId: getProducts
+      summary: One product listing for every listing page (category, brand, list, deals, tag, search, all products)
+      description: |
+        Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`); none = all products.
+        Filter and sort parameters come from the `query` strings of a previous answer: pass them through
+        as they are. Works without a token; with a token prices and limits are the shopper's.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: category, in: query, required: false, description: 'CategoryTarget.path joined with "/"', schema: { type: string } }
+        - { name: brand, in: query, required: false, description: BrandTarget.slug, schema: { type: string } }
+        - { name: list, in: query, required: false, description: 'ListTarget.slug, or ListTarget.id when the slug is null', schema: { type: string } }
+        - { name: tag, in: query, required: false, description: TagTarget.slug, schema: { type: string } }
+        - { name: deals, in: query, required: false, schema: { type: boolean } }
+        - { name: q, in: query, required: false, description: Search text, schema: { type: string, maxLength: 200 } }
+        - { name: brands, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
+        - { name: categories, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
+        - { name: options, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
+        - { name: inStock, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: boolean } }
+        - { name: priceMin, in: query, required: false, description: Filter typed by the shopper (see ListingFacet.range), schema: { type: number, minimum: 0 } }
+        - { name: priceMax, in: query, required: false, description: Filter typed by the shopper (see ListingFacet.range), schema: { type: number, minimum: 0 } }
+        - { name: sort, in: query, required: false, description: 'Only from a `query` string.', schema: { type: string } }
+        - $ref: '#/components/parameters/Page'
+        - { name: perPage, in: query, required: false, description: Default and maximum are store settings, schema: { type: integer, minimum: 1, maximum: 100 } }
+      responses:
+        '200':
+          description: Listing (an empty result is 200 with no items)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductListingResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /products/{slug}:
+    parameters:
+      - $ref: '#/components/parameters/ProductSlug'
+      - $ref: '#/components/parameters/Locale'
+    get:
+      operationId: getProduct
+      summary: Product page. The backend picks the variant, prices it and decides every option's state.
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductDetailsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /products/{slug}/recommendations:
+    parameters:
+      - $ref: '#/components/parameters/ProductSlug'
+      - $ref: '#/components/parameters/Locale'
+    get:
+      operationId: getProductRecommendations
+      summary: Product rows for the product page (related, similar, bought together), in the order to show them
+      responses:
+        '200':
+          description: Recommendation sections (only sections with products)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductRecommendationsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /products/{slug}/reviews:
+    parameters:
+      - $ref: '#/components/parameters/ProductSlug'
+      - $ref: '#/components/parameters/Locale'
+    get:
+      operationId: getProductReviews
+      summary: Rating summary and reviews
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: Reviews (`enabled` false when the store has reviews switched off)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductReviewsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /products/{productId}/notify-me:
+    parameters:
+      - $ref: '#/components/parameters/ProductId'
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: notifyWhenAvailable
+      summary: Tell the shopper when an out-of-stock product is back. 409 already_available when it is in stock.
+      security: [{ bearer: [] }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                email: { type: string, format: email, nullable: true }
+      responses:
+        '200':
+          description: Subscribed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                additionalProperties: false
+                properties:
+                  data:
+                    type: object
+                    required: [subscribed]
+                    additionalProperties: false
+                    properties:
+                      subscribed: { type: boolean, enum: [true] }
+        default: { $ref: '#/components/responses/Error' }
+
+  /search/suggestions:
+    get:
+      operationId: getSearchSuggestions
+      summary: Products to show under the search box while typing. Read-only.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: q, in: query, required: true, schema: { type: string, minLength: 1, maxLength: 200 } }
+        - { name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 20, default: 6 } }
+      responses:
+        '200':
+          description: Suggestions
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SearchSuggestionsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /categories:
+    get:
+      operationId: getCategories
+      summary: The category tree (categories, groups, sub-categories) for a categories page
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Category tree
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CategoriesResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /brands:
+    get:
+      operationId: getBrands
+      summary: Brands index
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - $ref: '#/components/parameters/Page'
+        - { name: perPage, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 100, default: 48 } }
+      responses:
+        '200':
+          description: Brands page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BrandsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /resolve:
+    get:
+      operationId: resolvePath
+      summary: What an unknown path is (old storefront URLs, the merchant's redirect table)
+      description: |
+        For paths the storefront has no page for. Always 200; `result` says what to do:
+        `target` → redirect (permanent) to the storefront's own URL of that Target; `redirect` → follow
+        `target` or `url` with `permanent`; `gone` → answer 410; `not_found` → answer 404.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: path, in: query, required: true, description: 'Path and query as requested, e.g. /en/product/skin-care/face-care', schema: { type: string, maxLength: 2000 } }
+      responses:
+        '200':
+          description: Resolution
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ResolutionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  # ---------------------------------------------------------------- checkout and orders
+
+  /checkout/settings:
+    get:
+      operationId: getCheckoutSettings
+      summary: What this store's checkout supports and how its address form looks. No token needed.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Checkout settings
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CheckoutSettingsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /checkout:
+    post:
+      operationId: computeCheckout
+      summary: Compute the checkout for the shopper's choices. Never writes; call it after every change.
+      description: |
+        A choice that is no longer valid (deleted address, payment method not offered any more) is dropped,
+        explained in `messages` and listed again in `missing`. The call does not fail because of it.
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CheckoutSelections' }
+      responses:
+        '200':
+          description: Checkout
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CheckoutResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /checkout/contact:
+    put:
+      operationId: setCheckoutContact
+      summary: Contact details of a guest who checks out without an account
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, phone]
+              additionalProperties: false
+              properties:
+                firstName: { type: string, minLength: 1, maxLength: 100 }
+                lastName: { type: string, minLength: 1, maxLength: 100 }
+                phone: { type: string, minLength: 5, maxLength: 20 }
+                email: { type: string, format: email, nullable: true }
+      responses:
+        '200':
+          description: Saved contact
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                additionalProperties: false
+                properties:
+                  data: { $ref: '#/components/schemas/CheckoutContact' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /checkout/result:
+    get:
+      operationId: getCheckoutResult
+      summary: The real state of an order or payment. Call it on the page the shopper returns to.
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: ref, in: query, required: true, description: '`next.reference` from POST /orders, or the `checkout` parameter on the return URL', schema: { type: string, maxLength: 200 } }
+      responses:
+        '200':
+          description: Result (poll while `status` is pending)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CheckoutResultResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /uploads:
+    post:
+      operationId: uploadFile
+      summary: Upload a prescription image. The returned id goes in `prescriptionFiles`.
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary, description: 'jpg, png, webp or pdf, up to 10 MB' }
+      responses:
+        '201':
+          description: Uploaded file
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                additionalProperties: false
+                properties:
+                  data: { $ref: '#/components/schemas/UploadedFile' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /locations:
+    get:
+      operationId: getLocations
+      summary: Cities, areas and districts for the address form. No token needed.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Locations
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LocationsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /pickup-branches:
+    get:
+      operationId: getPickupBranches
+      summary: Branches where an order can be collected
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Branches (empty when the store has no pickup)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PickupBranchesResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /addresses:
+    get:
+      operationId: getAddresses
+      summary: The shopper's address book
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Addresses
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AddressesResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    post:
+      operationId: createAddress
+      summary: Add an address
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddressInput' }
+      responses:
+        '201':
+          description: The new address and the whole address book
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AddressSavedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /addresses/{addressId}:
+    parameters:
+      - $ref: '#/components/parameters/AddressId'
+      - $ref: '#/components/parameters/Locale'
+    put:
+      operationId: updateAddress
+      summary: Change an address. The answer carries the address id to use from now on (it can be a new id).
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AddressInput' }
+      responses:
+        '200':
+          description: The saved address and the whole address book
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AddressSavedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: deleteAddress
+      summary: Remove an address
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: The address book after the change
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AddressesResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /addresses/{addressId}/default:
+    parameters:
+      - $ref: '#/components/parameters/AddressId'
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: setDefaultAddress
+      summary: Make this the default address
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: The address book after the change
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AddressesResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /orders:
+    get:
+      operationId: getOrders
+      summary: The shopper's orders, newest first
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: Orders page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrdersResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    post:
+      operationId: placeOrder
+      summary: Place the order for the shopper's cart
+      description: |
+        Send the same choices as the last `POST /checkout` plus the total that was shown.
+        409 `total_changed` / `checkout_incomplete` / `payment_change_needs_consent` carry the fresh
+        `checkout` next to `error`: show it and let the shopper confirm again.
+        An `Idempotency-Key` header makes a retry with the same key return the first answer.
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: Idempotency-Key, in: header, required: false, schema: { type: string, maxLength: 100 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlaceOrderRequest' }
+      responses:
+        '200':
+          description: What to do next
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlaceOrderResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /orders/cancellation-reasons:
+    get:
+      operationId: getOrderCancellationReasons
+      summary: Reasons the shopper can pick when cancelling
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Reasons
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CancellationReasonsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /orders/{orderId}:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/Locale'
+    get:
+      operationId: getOrder
+      summary: One order of the shopper. Read-only.
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Order
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /orders/{orderId}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: cancelOrder
+      summary: Cancel an order (only while `actions.canCancel`). 409 cannot_cancel otherwise.
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reasonId]
+              additionalProperties: false
+              properties:
+                reasonId: { type: integer, minimum: 1 }
+                note: { type: string, maxLength: 500, nullable: true }
+      responses:
+        '200':
+          description: The order after the change
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /orders/{orderId}/reorder:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: reorder
+      summary: Add the order's items to the cart again. Items that can't be bought now are skipped and listed.
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: The cart and what was skipped
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReorderResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
 components:
   securitySchemes:
     bearer:
@@ -341,6 +880,23 @@ components:
       required: true
       description: ProductCard.id
       schema: { type: integer, minimum: 1 }
+    ProductSlug:
+      name: slug
+      in: path
+      required: true
+      description: ProductTarget.slug (either language)
+      schema: { type: string, minLength: 1 }
+    AddressId:
+      name: addressId
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1 }
+    OrderId:
+      name: orderId
+      in: path
+      required: true
+      description: Order.id
+      schema: { type: string, minLength: 1, maxLength: 64 }
     Page:
       name: page
       in: query
@@ -377,6 +933,8 @@ components:
         - $ref: '#/components/schemas/DealsTarget'
         - $ref: '#/components/schemas/HomeTarget'
         - $ref: '#/components/schemas/UrlTarget'
+        - $ref: '#/components/schemas/TagTarget'
+        - $ref: '#/components/schemas/SearchTarget'
       discriminator:
         propertyName: type
         mapping:
@@ -390,6 +948,8 @@ components:
           deals: '#/components/schemas/DealsTarget'
           home: '#/components/schemas/HomeTarget'
           url: '#/components/schemas/UrlTarget'
+          tag: '#/components/schemas/TagTarget'
+          search: '#/components/schemas/SearchTarget'
     ProductTarget:
       type: object
       required: [type, slug]
@@ -464,6 +1024,21 @@ components:
       properties:
         type: { type: string, enum: [url] }
         url: { type: string, pattern: '^[a-zA-Z][a-zA-Z0-9+.-]*:' }
+    TagTarget:
+      type: object
+      required: [type, slug]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [tag] }
+        slug: { type: string, minLength: 1 }
+    SearchTarget:
+      description: Search results for `query` (empty = all products)
+      type: object
+      required: [type, query]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [search] }
+        query: { type: string }
 
     NullableTarget:
       description: A Target, or null when not clickable.
@@ -479,6 +1054,8 @@ components:
         - $ref: '#/components/schemas/DealsTarget'
         - $ref: '#/components/schemas/HomeTarget'
         - $ref: '#/components/schemas/UrlTarget'
+        - $ref: '#/components/schemas/TagTarget'
+        - $ref: '#/components/schemas/SearchTarget'
 
     Image:
       type: object
@@ -672,7 +1249,7 @@ components:
         compareAt: { type: number, nullable: true, description: Original price when discounted }
         discountPercent: { type: integer, nullable: true }
         display: { type: string, description: 'Ready-to-show text for `amount` in the request language, e.g. "176 EGP", "1,260 جنية"', example: 176 EGP }
-        compareAtDisplay: { type: string, nullable: true, description: Ready-to-show text for `compareAt`; null when not discounted, example: 196 EGP }
+        compareAtDisplay: { type: string, nullable: true, description: 'Ready-to-show text for `compareAt`; null when not discounted', example: 196 EGP }
         discountLabel: { type: string, nullable: true, description: 'Ready-to-show discount text, e.g. "10 %" (store settings may add decimals or "OFF"); null when not discounted', example: '10 %' }
 
     ProductCard:
@@ -825,13 +1402,16 @@ components:
       required: [error]
       additionalProperties: false
       properties:
+        checkout:
+          description: The fresh checkout, sent with total_changed, checkout_incomplete and payment_change_needs_consent
+          allOf: [{ $ref: '#/components/schemas/Checkout' }]
         error:
           type: object
           required: [code, message]
           additionalProperties: false
           properties:
             code: { type: string, example: server_error }
-            message: { type: string, description: Localized, safe to show }
+            message: { type: string, description: 'Localized, safe to show' }
             fields:
               description: Per-field messages (validation_failed)
               type: object
@@ -1098,3 +1678,994 @@ components:
           additionalProperties: false
           properties:
             unreadCount: { type: integer, minimum: 0 }
+
+    # ---------------------------------------------------------------- shopping
+
+    RichText:
+      description: |
+        Formatted text written by the merchant. The backend cleans `html` (no scripts, styles, iframes or
+        event handlers; links and images only with http/https addresses). It is the only HTML a storefront
+        may put on a page.
+      type: object
+      required: [html]
+      additionalProperties: false
+      properties:
+        html: { type: string }
+
+    Seo:
+      description: Page meta decided by the backend. Targets become the storefront's own URLs.
+      type: object
+      required: [title, description, canonical, alternates, index]
+      additionalProperties: false
+      properties:
+        title: { type: string }
+        description: { type: string, nullable: true }
+        canonical: { $ref: '#/components/schemas/NullableTarget' }
+        alternates:
+          description: The same page in each language the store has
+          type: array
+          items:
+            type: object
+            required: [locale, target]
+            additionalProperties: false
+            properties:
+              locale: { $ref: '#/components/schemas/Locale' }
+              target: { $ref: '#/components/schemas/Target' }
+        index: { type: boolean, description: False → tell search engines not to index this page }
+
+    ProductOption:
+      description: One thing the shopper chooses (size, color). Every value says where a click on it goes.
+      type: object
+      required: [id, name, display, values]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        display: { type: string, enum: [buttons, dropdown, color, image], description: 'A hint; unknown values → draw as buttons' }
+        values:
+          type: array
+          items:
+            type: object
+            required: [id, label, color, image, state, target]
+            additionalProperties: false
+            properties:
+              id: { type: integer }
+              label: { type: string }
+              color: { type: string, nullable: true, description: CSS color for a swatch }
+              image: { type: string, nullable: true }
+              state:
+                description: selected = the product shown now. out_of_stock = can be opened but not bought. unavailable = no such product (not clickable).
+                type: string
+                enum: [selected, available, out_of_stock, unavailable]
+              target:
+                description: The product to open when this value is clicked; null when selected or unavailable
+                nullable: true
+                allOf: [{ $ref: '#/components/schemas/ProductTarget' }]
+
+    ProductAvailability:
+      type: object
+      required: [status, message, notifyMe]
+      additionalProperties: false
+      properties:
+        status: { type: string, enum: [available, out_of_stock, coming_soon, preorder, unavailable] }
+        message: { type: string, nullable: true, description: 'Localized text to show, e.g. "Out of stock", "Only 3 left"; null when there is nothing to say' }
+        notifyMe: { type: boolean, description: 'Offer "tell me when it is back" (POST /products/{productId}/notify-me)' }
+
+    ProductDetails:
+      type: object
+      required: [product, redirect, sku, gallery, video, options, availability, quantityStep, breadcrumbs, summary, description, specifications, notices, seo]
+      additionalProperties: false
+      properties:
+        product:
+          description: The product being shown (one variant). Its `id` is the one to use for cart, wishlist and compare.
+          allOf: [{ $ref: '#/components/schemas/ProductCard' }]
+        redirect:
+          description: Set when the slug asked for is not this product's address in this language. Redirect there instead of showing the page.
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/ProductTarget' }]
+        sku: { type: string, nullable: true, description: Null when the store hides it }
+        gallery:
+          description: Main image first
+          type: array
+          items: { $ref: '#/components/schemas/Image' }
+        video:
+          type: object
+          nullable: true
+          required: [url, thumbnail]
+          additionalProperties: false
+          properties:
+            url: { type: string }
+            thumbnail: { type: string, nullable: true }
+        options:
+          description: Empty for a product without choices
+          type: array
+          items: { $ref: '#/components/schemas/ProductOption' }
+        availability: { $ref: '#/components/schemas/ProductAvailability' }
+        quantityStep: { type: number, description: 'Allowed increment (1, or e.g. 0.5 for weighed products)' }
+        breadcrumbs:
+          type: array
+          items: { $ref: '#/components/schemas/Link' }
+        summary:
+          description: Short description
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/RichText' }]
+        description:
+          description: Long description
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/RichText' }]
+        specifications:
+          type: array
+          items:
+            type: object
+            required: [name, value]
+            additionalProperties: false
+            properties:
+              name: { type: string }
+              value: { type: string }
+        notices:
+          description: Short texts to show near the price (promotion, payment offer)
+          type: array
+          items:
+            type: object
+            required: [kind, text]
+            additionalProperties: false
+            properties:
+              kind: { type: string, enum: [promotion, payment_offer, info] }
+              text: { type: string }
+        seo: { $ref: '#/components/schemas/Seo' }
+    ProductDetailsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/ProductDetails' }
+
+    ProductRecommendationsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [sections]
+          additionalProperties: false
+          properties:
+            sections:
+              type: array
+              items:
+                type: object
+                required: [key, title, products, total]
+                additionalProperties: false
+                properties:
+                  key: { type: string, enum: [related, similar, frequently_bought_together] }
+                  title: { type: string }
+                  products:
+                    type: array
+                    items: { $ref: '#/components/schemas/ProductCard' }
+                  total:
+                    description: Price of buying all of them together (frequently_bought_together only)
+                    nullable: true
+                    allOf: [{ $ref: '#/components/schemas/Money' }]
+
+    ProductReviewsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [enabled, summary, items, pagination]
+          additionalProperties: false
+          properties:
+            enabled: { type: boolean }
+            summary:
+              type: object
+              nullable: true
+              required: [average, count, distribution]
+              additionalProperties: false
+              properties:
+                average: { type: number }
+                count: { type: integer }
+                distribution:
+                  description: 5 stars first
+                  type: array
+                  items:
+                    type: object
+                    required: [stars, count, percent]
+                    additionalProperties: false
+                    properties:
+                      stars: { type: integer, minimum: 1, maximum: 5 }
+                      count: { type: integer, minimum: 0 }
+                      percent: { type: integer, minimum: 0, maximum: 100 }
+            items:
+              type: array
+              items:
+                type: object
+                required: [id, author, rating, comment, createdAt]
+                additionalProperties: false
+                properties:
+                  id: { type: integer }
+                  author: { type: string, nullable: true, description: Null when the store hides names }
+                  rating: { type: integer, minimum: 1, maximum: 5 }
+                  comment: { type: string, nullable: true }
+                  createdAt: { type: string, format: date-time }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+
+    ListingFacet:
+      description: One filter group. Links come ready from the backend (`query`).
+      type: object
+      required: [key, label, kind, display, values, range]
+      additionalProperties: false
+      properties:
+        key: { type: string, example: brand }
+        label: { type: string }
+        kind: { type: string, enum: [options, range], description: 'options → `values`; range → `range`. Skip unknown kinds.' }
+        display: { type: string, enum: [list, color, image], description: 'A hint for `values`' }
+        values:
+          type: array
+          items:
+            type: object
+            required: [label, selected, count, color, image, query]
+            additionalProperties: false
+            properties:
+              label: { type: string }
+              selected: { type: boolean }
+              count: { type: integer, nullable: true, description: Products with this value; null when not counted }
+              color: { type: string, nullable: true }
+              image: { type: string, nullable: true }
+              query: { type: string, description: 'Filters after clicking this value (adds it, or removes it when selected)' }
+        range:
+          description: A from/to filter typed by the shopper. Send the two numbers as `priceMin` / `priceMax`, next to the parameters of `query`.
+          type: object
+          nullable: true
+          required: [min, max, selectedMin, selectedMax, query]
+          additionalProperties: false
+          properties:
+            min:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Money' }]
+            max:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Money' }]
+            selectedMin: { type: number, nullable: true }
+            selectedMax: { type: number, nullable: true }
+            query: { type: string, description: 'The other filters, without this range' }
+
+    ProductListing:
+      type: object
+      required: [context, breadcrumbs, items, pagination, sort, facets, appliedFilters, clearFiltersQuery, seo]
+      additionalProperties: false
+      properties:
+        context:
+          type: object
+          required: [type, title, description, image, query]
+          additionalProperties: false
+          properties:
+            type: { type: string, enum: [all, category, brand, list, deals, tag, search] }
+            title: { type: string, description: The page heading }
+            description:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/RichText' }]
+            image:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Image' }]
+            query: { type: string, nullable: true, description: The search text (search only) }
+        breadcrumbs:
+          type: array
+          items: { $ref: '#/components/schemas/Link' }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/ProductCard' }
+        pagination: { $ref: '#/components/schemas/Pagination' }
+        sort:
+          description: Sort choices in display order; exactly one is selected
+          type: array
+          items:
+            type: object
+            required: [label, selected, query]
+            additionalProperties: false
+            properties:
+              label: { type: string }
+              selected: { type: boolean }
+              query: { type: string }
+        facets:
+          description: Empty when the store has filters switched off
+          type: array
+          items: { $ref: '#/components/schemas/ListingFacet' }
+        appliedFilters:
+          description: Chips for the filters in use
+          type: array
+          items:
+            type: object
+            required: [label, removeQuery]
+            additionalProperties: false
+            properties:
+              label: { type: string }
+              removeQuery: { type: string }
+        clearFiltersQuery: { type: string, nullable: true, description: Null when no filter is in use }
+        seo: { $ref: '#/components/schemas/Seo' }
+    ProductListingResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/ProductListing' }
+
+    SearchSuggestionsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [query, products, viewAll]
+          additionalProperties: false
+          properties:
+            query: { type: string }
+            products:
+              type: array
+              items: { $ref: '#/components/schemas/ProductCard' }
+            viewAll: { $ref: '#/components/schemas/SearchTarget' }
+
+    CategoryNode:
+      type: object
+      required: [id, name, image, target, children]
+      additionalProperties: false
+      properties:
+        id: { type: string, description: Unique in the tree }
+        name: { type: string }
+        image:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Image' }]
+        target: { $ref: '#/components/schemas/CategoryTarget' }
+        children:
+          type: array
+          items: { $ref: '#/components/schemas/CategoryNode' }
+    CategoriesResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/CategoryNode' }
+
+    BrandsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Tile' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+
+    Resolution:
+      type: object
+      required: [result, target, url, permanent]
+      additionalProperties: false
+      properties:
+        result: { type: string, enum: [target, redirect, gone, not_found] }
+        target: { $ref: '#/components/schemas/NullableTarget' }
+        url: { type: string, nullable: true, description: Where to redirect when it is not something the backend knows as a Target }
+        permanent: { type: boolean, description: '301 when true, 302 when false' }
+    ResolutionResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Resolution' }
+
+    # ---------------------------------------------------------------- checkout and orders
+
+    CheckoutSettings:
+      type: object
+      required: [guestCheckout, guestEmail, pickup, promoCode, orderNote, notice, addressForm]
+      additionalProperties: false
+      properties:
+        guestCheckout: { type: boolean, description: False → a shopper must sign in before checkout }
+        guestEmail: { type: string, enum: [required, optional, hidden] }
+        pickup:
+          type: object
+          required: [enabled, label]
+          additionalProperties: false
+          properties:
+            enabled: { type: boolean }
+            label: { type: string, nullable: true }
+        promoCode: { type: boolean }
+        orderNote: { type: boolean }
+        notice: { type: string, nullable: true, description: A text the merchant wants on the checkout page }
+        addressForm:
+          description: Draw the address form from this. Send the values back under the same names.
+          type: object
+          required: [levels, fields]
+          additionalProperties: false
+          properties:
+            levels:
+              description: Location pickers to show, in order
+              type: array
+              items: { type: string, enum: [city, area, district] }
+            fields:
+              description: Text inputs to show, in order (hidden fields are not listed)
+              type: array
+              items:
+                type: object
+                required: [name, label, required, kind]
+                additionalProperties: false
+                properties:
+                  name: { type: string, example: street }
+                  label: { type: string }
+                  required: { type: boolean }
+                  kind: { type: string, enum: [text, phone, email], description: 'Unknown values → text' }
+    CheckoutSettingsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/CheckoutSettings' }
+
+    NamedRef:
+      type: object
+      required: [id, name]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        name: { type: string }
+
+    Address:
+      type: object
+      required: [id, isDefault, city, area, district, values, formatted, deliverable]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        isDefault: { type: boolean }
+        city: { $ref: '#/components/schemas/NamedRef' }
+        area:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/NamedRef' }]
+        district:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/NamedRef' }]
+        values:
+          description: The text fields of CheckoutSettings.addressForm.fields, by name
+          type: object
+          additionalProperties: { type: string, nullable: true }
+        formatted: { type: string, description: 'The whole address as one line, written by the backend' }
+        deliverable: { type: boolean, description: False → the store does not deliver there now }
+    AddressInput:
+      type: object
+      required: [cityId, values]
+      additionalProperties: false
+      properties:
+        cityId: { type: integer, minimum: 1 }
+        areaId: { type: integer, minimum: 1, nullable: true }
+        districtId: { type: integer, minimum: 1, nullable: true }
+        isDefault: { type: boolean }
+        values:
+          type: object
+          additionalProperties: { type: string, nullable: true }
+    AddressesResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Address' }
+    AddressSavedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [address, items]
+          additionalProperties: false
+          properties:
+            address: { $ref: '#/components/schemas/Address' }
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Address' }
+
+    LocationsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [cities]
+          additionalProperties: false
+          properties:
+            cities:
+              type: array
+              items:
+                type: object
+                required: [id, name, areas]
+                additionalProperties: false
+                properties:
+                  id: { type: integer }
+                  name: { type: string }
+                  areas:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, name, districts]
+                      additionalProperties: false
+                      properties:
+                        id: { type: integer }
+                        name: { type: string }
+                        districts:
+                          type: array
+                          items: { $ref: '#/components/schemas/NamedRef' }
+
+    PickupBranch:
+      type: object
+      required: [id, name, address, phone, mapUrl]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        address: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        mapUrl: { type: string, nullable: true }
+    PickupBranchesResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/PickupBranch' }
+
+    UploadedFile:
+      type: object
+      required: [id, name]
+      additionalProperties: false
+      properties:
+        id: { type: string, description: 'Send it in `prescriptionFiles`' }
+        name: { type: string }
+
+    CheckoutSelections:
+      description: What the shopper has chosen so far. Everything is optional. No prices.
+      type: object
+      additionalProperties: false
+      properties:
+        fulfilment: { type: string, enum: [delivery, pickup], nullable: true }
+        addressId: { type: integer, nullable: true, description: For delivery }
+        branchId: { type: integer, nullable: true, description: For pickup }
+        paymentMethodId: { type: integer, nullable: true }
+        installmentPlanId: { type: integer, nullable: true }
+        promoCode: { type: string, maxLength: 100, nullable: true }
+        note: { type: string, maxLength: 1000, nullable: true }
+        prescriptionFiles:
+          type: array
+          maxItems: 10
+          items: { type: string }
+        acceptPaymentChange: { type: boolean, description: 'Send true after the shopper accepted a `payment_change_needs_consent` answer' }
+
+    CheckoutContact:
+      type: object
+      required: [isGuest, name, phone, email]
+      additionalProperties: false
+      properties:
+        isGuest: { type: boolean }
+        name: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+
+    TotalLine:
+      description: One row of a price breakdown. Show `label` and `amount.display` (or `text`). Discounts are negative and their text already has the minus sign.
+      type: object
+      required: [kind, label, amount, text]
+      additionalProperties: false
+      properties:
+        kind: { type: string, enum: [subtotal, promotion_discount, promo_code, delivery, payment_fee, other], description: 'For styling only; unknown values → other' }
+        label: { type: string }
+        amount:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Money' }]
+        text: { type: string, nullable: true, description: 'Shown instead of an amount, e.g. "Free" or "Confirmed by phone"' }
+
+    CheckoutNotice:
+      type: object
+      required: [code, message]
+      additionalProperties: false
+      properties:
+        code: { type: string }
+        message: { type: string }
+
+    Checkout:
+      description: Everything the checkout page shows, computed by the backend for the choices sent.
+      type: object
+      required: [cart, contact, fulfilment, payment, promo, requirements, totals, minimumOrder, missing, blockers, messages, canPlaceOrder]
+      additionalProperties: false
+      properties:
+        cart: { $ref: '#/components/schemas/Cart' }
+        contact: { $ref: '#/components/schemas/CheckoutContact' }
+        fulfilment:
+          type: object
+          required: [options, selected, addresses, addressId, branch, delivery]
+          additionalProperties: false
+          properties:
+            options:
+              description: Ways to get the order, in display order
+              type: array
+              items:
+                type: object
+                required: [type, label, available, reason]
+                additionalProperties: false
+                properties:
+                  type: { type: string, enum: [delivery, pickup] }
+                  label: { type: string }
+                  available: { type: boolean }
+                  reason: { type: string, nullable: true, description: Why it is not available }
+            selected: { type: string, enum: [delivery, pickup], nullable: true }
+            addresses:
+              description: The shopper's address book
+              type: array
+              items: { $ref: '#/components/schemas/Address' }
+            addressId: { type: integer, nullable: true, description: The chosen address }
+            branch:
+              description: The chosen pickup branch
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/PickupBranch' }]
+            delivery:
+              description: Null until the backend can price the delivery (an address or branch is chosen)
+              type: object
+              nullable: true
+              required: [fee, text, free]
+              additionalProperties: false
+              properties:
+                fee:
+                  nullable: true
+                  allOf: [{ $ref: '#/components/schemas/Money' }]
+                text: { type: string, nullable: true, description: 'Shown instead of a fee, e.g. "Confirmed by phone"' }
+                free: { type: boolean }
+        payment:
+          type: object
+          required: [methods, selected]
+          additionalProperties: false
+          properties:
+            methods:
+              description: Methods offered for this cart and these choices, in display order
+              type: array
+              items:
+                type: object
+                required: [id, name, icon, online, fee, note, plans]
+                additionalProperties: false
+                properties:
+                  id: { type: integer }
+                  name: { type: string }
+                  icon: { type: string, nullable: true }
+                  online: { type: boolean, description: True → the shopper pays on a payment page after placing the order }
+                  fee:
+                    description: Extra fee (or discount, negative) of this method for this checkout
+                    nullable: true
+                    allOf: [{ $ref: '#/components/schemas/Money' }]
+                  note: { type: string, nullable: true }
+                  plans:
+                    description: Installment plans; when not empty the shopper must pick one
+                    type: array
+                    items: { $ref: '#/components/schemas/NamedRef' }
+            selected:
+              type: object
+              nullable: true
+              required: [methodId, planId]
+              additionalProperties: false
+              properties:
+                methodId: { type: integer }
+                planId: { type: integer, nullable: true }
+        promo:
+          type: object
+          required: [code, applied, message]
+          additionalProperties: false
+          properties:
+            code: { type: string, nullable: true, description: The code that was sent }
+            applied: { type: boolean }
+            message: { type: string, nullable: true, description: 'Why the code was refused, or a hint about what it changed' }
+        requirements:
+          type: object
+          required: [prescription]
+          additionalProperties: false
+          properties:
+            prescription:
+              type: object
+              required: [required, files]
+              additionalProperties: false
+              properties:
+                required: { type: boolean }
+                files:
+                  type: array
+                  items: { $ref: '#/components/schemas/UploadedFile' }
+        totals:
+          type: object
+          required: [lines, total]
+          additionalProperties: false
+          properties:
+            lines:
+              type: array
+              items: { $ref: '#/components/schemas/TotalLine' }
+            total:
+              description: What the shopper pays. Show it, and send its `amount` back as `expectedTotal`.
+              allOf: [{ $ref: '#/components/schemas/Money' }]
+        minimumOrder:
+          description: Null when the store has no minimum
+          type: object
+          nullable: true
+          required: [amount, remaining, progressPercent]
+          additionalProperties: false
+          properties:
+            amount: { $ref: '#/components/schemas/Money' }
+            remaining: { $ref: '#/components/schemas/Money' }
+            progressPercent: { type: integer, minimum: 0, maximum: 100 }
+        missing:
+          description: |
+            What the shopper still has to choose or fill. Codes: `sign_in`, `contact`, `fulfilment`, `address`,
+            `branch`, `payment_method`, `installment_plan`, `prescription`. Show `message` for codes you don't know.
+          type: array
+          items: { $ref: '#/components/schemas/CheckoutNotice' }
+        blockers:
+          description: |
+            Why the order can't be placed even with every field filled. Codes: `empty_cart`, `unavailable_items`,
+            `minimum_order`, `guest_checkout_disabled`, `account_not_approved`, `not_deliverable`, `pickup_only_items`,
+            `no_payment_method`, `promo_invalid`, `not_supported`. Show `message`.
+          type: array
+          items: { $ref: '#/components/schemas/CheckoutNotice' }
+        messages:
+          description: Things that changed and the shopper should know (a dropped choice, a changed price)
+          type: array
+          items:
+            type: object
+            required: [level, text]
+            additionalProperties: false
+            properties:
+              level: { type: string, enum: [info, warning] }
+              text: { type: string }
+        canPlaceOrder: { type: boolean, description: 'Enable the "place order" button only when true' }
+    CheckoutResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Checkout' }
+
+    PlaceOrderRequest:
+      type: object
+      required: [selections, expectedTotal, acceptTerms]
+      additionalProperties: false
+      properties:
+        selections: { $ref: '#/components/schemas/CheckoutSelections' }
+        expectedTotal: { type: number, description: '`totals.total.amount` of the checkout the shopper saw' }
+        acceptTerms: { type: boolean, enum: [true] }
+        returnUrl:
+          description: |
+            A page of this storefront (absolute https URL on an origin the store allows). Needed for online
+            payment methods: after paying, the shopper lands there with `?checkout=<reference>` added.
+          type: string
+          maxLength: 2000
+          nullable: true
+    PlaceOrderResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [next, order]
+          additionalProperties: false
+          properties:
+            next:
+              description: |
+                `done` → the order exists; go to the result page with `reference`.
+                `redirect` → send the shopper to `url` (the payment page); they come back to `returnUrl`.
+              type: object
+              required: [type, url, reference]
+              additionalProperties: false
+              properties:
+                type: { type: string, enum: [done, redirect] }
+                url: { type: string, nullable: true }
+                reference: { type: string, description: For GET /checkout/result }
+            order:
+              description: Set when `next.type` is done
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Order' }]
+
+    CheckoutResultResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [status, message, order, retry]
+          additionalProperties: false
+          properties:
+            status:
+              description: placed = order created, pay later. paid = paid online and order created. pending = the bank has not answered yet (ask again in a few seconds). failed / cancelled = no order.
+              type: string
+              enum: [placed, paid, pending, failed, cancelled]
+            message: { type: string, nullable: true, description: 'Localized text for the shopper, written by the backend' }
+            order:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Order' }]
+            retry: { type: boolean, description: True → the cart is still there and the shopper can go back to checkout }
+
+    OrderStatus:
+      type: object
+      required: [code, label, active]
+      additionalProperties: false
+      properties:
+        code: { type: string, example: processing, description: 'For styling; show `label`' }
+        label: { type: string }
+        active: { type: boolean, description: 'Still on its way (not delivered, cancelled or returned)' }
+
+    OrderSummary:
+      type: object
+      required: [id, number, placedAt, status, itemCount, total]
+      additionalProperties: false
+      properties:
+        id: { type: string, description: 'The id for URLs and for GET /orders/{orderId}' }
+        number: { type: string, description: 'What the shopper calls the order, e.g. "48213"' }
+        placedAt: { type: string, format: date-time }
+        status: { $ref: '#/components/schemas/OrderStatus' }
+        itemCount: { type: number, minimum: 0 }
+        total: { $ref: '#/components/schemas/Money' }
+    OrdersResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/OrderSummary' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+
+    Order:
+      type: object
+      required: [id, number, placedAt, status, timeline, fulfilment, payment, items, totals, note, actions]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        number: { type: string }
+        placedAt: { type: string, format: date-time }
+        status: { $ref: '#/components/schemas/OrderStatus' }
+        timeline:
+          description: The steps of this order, in order; empty when the store shows none
+          type: array
+          items:
+            type: object
+            required: [label, done, current]
+            additionalProperties: false
+            properties:
+              label: { type: string }
+              done: { type: boolean }
+              current: { type: boolean }
+        fulfilment:
+          type: object
+          required: [type, address, branch]
+          additionalProperties: false
+          properties:
+            type: { type: string, enum: [delivery, pickup] }
+            address: { type: string, nullable: true, description: The delivery address as one line }
+            branch:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/PickupBranch' }]
+        payment:
+          type: object
+          required: [method, online]
+          additionalProperties: false
+          properties:
+            method: { type: string, nullable: true }
+            online: { type: boolean }
+        items:
+          type: array
+          items:
+            type: object
+            required: [name, image, target, quantity, lineTotal, compareAt]
+            additionalProperties: false
+            properties:
+              name: { type: string }
+              image:
+                nullable: true
+                allOf: [{ $ref: '#/components/schemas/Image' }]
+              target:
+                description: Null when the product no longer exists
+                nullable: true
+                allOf: [{ $ref: '#/components/schemas/ProductTarget' }]
+              quantity: { type: number }
+              lineTotal: { $ref: '#/components/schemas/Money' }
+              compareAt:
+                description: The line's price before discount; null when not discounted
+                nullable: true
+                allOf: [{ $ref: '#/components/schemas/Money' }]
+        totals:
+          type: object
+          required: [lines, total]
+          additionalProperties: false
+          properties:
+            lines:
+              type: array
+              items: { $ref: '#/components/schemas/TotalLine' }
+            total: { $ref: '#/components/schemas/Money' }
+        note: { type: string, nullable: true }
+        actions:
+          description: What the shopper may do now, decided by the backend
+          type: object
+          required: [canCancel, canReorder]
+          additionalProperties: false
+          properties:
+            canCancel: { type: boolean }
+            canReorder: { type: boolean }
+    OrderResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Order' }
+
+    CancellationReasonsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                required: [id, text]
+                additionalProperties: false
+                properties:
+                  id: { type: integer }
+                  text: { type: string }
+
+    ReorderResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [cart, skipped]
+          additionalProperties: false
+          properties:
+            cart: { $ref: '#/components/schemas/Cart' }
+            skipped:
+              type: array
+              items:
+                type: object
+                required: [name, reason]
+                additionalProperties: false
+                properties:
+                  name: { type: string }
+                  reason: { type: string, description: Localized }

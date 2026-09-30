@@ -266,6 +266,480 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One product listing for every listing page (category, brand, list, deals, tag, search, all products)
+         * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`); none = all products.
+         *     Filter and sort parameters come from the `query` strings of a previous answer: pass them through
+         *     as they are. Works without a token; with a token prices and limits are the shopper's.
+         */
+        get: operations["getProducts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/products/{slug}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductTarget.slug (either language) */
+                slug: components["parameters"]["ProductSlug"];
+            };
+            cookie?: never;
+        };
+        /** Product page. The backend picks the variant, prices it and decides every option's state. */
+        get: operations["getProduct"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/products/{slug}/recommendations": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductTarget.slug (either language) */
+                slug: components["parameters"]["ProductSlug"];
+            };
+            cookie?: never;
+        };
+        /** Product rows for the product page (related, similar, bought together), in the order to show them */
+        get: operations["getProductRecommendations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/products/{slug}/reviews": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductTarget.slug (either language) */
+                slug: components["parameters"]["ProductSlug"];
+            };
+            cookie?: never;
+        };
+        /** Rating summary and reviews */
+        get: operations["getProductReviews"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/products/{productId}/notify-me": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Tell the shopper when an out-of-stock product is back. 409 already_available when it is in stock. */
+        post: operations["notifyWhenAvailable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/search/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Products to show under the search box while typing. Read-only. */
+        get: operations["getSearchSuggestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The category tree (categories, groups, sub-categories) for a categories page */
+        get: operations["getCategories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/brands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Brands index */
+        get: operations["getBrands"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * What an unknown path is (old storefront URLs, the merchant's redirect table)
+         * @description For paths the storefront has no page for. Always 200; `result` says what to do:
+         *     `target` → redirect (permanent) to the storefront's own URL of that Target; `redirect` → follow
+         *     `target` or `url` with `permanent`; `gone` → answer 410; `not_found` → answer 404.
+         */
+        get: operations["resolvePath"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/checkout/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What this store's checkout supports and how its address form looks. No token needed. */
+        get: operations["getCheckoutSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compute the checkout for the shopper's choices. Never writes; call it after every change.
+         * @description A choice that is no longer valid (deleted address, payment method not offered any more) is dropped,
+         *     explained in `messages` and listed again in `missing`. The call does not fail because of it.
+         */
+        post: operations["computeCheckout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/checkout/contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Contact details of a guest who checks out without an account */
+        put: operations["setCheckoutContact"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/checkout/result": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The real state of an order or payment. Call it on the page the shopper returns to. */
+        get: operations["getCheckoutResult"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a prescription image. The returned id goes in `prescriptionFiles`. */
+        post: operations["uploadFile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cities, areas and districts for the address form. No token needed. */
+        get: operations["getLocations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pickup-branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Branches where an order can be collected */
+        get: operations["getPickupBranches"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/addresses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The shopper's address book */
+        get: operations["getAddresses"];
+        put?: never;
+        /** Add an address */
+        post: operations["createAddress"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/addresses/{addressId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                addressId: components["parameters"]["AddressId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Change an address. The answer carries the address id to use from now on (it can be a new id). */
+        put: operations["updateAddress"];
+        post?: never;
+        /** Remove an address */
+        delete: operations["deleteAddress"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/addresses/{addressId}/default": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                addressId: components["parameters"]["AddressId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Make this the default address */
+        post: operations["setDefaultAddress"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The shopper's orders, newest first */
+        get: operations["getOrders"];
+        put?: never;
+        /**
+         * Place the order for the shopper's cart
+         * @description Send the same choices as the last `POST /checkout` plus the total that was shown.
+         *     409 `total_changed` / `checkout_incomplete` / `payment_change_needs_consent` carry the fresh
+         *     `checkout` next to `error`: show it and let the shopper confirm again.
+         *     An `Idempotency-Key` header makes a retry with the same key return the first answer.
+         */
+        post: operations["placeOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/cancellation-reasons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reasons the shopper can pick when cancelling */
+        get: operations["getOrderCancellationReasons"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        /** One order of the shopper. Read-only. */
+        get: operations["getOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}/cancel": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel an order (only while `actions.canCancel`). 409 cannot_cancel otherwise. */
+        post: operations["cancelOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}/reorder": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add the order's items to the cart again. Items that can't be bought now are skipped and listed. */
+        post: operations["reorder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -273,7 +747,7 @@ export interface components {
         /** @enum {string} */
         Locale: "en" | "ar";
         /** @description Where a click goes. `null` wherever a Target is optional means "not clickable". */
-        Target: components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"];
+        Target: components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"];
         ProductTarget: {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -354,8 +828,25 @@ export interface components {
             type: "url";
             url: string;
         };
+        TagTarget: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "tag";
+            slug: string;
+        };
+        /** @description Search results for `query` (empty = all products) */
+        SearchTarget: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "search";
+            query: string;
+        };
         /** @description A Target, or null when not clickable. */
-        NullableTarget: (components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"]) | null;
+        NullableTarget: (components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"]) | null;
         Image: {
             url: string;
             alt: string | null;
@@ -576,10 +1067,12 @@ export interface components {
             popups: components["schemas"]["Popup"][];
         };
         ErrorResponse: {
+            /** @description The fresh checkout, sent with total_changed, checkout_incomplete and payment_change_needs_consent */
+            checkout?: components["schemas"]["Checkout"];
             error: {
                 /** @example server_error */
                 code: string;
-                /** @description Localized */
+                /** @description Localized, safe to show */
                 message: string;
                 /** @description Per-field messages (validation_failed) */
                 fields?: {
@@ -742,6 +1235,613 @@ export interface components {
                 unreadCount: number;
             };
         };
+        /**
+         * @description Formatted text written by the merchant. The backend cleans `html` (no scripts, styles, iframes or
+         *     event handlers; links and images only with http/https addresses). It is the only HTML a storefront
+         *     may put on a page.
+         */
+        RichText: {
+            html: string;
+        };
+        /** @description Page meta decided by the backend. Targets become the storefront's own URLs. */
+        Seo: {
+            title: string;
+            description: string | null;
+            canonical: components["schemas"]["NullableTarget"];
+            /** @description The same page in each language the store has */
+            alternates: {
+                locale: components["schemas"]["Locale"];
+                target: components["schemas"]["Target"];
+            }[];
+            /** @description False → tell search engines not to index this page */
+            index: boolean;
+        };
+        /** @description One thing the shopper chooses (size, color). Every value says where a click on it goes. */
+        ProductOption: {
+            id: number;
+            name: string;
+            /**
+             * @description A hint; unknown values → draw as buttons
+             * @enum {string}
+             */
+            display: "buttons" | "dropdown" | "color" | "image";
+            values: {
+                id: number;
+                label: string;
+                /** @description CSS color for a swatch */
+                color: string | null;
+                image: string | null;
+                /**
+                 * @description selected = the product shown now. out_of_stock = can be opened but not bought. unavailable = no such product (not clickable).
+                 * @enum {string}
+                 */
+                state: "selected" | "available" | "out_of_stock" | "unavailable";
+                /** @description The product to open when this value is clicked; null when selected or unavailable */
+                target: components["schemas"]["ProductTarget"] | null;
+            }[];
+        };
+        ProductAvailability: {
+            /** @enum {string} */
+            status: "available" | "out_of_stock" | "coming_soon" | "preorder" | "unavailable";
+            /** @description Localized text to show, e.g. "Out of stock", "Only 3 left"; null when there is nothing to say */
+            message: string | null;
+            /** @description Offer "tell me when it is back" (POST /products/{productId}/notify-me) */
+            notifyMe: boolean;
+        };
+        ProductDetails: {
+            /** @description The product being shown (one variant). Its `id` is the one to use for cart, wishlist and compare. */
+            product: components["schemas"]["ProductCard"];
+            /** @description Set when the slug asked for is not this product's address in this language. Redirect there instead of showing the page. */
+            redirect: components["schemas"]["ProductTarget"] | null;
+            /** @description Null when the store hides it */
+            sku: string | null;
+            /** @description Main image first */
+            gallery: components["schemas"]["Image"][];
+            video: {
+                url: string;
+                thumbnail: string | null;
+            } | null;
+            /** @description Empty for a product without choices */
+            options: components["schemas"]["ProductOption"][];
+            availability: components["schemas"]["ProductAvailability"];
+            /** @description Allowed increment (1, or e.g. 0.5 for weighed products) */
+            quantityStep: number;
+            breadcrumbs: components["schemas"]["Link"][];
+            /** @description Short description */
+            summary: components["schemas"]["RichText"] | null;
+            /** @description Long description */
+            description: components["schemas"]["RichText"] | null;
+            specifications: {
+                name: string;
+                value: string;
+            }[];
+            /** @description Short texts to show near the price (promotion, payment offer) */
+            notices: {
+                /** @enum {string} */
+                kind: "promotion" | "payment_offer" | "info";
+                text: string;
+            }[];
+            seo: components["schemas"]["Seo"];
+        };
+        ProductDetailsResponse: {
+            data: components["schemas"]["ProductDetails"];
+        };
+        ProductRecommendationsResponse: {
+            data: {
+                sections: {
+                    /** @enum {string} */
+                    key: "related" | "similar" | "frequently_bought_together";
+                    title: string;
+                    products: components["schemas"]["ProductCard"][];
+                    /** @description Price of buying all of them together (frequently_bought_together only) */
+                    total: components["schemas"]["Money"] | null;
+                }[];
+            };
+        };
+        ProductReviewsResponse: {
+            data: {
+                enabled: boolean;
+                summary: {
+                    average: number;
+                    count: number;
+                    /** @description 5 stars first */
+                    distribution: {
+                        stars: number;
+                        count: number;
+                        percent: number;
+                    }[];
+                } | null;
+                items: {
+                    id: number;
+                    /** @description Null when the store hides names */
+                    author: string | null;
+                    rating: number;
+                    comment: string | null;
+                    /** Format: date-time */
+                    createdAt: string;
+                }[];
+                pagination: components["schemas"]["Pagination"];
+            };
+        };
+        /** @description One filter group. Links come ready from the backend (`query`). */
+        ListingFacet: {
+            /** @example brand */
+            key: string;
+            label: string;
+            /**
+             * @description options → `values`; range → `range`. Skip unknown kinds.
+             * @enum {string}
+             */
+            kind: "options" | "range";
+            /**
+             * @description A hint for `values`
+             * @enum {string}
+             */
+            display: "list" | "color" | "image";
+            values: {
+                label: string;
+                selected: boolean;
+                /** @description Products with this value; null when not counted */
+                count: number | null;
+                color: string | null;
+                image: string | null;
+                /** @description Filters after clicking this value (adds it, or removes it when selected) */
+                query: string;
+            }[];
+            /** @description A from/to filter typed by the shopper. Send the two numbers as `priceMin` / `priceMax`, next to the parameters of `query`. */
+            range: {
+                min: components["schemas"]["Money"] | null;
+                max: components["schemas"]["Money"] | null;
+                selectedMin: number | null;
+                selectedMax: number | null;
+                /** @description The other filters, without this range */
+                query: string;
+            } | null;
+        };
+        ProductListing: {
+            context: {
+                /** @enum {string} */
+                type: "all" | "category" | "brand" | "list" | "deals" | "tag" | "search";
+                /** @description The page heading */
+                title: string;
+                description: components["schemas"]["RichText"] | null;
+                image: components["schemas"]["Image"] | null;
+                /** @description The search text (search only) */
+                query: string | null;
+            };
+            breadcrumbs: components["schemas"]["Link"][];
+            items: components["schemas"]["ProductCard"][];
+            pagination: components["schemas"]["Pagination"];
+            /** @description Sort choices in display order; exactly one is selected */
+            sort: {
+                label: string;
+                selected: boolean;
+                query: string;
+            }[];
+            /** @description Empty when the store has filters switched off */
+            facets: components["schemas"]["ListingFacet"][];
+            /** @description Chips for the filters in use */
+            appliedFilters: {
+                label: string;
+                removeQuery: string;
+            }[];
+            /** @description Null when no filter is in use */
+            clearFiltersQuery: string | null;
+            seo: components["schemas"]["Seo"];
+        };
+        ProductListingResponse: {
+            data: components["schemas"]["ProductListing"];
+        };
+        SearchSuggestionsResponse: {
+            data: {
+                query: string;
+                products: components["schemas"]["ProductCard"][];
+                viewAll: components["schemas"]["SearchTarget"];
+            };
+        };
+        CategoryNode: {
+            /** @description Unique in the tree */
+            id: string;
+            name: string;
+            image: components["schemas"]["Image"] | null;
+            target: components["schemas"]["CategoryTarget"];
+            children: components["schemas"]["CategoryNode"][];
+        };
+        CategoriesResponse: {
+            data: {
+                items: components["schemas"]["CategoryNode"][];
+            };
+        };
+        BrandsResponse: {
+            data: {
+                items: components["schemas"]["Tile"][];
+                pagination: components["schemas"]["Pagination"];
+            };
+        };
+        Resolution: {
+            /** @enum {string} */
+            result: "target" | "redirect" | "gone" | "not_found";
+            target: components["schemas"]["NullableTarget"];
+            /** @description Where to redirect when it is not something the backend knows as a Target */
+            url: string | null;
+            /** @description 301 when true, 302 when false */
+            permanent: boolean;
+        };
+        ResolutionResponse: {
+            data: components["schemas"]["Resolution"];
+        };
+        CheckoutSettings: {
+            /** @description False → a shopper must sign in before checkout */
+            guestCheckout: boolean;
+            /** @enum {string} */
+            guestEmail: "required" | "optional" | "hidden";
+            pickup: {
+                enabled: boolean;
+                label: string | null;
+            };
+            promoCode: boolean;
+            orderNote: boolean;
+            /** @description A text the merchant wants on the checkout page */
+            notice: string | null;
+            /** @description Draw the address form from this. Send the values back under the same names. */
+            addressForm: {
+                /** @description Location pickers to show, in order */
+                levels: ("city" | "area" | "district")[];
+                /** @description Text inputs to show, in order (hidden fields are not listed) */
+                fields: {
+                    /** @example street */
+                    name: string;
+                    label: string;
+                    required: boolean;
+                    /**
+                     * @description Unknown values → text
+                     * @enum {string}
+                     */
+                    kind: "text" | "phone" | "email";
+                }[];
+            };
+        };
+        CheckoutSettingsResponse: {
+            data: components["schemas"]["CheckoutSettings"];
+        };
+        NamedRef: {
+            id: number;
+            name: string;
+        };
+        Address: {
+            id: number;
+            isDefault: boolean;
+            city: components["schemas"]["NamedRef"];
+            area: components["schemas"]["NamedRef"] | null;
+            district: components["schemas"]["NamedRef"] | null;
+            /** @description The text fields of CheckoutSettings.addressForm.fields, by name */
+            values: {
+                [key: string]: string | null;
+            };
+            /** @description The whole address as one line, written by the backend */
+            formatted: string;
+            /** @description False → the store does not deliver there now */
+            deliverable: boolean;
+        };
+        AddressInput: {
+            cityId: number;
+            areaId?: number | null;
+            districtId?: number | null;
+            isDefault?: boolean;
+            values: {
+                [key: string]: string | null;
+            };
+        };
+        AddressesResponse: {
+            data: {
+                items: components["schemas"]["Address"][];
+            };
+        };
+        AddressSavedResponse: {
+            data: {
+                address: components["schemas"]["Address"];
+                items: components["schemas"]["Address"][];
+            };
+        };
+        LocationsResponse: {
+            data: {
+                cities: {
+                    id: number;
+                    name: string;
+                    areas: {
+                        id: number;
+                        name: string;
+                        districts: components["schemas"]["NamedRef"][];
+                    }[];
+                }[];
+            };
+        };
+        PickupBranch: {
+            id: number;
+            name: string;
+            address: string | null;
+            phone: string | null;
+            mapUrl: string | null;
+        };
+        PickupBranchesResponse: {
+            data: {
+                items: components["schemas"]["PickupBranch"][];
+            };
+        };
+        UploadedFile: {
+            /** @description Send it in `prescriptionFiles` */
+            id: string;
+            name: string;
+        };
+        /** @description What the shopper has chosen so far. Everything is optional. No prices. */
+        CheckoutSelections: {
+            /** @enum {string|null} */
+            fulfilment?: "delivery" | "pickup" | null;
+            /** @description For delivery */
+            addressId?: number | null;
+            /** @description For pickup */
+            branchId?: number | null;
+            paymentMethodId?: number | null;
+            installmentPlanId?: number | null;
+            promoCode?: string | null;
+            note?: string | null;
+            prescriptionFiles?: string[];
+            /** @description Send true after the shopper accepted a `payment_change_needs_consent` answer */
+            acceptPaymentChange?: boolean;
+        };
+        CheckoutContact: {
+            isGuest: boolean;
+            name: string | null;
+            phone: string | null;
+            email: string | null;
+        };
+        /** @description One row of a price breakdown. Show `label` and `amount.display` (or `text`). Discounts are negative and their text already has the minus sign. */
+        TotalLine: {
+            /**
+             * @description For styling only; unknown values → other
+             * @enum {string}
+             */
+            kind: "subtotal" | "promotion_discount" | "promo_code" | "delivery" | "payment_fee" | "other";
+            label: string;
+            amount: components["schemas"]["Money"] | null;
+            /** @description Shown instead of an amount, e.g. "Free" or "Confirmed by phone" */
+            text: string | null;
+        };
+        CheckoutNotice: {
+            code: string;
+            message: string;
+        };
+        /** @description Everything the checkout page shows, computed by the backend for the choices sent. */
+        Checkout: {
+            cart: components["schemas"]["Cart"];
+            contact: components["schemas"]["CheckoutContact"];
+            fulfilment: {
+                /** @description Ways to get the order, in display order */
+                options: {
+                    /** @enum {string} */
+                    type: "delivery" | "pickup";
+                    label: string;
+                    available: boolean;
+                    /** @description Why it is not available */
+                    reason: string | null;
+                }[];
+                /** @enum {string|null} */
+                selected: "delivery" | "pickup" | null;
+                /** @description The shopper's address book */
+                addresses: components["schemas"]["Address"][];
+                /** @description The chosen address */
+                addressId: number | null;
+                /** @description The chosen pickup branch */
+                branch: components["schemas"]["PickupBranch"] | null;
+                /** @description Null until the backend can price the delivery (an address or branch is chosen) */
+                delivery: {
+                    fee: components["schemas"]["Money"] | null;
+                    /** @description Shown instead of a fee, e.g. "Confirmed by phone" */
+                    text: string | null;
+                    free: boolean;
+                } | null;
+            };
+            payment: {
+                /** @description Methods offered for this cart and these choices, in display order */
+                methods: {
+                    id: number;
+                    name: string;
+                    icon: string | null;
+                    /** @description True → the shopper pays on a payment page after placing the order */
+                    online: boolean;
+                    /** @description Extra fee (or discount, negative) of this method for this checkout */
+                    fee: components["schemas"]["Money"] | null;
+                    note: string | null;
+                    /** @description Installment plans; when not empty the shopper must pick one */
+                    plans: components["schemas"]["NamedRef"][];
+                }[];
+                selected: {
+                    methodId: number;
+                    planId: number | null;
+                } | null;
+            };
+            promo: {
+                /** @description The code that was sent */
+                code: string | null;
+                applied: boolean;
+                /** @description Why the code was refused, or a hint about what it changed */
+                message: string | null;
+            };
+            requirements: {
+                prescription: {
+                    required: boolean;
+                    files: components["schemas"]["UploadedFile"][];
+                };
+            };
+            totals: {
+                lines: components["schemas"]["TotalLine"][];
+                /** @description What the shopper pays. Show it, and send its `amount` back as `expectedTotal`. */
+                total: components["schemas"]["Money"];
+            };
+            /** @description Null when the store has no minimum */
+            minimumOrder: {
+                amount: components["schemas"]["Money"];
+                remaining: components["schemas"]["Money"];
+                progressPercent: number;
+            } | null;
+            /**
+             * @description What the shopper still has to choose or fill. Codes: `sign_in`, `contact`, `fulfilment`, `address`,
+             *     `branch`, `payment_method`, `installment_plan`, `prescription`. Show `message` for codes you don't know.
+             */
+            missing: components["schemas"]["CheckoutNotice"][];
+            /**
+             * @description Why the order can't be placed even with every field filled. Codes: `empty_cart`, `unavailable_items`,
+             *     `minimum_order`, `guest_checkout_disabled`, `account_not_approved`, `not_deliverable`, `pickup_only_items`,
+             *     `no_payment_method`, `promo_invalid`, `not_supported`. Show `message`.
+             */
+            blockers: components["schemas"]["CheckoutNotice"][];
+            /** @description Things that changed and the shopper should know (a dropped choice, a changed price) */
+            messages: {
+                /** @enum {string} */
+                level: "info" | "warning";
+                text: string;
+            }[];
+            /** @description Enable the "place order" button only when true */
+            canPlaceOrder: boolean;
+        };
+        CheckoutResponse: {
+            data: components["schemas"]["Checkout"];
+        };
+        PlaceOrderRequest: {
+            selections: components["schemas"]["CheckoutSelections"];
+            /** @description `totals.total.amount` of the checkout the shopper saw */
+            expectedTotal: number;
+            /** @enum {boolean} */
+            acceptTerms: true;
+            /**
+             * @description A page of this storefront (absolute https URL on an origin the store allows). Needed for online
+             *     payment methods: after paying, the shopper lands there with `?checkout=<reference>` added.
+             */
+            returnUrl?: string | null;
+        };
+        PlaceOrderResponse: {
+            data: {
+                /**
+                 * @description `done` → the order exists; go to the result page with `reference`.
+                 *     `redirect` → send the shopper to `url` (the payment page); they come back to `returnUrl`.
+                 */
+                next: {
+                    /** @enum {string} */
+                    type: "done" | "redirect";
+                    url: string | null;
+                    /** @description For GET /checkout/result */
+                    reference: string;
+                };
+                /** @description Set when `next.type` is done */
+                order: components["schemas"]["Order"] | null;
+            };
+        };
+        CheckoutResultResponse: {
+            data: {
+                /**
+                 * @description placed = order created, pay later. paid = paid online and order created. pending = the bank has not answered yet (ask again in a few seconds). failed / cancelled = no order.
+                 * @enum {string}
+                 */
+                status: "placed" | "paid" | "pending" | "failed" | "cancelled";
+                /** @description Localized text for the shopper, written by the backend */
+                message: string | null;
+                order: components["schemas"]["Order"] | null;
+                /** @description True → the cart is still there and the shopper can go back to checkout */
+                retry: boolean;
+            };
+        };
+        OrderStatus: {
+            /**
+             * @description For styling; show `label`
+             * @example processing
+             */
+            code: string;
+            label: string;
+            /** @description Still on its way (not delivered, cancelled or returned) */
+            active: boolean;
+        };
+        OrderSummary: {
+            /** @description The id for URLs and for GET /orders/{orderId} */
+            id: string;
+            /** @description What the shopper calls the order, e.g. "48213" */
+            number: string;
+            /** Format: date-time */
+            placedAt: string;
+            status: components["schemas"]["OrderStatus"];
+            itemCount: number;
+            total: components["schemas"]["Money"];
+        };
+        OrdersResponse: {
+            data: {
+                items: components["schemas"]["OrderSummary"][];
+                pagination: components["schemas"]["Pagination"];
+            };
+        };
+        Order: {
+            id: string;
+            number: string;
+            /** Format: date-time */
+            placedAt: string;
+            status: components["schemas"]["OrderStatus"];
+            /** @description The steps of this order, in order; empty when the store shows none */
+            timeline: {
+                label: string;
+                done: boolean;
+                current: boolean;
+            }[];
+            fulfilment: {
+                /** @enum {string} */
+                type: "delivery" | "pickup";
+                /** @description The delivery address as one line */
+                address: string | null;
+                branch: components["schemas"]["PickupBranch"] | null;
+            };
+            payment: {
+                method: string | null;
+                online: boolean;
+            };
+            items: {
+                name: string;
+                image: components["schemas"]["Image"] | null;
+                /** @description Null when the product no longer exists */
+                target: components["schemas"]["ProductTarget"] | null;
+                quantity: number;
+                lineTotal: components["schemas"]["Money"];
+                /** @description The line's price before discount; null when not discounted */
+                compareAt: components["schemas"]["Money"] | null;
+            }[];
+            totals: {
+                lines: components["schemas"]["TotalLine"][];
+                total: components["schemas"]["Money"];
+            };
+            note: string | null;
+            /** @description What the shopper may do now, decided by the backend */
+            actions: {
+                canCancel: boolean;
+                canReorder: boolean;
+            };
+        };
+        OrderResponse: {
+            data: components["schemas"]["Order"];
+        };
+        CancellationReasonsResponse: {
+            data: {
+                items: {
+                    id: number;
+                    text: string;
+                }[];
+            };
+        };
+        ReorderResponse: {
+            data: {
+                cart: components["schemas"]["Cart"];
+                skipped: {
+                    name: string;
+                    /** @description Localized */
+                    reason: string;
+                }[];
+            };
+        };
     };
     responses: {
         /** @description Error */
@@ -758,6 +1858,11 @@ export interface components {
         Locale: components["schemas"]["Locale"];
         /** @description ProductCard.id */
         ProductId: number;
+        /** @description ProductTarget.slug (either language) */
+        ProductSlug: string;
+        AddressId: number;
+        /** @description Order.id */
+        OrderId: string;
         Page: number;
         PerPage: number;
     };
@@ -1218,6 +2323,753 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UnreadCountResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getProducts: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                /** @description CategoryTarget.path joined with "/" */
+                category?: string;
+                /** @description BrandTarget.slug */
+                brand?: string;
+                /** @description ListTarget.slug, or ListTarget.id when the slug is null */
+                list?: string;
+                /** @description TagTarget.slug */
+                tag?: string;
+                deals?: boolean;
+                /** @description Search text */
+                q?: string;
+                /** @description Filter. Only from a `query` string. */
+                brands?: string;
+                /** @description Filter. Only from a `query` string. */
+                categories?: string;
+                /** @description Filter. Only from a `query` string. */
+                options?: string;
+                /** @description Filter. Only from a `query` string. */
+                inStock?: boolean;
+                /** @description Filter typed by the shopper (see ListingFacet.range) */
+                priceMin?: number;
+                /** @description Filter typed by the shopper (see ListingFacet.range) */
+                priceMax?: number;
+                /** @description Only from a `query` string. */
+                sort?: string;
+                page?: components["parameters"]["Page"];
+                /** @description Default and maximum are store settings */
+                perPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Listing (an empty result is 200 with no items) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductListingResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getProduct: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductTarget.slug (either language) */
+                slug: components["parameters"]["ProductSlug"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Product details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductDetailsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getProductRecommendations: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductTarget.slug (either language) */
+                slug: components["parameters"]["ProductSlug"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Recommendation sections (only sections with products) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductRecommendationsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getProductReviews: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: components["parameters"]["Page"];
+                perPage?: components["parameters"]["PerPage"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductTarget.slug (either language) */
+                slug: components["parameters"]["ProductSlug"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reviews (`enabled` false when the store has reviews switched off) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductReviewsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    notifyWhenAvailable: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description ProductCard.id */
+                productId: components["parameters"]["ProductId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: email */
+                    email?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Subscribed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            /** @enum {boolean} */
+                            subscribed: true;
+                        };
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getSearchSuggestions: {
+        parameters: {
+            query: {
+                locale?: components["parameters"]["Locale"];
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Suggestions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchSuggestionsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getCategories: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Category tree */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoriesResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getBrands: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: components["parameters"]["Page"];
+                perPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Brands page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    resolvePath: {
+        parameters: {
+            query: {
+                locale?: components["parameters"]["Locale"];
+                /** @description Path and query as requested, e.g. /en/product/skin-care/face-care */
+                path: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Resolution */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResolutionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getCheckoutSettings: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Checkout settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutSettingsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    computeCheckout: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CheckoutSelections"];
+            };
+        };
+        responses: {
+            /** @description Checkout */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    setCheckoutContact: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    firstName: string;
+                    lastName: string;
+                    phone: string;
+                    /** Format: email */
+                    email?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Saved contact */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["CheckoutContact"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getCheckoutResult: {
+        parameters: {
+            query: {
+                locale?: components["parameters"]["Locale"];
+                /** @description `next.reference` from POST /orders, or the `checkout` parameter on the return URL */
+                ref: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Result (poll while `status` is pending) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutResultResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    uploadFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description jpg, png, webp or pdf, up to 10 MB
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Uploaded file */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["UploadedFile"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLocations: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Locations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getPickupBranches: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Branches (empty when the store has no pickup) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PickupBranchesResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getAddresses: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Addresses */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressesResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    createAddress: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressInput"];
+            };
+        };
+        responses: {
+            /** @description The new address and the whole address book */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressSavedResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    updateAddress: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                addressId: components["parameters"]["AddressId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressInput"];
+            };
+        };
+        responses: {
+            /** @description The saved address and the whole address book */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressSavedResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    deleteAddress: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                addressId: components["parameters"]["AddressId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The address book after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressesResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    setDefaultAddress: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                addressId: components["parameters"]["AddressId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The address book after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AddressesResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getOrders: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: components["parameters"]["Page"];
+                perPage?: components["parameters"]["PerPage"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orders page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrdersResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    placeOrder: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlaceOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description What to do next */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceOrderResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getOrderCancellationReasons: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reasons */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CancellationReasonsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getOrder: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    cancelOrder: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reasonId: number;
+                    note?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description The order after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    reorder: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The cart and what was skipped */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReorderResponse"];
                 };
             };
             default: components["responses"]["Error"];
