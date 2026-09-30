@@ -297,5 +297,16 @@ export function createShopperStore({ now = () => new Date('2026-09-29T10:00:00Z'
       guestCounter = 0;
       sessions.set('test-customer', seedCustomer());
     },
+    // for the other mock modules (scripts/mock/modules.mjs): the same shopper and products
+    /** The session of a token ({isGuest, firstName, cart: Map(productId → quantity), …}) or null. */
+    session: (token) => (token ? (sessions.get(token) ?? null) : null),
+    /** The v3 Cart of a session, as `GET /cart` answers it. */
+    cartOf: (state, locale) => cart(state, locale),
+    /** A product card by id, or null. */
+    product,
+    /** Every product card the mock knows, in home-page order. */
+    products: (locale) => [...catalog[locale].values()],
+    money,
+    total,
   };
 }

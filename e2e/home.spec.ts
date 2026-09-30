@@ -1,7 +1,8 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
+import { APP_URL, MOCK_API } from './support';
 
 const live = process.env.E2E_LIVE === '1';
-const API = live ? (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com').replace(/\/+$/, '') : 'http://127.0.0.1:4010';
+const API = live ? (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com').replace(/\/+$/, '') : MOCK_API;
 
 /** The price text the API sends for the first product on the home page (mock or live). */
 async function firstPriceText(request: APIRequestContext, locale: 'en' | 'ar'): Promise<string> {
@@ -92,7 +93,7 @@ test.describe('home page', () => {
 
     const arabic = await browser.newContext({ locale: 'ar-EG', extraHTTPHeaders: { 'Accept-Language': 'ar-EG,ar;q=0.9' } });
     const arabicPage = await arabic.newPage();
-    await arabicPage.goto('http://127.0.0.1:3200/');
+    await arabicPage.goto(`${APP_URL}/`);
     await expect(arabicPage).toHaveURL(/\/ar$/);
     await arabic.close();
   });
@@ -115,13 +116,13 @@ test.describe('home page', () => {
 
   test('says so when the store API is down', async ({ page, request }) => {
     test.skip(live, 'cannot break the live API');
-    await request.post('http://127.0.0.1:4010/__mode', { data: { fail: true } });
+    await request.post(`${MOCK_API}/__mode`, { data: { fail: true } });
     try {
       await page.goto('/en');
       await expect(page.getByRole('heading', { name: 'The store is taking a break' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en');
     } finally {
-      await request.post('http://127.0.0.1:4010/__mode', { data: { fail: false } });
+      await request.post(`${MOCK_API}/__mode`, { data: { fail: false } });
     }
   });
 });

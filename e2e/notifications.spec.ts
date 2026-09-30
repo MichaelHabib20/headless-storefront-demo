@@ -1,11 +1,11 @@
 import { expect, test, type APIRequestContext, type BrowserContext, type Page } from '@playwright/test';
+import { MOCK_API } from './support';
 
 /**
  * Notifications against the mock API (scripts/mock/shopper.mjs): "test-customer" has 25
  * notifications, #903 already read → 24 unread. State is reset before every test.
  */
 const live = process.env.E2E_LIVE === '1';
-const MOCK_API = 'http://127.0.0.1:4010';
 
 test.skip(live, 'needs the mock API state (seeded customer + /__reset)');
 

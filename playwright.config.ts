@@ -9,8 +9,9 @@ loadEnvConfig(process.cwd());
  * E2E_LIVE=1 runs the same tests against the real staging API instead.
  */
 const live = process.env.E2E_LIVE === '1';
-const apiUrl = live ? (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com') : 'http://127.0.0.1:4010';
-const port = 3200;
+const mockPort = Number(process.env.MOCK_API_PORT ?? 4010);
+const apiUrl = live ? (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com') : `http://127.0.0.1:${mockPort}`;
+const port = Number(process.env.E2E_PORT ?? 3200);
 
 export default defineConfig({
   testDir: './e2e',
@@ -31,7 +32,7 @@ export default defineConfig({
   webServer: [
     ...(live
       ? []
-      : [{ command: 'node scripts/mock-api.mjs', url: 'http://127.0.0.1:4010/health', reuseExistingServer: false }]),
+      : [{ command: 'node scripts/mock-api.mjs', url: `http://127.0.0.1:${mockPort}/health`, reuseExistingServer: false, env: { MOCK_API_PORT: String(mockPort) } }]),
     {
       command: `npx next start -p ${port}`,
       url: `http://127.0.0.1:${port}/en`,

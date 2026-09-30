@@ -31,7 +31,19 @@ export interface Client {
   withToken(token: string | undefined): Client;
 }
 
-const FALLBACK_MESSAGES: Record<ApiErrorKind, string> = {
+type V3OnlyKind =
+  | 'already_available'
+  | 'total_changed'
+  | 'checkout_incomplete'
+  | 'payment_change_needs_consent'
+  | 'order_in_progress'
+  | 'cannot_cancel'
+  | 'guest_checkout_disabled'
+  | 'phone_in_use'
+  | 'payment_provider_error';
+type LegacyKind = Exclude<ApiErrorKind, V3OnlyKind>;
+
+const FALLBACK_MESSAGES: Record<LegacyKind, string> = {
   validation: 'Please check the highlighted fields.',
   invalid_credentials: 'The details you entered are not correct.',
   account_deactivated: 'This account has been deactivated.',
@@ -58,7 +70,7 @@ const FALLBACK_MESSAGES: Record<ApiErrorKind, string> = {
  */
 export function messageFor(env: Pick<Envelope, 'message' | 'message_ar'>, locale: Locale, kind: ApiErrorKind): string {
   const message = locale === 'ar' && env.message_ar ? env.message_ar : env.message;
-  if (!message || /^[a-z_]+\.[A-Za-z_]+$/.test(message)) return FALLBACK_MESSAGES[kind];
+  if (!message || /^[a-z_]+\.[A-Za-z_]+$/.test(message)) return FALLBACK_MESSAGES[kind as LegacyKind] ?? FALLBACK_MESSAGES.unknown;
   return message;
 }
 

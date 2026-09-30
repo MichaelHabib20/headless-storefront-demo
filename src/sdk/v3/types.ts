@@ -40,6 +40,10 @@ export type Notification = Schemas['Notification'];
 export type NotificationsPage = Schemas['NotificationsResponse']['data'];
 export type MoveToCartResult = { cart: Cart; wishlist: ListState };
 
+// shared by the shopping pages
+export type RichText = Schemas['RichText'];
+export type Seo = Schemas['Seo'];
+
 export const LOCALES = ['en', 'ar'] as const satisfies readonly Locale[];
 
 export function isLocale(value: unknown): value is Locale {

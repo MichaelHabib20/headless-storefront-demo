@@ -11,7 +11,7 @@ const inMoney = (file) => file.startsWith('src/money/');
 
 const SHOW_MONEY = 'Render <Money value={...} /> or <Price price={...} locale={locale} /> from @/money (style them with className / classNames).';
 
-const TARGET_TYPES = 'product|category|brand|list|page|landing_page|form|deals|home|url';
+const TARGET_TYPES = 'product|category|brand|list|page|landing_page|form|deals|home|url|tag|search';
 
 export const RULES = [
   {
@@ -116,9 +116,10 @@ export const RULES = [
   },
   {
     id: 'no-raw-html',
-    applies: (f) => !isTest(f),
-    patterns: [/dangerouslySetInnerHTML/],
-    message: 'Do not inject HTML. Render backend text as text.',
+    // RichText is the one component that shows the backend's cleaned HTML (the API's `RichText`).
+    applies: (f) => !isTest(f) && f !== 'src/components/ui/RichText.tsx',
+    patterns: [/dangerouslySetInnerHTML/, /\.innerHTML\b/, /insertAdjacentHTML/],
+    message: 'Do not inject HTML. Render backend text as text; formatted text from the API (a RichText value) goes through <RichText value={...} /> from @/components/ui/RichText.',
   },
   {
     id: 'no-hardcoded-store',

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { MOCK_API } from './support';
 
 /*
  * Card actions (add to cart, wishlist, compare) and header counts against the stateful mock API.
@@ -6,7 +7,7 @@ import { expect, test, type Page } from '@playwright/test';
  * The seeded customer ("test-customer") has 36480 ×2 and 7346 in the cart, 8412/8658/33594 in the
  * wishlist, 36480/8412 in compare (max 4) and 24 unread notifications.
  */
-const MOCK = 'http://127.0.0.1:4010';
+const MOCK = MOCK_API;
 
 test.skip(process.env.E2E_LIVE === '1', 'needs the stateful mock API');
 

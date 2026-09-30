@@ -4,16 +4,19 @@
  * - layout/home: recorded staging responses (src/test/fixtures/v3)
  * - shopper endpoints (session, me, cart, wishlist, compare, notifications): stateful
  *   in-memory store (scripts/mock/shopper.mjs). "Bearer test-customer" is a seeded customer.
+ * - everything else: the modules in scripts/mock/modules.mjs, asked in order
  * Control: POST /__mode {"fail": true} → every API call returns 500. POST /__reset → fresh state.
  */
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { createModules } from './mock/modules.mjs';
 import { createShopperStore } from './mock/shopper.mjs';
 
 const port = Number(process.env.MOCK_API_PORT ?? 4010);
 const dir = path.resolve('src/test/fixtures/v3');
 const store = createShopperStore();
+const modules = createModules(store);
 let fail = false;
 let delayMs = 0; // simulate a slow backend (races only show up when writes overlap)
 
@@ -47,6 +50,7 @@ http
     }
     if (url.pathname === '/__reset' && req.method === 'POST') {
       store.reset();
+      for (const part of modules) part.reset?.();
       fail = false;
       delayMs = 0;
       return send(200, { reset: true });
@@ -68,7 +72,12 @@ http
 
     const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '') || null;
     const body = ['PUT', 'POST'].includes(req.method ?? '') ? await readBody(req) : null;
-    const [status, payload] = store.handle({ method: req.method, pathname, query: url.searchParams, token, locale, body });
+    const request = { method: req.method, pathname, query: url.searchParams, token, locale, body, contentType: String(req.headers['content-type'] ?? '') };
+    for (const part of modules) {
+      const answer = part.handle(request);
+      if (answer) return send(answer[0], answer[1]);
+    }
+    const [status, payload] = store.handle(request);
     send(status, payload);
   })
   .listen(port, () => console.log(`mock v3 API on http://127.0.0.1:${port}`));

@@ -1,10 +1,11 @@
 import { expect, test, type APIRequestContext, type BrowserContext, type Page } from '@playwright/test';
+import { MOCK_API } from './support';
 
 /**
  * Wishlist and compare pages against the stateful mock API (scripts/mock/shopper.mjs).
  * "test-customer" is the seeded customer: 3 wishlist items, 2 compared products (max 4).
  */
-const API = 'http://127.0.0.1:4010';
+const API = MOCK_API;
 const live = process.env.E2E_LIVE === '1';
 
 function collectErrors(page: Page) {

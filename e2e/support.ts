@@ -6,7 +6,9 @@ import type { BrowserContext, Page } from '@playwright/test';
  * (E2E_PHONE / E2E_PASSWORD from .env.local or CI secrets — never committed).
  */
 export const live = process.env.E2E_LIVE === '1';
-export const MOCK_API = 'http://127.0.0.1:4010';
+/** Ports come from the environment so several checkouts of this repo can run e2e at the same time. */
+export const MOCK_API = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4010}`;
+export const APP_URL = `http://127.0.0.1:${process.env.E2E_PORT ?? 3200}`;
 const API = process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com';
 
 let cachedToken: string | null = null;
@@ -29,7 +31,7 @@ export async function customerToken(): Promise<string> {
 }
 
 /** Signs the browser context in as the test customer (httpOnly session cookie, like the real sign-in). */
-export async function signInAsCustomer(context: BrowserContext, baseURL = 'http://127.0.0.1:3200'): Promise<void> {
+export async function signInAsCustomer(context: BrowserContext, baseURL = APP_URL): Promise<void> {
   const { hostname } = new URL(baseURL);
   await context.addCookies([{ name: 'sc_token', value: await customerToken(), domain: hostname, path: '/', httpOnly: true, sameSite: 'Lax' }]);
 }

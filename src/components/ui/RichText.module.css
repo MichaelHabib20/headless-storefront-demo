@@ -1,0 +1,41 @@
+/* Merchant-written HTML: keep it inside its box and readable in both directions. */
+.richText {
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.richText > :first-child {
+  margin-block-start: 0;
+}
+
+.richText > :last-child {
+  margin-block-end: 0;
+}
+
+.richText img,
+.richText table {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+.richText ul,
+.richText ol {
+  padding-inline-start: 1.25rem;
+}
+
+.richText a {
+  text-decoration: underline;
+}
+
+.richText table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.richText th,
+.richText td {
+  border: 1px solid var(--color-border, #d9d9d9);
+  padding: 0.4rem 0.6rem;
+  text-align: start;
+}

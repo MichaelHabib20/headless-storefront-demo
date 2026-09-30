@@ -12,6 +12,9 @@ describe('resolveTarget', () => {
     [{ type: 'page', slug: 'about-us' }, '/en/pages/about-us'],
     [{ type: 'landing_page', slug: 'ramadan' }, '/en/l/ramadan'],
     [{ type: 'form', slug: 'prescriptions' }, '/en/forms/prescriptions'],
+    [{ type: 'tag', slug: 'new-in' }, '/en/tags/new-in'],
+    [{ type: 'search', query: 'panadol extra' }, '/en/search?q=panadol%20extra'],
+    [{ type: 'search', query: '' }, '/en/search'],
     [{ type: 'deals' }, '/en/deals'],
     [{ type: 'home' }, '/en'],
   ];

@@ -140,6 +140,9 @@ describe('architecture rules', () => {
 
   it('catches raw HTML and hardcoded store hosts', () => {
     expect(rulesHit('src/components/F.tsx', '<div dangerouslySetInnerHTML={{ __html: x }} />')).toContain('no-raw-html');
+    expect(rulesHit('src/components/F.tsx', 'ref.current.innerHTML = product.description.html;')).toContain('no-raw-html');
+    // the one component that shows the API's cleaned RichText
+    expect(rulesHit('src/components/ui/RichText.tsx', '<div dangerouslySetInnerHTML={{ __html: value.html }} />')).toEqual([]);
     expect(rulesHit('src/lib/x.ts', "const base = 'https://staging-seif.witheldokan.com';")).toContain('no-hardcoded-store');
   });
 

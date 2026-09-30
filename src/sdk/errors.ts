@@ -21,6 +21,16 @@ export type ApiErrorKind =
   | 'quantity_not_allowed'
   | 'compare_full'
   | 'conflict'
+  // shopping, checkout and orders (v3 error codes, same names)
+  | 'already_available'
+  | 'total_changed'
+  | 'checkout_incomplete'
+  | 'payment_change_needs_consent'
+  | 'order_in_progress'
+  | 'cannot_cancel'
+  | 'guest_checkout_disabled'
+  | 'phone_in_use'
+  | 'payment_provider_error'
   | 'unknown';
 
 export class ApiError extends Error {
@@ -29,6 +39,8 @@ export class ApiError extends Error {
   readonly code: number;
   /** Per-field messages, keyed by the SDK's field names (not the backend's). */
   readonly fieldErrors: Record<string, string[]>;
+  /** What the backend sent next to `error` (e.g. the fresh `checkout` with total_changed). */
+  readonly details: Record<string, unknown>;
 
   constructor(
     kind: ApiErrorKind,
@@ -36,12 +48,14 @@ export class ApiError extends Error {
     message: string,
     fieldErrors: Record<string, string[]> = {},
     cause?: unknown,
+    details: Record<string, unknown> = {},
   ) {
     super(message, cause === undefined ? undefined : { cause });
     this.name = 'ApiError';
     this.kind = kind;
     this.code = code;
     this.fieldErrors = fieldErrors;
+    this.details = details;
   }
 }
 
@@ -55,5 +69,5 @@ export function renameFields(error: ApiError, names: Record<string, string>): Ap
   for (const [field, messages] of Object.entries(error.fieldErrors)) {
     fieldErrors[names[field] ?? field] = messages;
   }
-  return new ApiError(error.kind, error.code, error.message, fieldErrors, error.cause);
+  return new ApiError(error.kind, error.code, error.message, fieldErrors, error.cause, error.details);
 }

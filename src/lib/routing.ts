@@ -13,13 +13,23 @@ export const routes = {
   page: (locale: Locale, slug: string) => `/${locale}/pages/${encode(slug)}`,
   landingPage: (locale: Locale, slug: string) => `/${locale}/l/${encode(slug)}`,
   form: (locale: Locale, slug: string) => `/${locale}/forms/${encode(slug)}`,
+  tag: (locale: Locale, slug: string) => `/${locale}/tags/${encode(slug)}`,
   deals: (locale: Locale) => `/${locale}/deals`,
-  search: (locale: Locale) => `/${locale}/search`,
+  /** Search results; without a query it lists all products. */
+  search: (locale: Locale, query = '') => (query ? `/${locale}/search?q=${encode(query)}` : `/${locale}/search`),
+  categories: (locale: Locale) => `/${locale}/categories`,
+  brands: (locale: Locale) => `/${locale}/brands`,
   cart: (locale: Locale) => `/${locale}/cart`,
   wishlist: (locale: Locale) => `/${locale}/wishlist`,
   compare: (locale: Locale) => `/${locale}/compare`,
   notifications: (locale: Locale) => `/${locale}/notifications`,
   checkout: (locale: Locale) => `/${locale}/checkout`,
+  /** Where the shopper lands after placing an order or paying; `reference` comes from the API. */
+  checkoutResult: (locale: Locale, reference?: string) =>
+    reference ? `/${locale}/checkout/result?checkout=${encode(reference)}` : `/${locale}/checkout/result`,
+  orders: (locale: Locale) => `/${locale}/account/orders`,
+  order: (locale: Locale, id: string) => `/${locale}/account/orders/${encode(id)}`,
+  addresses: (locale: Locale) => `/${locale}/account/addresses`,
   account: (locale: Locale) => `/${locale}/account`,
   signIn: (locale: Locale) => `/${locale}/sign-in`,
   signUp: (locale: Locale) => `/${locale}/sign-up`,
@@ -56,6 +66,10 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
       return internal(routes.landingPage(locale, target.slug));
     case 'form':
       return internal(routes.form(locale, target.slug));
+    case 'tag':
+      return internal(routes.tag(locale, target.slug));
+    case 'search':
+      return internal(routes.search(locale, target.query));
     case 'deals':
       return internal(routes.deals(locale));
     case 'home':

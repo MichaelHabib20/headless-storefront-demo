@@ -17,12 +17,21 @@ export interface RequestOptions {
   /** Shopper token (customer or guest). Personal requests are never cached. */
   token?: string | null;
   body?: unknown;
-  query?: Record<string, string | number | undefined>;
+  query?: Record<string, string | number | boolean | null | undefined>;
+}
+
+export interface UploadOptions {
+  locale: Locale;
+  token?: string | null;
+  /** The file goes in the `file` field. */
+  form: FormData;
 }
 
 export interface StorefrontClient {
   get<T>(path: string, locale: Locale): Promise<T>;
   request<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, options: RequestOptions): Promise<T>;
+  /** multipart/form-data POST (file uploads). */
+  upload<T>(path: string, options: UploadOptions): Promise<T>;
 }
 
 const MESSAGES = {
@@ -41,6 +50,15 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   compare_full: 'compare_full',
   rate_limited: 'rate_limited',
   server_error: 'server',
+  already_available: 'already_available',
+  total_changed: 'total_changed',
+  checkout_incomplete: 'checkout_incomplete',
+  payment_change_needs_consent: 'payment_change_needs_consent',
+  order_in_progress: 'order_in_progress',
+  cannot_cancel: 'cannot_cancel',
+  guest_checkout_disabled: 'guest_checkout_disabled',
+  phone_in_use: 'phone_in_use',
+  payment_provider_error: 'payment_provider_error',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {
@@ -61,23 +79,39 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
   const root = `${options.baseUrl.replace(/\/+$/, '')}/api/customer/v3/`;
   const doFetch = options.fetch ?? fetch;
 
-  async function request<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, body, query }: RequestOptions): Promise<T> {
+  function request<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, body, query }: RequestOptions): Promise<T> {
+    return send<T>(method, path, { locale, token, query, body: body === undefined ? undefined : JSON.stringify(body), json: body !== undefined });
+  }
+
+  function upload<T>(path: string, { locale, token, form }: UploadOptions): Promise<T> {
+    return send<T>('POST', path, { locale, token, body: form, json: false });
+  }
+
+  interface Sending {
+    locale: Locale;
+    token?: string | null;
+    query?: RequestOptions['query'];
+    body?: BodyInit;
+    json: boolean;
+  }
+
+  async function send<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, query, body, json }: Sending): Promise<T> {
     // device-type: web → the store applies its website rules (e.g. default area for new guests).
     const headers: Record<string, string> = { Accept: 'application/json', 'Accept-Language': locale, 'device-type': 'web' };
     if (options.apiKey) headers['api-key'] = options.apiKey;
     if (token) headers.Authorization = `Bearer ${token}`;
-    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (json) headers['Content-Type'] = 'application/json';
 
     const init: RequestInit & { next?: { revalidate: number } } = {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body,
       signal: AbortSignal.timeout(options.timeoutMs ?? 15_000),
     };
     if (method === 'GET' && !token && options.revalidate !== undefined) init.next = { revalidate: options.revalidate };
     else init.cache = 'no-store';
 
-    const search = query ? new URLSearchParams(Object.entries(query).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)])).toString() : '';
+    const search = query ? new URLSearchParams(Object.entries(query).filter(([, v]) => v !== undefined && v !== null).map(([k, v]) => [k, String(v)])).toString() : '';
     let res: Response;
     try {
       res = await doFetch(root + path.replace(/^\/+/, '') + (search ? `?${search}` : ''), init);
@@ -93,9 +127,9 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
     }
 
     if (!res.ok) {
-      const error = (payload as { error?: { code?: string; message?: string; fields?: Record<string, string[]> } })?.error;
+      const { error, ...details } = (payload ?? {}) as { error?: { code?: string; message?: string; fields?: Record<string, string[]> } } & Record<string, unknown>;
       const kind = kindFor(res.status, error?.code);
-      throw new ApiError(kind, res.status, error?.message || MESSAGES[kind === 'not_found' ? 'not_found' : 'server'], error?.fields ?? {});
+      throw new ApiError(kind, res.status, error?.message || MESSAGES[kind === 'not_found' ? 'not_found' : 'server'], error?.fields ?? {}, undefined, details);
     }
     if (!payload || typeof payload !== 'object' || !('data' in payload)) {
       throw new ApiError('invalid_response', res.status, MESSAGES.invalid_response);
@@ -105,6 +139,7 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
 
   return {
     request,
+    upload,
     get: <T>(path: string, locale: Locale) => request<T>('GET', path, { locale }),
   };
 }

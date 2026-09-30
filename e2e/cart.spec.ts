@@ -1,4 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
+import { MOCK_API } from './support';
 
 /**
  * Cart page against the stateful mock API (scripts/mock/shopper.mjs): "test-customer" has
@@ -6,7 +7,6 @@ import { expect, test, type BrowserContext, type Page } from '@playwright/test';
  * The money texts ("196.00 EGP", "196.00 جنية"), the messages and the progress (65%) are the mock
  * backend's, written like the real one: the page must show them as they are.
  */
-const MOCK_API = 'http://127.0.0.1:4010';
 
 test.skip(process.env.E2E_LIVE === '1', 'needs the stateful mock API');
 

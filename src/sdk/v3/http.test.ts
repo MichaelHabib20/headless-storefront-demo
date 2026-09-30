@@ -51,3 +51,37 @@ describe('storefront client', () => {
     await expect(getHome(client, 'en')).rejects.toMatchObject({ kind: 'network' });
   });
 });
+
+describe('storefront client: checkout errors and uploads', () => {
+  it('keeps what the backend sent next to the error (the fresh checkout)', async () => {
+    const body = { error: { code: 'total_changed', message: 'The total changed.' }, checkout: { canPlaceOrder: true } };
+    const client = createStorefrontClient({ baseUrl: 'https://api.test', fetch: mockFetch(409, body) });
+
+    const error = await client.request('POST', 'orders', { locale: 'en', token: 't', body: {} }).catch((e) => e);
+
+    expect(error).toMatchObject({ kind: 'total_changed', code: 409, message: 'The total changed.', details: { checkout: { canPlaceOrder: true } } });
+  });
+
+  it('sends booleans in the query and leaves out empty values', async () => {
+    const fetch = mockFetch(200, { data: {} });
+    const client = createStorefrontClient({ baseUrl: 'https://api.test', fetch });
+
+    await client.request('GET', 'products', { locale: 'en', query: { deals: true, q: undefined, brand: null, page: 2 } });
+
+    expect(fetch.mock.calls[0][0]).toBe('https://api.test/api/customer/v3/products?deals=true&page=2');
+  });
+
+  it('uploads a file as form data without a JSON content type', async () => {
+    const fetch = mockFetch(201, { data: { id: 'f1', name: 'rx.png' } });
+    const client = createStorefrontClient({ baseUrl: 'https://api.test', fetch });
+    const form = new FormData();
+    form.set('file', new Blob(['x'], { type: 'image/png' }), 'rx.png');
+
+    await expect(client.upload('uploads', { locale: 'ar', token: 't', form })).resolves.toEqual({ id: 'f1', name: 'rx.png' });
+
+    const init = fetch.mock.calls[0][1];
+    expect(init?.body).toBe(form);
+    expect(init?.headers).toMatchObject({ Authorization: 'Bearer t', 'Accept-Language': 'ar' });
+    expect(init?.headers).not.toHaveProperty('Content-Type');
+  });
+});
