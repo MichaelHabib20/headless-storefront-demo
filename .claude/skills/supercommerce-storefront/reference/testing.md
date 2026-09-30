@@ -6,7 +6,7 @@
 |---|---|---|
 | Types | `npm run typecheck` | Using fields the contract doesn't have, wrong shapes |
 | Lint | `npm run lint` | React/Next mistakes, importing SDK internals, `any` |
-| Architecture rules | `npm run check:rules` | Calling the API outside the SDK, legacy fields, building URLs from slugs or hardcoding `/en`/`/ar` paths, price math or price-based rules in the UI, hardcoded UI text in components (must be in i18n), env vars in client code, raw HTML, hardcoded store hosts |
+| Architecture rules | `npm run check:rules` | Calling the API outside the SDK, legacy fields, building URLs from slugs or hardcoding `/en`/`/ar` paths, price math or price-based rules in the UI, hardcoded UI text in components (must be in i18n), writes on page load (server actions in `useEffect`), env vars in client code, raw HTML, hardcoded store hosts |
 | Contract | `npm run contract:check` | Recorded API responses and shopper fixtures vs `contract/openapi.yaml`; stale generated types; contract out of sync with the backend |
 | Unit + component | `npm run test` | Logic (`src/lib`, `src/sdk`, helpers), components rendered with real data, the mock API vs the contract (`scripts/mock-shopper.test.mjs`) |
 | Build | `npm run build` | Anything that breaks the production build |
