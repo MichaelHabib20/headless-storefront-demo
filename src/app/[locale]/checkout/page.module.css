@@ -1,0 +1,23 @@
+.page {
+  padding-block: var(--space-6) var(--space-8);
+}
+
+.title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 3vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.signIn {
+  margin: 0;
+  padding-block-end: var(--space-8);
+  color: var(--color-muted);
+}
+.signIn a {
+  color: var(--color-text);
+  font-weight: 700;
+  text-underline-offset: 4px;
+}

@@ -1,0 +1,8 @@
+{
+ "data": {
+  "status": "pending",
+  "message": "We are waiting for the bank to confirm your payment.",
+  "order": null,
+  "retry": false
+ }
+}

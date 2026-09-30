@@ -29,5 +29,6 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
     return toFormState(error, values, { email: 'identifier', phone: 'identifier' });
   }
 
-  redirect(routes.account(locale));
+  // Only a known page, never a URL from the form: checkout sends shoppers here with ?next=checkout.
+  redirect(formData.get('next') === 'checkout' ? routes.checkout(locale) : routes.account(locale));
 }

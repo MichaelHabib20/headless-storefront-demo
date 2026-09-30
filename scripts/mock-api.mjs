@@ -20,25 +20,28 @@ const modules = createModules(store);
 let fail = false;
 let delayMs = 0; // simulate a slow backend (races only show up when writes overlap)
 
-function readBody(req) {
+/** The request body as text (`raw`, e.g. a multipart upload) and as JSON (`json`, null when it is not JSON). */
+function readRequest(req) {
   return new Promise((resolve) => {
     let raw = '';
     req.on('data', (chunk) => (raw += chunk));
     req.on('end', () => {
       try {
-        resolve(raw ? JSON.parse(raw) : null);
+        resolve({ raw, json: raw ? JSON.parse(raw) : null });
       } catch {
-        resolve(null);
+        resolve({ raw, json: null });
       }
     });
   });
 }
+const readBody = async (req) => (await readRequest(req)).json;
 
 http
   .createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', `http://localhost:${port}`);
-    const send = (status, body) => {
-      res.writeHead(status, { 'Content-Type': 'application/json' });
+    // `headers` lets a module answer something else than JSON (the mock payment page, a redirect).
+    const send = (status, body, headers = {}) => {
+      res.writeHead(status, { 'Content-Type': 'application/json', ...headers });
       res.end(typeof body === 'string' ? body : JSON.stringify(body));
     };
 
@@ -71,11 +74,12 @@ http
     }
 
     const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '') || null;
-    const body = ['PUT', 'POST'].includes(req.method ?? '') ? await readBody(req) : null;
-    const request = { method: req.method, pathname, query: url.searchParams, token, locale, body, contentType: String(req.headers['content-type'] ?? '') };
+    const sent = ['PUT', 'POST'].includes(req.method ?? '') ? await readRequest(req) : { raw: '', json: null };
+    const body = sent.json;
+    const request = { method: req.method, pathname, query: url.searchParams, token, locale, body, contentType: String(req.headers['content-type'] ?? ''), headers: req.headers, raw: sent.raw };
     for (const part of modules) {
       const answer = part.handle(request);
-      if (answer) return send(answer[0], answer[1]);
+      if (answer) return send(answer[0], answer[1], answer[2]);
     }
     const [status, payload] = store.handle(request);
     send(status, payload);

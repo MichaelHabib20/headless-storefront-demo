@@ -1,0 +1,352 @@
+{
+ "data": {
+  "cart": {
+   "items": [
+    {
+     "product": {
+      "id": 36480,
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+      "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+       "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 18,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "18 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     "quantity": 2,
+     "quantityStep": 1,
+     "unitPrice": {
+      "currency": "EGP",
+      "amount": 18,
+      "compareAt": null,
+      "discountPercent": null,
+      "display": "18 EGP",
+      "compareAtDisplay": null,
+      "discountLabel": null
+     },
+     "lineTotal": {
+      "amount": 36,
+      "currency": "EGP",
+      "display": "36 EGP"
+     },
+     "availability": {
+      "status": "available",
+      "message": null,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     }
+    },
+    {
+     "product": {
+      "id": 7346,
+      "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new",
+      "name": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+       "alt": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 160,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "160 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+      }
+     },
+     "quantity": 2,
+     "quantityStep": 1,
+     "unitPrice": {
+      "currency": "EGP",
+      "amount": 160,
+      "compareAt": null,
+      "discountPercent": null,
+      "display": "160 EGP",
+      "compareAtDisplay": null,
+      "discountLabel": null
+     },
+     "lineTotal": {
+      "amount": 320,
+      "currency": "EGP",
+      "display": "320 EGP"
+     },
+     "availability": {
+      "status": "available",
+      "message": null,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     }
+    }
+   ],
+   "summary": {
+    "itemCount": 4,
+    "subtotal": {
+     "amount": 356,
+     "currency": "EGP",
+     "display": "356.00 EGP"
+    },
+    "discount": null,
+    "total": {
+     "amount": 356,
+     "currency": "EGP",
+     "display": "356.00 EGP"
+    }
+   },
+   "checkout": {
+    "allowed": true,
+    "blockers": [],
+    "minimumOrder": {
+     "amount": {
+      "amount": 300,
+      "currency": "EGP",
+      "display": "300.00 EGP"
+     },
+     "remaining": {
+      "amount": 0,
+      "currency": "EGP",
+      "display": "0.00 EGP"
+     },
+     "progressPercent": 100
+    }
+   },
+   "requiresPrescription": false
+  },
+  "contact": {
+   "isGuest": false,
+   "name": "Test Customer",
+   "phone": "01000000001",
+   "email": "test.customer@example.com"
+  },
+  "fulfilment": {
+   "options": [
+    {
+     "type": "delivery",
+     "label": "Delivery",
+     "available": true,
+     "reason": null
+    },
+    {
+     "type": "pickup",
+     "label": "Click & Collect",
+     "available": true,
+     "reason": null
+    }
+   ],
+   "selected": "pickup",
+   "addresses": [
+    {
+     "id": 501,
+     "isDefault": true,
+     "city": {
+      "id": 1,
+      "name": "Cairo"
+     },
+     "area": {
+      "id": 11,
+      "name": "Nasr City"
+     },
+     "district": null,
+     "values": {
+      "label": "Home",
+      "street": "12 Abbas El Akkad St",
+      "building": "12",
+      "floor": "3",
+      "apartment": "7",
+      "phone": "01000000001"
+     },
+     "formatted": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+     "deliverable": true
+    }
+   ],
+   "addressId": null,
+   "branch": {
+    "id": 71,
+    "name": "Nasr City branch",
+    "address": "45 Makram Ebeid St, Nasr City, Cairo",
+    "phone": "0221234567",
+    "mapUrl": "https://maps.example.com/?q=nasr-city-branch"
+   },
+   "delivery": {
+    "fee": null,
+    "text": "Free — collect it from the branch",
+    "free": true
+   }
+  },
+  "payment": {
+   "methods": [
+    {
+     "id": 1,
+     "name": "Cash on delivery",
+     "icon": null,
+     "online": false,
+     "fee": null,
+     "note": null,
+     "plans": []
+    },
+    {
+     "id": 2,
+     "name": "Card on delivery",
+     "icon": null,
+     "online": false,
+     "fee": {
+      "amount": 10,
+      "currency": "EGP",
+      "display": "10.00 EGP"
+     },
+     "note": "The courier brings a card machine.",
+     "plans": []
+    },
+    {
+     "id": 3,
+     "name": "Credit / debit card",
+     "icon": null,
+     "online": true,
+     "fee": null,
+     "note": null,
+     "plans": []
+    },
+    {
+     "id": 4,
+     "name": "Installments",
+     "icon": null,
+     "online": true,
+     "fee": null,
+     "note": "Pay in monthly installments.",
+     "plans": [
+      {
+       "id": 41,
+       "name": "6 months"
+      },
+      {
+       "id": 42,
+       "name": "12 months"
+      }
+     ]
+    }
+   ],
+   "selected": {
+    "methodId": 4,
+    "planId": null
+   }
+  },
+  "promo": {
+   "code": "SAVE10",
+   "applied": true,
+   "message": "10% off your items."
+  },
+  "requirements": {
+   "prescription": {
+    "required": false,
+    "files": []
+   }
+  },
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "Subtotal",
+     "amount": {
+      "amount": 356,
+      "currency": "EGP",
+      "display": "356.00 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "promo_code",
+     "label": "Promo code SAVE10",
+     "amount": {
+      "amount": -35.6,
+      "currency": "EGP",
+      "display": "-35.60 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "delivery",
+     "label": "Delivery",
+     "amount": null,
+     "text": "Free — collect it from the branch"
+    }
+   ],
+   "total": {
+    "amount": 320.4,
+    "currency": "EGP",
+    "display": "320.40 EGP"
+   }
+  },
+  "minimumOrder": {
+   "amount": {
+    "amount": 300,
+    "currency": "EGP",
+    "display": "300.00 EGP"
+   },
+   "remaining": {
+    "amount": 0,
+    "currency": "EGP",
+    "display": "0.00 EGP"
+   },
+   "progressPercent": 100
+  },
+  "missing": [
+   {
+    "code": "installment_plan",
+    "message": "Choose an installment plan."
+   }
+  ],
+  "blockers": [],
+  "messages": [],
+  "canPlaceOrder": false
+ }
+}

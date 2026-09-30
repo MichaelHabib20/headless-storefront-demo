@@ -1,0 +1,244 @@
+{
+ "data": {
+  "cart": {
+   "items": [
+    {
+     "product": {
+      "id": 8658,
+      "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+      "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+       "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 200,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "200 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     },
+     "quantity": 2,
+     "quantityStep": 1,
+     "unitPrice": {
+      "currency": "EGP",
+      "amount": 200,
+      "compareAt": null,
+      "discountPercent": null,
+      "display": "200 جنية",
+      "compareAtDisplay": null,
+      "discountLabel": null
+     },
+     "lineTotal": {
+      "amount": 400,
+      "currency": "EGP",
+      "display": "400 جنية"
+     },
+     "availability": {
+      "status": "available",
+      "message": null,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     }
+    }
+   ],
+   "summary": {
+    "itemCount": 2,
+    "subtotal": {
+     "amount": 400,
+     "currency": "EGP",
+     "display": "400.00 جنية"
+    },
+    "discount": null,
+    "total": {
+     "amount": 400,
+     "currency": "EGP",
+     "display": "400.00 جنية"
+    }
+   },
+   "checkout": {
+    "allowed": true,
+    "blockers": [],
+    "minimumOrder": {
+     "amount": {
+      "amount": 300,
+      "currency": "EGP",
+      "display": "300.00 جنية"
+     },
+     "remaining": {
+      "amount": 0,
+      "currency": "EGP",
+      "display": "0.00 جنية"
+     },
+     "progressPercent": 100
+    }
+   },
+   "requiresPrescription": false
+  },
+  "contact": {
+   "isGuest": true,
+   "name": null,
+   "phone": null,
+   "email": null
+  },
+  "fulfilment": {
+   "options": [
+    {
+     "type": "delivery",
+     "label": "التوصيل",
+     "available": true,
+     "reason": null
+    },
+    {
+     "type": "pickup",
+     "label": "استلم من الفرع",
+     "available": true,
+     "reason": null
+    }
+   ],
+   "selected": null,
+   "addresses": [],
+   "addressId": null,
+   "branch": null,
+   "delivery": null
+  },
+  "payment": {
+   "methods": [
+    {
+     "id": 1,
+     "name": "الدفع عند الاستلام",
+     "icon": null,
+     "online": false,
+     "fee": null,
+     "note": null,
+     "plans": []
+    },
+    {
+     "id": 2,
+     "name": "بطاقة عند الاستلام",
+     "icon": null,
+     "online": false,
+     "fee": {
+      "amount": 10,
+      "currency": "EGP",
+      "display": "10.00 جنية"
+     },
+     "note": "يحضر المندوب ماكينة الدفع.",
+     "plans": []
+    },
+    {
+     "id": 3,
+     "name": "بطاقة ائتمان / خصم",
+     "icon": null,
+     "online": true,
+     "fee": null,
+     "note": null,
+     "plans": []
+    },
+    {
+     "id": 4,
+     "name": "التقسيط",
+     "icon": null,
+     "online": true,
+     "fee": null,
+     "note": "ادفع على أقساط شهرية.",
+     "plans": [
+      {
+       "id": 41,
+       "name": "6 أشهر"
+      },
+      {
+       "id": 42,
+       "name": "12 شهراً"
+      }
+     ]
+    }
+   ],
+   "selected": null
+  },
+  "promo": {
+   "code": null,
+   "applied": false,
+   "message": null
+  },
+  "requirements": {
+   "prescription": {
+    "required": false,
+    "files": []
+   }
+  },
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "المجموع الفرعي",
+     "amount": {
+      "amount": 400,
+      "currency": "EGP",
+      "display": "400.00 جنية"
+     },
+     "text": null
+    }
+   ],
+   "total": {
+    "amount": 400,
+    "currency": "EGP",
+    "display": "400.00 جنية"
+   }
+  },
+  "minimumOrder": {
+   "amount": {
+    "amount": 300,
+    "currency": "EGP",
+    "display": "300.00 جنية"
+   },
+   "remaining": {
+    "amount": 0,
+    "currency": "EGP",
+    "display": "0.00 جنية"
+   },
+   "progressPercent": 100
+  },
+  "missing": [
+   {
+    "code": "contact",
+    "message": "أضف بيانات التواصل."
+   },
+   {
+    "code": "fulfilment",
+    "message": "اختر التوصيل أو الاستلام من الفرع."
+   },
+   {
+    "code": "payment_method",
+    "message": "اختر طريقة الدفع."
+   }
+  ],
+  "blockers": [],
+  "messages": [],
+  "canPlaceOrder": false
+ }
+}

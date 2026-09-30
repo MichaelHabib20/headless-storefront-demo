@@ -8,7 +8,7 @@ import { RESOLUTION_HEADER } from '@/lib/resolve';
 import { isStorefrontPath, routes } from '@/lib/routing';
 
 /** First path segments of routes that exist in the URL scheme but aren't built yet. */
-const PLANNED = new Set(['pages', 'l', 'forms', 'checkout', 'track-order']);
+const PLANNED = new Set(['pages', 'l', 'forms', 'track-order']);
 
 type Params = Promise<{ locale: string; slug: string[] }>;
 

@@ -1,0 +1,8 @@
+{
+ "data": {
+  "status": "failed",
+  "message": "The payment was declined. You were not charged.",
+  "order": null,
+  "retry": true
+ }
+}

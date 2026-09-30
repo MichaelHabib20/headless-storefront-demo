@@ -9,10 +9,12 @@ import '../auth.css';
 
 export const dynamic = 'force-dynamic';
 
-export default async function SignInPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function SignInPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams?: Promise<{ next?: string | string[] }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  if (await readSession()) redirect(routes.account(locale));
+  // Checkout sends shoppers here with ?next=checkout and gets them back after sign-in.
+  const next = (await searchParams)?.next === 'checkout' ? 'checkout' : undefined;
+  if (await readSession()) redirect(next ? routes.checkout(locale) : routes.account(locale));
   const result = await loadAuthConfig(locale);
 
   return (
@@ -21,7 +23,7 @@ export default async function SignInPage({ params }: { params: Promise<{ locale:
       <p className="lead">Welcome back.</p>
       <div className="card">
         {result.ok ? (
-          <SignInForm loginMethod={result.config.loginMethod} locale={locale} />
+          <SignInForm loginMethod={result.config.loginMethod} locale={locale} next={next} />
         ) : (
           <div className="alert" role="alert">{result.message}</div>
         )}

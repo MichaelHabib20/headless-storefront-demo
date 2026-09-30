@@ -1,0 +1,20 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 71,
+    "name": "فرع مدينة نصر",
+    "address": "45 شارع مكرم عبيد، مدينة نصر، القاهرة",
+    "phone": "0221234567",
+    "mapUrl": "https://maps.example.com/?q=nasr-city-branch"
+   },
+   {
+    "id": 72,
+    "name": "فرع الدقي",
+    "address": "8 شارع التحرير، الدقي، الجيزة",
+    "phone": null,
+    "mapUrl": null
+   }
+  ]
+ }
+}
