@@ -93,6 +93,8 @@ const WRITE_ON_LOAD = {
   message: 'Viewing a page must never change data: do not call server actions (…Action) from useEffect. Writes happen only on a user action (click/submit).',
 };
 
+const SAFE_EFFECT_CALLS = new Set(['addEventListener', 'removeEventListener', 'clearTimeout', 'clearInterval', 'removeItem', 'removeAttribute', 'addListener', 'removeListener']);
+
 function effectBodies(source) {
   const bodies = [];
   const pattern = /\buseEffect\s*\(/g;
@@ -116,7 +118,10 @@ export function checkSource(file, source) {
 
   if (/^src\/(app|components)\//.test(file) && !isTest(file)) {
     for (const effect of effectBodies(source)) {
-      const call = effect.text.match(/\b\w+Action\s*\(/);
+      // Server actions (…Action) and write-style calls, including actions passed in as props
+      // (e.g. `markAllRead()`); browser APIs like addEventListener / clearTimeout are fine.
+      const calls = [...effect.text.matchAll(/\b(\w+Action|(?:mark|add|remove|toggle|clear|move|delete|save|submit)[A-Z]\w*)\s*\(/g)];
+      const call = calls.find((c) => !SAFE_EFFECT_CALLS.has(c[1]));
       if (!call) continue;
       const line = source.slice(0, effect.start + effect.text.indexOf(call[0])).split(/\r?\n/).length;
       violations.push({ rule: WRITE_ON_LOAD.id, file, line, text: lines[line - 1].trim(), message: WRITE_ON_LOAD.message });
