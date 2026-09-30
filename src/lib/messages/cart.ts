@@ -4,6 +4,7 @@ import { defineMessages } from './define';
 export const cartMessages = defineMessages({
   en: {
     cartTitle: 'Shopping cart',
+    cartTitleWithCount: 'Shopping cart ({count})',
     cartItemsHeading: 'Your items',
     cartEmptyTitle: 'Your cart is empty',
     cartEmptyText: 'Browse the store and add the products you like.',
@@ -37,6 +38,7 @@ export const cartMessages = defineMessages({
   },
   ar: {
     cartTitle: 'سلة التسوق',
+    cartTitleWithCount: 'سلة التسوق ({count})',
     cartItemsHeading: 'منتجاتك',
     cartEmptyTitle: 'سلة التسوق فارغة',
     cartEmptyText: 'تصفح المتجر وأضف المنتجات التي تعجبك.',

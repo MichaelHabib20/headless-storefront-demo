@@ -40,6 +40,9 @@ interface NotificationsPage { items: Notification[]; pagination: Pagination; unr
   guest created.** A 401 → the same empty state. Other failures → an error block (`role="alert"`).
 - `NotificationsView` renders heading, `unreadCount`, "Mark all as read" (only when `unreadCount > 0`),
   the list (`NotificationItem`), and `NotificationsPagination` (local prev/next from `pagination`).
+- `NotificationsFilter` (client) is the "All / Unread only" toggle: it hides the items of the
+  **current page** whose `read` is true (API order kept). Display only — no API call, no counting;
+  `GET /notifications` has no unread filter, so "unread across all pages" needs backend support.
 - Server actions (`actions.ts`): `markNotificationReadAction(locale, id)` and
   `markAllNotificationsReadAction(locale)` → `withShopper` → SDK →
   `revalidatePath('/[locale]', 'layout')` (list + header badge). The view binds them per item.

@@ -45,8 +45,18 @@ describe('CartView', () => {
     expect(screen.getByRole('heading', { name: 'Your items' })).toBeVisible();
   });
 
+  it('shows the item count of the API in the page heading (en)', () => {
+    const cart = cartFixture('en');
+    // 2 lines, 3 units: the heading shows summary.itemCount, not the number of lines.
+    expect(cart.items).toHaveLength(2);
+    expect(cart.summary.itemCount).toBe(3);
+    setup(cart);
+    expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart (3)' })).toBeVisible();
+  });
+
   it('renders in Arabic', () => {
     setup(cartFixture('ar'), 'ar');
+    expect(screen.getByRole('heading', { level: 1, name: 'سلة التسوق (٣)' })).toBeVisible();
     expect(screen.getAllByTestId('cart-line')).toHaveLength(2);
     expect(screen.getByTestId('cart-total')).toHaveTextContent('١٩٦ ج.م');
     expect(screen.getByRole('button', { name: 'إفراغ السلة' })).toBeEnabled();
@@ -67,11 +77,13 @@ describe('CartView', () => {
     // still the last API answer while the request is on its way
     expect(within(second).getByTestId('cart-line-total')).toHaveTextContent('EGP 160');
     expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 196');
+    expect(screen.getByTestId('cart-title')).toHaveTextContent('Shopping cart (3)');
     expect(screen.getByRole('button', { name: 'Checkout' })).toBeDisabled();
 
     answer.resolve({ ok: true, cart: cartAfterIncrease() });
 
     await waitFor(() => expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 356'));
+    expect(screen.getByTestId('cart-title')).toHaveTextContent('Shopping cart (4)');
     expect(within(screen.getAllByTestId('cart-line')[1]).getByTestId('cart-line-total')).toHaveTextContent('EGP 320');
     expect(screen.queryByTestId('checkout-blockers')).toBeNull();
     expect(screen.getByRole('link', { name: 'Checkout' })).toHaveAttribute('href', '/en/checkout');
@@ -101,6 +113,7 @@ describe('CartView', () => {
     expect(removeItemAction).toHaveBeenCalledWith('en', 36480);
     await waitFor(() => expect(screen.getAllByTestId('cart-line')).toHaveLength(1));
     expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 160');
+    expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart (1)' })).toBeVisible();
   });
 
   it('clears the cart after confirmation and shows the empty state', async () => {
@@ -117,6 +130,8 @@ describe('CartView', () => {
     expect(clearCartAction).toHaveBeenCalledWith('en');
     expect(await screen.findByTestId('cart-empty')).toBeVisible();
     expect(screen.queryByTestId('cart-line')).toBeNull();
+    // No count on an empty cart, just the page title.
+    expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
   });
 
   it('shows a generic message when the server action itself fails', async () => {
@@ -135,6 +150,7 @@ describe('CartView', () => {
     const { rerender, setQuantityAction, removeItemAction, clearCartAction } = setup();
     rerender(<CartView cart={cartAfterIncrease()} locale="en" setQuantityAction={setQuantityAction} removeItemAction={removeItemAction} clearCartAction={clearCartAction} />);
     expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 356');
+    expect(screen.getByTestId('cart-title')).toHaveTextContent('Shopping cart (4)');
   });
 });
 

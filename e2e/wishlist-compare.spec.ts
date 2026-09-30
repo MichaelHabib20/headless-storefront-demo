@@ -75,7 +75,7 @@ test.describe('wishlist and compare', () => {
       const items = page.getByTestId('wishlist-item');
       await expect(items).toHaveCount(3);
 
-      await items.first().getByRole('button', { name: /^Move to cart/ }).click();
+      await items.first().getByRole('button', { name: /^Add to bag/ }).click();
       const status = page.getByTestId('wishlist-status');
       await expect(status).toContainText('Moved to your cart.');
       await expect(status.getByRole('link', { name: 'View cart' })).toHaveAttribute('href', '/en/cart');
@@ -157,7 +157,7 @@ test.describe('wishlist and compare', () => {
       await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
       await expect(page.getByRole('heading', { level: 1, name: 'قائمة المفضلة' })).toBeVisible();
       await expect(page.getByTestId('wishlist-item')).toHaveCount(3);
-      await expect(page.getByTestId('wishlist-item').first().getByRole('button', { name: /^نقل إلى السلة/ })).toBeVisible();
+      await expect(page.getByTestId('wishlist-item').first().getByRole('button', { name: /^أضف إلى الحقيبة/ })).toBeVisible();
       await expect(page.getByTestId('wishlist-item').first()).toContainText('ج.م');
 
       // the remove button sits in the top-left corner of the card in RTL

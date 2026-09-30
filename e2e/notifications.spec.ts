@@ -85,6 +85,43 @@ test.describe('notifications (signed in)', () => {
     await expect(notification(page, 'Baby care week')).toHaveAttribute('data-read', 'true');
   });
 
+  test('"Unread only" filters the notifications of the current page and changes nothing', async ({ page, request }) => {
+    await page.goto('/en/notifications');
+    await page.waitForLoadState('networkidle'); // the toggle works once the page is hydrated
+    const filter = page.getByRole('radiogroup', { name: 'Show notifications' });
+    await expect(filter.getByRole('radio', { name: 'All' })).toBeChecked();
+    await expect(page.getByTestId('notification')).toHaveCount(10);
+
+    await filter.getByRole('radio', { name: 'Unread only' }).check();
+    await expect(page.getByTestId('notification')).toHaveCount(9);
+    await expect(page.locator('[data-testid="notification"][data-read="true"]')).toHaveCount(0);
+    await expect(notification(page, 'Upload your prescription')).toHaveCount(0);
+    // the count is still the API's; filtering is not reading
+    await expect(page.getByTestId('notifications-unread')).toHaveText('24 unread');
+    expect(await unreadOnServer(request)).toBe(24);
+
+    // marking one read while filtered takes it out of the list
+    await notification(page, 'Your order is on its way').getByRole('button', { name: 'Mark as read' }).click();
+    await expect(page.getByTestId('notifications-unread')).toHaveText('23 unread');
+    await expect(page.getByTestId('notification')).toHaveCount(8);
+    await expect(filter.getByRole('radio', { name: 'Unread only' })).toBeChecked();
+
+    await filter.getByRole('radio', { name: 'All' }).check();
+    await expect(page.getByTestId('notification')).toHaveCount(10);
+  });
+
+  test('"Unread only" says so when nothing on the page is unread', async ({ page }) => {
+    await page.goto('/en/notifications');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('radio', { name: 'Unread only' }).check();
+    await page.getByRole('button', { name: 'Mark all as read' }).click();
+
+    await expect(page.getByTestId('notifications-unread')).toHaveText("You're all caught up");
+    await expect(page.getByTestId('notification')).toHaveCount(0);
+    await expect(page.getByTestId('notifications-filter-empty')).toHaveText('No unread notifications on this page.');
+    await expect(page.getByRole('navigation', { name: 'Notification pages' })).toBeVisible();
+  });
+
   test('pages through older notifications', async ({ page }) => {
     await page.goto('/en/notifications');
     const pagination = page.getByRole('navigation', { name: 'Notification pages' });
@@ -107,6 +144,14 @@ test.describe('notifications (signed in)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'الإشعارات' })).toBeVisible();
     await expect(page.getByTestId('notifications-unread')).toHaveText('٢٤ غير مقروءة');
     await expect(notification(page, 'أسبوع العناية بالطفل').getByRole('link')).toHaveAttribute('href', '/ar/lists/125');
+
+    await page.waitForLoadState('networkidle');
+    const filter = page.getByRole('radiogroup', { name: 'عرض الإشعارات' });
+    await filter.getByRole('radio', { name: 'غير المقروءة فقط' }).check();
+    await expect(page.getByTestId('notification')).toHaveCount(9);
+    await expect(notification(page, 'ارفع روشتتك')).toHaveCount(0);
+    await filter.getByRole('radio', { name: 'الكل' }).check();
+    await expect(page.getByTestId('notification')).toHaveCount(10);
 
     await page.getByRole('button', { name: 'تحديد الكل كمقروء' }).click();
     await expect(page.getByTestId('notifications-unread')).toHaveText('اطّلعت على كل الإشعارات');

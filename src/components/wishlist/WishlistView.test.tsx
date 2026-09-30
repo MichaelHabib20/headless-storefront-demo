@@ -37,7 +37,8 @@ describe('WishlistView', () => {
     expect(screen.getByText('Saved items: 3')).toBeInTheDocument();
     const [first] = wishlistFixture('en').items;
     expect(screen.getByRole('button', { name: `Remove ${first.name}` })).toBeEnabled();
-    expect(screen.getByRole('button', { name: `Move to cart ${first.name}` })).toBeEnabled();
+    expect(screen.getByRole('button', { name: `Add to bag ${first.name}` })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: /Move to cart/ })).toBeNull();
 
     const nav = screen.getByRole('navigation', { name: 'Wishlist pages' });
     expect(within(nav).getByRole('link', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
@@ -51,7 +52,7 @@ describe('WishlistView', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'قائمة المفضلة' })).toBeInTheDocument();
     expect(screen.getByText('المنتجات المحفوظة: ٣')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: /^نقل إلى السلة/ })).toHaveLength(2);
+    expect(screen.getAllByRole('button', { name: /^أضف إلى الحقيبة/ })).toHaveLength(2);
     expect(screen.getAllByRole('button', { name: /^إزالة/ })).toHaveLength(2);
 
     const nav = screen.getByRole('navigation', { name: 'صفحات المفضلة' });
@@ -66,12 +67,12 @@ describe('WishlistView', () => {
     expect(screen.queryByTestId('pagination')).toBeNull();
   });
 
-  it('disables "Move to cart" when the API says the product cannot be added', () => {
+  it('disables "Add to bag" when the API says the product cannot be added', () => {
     const wishlist = wishlistFixture('en');
     wishlist.items[0].purchase.canAddToCart = false;
     render(<WishlistView state={{ status: 'ok', wishlist }} locale="en" onRemove={idle()} onMoveToCart={idle()} />);
-    expect(screen.getByRole('button', { name: `Move to cart ${wishlist.items[0].name}` })).toBeDisabled();
-    expect(screen.getByRole('button', { name: `Move to cart ${wishlist.items[1].name}` })).toBeEnabled();
+    expect(screen.getByRole('button', { name: `Add to bag ${wishlist.items[0].name}` })).toBeDisabled();
+    expect(screen.getByRole('button', { name: `Add to bag ${wishlist.items[1].name}` })).toBeEnabled();
   });
 
   it.each([
@@ -139,7 +140,7 @@ describe('WishlistView', () => {
     const [first] = wishlistFixture('ar').items;
     render(<WishlistView state={ok('ar')} locale="ar" onRemove={idle()} onMoveToCart={move.action} />);
 
-    await user.click(screen.getByRole('button', { name: `نقل إلى السلة ${first.name}` }));
+    await user.click(screen.getByRole('button', { name: `أضف إلى الحقيبة ${first.name}` }));
     expect(move.action).toHaveBeenCalledWith('ar', first.id);
     expect(screen.getAllByTestId('wishlist-item')).toHaveLength(1);
 
@@ -157,7 +158,7 @@ describe('WishlistView', () => {
     const [first] = wishlistFixture('en').items;
     render(<WishlistView state={ok('en')} locale="en" onRemove={idle()} onMoveToCart={onMoveToCart} />);
 
-    await user.click(screen.getByRole('button', { name: `Move to cart ${first.name}` }));
+    await user.click(screen.getByRole('button', { name: `Add to bag ${first.name}` }));
     expect(await screen.findByRole('alert')).toHaveTextContent('We could not update your wishlist. Please try again.');
     await waitFor(() => expect(screen.getAllByTestId('wishlist-item')).toHaveLength(2));
   });

@@ -4,6 +4,7 @@ import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { fill, formatCount, notificationsPageHref, type MarkAllReadAction, type MarkReadAction } from './helpers';
 import { NotificationItem } from './NotificationItem';
+import { NotificationsFilter } from './NotificationsFilter';
 import { NotificationsPagination } from './NotificationsPagination';
 import { PendingButton } from './PendingButton';
 import styles from './Notifications.module.css';
@@ -61,18 +62,27 @@ export function NotificationsView({ result, locale, now, timeZone, markRead, mar
           </Link>
         </div>
       ) : data && data.items.length > 0 ? (
-        <ul className={styles.list}>
-          {data.items.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-              locale={locale}
-              now={now}
-              timeZone={timeZone}
-              markRead={markRead.bind(null, locale, notification.id)}
-            />
-          ))}
-        </ul>
+        <NotificationsFilter
+          labels={{
+            group: t('notificationsFilterLabel'),
+            all: t('notificationsFilterAll'),
+            unread: t('notificationsFilterUnread'),
+            noUnread: t('notificationsFilterNoUnread'),
+          }}
+          entries={data.items.map((notification) => ({
+            id: notification.id,
+            read: notification.read,
+            item: (
+              <NotificationItem
+                notification={notification}
+                locale={locale}
+                now={now}
+                timeZone={timeZone}
+                markRead={markRead.bind(null, locale, notification.id)}
+              />
+            ),
+          }))}
+        />
       ) : (
         <div className={styles.state} data-testid="notifications-empty">
           <h2 className={styles.stateTitle}>{t('notificationsEmptyTitle')}</h2>

@@ -29,7 +29,7 @@ describe('cart page', () => {
     await renderPage('en');
 
     expect(getCart).toHaveBeenCalledWith(expect.anything(), { locale: 'en', token: 'test-customer' });
-    expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
+    expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart (3)' })).toBeVisible();
     expect(screen.getAllByTestId('cart-line')).toHaveLength(2);
     expect(screen.getByTestId('cart-total')).toHaveTextContent('EGP 196');
   });
@@ -40,6 +40,7 @@ describe('cart page', () => {
 
     expect(getCart).not.toHaveBeenCalled();
     expect(ensureShopperContext).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
     expect(screen.getByTestId('cart-empty')).toBeVisible();
   });
 

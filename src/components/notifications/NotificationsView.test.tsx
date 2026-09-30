@@ -121,6 +121,7 @@ describe('NotificationsView', () => {
     ['empty list', ok({ items: [], pagination: { page: 1, perPage: 10, total: 0, totalPages: 0 }, unreadCount: 0 })],
   ])('shows a friendly empty state (%s)', (_name, result) => {
     setup(result);
+    expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.getByTestId('notifications-empty')).toHaveTextContent('Nothing here yet');
     expect(screen.getByRole('link', { name: 'Continue shopping' })).toHaveAttribute('href', '/en');
     expect(screen.queryByTestId('notification')).toBeNull();
@@ -139,6 +140,61 @@ describe('NotificationsView', () => {
     setup({ status: 'error' });
     expect(screen.getByRole('alert')).toHaveTextContent('Notifications are unavailable');
     expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/notifications');
+  });
+});
+
+describe('NotificationsView "All / Unread only"', () => {
+  const titles = () => screen.getAllByTestId('notification').map((node) => node.querySelector('[id$="-title"]')?.textContent);
+
+  it('shows all notifications of the page by default', () => {
+    const data = notificationsFixture('en');
+    setup(ok(data));
+    const group = screen.getByRole('radiogroup', { name: 'Show notifications' });
+    expect(within(group).getByRole('radio', { name: 'All' })).toBeChecked();
+    expect(within(group).getByRole('radio', { name: 'Unread only' })).not.toBeChecked();
+    expect(screen.getAllByTestId('notification')).toHaveLength(data.items.length);
+  });
+
+  it('hides the notifications the API marked read, keeps the API order, and changes nothing', () => {
+    const data = notificationsFixture('en');
+    const { markRead, markAllRead } = setup(ok(data));
+
+    fireEvent.click(screen.getByRole('radio', { name: 'Unread only' }));
+
+    expect(screen.getByRole('radio', { name: 'Unread only' })).toBeChecked();
+    expect(titles()).toEqual(data.items.filter((n) => !n.read).map((n) => n.title));
+    expect(screen.getAllByTestId('notification').every((node) => node.dataset.read === 'false')).toBe(true);
+    expect(screen.queryByText('Upload your prescription')).toBeNull(); // #903 is read
+    // the unread count is still the API's, not the number of items shown
+    expect(screen.getByTestId('notifications-unread')).toHaveTextContent('24 unread');
+    expect(markRead).not.toHaveBeenCalled();
+    expect(markAllRead).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('radio', { name: 'All' }));
+    expect(titles()).toEqual(data.items.map((n) => n.title));
+  });
+
+  it('says so when nothing on this page is unread', () => {
+    const data = notificationsFixture('en');
+    data.items = data.items.map((n) => ({ ...n, read: true }));
+    setup(ok(data));
+
+    fireEvent.click(screen.getByRole('radio', { name: 'Unread only' }));
+    expect(screen.queryByTestId('notification')).toBeNull();
+    expect(screen.getByTestId('notifications-filter-empty')).toHaveTextContent('No unread notifications on this page.');
+    // pagination stays so older pages can still be reached
+    expect(screen.getByTestId('notifications-pagination')).toBeInTheDocument();
+  });
+
+  it('is translated in Arabic', () => {
+    const data = notificationsFixture('ar');
+    setup(ok(data), 'ar');
+    const group = screen.getByRole('radiogroup', { name: 'عرض الإشعارات' });
+    expect(within(group).getByRole('radio', { name: 'الكل' })).toBeChecked();
+
+    fireEvent.click(within(group).getByRole('radio', { name: 'غير المقروءة فقط' }));
+    expect(titles()).toEqual(data.items.filter((n) => !n.read).map((n) => n.title));
+    expect(screen.queryByText('ارفع روشتتك')).toBeNull();
   });
 });
 

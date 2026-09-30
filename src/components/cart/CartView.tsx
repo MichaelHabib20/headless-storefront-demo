@@ -6,6 +6,7 @@ import { translator } from '@/lib/i18n';
 import { CartEmpty } from './CartEmpty';
 import { CartLineItem } from './CartLineItem';
 import { CartSummary } from './CartSummary';
+import { CartTitle } from './CartTitle';
 import { ClearCartButton } from './ClearCartButton';
 import type { CartActionResult, CartCall, ClearCartAction, RemoveItemAction, SetQuantityAction } from './types';
 import styles from './CartView.module.css';
@@ -84,49 +85,59 @@ export function CartView({ cart: serverCart, locale, setQuantityAction, removeIt
     update({ productIds, to: 'removing' }, () => clearCartAction(locale));
   }
 
-  if (!cart.items.length) return <CartEmpty locale={locale} />;
+  if (!cart.items.length) {
+    return (
+      <>
+        <CartTitle locale={locale} />
+        <CartEmpty locale={locale} />
+      </>
+    );
+  }
 
   return (
-    <div className={styles.layout}>
-      <section className={styles.items} aria-labelledby="cart-items-heading">
-        <div className={styles.listHeader}>
-          <h2 id="cart-items-heading" className={styles.listTitle}>
-            {t('cartItemsHeading')}
-          </h2>
-          <ClearCartButton locale={locale} disabled={isPending} onConfirm={clearAll} />
-        </div>
+    <>
+      <CartTitle locale={locale} itemCount={cart.summary.itemCount} />
+      <div className={styles.layout}>
+        <section className={styles.items} aria-labelledby="cart-items-heading">
+          <div className={styles.listHeader}>
+            <h2 id="cart-items-heading" className={styles.listTitle}>
+              {t('cartItemsHeading')}
+            </h2>
+            <ClearCartButton locale={locale} disabled={isPending} onConfirm={clearAll} />
+          </div>
 
-        <p className="visually-hidden" role="status">
-          {isPending ? t('cartUpdating') : ''}
-        </p>
-        {error && (
-          <p className={styles.error} role="alert">
-            {error}
+          <p className="visually-hidden" role="status">
+            {isPending ? t('cartUpdating') : ''}
           </p>
-        )}
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
 
-        <ul className={styles.list}>
-          {cart.items.map((item) => {
-            const id = item.product.id;
-            const optimistic = inFlight[id];
-            return (
-              <li key={id}>
-                <CartLineItem
-                  item={item}
-                  locale={locale}
-                  quantity={typeof optimistic === 'number' ? optimistic : item.quantity}
-                  pending={optimistic !== undefined}
-                  disabled={isPending}
-                  onQuantityChange={(quantity) => changeQuantity(id, quantity)}
-                  onRemove={() => removeLine(id)}
-                />
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+          <ul className={styles.list}>
+            {cart.items.map((item) => {
+              const id = item.product.id;
+              const optimistic = inFlight[id];
+              return (
+                <li key={id}>
+                  <CartLineItem
+                    item={item}
+                    locale={locale}
+                    quantity={typeof optimistic === 'number' ? optimistic : item.quantity}
+                    pending={optimistic !== undefined}
+                    disabled={isPending}
+                    onQuantityChange={(quantity) => changeQuantity(id, quantity)}
+                    onRemove={() => removeLine(id)}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
 
-      <CartSummary cart={cart} locale={locale} pending={isPending} />
-    </div>
+        <CartSummary cart={cart} locale={locale} pending={isPending} />
+      </div>
+    </>
   );
 }

@@ -30,7 +30,8 @@ test.describe('cart page', () => {
     await signIn(context);
     await openCart(page, 'en');
 
-    await expect(page.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
+    // 2 lines, 3 units: the count is the API's summary.itemCount
+    await expect(page.getByRole('heading', { level: 1, name: 'Shopping cart (3)' })).toBeVisible();
     const lines = page.getByTestId('cart-line');
     await expect(lines).toHaveCount(2);
     await expect(lines.first()).toContainText('J&J Baby Bedtime Bath');
@@ -56,6 +57,7 @@ test.describe('cart page', () => {
 
     await expect(second.getByTestId('cart-quantity')).toHaveText('2');
     await expect(page.getByTestId('cart-total')).toHaveText('EGP 356');
+    await expect(page.getByTestId('cart-title')).toHaveText('Shopping cart (4)');
     await expect(second.getByTestId('cart-line-total')).toContainText('EGP 320');
     await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Checkout' })).toHaveAttribute('href', '/en/checkout');
@@ -63,6 +65,7 @@ test.describe('cart page', () => {
     // The change lives in the backend, not just in the page.
     await page.reload();
     await expect(page.getByTestId('cart-total')).toHaveText('EGP 356');
+    await expect(page.getByTestId('cart-title')).toHaveText('Shopping cart (4)');
   });
 
   test('removes an item', async ({ page, context }) => {
@@ -75,6 +78,7 @@ test.describe('cart page', () => {
     await expect(lines).toHaveCount(1);
     await expect(lines.first()).toContainText('No More Tangles');
     await expect(page.getByTestId('cart-total')).toHaveText('EGP 160');
+    await expect(page.getByTestId('cart-title')).toHaveText('Shopping cart (1)');
   });
 
   test('clears the cart after confirmation', async ({ page, context }) => {
@@ -86,8 +90,40 @@ test.describe('cart page', () => {
 
     await expect(page.getByTestId('cart-empty')).toBeVisible();
     await expect(page.getByTestId('cart-line')).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
     await page.reload();
     await expect(page.getByTestId('cart-empty')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Shopping cart' })).toBeVisible();
+  });
+
+  test('keeps the order summary in view while the lines scroll on desktop', async ({ page, context, request }) => {
+    // A long cart: every other product of the mock catalogue joins the seeded customer's 2 lines.
+    const auth = { Authorization: 'Bearer test-customer' };
+    const cart = (await (await request.get(`${MOCK_API}/api/customer/v3/cart`, { headers: auth })).json()) as { data: { items: { product: { id: number } }[] } };
+    const inCart = new Set(cart.data.items.map((item) => item.product.id));
+    const home = (await (await request.get(`${MOCK_API}/api/customer/v3/home`)).json()) as { data: { sections: { products: { id: number }[] }[] } };
+    const extra = [...new Set(home.data.sections.flatMap((section) => section.products.map((product) => product.id)))].filter((id) => !inCart.has(id));
+    expect(extra.length).toBeGreaterThanOrEqual(6);
+    for (const id of extra) {
+      expect((await request.put(`${MOCK_API}/api/customer/v3/cart/items/${id}`, { headers: auth, data: { quantity: 1 } })).ok()).toBe(true);
+    }
+
+    await signIn(context);
+    await openCart(page, 'en');
+    const lines = page.getByTestId('cart-line');
+    await expect(lines).toHaveCount(inCart.size + extra.length);
+    const summary = page.getByTestId('cart-summary');
+
+    // The first line and the summary start at the same height; scroll well into the list.
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await expect(lines.first()).not.toBeInViewport();
+    await expect(summary).toBeInViewport({ ratio: 1 });
+    await expect(summary.getByRole('link', { name: 'Checkout' })).toBeInViewport();
+
+    // It sits below the sticky header, not under it.
+    const header = await page.getByRole('banner').boundingBox();
+    const box = await summary.boundingBox();
+    expect(box!.y).toBeGreaterThanOrEqual(header!.y + header!.height);
   });
 
   test('a guest sees an empty cart and no session is created', async ({ page, context }) => {
@@ -107,7 +143,7 @@ test.describe('cart page', () => {
 
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
-    await expect(page.getByRole('heading', { level: 1, name: 'سلة التسوق' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'سلة التسوق (٣)' })).toBeVisible();
     await expect(page.getByTestId('cart-line')).toHaveCount(2);
     await expect(page.getByTestId('cart-total')).toHaveText('١٩٦ ج.م');
     await expect(page.getByTestId('checkout-blockers')).toContainText('أضف 104 ج.م للوصول للحد الأدنى للطلب.');
@@ -116,6 +152,7 @@ test.describe('cart page', () => {
 
     await page.getByTestId('cart-line').nth(1).getByRole('button', { name: 'زيادة الكمية' }).click();
     await expect(page.getByTestId('cart-total')).toHaveText('٣٥٦ ج.م');
+    await expect(page.getByTestId('cart-title')).toHaveText('سلة التسوق (٤)');
     await expect(page.getByRole('link', { name: 'إتمام الطلب' })).toHaveAttribute('href', '/ar/checkout');
   });
 
