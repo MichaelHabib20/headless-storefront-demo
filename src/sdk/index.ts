@@ -10,4 +10,5 @@ export { ApiError, isApiError, type ApiErrorKind } from './errors';
 export { createStorefrontClient, type StorefrontClient, type StorefrontClientOptions } from './v3/http';
 export { getHome, getLayout } from './v3/storefront';
 export * from './v3/shopper';
+export { getCheckoutSettings, getLocations } from './v3/settings';
 export * from './v3/types';

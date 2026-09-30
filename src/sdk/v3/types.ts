@@ -44,6 +44,11 @@ export type MoveToCartResult = { cart: Cart; wishlist: ListState };
 export type RichText = Schemas['RichText'];
 export type Seo = Schemas['Seo'];
 
+// store settings for checkout and addresses
+export type CheckoutSettings = Schemas['CheckoutSettings'];
+export type AddressFormField = CheckoutSettings['addressForm']['fields'][number];
+export type Locations = Schemas['LocationsResponse']['data'];
+
 export const LOCALES = ['en', 'ar'] as const satisfies readonly Locale[];
 
 export function isLocale(value: unknown): value is Locale {
