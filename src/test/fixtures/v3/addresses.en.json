@@ -1,0 +1,52 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 501,
+    "isDefault": true,
+    "city": {
+     "id": 1,
+     "name": "Cairo"
+    },
+    "area": {
+     "id": 11,
+     "name": "Nasr City"
+    },
+    "district": null,
+    "values": {
+     "label": "Home",
+     "street": "12 Abbas El Akkad St",
+     "building": "12",
+     "floor": "3",
+     "apartment": "7",
+     "phone": "01000000001"
+    },
+    "formatted": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+    "deliverable": true
+   },
+   {
+    "id": 601,
+    "isDefault": false,
+    "city": {
+     "id": 2,
+     "name": "Giza"
+    },
+    "area": {
+     "id": 22,
+     "name": "Remote Oasis"
+    },
+    "district": null,
+    "values": {
+     "label": "Work",
+     "street": "Desert Rd",
+     "building": "4",
+     "floor": null,
+     "apartment": null,
+     "phone": "01000000002"
+    },
+    "formatted": "4, Desert Rd, Remote Oasis, Giza",
+    "deliverable": false
+   }
+  ]
+ }
+}

@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { getAuthConfig, isLocale, login, type LoginInput } from '@/sdk';
 import { field, toFormState, type FormState } from '@/lib/form';
-import { routes } from '@/lib/routing';
+import { routes, safeReturnPath } from '@/lib/routing';
 import { saveSession } from '@/lib/session';
 import { forgetGuest, guestToken } from '@/lib/shopper.server';
 import { storeClient } from '@/lib/store';
@@ -29,5 +29,7 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
     return toFormState(error, values, { email: 'identifier', phone: 'identifier' });
   }
 
-  redirect(routes.account(locale));
+  // Back to the page that asked for the sign-in (only a local page: checked again here).
+  const next = formData.get('next');
+  redirect(safeReturnPath(typeof next === 'string' ? next : null) ?? routes.account(locale));
 }

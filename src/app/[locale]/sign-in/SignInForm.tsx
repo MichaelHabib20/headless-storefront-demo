@@ -5,7 +5,7 @@ import type { AuthConfig, Locale } from '@/sdk';
 import type { FormState } from '@/lib/form';
 import { signInAction } from './actions';
 
-export function SignInForm({ loginMethod, locale }: { loginMethod: AuthConfig['loginMethod']; locale: Locale }) {
+export function SignInForm({ loginMethod, locale, next = null }: { loginMethod: AuthConfig['loginMethod']; locale: Locale; next?: string | null }) {
   const [state, action, pending] = useActionState<FormState, FormData>(signInAction, {});
   const errors = state.fieldErrors ?? {};
   const isPhone = loginMethod === 'phone';
@@ -13,6 +13,7 @@ export function SignInForm({ loginMethod, locale }: { loginMethod: AuthConfig['l
   return (
     <form action={action} noValidate>
       <input type="hidden" name="locale" value={locale} />
+      {next && <input type="hidden" name="next" value={next} />}
       {state.message && <div className="alert" role="alert">{state.message}</div>}
 
       <label>

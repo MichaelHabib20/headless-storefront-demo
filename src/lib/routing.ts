@@ -29,9 +29,14 @@ export const routes = {
     reference ? `/${locale}/checkout/result?checkout=${encode(reference)}` : `/${locale}/checkout/result`,
   orders: (locale: Locale) => `/${locale}/account/orders`,
   order: (locale: Locale, id: string) => `/${locale}/account/orders/${encode(id)}`,
-  addresses: (locale: Locale) => `/${locale}/account/addresses`,
+  /** The address book; `next` carries a return page (see addressReturn), `saved` the id of the address just saved. */
+  addresses: (locale: Locale, { next, saved }: { next?: AddressReturn | null; saved?: number | null } = {}) =>
+    withQuery(`/${locale}/account/addresses`, { next, saved }),
+  newAddress: (locale: Locale, next?: AddressReturn | null) => withQuery(`/${locale}/account/addresses/new`, { next }),
+  editAddress: (locale: Locale, id: number, next?: AddressReturn | null) => withQuery(`/${locale}/account/addresses/${id}/edit`, { next }),
   account: (locale: Locale) => `/${locale}/account`,
-  signIn: (locale: Locale) => `/${locale}/sign-in`,
+  /** `returnTo`: a page of this storefront to come back to after signing in (checked with safeReturnPath). */
+  signIn: (locale: Locale, returnTo?: string | null) => withQuery(`/${locale}/sign-in`, { next: returnTo }),
   signUp: (locale: Locale) => `/${locale}/sign-up`,
   branches: (locale: Locale) => `/${locale}/pages/branches`,
   contact: (locale: Locale) => `/${locale}/pages/contact`,
@@ -81,6 +86,41 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
   }
 }
 
+/**
+ * Where the address pages send the shopper after a save (`?next=` on the address list, new and edit
+ * pages). Only these names are accepted — never a URL — so the parameter can't be an open redirect.
+ */
+export type AddressReturn = 'checkout';
+
+export function addressReturn(value: string | string[] | null | undefined): AddressReturn | null {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return raw === 'checkout' ? 'checkout' : null;
+}
+
+/** The page an address save goes back to, or null to stay in the address book. */
+export function addressReturnHref(locale: Locale, next: AddressReturn | null): string | null {
+  return next === 'checkout' ? routes.checkout(locale) : null;
+}
+
+/**
+ * A page of this storefront to go back to (e.g. after signing in), or null. Only local paths under a
+ * locale are accepted, so a crafted link can never send the shopper to another site.
+ */
+export function safeReturnPath(value: string | string[] | null | undefined): string | null {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (typeof raw !== 'string' || raw.length > 500 || /[\\\s]/.test(raw) || raw.includes('//')) return null;
+  const first = raw.slice(1).split(/[/?#]/)[0];
+  return raw.startsWith('/') && Object.hasOwn(LOCALE_SEGMENTS, first) ? raw : null;
+}
+
+/** Every locale is a first path segment (type-checked against `Locale`; no SDK import in client bundles). */
+const LOCALE_SEGMENTS: Record<Locale, true> = { en: true, ar: true };
+
+/** An external link the API sent as a plain URL (e.g. a branch's `mapUrl`), or null when it isn't a safe web link. */
+export function externalHref(url: string | null | undefined): string | null {
+  return url && /^https?:\/\//i.test(url) ? url : null;
+}
+
 /** Same path in the other language: /en/p/x → /ar/p/x */
 export function switchLocalePath(pathname: string, to: Locale): string {
   const [, , ...rest] = pathname.split('/');
@@ -93,6 +133,15 @@ function internal(href: string): ResolvedLink {
 
 function encode(segment: string): string {
   return encodeURIComponent(segment);
+}
+
+function withQuery(path: string, query: Record<string, string | number | null | undefined>): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== null && value !== '') params.set(key, String(value));
+  }
+  const search = params.toString();
+  return search ? `${path}?${search}` : path;
 }
 
 function isSafeUrl(url: string): boolean {

@@ -1,0 +1,57 @@
+{
+ "data": {
+  "guestCheckout": true,
+  "guestEmail": "optional",
+  "pickup": {
+   "enabled": true,
+   "label": "Click & Collect"
+  },
+  "promoCode": true,
+  "orderNote": true,
+  "notice": "Orders placed before 6 pm are delivered the same day.",
+  "addressForm": {
+   "levels": [
+    "city",
+    "area"
+   ],
+   "fields": [
+    {
+     "name": "label",
+     "label": "Address name",
+     "required": false,
+     "kind": "text"
+    },
+    {
+     "name": "street",
+     "label": "Street",
+     "required": true,
+     "kind": "text"
+    },
+    {
+     "name": "building",
+     "label": "Building",
+     "required": true,
+     "kind": "text"
+    },
+    {
+     "name": "floor",
+     "label": "Floor",
+     "required": false,
+     "kind": "text"
+    },
+    {
+     "name": "apartment",
+     "label": "Apartment",
+     "required": false,
+     "kind": "text"
+    },
+    {
+     "name": "phone",
+     "label": "Phone",
+     "required": true,
+     "kind": "phone"
+    }
+   ]
+  }
+ }
+}

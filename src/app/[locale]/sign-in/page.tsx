@@ -2,17 +2,25 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { isLocale } from '@/sdk';
 import { loadAuthConfig } from '@/lib/config';
-import { routes } from '@/lib/routing';
+import { routes, safeReturnPath } from '@/lib/routing';
 import { readSession } from '@/lib/session';
 import { SignInForm } from './SignInForm';
 import '../auth.css';
 
 export const dynamic = 'force-dynamic';
 
-export default async function SignInPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function SignInPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  if (await readSession()) redirect(routes.account(locale));
+  // `?next=`: a page of this storefront to come back to (e.g. the orders page); anything else is ignored.
+  const next = safeReturnPath((await searchParams).next);
+  if (await readSession()) redirect(next ?? routes.account(locale));
   const result = await loadAuthConfig(locale);
 
   return (
@@ -21,7 +29,7 @@ export default async function SignInPage({ params }: { params: Promise<{ locale:
       <p className="lead">Welcome back.</p>
       <div className="card">
         {result.ok ? (
-          <SignInForm loginMethod={result.config.loginMethod} locale={locale} />
+          <SignInForm loginMethod={result.config.loginMethod} locale={locale} next={next} />
         ) : (
           <div className="alert" role="alert">{result.message}</div>
         )}

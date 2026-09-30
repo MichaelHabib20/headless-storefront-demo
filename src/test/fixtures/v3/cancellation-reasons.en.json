@@ -1,0 +1,22 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 1,
+    "text": "I changed my mind"
+   },
+   {
+    "id": 2,
+    "text": "I ordered by mistake"
+   },
+   {
+    "id": 3,
+    "text": "Delivery takes too long"
+   },
+   {
+    "id": 4,
+    "text": "Another reason"
+   }
+  ]
+ }
+}
