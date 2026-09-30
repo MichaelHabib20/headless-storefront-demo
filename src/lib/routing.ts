@@ -81,6 +81,20 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
   }
 }
 
+/**
+ * The first path segment (after the locale) of every route above; '' is the home page.
+ * A path outside these is not one of this storefront's pages: the middleware asks the backend
+ * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
+ * route above is missing here.
+ */
+const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order']);
+
+/** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
+export function isStorefrontPath(pathname: string): boolean {
+  const section = pathname.split(/[?#]/)[0].split('/')[2] ?? '';
+  return OWN_SECTIONS.has(section);
+}
+
 /** Same path in the other language: /en/p/x → /ar/p/x */
 export function switchLocalePath(pathname: string, to: Locale): string {
   const [, , ...rest] = pathname.split('/');

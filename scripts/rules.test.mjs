@@ -68,6 +68,9 @@ describe('architecture rules', () => {
     ];
     for (const line of fails) expect(rulesHit('src/components/cart/X.tsx', line), line).toContain('money-via-components');
     expect(rulesHit('src/lib/x.ts', 'return money.display;')).toContain('money-via-components');
+    // only a filter's / an option's own drawing hint is exempt, not money next to it
+    expect(rulesHit('src/components/catalog/X.tsx', '<span>{facet.range.min.display}</span>')).toContain('money-via-components');
+    expect(rulesHit('src/components/catalog/X.tsx', '<span>{facetPrice.display}</span>')).toContain('money-via-components');
     expect(rulesHit('src/app/[locale]/cart/page.tsx', '<dd>{cart.summary.total?.display}</dd>')).toContain('money-via-components');
 
     const passes = [
@@ -77,6 +80,10 @@ describe('architecture rules', () => {
       "<div style={{ display: 'grid', gap: 8 }}>",
       "<div style={{ display }}>",
       "const visible = getComputedStyle(node).display !== 'none';",
+      // drawing hints of listing filters and product options are not money
+      "const swatches = facet.display === 'color';",
+      '<ValueMark hint={facet.display} value={value} />',
+      "if (option.display === 'dropdown') {",
     ];
     for (const line of passes) expect(rulesHit('src/components/cart/X.tsx', line), line).toEqual([]);
     // the money components themselves, and tests checking what the API sent

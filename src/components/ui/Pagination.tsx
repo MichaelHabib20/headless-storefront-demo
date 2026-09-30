@@ -62,14 +62,16 @@ interface PaginationProps {
   query?: Query;
   locale: Locale;
   labels: PaginationLabels;
+  /** A page's link, when it is not baseHref + query (listings keep their query string exactly as it is). */
+  hrefFor?: (page: number) => string;
 }
 
 /** Previous / page numbers / next, as plain links (works without JavaScript). Hidden for a single page. */
-export function Pagination({ pagination, baseHref, query, locale, labels }: PaginationProps) {
+export function Pagination({ pagination, baseHref, query, locale, labels, hrefFor }: PaginationProps) {
   const { page, totalPages } = pagination;
   if (totalPages <= 1) return null;
 
-  const href = (n: number) => pageHref(baseHref, n, query);
+  const href = hrefFor ?? ((n: number) => pageHref(baseHref, n, query));
   const hasPrevious = page > 1;
   const hasNext = page < totalPages;
 

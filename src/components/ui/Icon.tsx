@@ -18,7 +18,8 @@ export type IconName =
   | 'linkedin'
   | 'tiktok'
   | 'snapchat'
-  | 'link';
+  | 'link'
+  | 'filter';
 
 const PATHS: Record<IconName, string> = {
   search: 'M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.8 4.8-1.4 1.4-4.8-4.8A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z',
@@ -39,6 +40,7 @@ const PATHS: Record<IconName, string> = {
   tiktok: 'M16.5 3c.4 2.2 1.7 3.7 4 3.9v3a7 7 0 0 1-4-1.3v6.2A5.8 5.8 0 1 1 10.7 9v3.1a2.8 2.8 0 1 0 2.8 2.7V3h3Z',
   snapchat: 'M12 2.5c2.8 0 5 2.2 5 5v2.3l1.5-.5.6 1.6-2 1c.6 2 2.2 3.2 3.9 3.6l-.3 1.2-2 .5-.3 1.3-1.8-.2c-1 .1-2 1.2-4.6 1.2s-3.6-1.1-4.6-1.2l-1.8.2-.3-1.3-2-.5-.3-1.2c1.7-.4 3.3-1.6 3.9-3.6l-2-1 .6-1.6 1.5.5V7.5c0-2.8 2.2-5 5-5Z',
   link: 'M10.6 13.4a1 1 0 0 0 1.4 1.4l4.9-4.9a3 3 0 0 0-4.2-4.2l-2 2 1.4 1.4 2-2a1 1 0 0 1 1.4 1.4l-4.9 4.9ZM13.4 10.6a1 1 0 0 0-1.4-1.4l-4.9 4.9a3 3 0 0 0 4.2 4.2l2-2-1.4-1.4-2 2a1 1 0 0 1-1.4-1.4l4.9-4.9Z',
+  filter: 'M3 5h18v2H3V5Zm3 6h12v2H6v-2Zm4 6h4v2h-4v-2Z',
 };
 
 interface IconProps extends SVGProps<SVGSVGElement> {

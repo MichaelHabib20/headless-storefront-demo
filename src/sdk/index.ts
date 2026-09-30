@@ -11,4 +11,5 @@ export { createStorefrontClient, type StorefrontClient, type StorefrontClientOpt
 export { getHome, getLayout } from './v3/storefront';
 export * from './v3/shopper';
 export { getCheckoutSettings, getLocations } from './v3/settings';
+export { getBrands, getCategories, getProducts, getSearchSuggestions, listingQuery, resolvePath, type ListingParams, type ListingScope } from './v3/catalog';
 export * from './v3/types';
