@@ -65,7 +65,9 @@ them and **blocks the deploy** when one is broken.
 | `src/app/[locale]/layout.tsx` | Loads `layout`, renders chrome for every page |
 | `src/app/[locale]/page.tsx` | The home page: composition of home blocks |
 | `src/app/[locale]/<area>/page.tsx` + `actions.ts` | Shopper pages (reads) and their server actions (writes) |
-| `src/app/[locale]/[...slug]/page.tsx` | "Coming soon" for routes that aren't built yet |
+| `src/app/[locale]/[...slug]/page.tsx` | "Coming soon" for routes that aren't built yet; the "no longer available" page (410) |
+| `src/components/catalog/` + `src/lib/listing.ts`, `catalog.server.ts`, `resolve.ts` | Listings (one view for category, brand, list, tag, deals, search), filters, sort, category and brand indexes, unknown-path answers |
+| `src/middleware.ts` | Locale prefix; asks `GET /resolve` for paths outside our routes (301/302/410/404) |
 | `src/test/fixtures/v3/` | Recorded API responses (`npm run fixtures:record`) + shopper fixtures from the mock |
 | `scripts/` | `check-rules.mjs` (architecture rules + the `src/money` lock in `money.lock.json`), `contract-check.mjs`, `mock-api.mjs` + `mock/shopper.mjs`, `record-fixtures.mjs` |
 
@@ -83,6 +85,7 @@ them and **blocks the deploy** when one is broken.
 | Cart page, quantities, totals, checkout button, minimum order | [reference/cart.md](reference/cart.md) |
 | Wishlist, compare, hearts, move to cart | [reference/wishlist-compare.md](reference/wishlist-compare.md) |
 | Notifications page, bell badge, mark as read | [reference/notifications.md](reference/notifications.md) |
+| Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 
 ## Common requests → how
@@ -106,6 +109,9 @@ them and **blocks the deploy** when one is broken.
 | "Add to cart / heart for guests" | Server action with `withShopper` | Create a guest while rendering; token in the browser |
 | "Add a new text/button" | Add the key to `en` **and** `ar` in `src/lib/i18n.ts` or `src/lib/messages/<area>.ts` | Hardcode English |
 | "Link the logo somewhere else" | `routes.*` in `src/lib/routing.ts` | Write `'/en/...'` strings |
+| "Add a filter / sort option" | Backend facet or sort option; links are its `query` strings (`listingHref`) | Build `?brands=…` or sort `items` yourself |
+| "Show N results" | `pagination.total` with `formatNumber()` | `items.length` |
+| "Redirect an old URL" | The merchant's redirect table (`GET /resolve`, handled in `src/middleware.ts`) | Hardcoded redirects |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
 
 ## Before you say "done"
