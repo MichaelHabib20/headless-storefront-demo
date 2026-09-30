@@ -64,14 +64,16 @@ interface PaginationProps {
   labels: PaginationLabels;
   /** Element id to scroll to on the new page (e.g. "reviews" for a list inside a longer page). */
   fragment?: string;
+  /** A page's link, when it is not baseHref + query (listings keep their query string exactly as it is). */
+  hrefFor?: (page: number) => string;
 }
 
 /** Previous / page numbers / next, as plain links (works without JavaScript). Hidden for a single page. */
-export function Pagination({ pagination, baseHref, query, locale, labels, fragment }: PaginationProps) {
+export function Pagination({ pagination, baseHref, query, locale, labels, fragment, hrefFor }: PaginationProps) {
   const { page, totalPages } = pagination;
   if (totalPages <= 1) return null;
 
-  const href = (n: number) => pageHref(baseHref, n, query) + (fragment ? `#${fragment}` : '');
+  const href = (n: number) => (hrefFor ? hrefFor(n) : pageHref(baseHref, n, query)) + (fragment ? `#${fragment}` : '');
   const hasPrevious = page > 1;
   const hasNext = page < totalPages;
 

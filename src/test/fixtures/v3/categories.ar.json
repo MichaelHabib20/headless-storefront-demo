@@ -1,0 +1,4008 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": "skin-care",
+    "name": "العناية بالبشرة",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin-Care-1749731184.webp",
+     "alt": "العناية بالبشرة"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "skin-care"
+     ]
+    },
+    "children": [
+     {
+      "id": "skin-care/body-care",
+      "name": "العناية بالجسم",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "skin-care",
+        "body-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "skin-care/body-care/scars-stretchmarks",
+        "name": "ازالة الندبات وعلامات التمدد",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Scars%20-%20Stretchmarks-1751272890.webp",
+         "alt": "ازالة الندبات وعلامات التمدد"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "body-care",
+          "scars-stretchmarks"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/body-care/body-scrub",
+        "name": "ماسكات للجسم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%20Scrub-1751272907.webp",
+         "alt": "ماسكات للجسم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "body-care",
+          "body-scrub"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/body-care/body-moisturizers",
+        "name": "مرطبات الجسم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%20Moisturizers-1751272926.webp",
+         "alt": "مرطبات الجسم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "body-care",
+          "body-moisturizers"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "skin-care/hand-care-foot",
+      "name": "العناية بالايد والقدم",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "skin-care",
+        "hand-care-foot"
+       ]
+      },
+      "children": [
+       {
+        "id": "skin-care/hand-care-foot/foot-care",
+        "name": "العناية بالقدم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Foot%20Care-1751272940.webp",
+         "alt": "العناية بالقدم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "hand-care-foot",
+          "foot-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/hand-care-foot/hand-moisturizers",
+        "name": "مرطبات الايدي",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hand%20Moisturizers-1751272958.webp",
+         "alt": "مرطبات الايدي"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "hand-care-foot",
+          "hand-moisturizers"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "skin-care/face-care",
+      "name": "العناية بالوجه",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "skin-care",
+        "face-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "skin-care/face-care/skin-cleansers",
+        "name": "منظفات الوجه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin%20Cleansers-1751272460.webp",
+         "alt": "منظفات الوجه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "skin-cleansers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/skin-moisturizers",
+        "name": "مرطبات الوجه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin%20Moisturizers-1751272491.webp",
+         "alt": "مرطبات الوجه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "skin-moisturizers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/sun-care",
+        "name": "الوقايه من الشمس",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sun%20Care-1751272512.webp",
+         "alt": "الوقايه من الشمس"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "sun-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/facial-toners-serums",
+        "name": "سيروم وتونر للوجه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Facial%20Toners%20-%20Serums-1751272556.webp",
+         "alt": "سيروم وتونر للوجه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "facial-toners-serums"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/eye-cream-contour",
+        "name": "كريمات العين والكونتور",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Cream%2520-%2520Contour-1750065683.webp",
+         "alt": "كريمات العين والكونتور"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "eye-cream-contour"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/makeup-removers",
+        "name": "مزيلات المكياج",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Makeup%20Removers-1751272575.webp",
+         "alt": "مزيلات المكياج"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "makeup-removers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/facial-masks-scrubs",
+        "name": "ماسكات ومقشر الوجه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Facial%20Masks%20-Scrubs-1751272863.webp",
+         "alt": "ماسكات ومقشر الوجه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "facial-masks-scrubs"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "mom-baby",
+    "name": "العناية بالام والطفل",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+     "alt": "العناية بالام والطفل"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    },
+    "children": [
+     {
+      "id": "mom-baby/baby-nutrition",
+      "name": "تغذية الطفل",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-nutrition"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-nutrition/baby-feeding-accessories",
+        "name": "مستلزمات تغذية الطفل",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Feeding%20Accessories-1751281605.webp",
+         "alt": "مستلزمات تغذية الطفل"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "baby-feeding-accessories"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-nutrition/baby-food",
+        "name": "طعام الاطفال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Food-1751281617.webp",
+         "alt": "طعام الاطفال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "baby-food"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-nutrition/nutrition-supplements",
+        "name": "المكملات الغذائية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nutrition%20Supplements-1751281635.webp",
+         "alt": "المكملات الغذائية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "nutrition-supplements"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-nutrition/baby-milk",
+        "name": "البان الاطفال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Milk-1751281646.webp",
+         "alt": "البان الاطفال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "baby-milk"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/baby-care",
+      "name": "العناية بالطفل",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-care/baby-skin-care",
+        "name": "العناية بالبشرة الطفل",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Skin%20Care-1751281831.webp",
+         "alt": "العناية بالبشرة الطفل"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-skin-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/nappy-care-diaper-cream",
+        "name": "العناية بالحفاضات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nappy%20Care-diaper%20cream-1751281874.webp",
+         "alt": "العناية بالحفاضات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "nappy-care-diaper-cream"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/kids-toothpaste",
+        "name": "معجون اسنان اطفال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Kids%20Toothpaste-1751281888.webp",
+         "alt": "معجون اسنان اطفال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "kids-toothpaste"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/baby-sun-care",
+        "name": "الوقاية من الشمس",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Sun%20Care-1751281900.webp",
+         "alt": "الوقاية من الشمس"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-sun-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/baby-health-care",
+        "name": "العناية بصحة الطفل",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Health%20Care-1751281918.webp",
+         "alt": "العناية بصحة الطفل"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-health-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/baby-toiletries-bath-accessories",
+        "name": "مستلزمات الاستحمام وحمام الطفل",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Toiletries%20%26%20Bath%20Accessories-1751281932.webp",
+         "alt": "مستلزمات الاستحمام وحمام الطفل"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-toiletries-bath-accessories"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/baby-accessories",
+      "name": "مستلزمات الطفل",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-accessories"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-accessories/medical-earrings",
+        "name": "الحلقان الطبية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%20Earrings-1751281746.webp",
+         "alt": "الحلقان الطبية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-accessories",
+          "medical-earrings"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-accessories/kids-toothbrush",
+        "name": "فرشاة اسنان اطفال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Kids%20Toothbrush-1751281759.webp",
+         "alt": "فرشاة اسنان اطفال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-accessories",
+          "kids-toothbrush"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-accessories/baby-equipment-pacifiers",
+        "name": "معدات الاطفال واللهيات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Equipment-Pacifiers-1751281799.webp",
+         "alt": "معدات الاطفال واللهيات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-accessories",
+          "baby-equipment-pacifiers"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/mom-care",
+      "name": "العناية بالام",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "mom-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/mom-care/breastfeeding-supplies",
+        "name": "مستلزمات الرضاعة الطبيعية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Breastfeeding%20Supplies-1751281661.webp",
+         "alt": "مستلزمات الرضاعة الطبيعية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "breastfeeding-supplies"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/mom-care/pregnancy-check",
+        "name": "اختبار الحمل",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Pregnancy%20Check-1751281675.webp",
+         "alt": "اختبار الحمل"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "pregnancy-check"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/mom-care/ovulation-check",
+        "name": "اختبار التبويض",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Ovulation%20Check-1751281688.webp",
+         "alt": "اختبار التبويض"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "ovulation-check"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/mom-care/mom-skin-care",
+        "name": "العناية بالبشرة الام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom%20Skin%20Care-1751281703.webp",
+         "alt": "العناية بالبشرة الام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "mom-skin-care"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/baby-diapers-wips",
+      "name": "الحفاضات ومناديل الاطفال",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-diapers-wips"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-diapers-wips/baby-diapers",
+        "name": "حفاضات الاطفال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Diapers-1751281718.webp",
+         "alt": "حفاضات الاطفال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-diapers-wips",
+          "baby-diapers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-diapers-wips/baby-wipes",
+        "name": "مناديل مبللة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Wipes-1751281733.webp",
+         "alt": "مناديل مبللة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-diapers-wips",
+          "baby-wipes"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "medicine",
+    "name": "الادوية",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medicine.1-1749729303.webp",
+     "alt": "الادوية"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "medicine"
+     ]
+    },
+    "children": [
+     {
+      "id": "medicine/headachefever",
+      "name": "ادوية مسكنة للصداع وخفض الحرارة",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "headachefever"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/headachefever/migraine-treatment",
+        "name": "أدوية علاج الصداع النصفى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Migraine%2520Treatment-1750000656.webp",
+         "alt": "أدوية علاج الصداع النصفى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "headachefever",
+          "migraine-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/headachefever/non-narcotic-analgesic",
+        "name": "المسكنات الغير مخدرة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Narcotic%2520Analgesic-1750000645.webp",
+         "alt": "المسكنات الغير مخدرة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "headachefever",
+          "non-narcotic-analgesic"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/food-beverages",
+      "name": "مأكولات و مشروبات",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "food-beverages"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/food-beverages/salt-substitute",
+        "name": "بديل ملح الطعام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Salt%2520Substitute-1750000378.webp",
+         "alt": "بديل ملح الطعام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "food-beverages",
+          "salt-substitute"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/food-beverages/honey-bee-products",
+        "name": "عسل ومنتجات نحل",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Honey%2520%2526%2520Bee%2520products-1750000390.webp",
+         "alt": "عسل ومنتجات نحل"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "food-beverages",
+          "honey-bee-products"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/vitamins-or-minerals",
+      "name": "الفيتامينات والمكملات الغذائية",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "vitamins-or-minerals"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/vitamins-or-minerals/eye-aid-vitamin",
+        "name": "فيتامين مقوي للبصر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Aid%2520Vitamin-1749998885.webp",
+         "alt": "فيتامين مقوي للبصر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "vitamins-or-minerals",
+          "eye-aid-vitamin"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/vitamins-or-minerals/multivitamins",
+        "name": "فيتامينات متعددة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Multivitamins-1749998897.webp",
+         "alt": "فيتامينات متعددة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "vitamins-or-minerals",
+          "multivitamins"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/vitamins-or-minerals/hair-tonic-vitamin",
+        "name": "مقوي للشعر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Tonic-1749998859.webp",
+         "alt": "مقوي للشعر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "vitamins-or-minerals",
+          "hair-tonic-vitamin"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/mouth-gum-care",
+      "name": "ادوية الفم واللثة",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "mouth-gum-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/mouth-gum-care/mouthwash-gargle-medicines",
+        "name": "غسول و غرغرة للفم و الحلق",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mouthwash%2520-%2520Gargle-1750000790.webp",
+         "alt": "غسول و غرغرة للفم و الحلق"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "mouthwash-gargle-medicines"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/mouth-gum-care/teeth-gum-care",
+        "name": "مستحضر للعناية بالأسنان واللثة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Teeth%2520-%2520Gum%2520Care-1750000762.webp",
+         "alt": "مستحضر للعناية بالأسنان واللثة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "teeth-gum-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/mouth-gum-care/lozenges",
+        "name": "مستحضرات استحلاب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lozenges-1750000778.webp",
+         "alt": "مستحضرات استحلاب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "lozenges"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/mouth-gum-care/topical-treatment-of-the-mouth",
+        "name": "علاج موضعي للفم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Treatment%2520Of%2520The%2520Mouth-1750000668.webp",
+         "alt": "علاج موضعي للفم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "topical-treatment-of-the-mouth"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/topical-prepareation",
+      "name": "الادوية الجلدية",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "topical-prepareation"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/topical-prepareation/anti-virals-medicine",
+        "name": "مضادات الفيروسات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Virals-1749999431.webp",
+         "alt": "مضادات الفيروسات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-virals-medicine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/soothing-protective",
+        "name": "مستحضر لحماية و تلطيف البشرة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Soothing-Protective-1749999239.webp",
+         "alt": "مستحضر لحماية و تلطيف البشرة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "soothing-protective"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/burns-wounds",
+        "name": "حروق / جروح",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Burns-Wounds-1749999478.webp",
+         "alt": "حروق / جروح"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "burns-wounds"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/skin-depigmentation",
+        "name": "علاج عدم تناسق لون البشرة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin%2520Depigmentation-1749999574.webp",
+         "alt": "علاج عدم تناسق لون البشرة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "skin-depigmentation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/body-firming-anti-ageing",
+        "name": "منتج لشد البشرة وضد تقدم العمر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body-Firming-Anti-Ageing-1751286214.webp",
+         "alt": "منتج لشد البشرة وضد تقدم العمر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "body-firming-anti-ageing"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/alopecia-treatment",
+        "name": "مستحضرات لعلاج الصلع",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Alopecia%2520Treatment-1749999196.webp",
+         "alt": "مستحضرات لعلاج الصلع"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "alopecia-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/varicose-veins",
+        "name": "مستحضرات لعلاج الدوالى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Varicose%2520Veins-1749999208.webp",
+         "alt": "مستحضرات لعلاج الدوالى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "varicose-veins"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anthelmintics-gastro-intestinal-tract-4",
+        "name": "أدوية طاردة للديدان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anthelmintics%252C-1749986240.webp",
+         "alt": "أدوية طاردة للديدان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anthelmintics-gastro-intestinal-tract-4"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/psoriasis-eczema",
+        "name": "مستحضرلعلاج الاكزيما والصدفية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Psoriasis-Eczema-1749999173.webp",
+         "alt": "مستحضرلعلاج الاكزيما والصدفية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "psoriasis-eczema"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/sun-screen",
+        "name": "مستحضرللوقاية من آشعة الشمس",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sun%2520Screen-1749999158.webp",
+         "alt": "مستحضرللوقاية من آشعة الشمس"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "sun-screen"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/astringent",
+        "name": "أدوية قابضة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Astringent-1749999455.webp",
+         "alt": "أدوية قابضة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "astringent"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/local-anaesthetic",
+        "name": "مخدر موضعى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Local%2520Anaesthetic-1749999054.webp",
+         "alt": "مخدر موضعى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "local-anaesthetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-dandruff",
+        "name": "مستحضرات لعلاج قشر الشعر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Dandruff-1749999184.webp",
+         "alt": "مستحضرات لعلاج قشر الشعر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-dandruff"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-fungals",
+        "name": "مضادات الفطريات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Fungals-1749986762.webp",
+         "alt": "مضادات الفطريات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-fungals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/male-sex-horm-androgens",
+        "name": "أدوية هرمونات الذكورة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Male%2520Sex%2520Horm%2520%2520Androgens-1749985953.webp",
+         "alt": "أدوية هرمونات الذكورة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "male-sex-horm-androgens"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/hair-tonic",
+        "name": "مستحضر مقوى للشعر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Tonic-1749999464.webp",
+         "alt": "مستحضر مقوى للشعر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "hair-tonic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/medical-soap",
+        "name": "صابون طبى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%2520Soap-1749999516.webp",
+         "alt": "صابون طبى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "medical-soap"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/haemorrhoids-anal-fissures",
+        "name": "علاج البواسيروالتشققات الشرجية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Haemorrhoids-Anal-Fissures-1749999029.webp",
+         "alt": "علاج البواسيروالتشققات الشرجية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "haemorrhoids-anal-fissures"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/wartsanti-corn-preparations",
+        "name": "علاج لعين السمكة و الكاللو",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Warts-Anti-Corn-Preparations-1749999606.webp",
+         "alt": "علاج لعين السمكة و الكاللو"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "wartsanti-corn-preparations"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-biotics-medicine",
+        "name": "المضادات الحيوية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Biotics-1749985984.webp",
+         "alt": "المضادات الحيوية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-biotics-medicine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/topical-anti-biotic-topical-prepareation-4",
+        "name": "مضاد حيوي موضعى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Anti-%2520Biotic-1749999039.webp",
+         "alt": "مضاد حيوي موضعى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "topical-anti-biotic-topical-prepareation-4"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-acne",
+        "name": "مستحضرات لعلاج حب الشباب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Acne-1749998950.webp",
+         "alt": "مستحضرات لعلاج حب الشباب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-acne"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/blank",
+        "name": "ابيض",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Blank-1749999442.webp",
+         "alt": "ابيض"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "blank"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-fungal-steroid",
+        "name": "مضاد للفطريات مع كورتيزون",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Fungal-Steroid-1749999148.webp",
+         "alt": "مضاد للفطريات مع كورتيزون"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-fungal-steroid"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/antiseptic",
+        "name": "مطهر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Antiseptic-1749999129.webp",
+         "alt": "مطهر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "antiseptic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/scabies-lice",
+        "name": "علاج حشرات الرأس و الجرب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Scabies-Lice-1749999561.webp",
+         "alt": "علاج حشرات الرأس و الجرب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "scabies-lice"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/vitiligo-treatment",
+        "name": "مستحضرات لعلاج البهاق",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Vitiligo-Treatment-1749999225.webp",
+         "alt": "مستحضرات لعلاج البهاق"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "vitiligo-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/steroid",
+        "name": "ستيرويدات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Steroid-1749999503.webp",
+         "alt": "ستيرويدات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "steroid"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/steroid-anti-biotic",
+        "name": "ستيرويد و مضاد حيوى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Steroid-Anti-Biotic-1749999491.webp",
+         "alt": "ستيرويد و مضاد حيوى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "steroid-anti-biotic"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/eye-medicines",
+      "name": "مستحضرات العين والاذن والانف",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "eye-medicines"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/eye-medicines/topical-anti-biotic",
+        "name": "مضاد حيوى موضعى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Anti-Biotic-1750000576.webp",
+         "alt": "مضاد حيوى موضعى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-anti-biotic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/ear-preparation",
+        "name": "مستحضرات للاذن",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Ear%2520Preparation-1750000521.webp",
+         "alt": "مستحضرات للاذن"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "ear-preparation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/eye-irrigation",
+        "name": "مستحضرات ترطيب العين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Irrigation-1750000563.webp",
+         "alt": "مستحضرات ترطيب العين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "eye-irrigation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/contact-lens-care",
+        "name": "مستحضرات للعدسات اللاصقة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Contact%2520Lens%2520Care-1750000543.webp",
+         "alt": "مستحضرات للعدسات اللاصقة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "contact-lens-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/topical-steroid-anti-biotic",
+        "name": "ستيرويد و مضاد حيوى موضعى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Steroid%2520%2526%2520Anti-Biotic-1750000485.webp",
+         "alt": "ستيرويد و مضاد حيوى موضعى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-steroid-anti-biotic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/eye-local-anaesthetic",
+        "name": "مخدر موضعى للعين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Local%2520Anaesthetic.-1750000444.webp",
+         "alt": "مخدر موضعى للعين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "eye-local-anaesthetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/topical-anti-viral",
+        "name": "مضاد للفيروسات موضعى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Anti-Viral-1750000586.webp",
+         "alt": "مضاد للفيروسات موضعى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-anti-viral"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/glaucoma-treatment",
+        "name": "علاج جلوكوما العين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Glaucoma%2520Treatment-1750000494.webp",
+         "alt": "علاج جلوكوما العين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "glaucoma-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/nose-preparation",
+        "name": "مستحضرات للانف",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nose%2520Preparation-1750000531.webp",
+         "alt": "مستحضرات للانف"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "nose-preparation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/eye-allergy-inflammation",
+        "name": "علاج حساسية و التهابات العين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Allergy%2520%2526%2520Inflammation-1750000509.webp",
+         "alt": "علاج حساسية و التهابات العين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "eye-allergy-inflammation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/mydriatics",
+        "name": "مستحضرات موسعة لحدقة العين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mydriatics-1750000554.webp",
+         "alt": "مستحضرات موسعة لحدقة العين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "mydriatics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/topical-steroid",
+        "name": "ستيرويد موضعى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Steroid-1750000471.webp",
+         "alt": "ستيرويد موضعى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-steroid"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/central-nervous-system",
+      "name": "ادوية مؤثرة على الجهاز العصبى",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "central-nervous-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/central-nervous-system/local-anaesthetic-central",
+        "name": "مخدر موضعي",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Local%2520Anaesthetic-1749991542.webp",
+         "alt": "مخدر موضعي"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "local-anaesthetic-central"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/psychotic-disorders",
+        "name": "أدوية لعلاج الاضطراب النفسي",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Psychotic%2520Disorders-1749988915.webp",
+         "alt": "أدوية لعلاج الاضطراب النفسي"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "psychotic-disorders"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/sedatives-hypnotics",
+        "name": "الأدوية المهدئة و المنومة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sedatives%2520%2526%2520Hypnotics-1749988869.webp",
+         "alt": "الأدوية المهدئة و المنومة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "sedatives-hypnotics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/cerebral-stimulant",
+        "name": "أدوية منشطة للمخ",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cerebral%2520Stimulant-1749991484.webp",
+         "alt": "أدوية منشطة للمخ"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "cerebral-stimulant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/alzheimer-treatment",
+        "name": "أدوية علاج الزهايمر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Alzheimer%2520Treatment-1749988904.webp",
+         "alt": "أدوية علاج الزهايمر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "alzheimer-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/anti-parkinsonism",
+        "name": "أدوية لعلاج الشلل الرعاش",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Parkinsonism-1749988938.webp",
+         "alt": "أدوية لعلاج الشلل الرعاش"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "anti-parkinsonism"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/cns-stimulants",
+        "name": "منشط للمخ",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cns%2520Stimulants-1749991531.webp",
+         "alt": "منشط للمخ"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "cns-stimulants"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/general-anaesthetic",
+        "name": "مخدر عام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/General%2520Anaesthetic-1749991521.webp",
+         "alt": "مخدر عام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "general-anaesthetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/anti-epileptic-a-convulsant",
+        "name": "أدوية الصرع و التشنج العصبى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Epileptic%2520-%2520A%2520%2520Convulsant-1749988891.webp",
+         "alt": "أدوية الصرع و التشنج العصبى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "anti-epileptic-a-convulsant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/neurotonic",
+        "name": "أدوية مقوية للأعصاب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Neurotonic-1749991470.webp",
+         "alt": "أدوية مقوية للأعصاب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "neurotonic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/anti-depressant",
+        "name": "أدوية مضادة للاكتئاب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Depressant-1749988949.webp",
+         "alt": "أدوية مضادة للاكتئاب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "anti-depressant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/adhdattent-deficit-hyperac-d",
+        "name": "فرط الحركة وتشتت الانتباه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/ADHD%2528Attent.Deficit.Hyperac.D%2529-1749991511.webp",
+         "alt": "فرط الحركة وتشتت الانتباه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "adhdattent-deficit-hyperac-d"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/miscellaneous",
+      "name": "استخدمات متنوعة",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "miscellaneous"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/miscellaneous/anti-dote",
+        "name": "علاج التسمم (زيادة دواء بالدم)",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Dote-1749998993.webp",
+         "alt": "علاج التسمم (زيادة دواء بالدم)"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "miscellaneous",
+          "anti-dote"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/miscellaneous/anaemia",
+        "name": "أدوية لعلاج الأنيميا",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anaemia-1749999716.webp",
+         "alt": "أدوية لعلاج الأنيميا"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "miscellaneous",
+          "anaemia"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/infections",
+      "name": "ادوية مقاومة للعدوى الميكروبية",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "infections"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/infections/anthelmintics",
+        "name": "أدوية طارده للديدان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anthelmintics.-1750943901.webp",
+         "alt": "أدوية طارده للديدان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anthelmintics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-fungals",
+        "name": "مضادات فطريات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-%20Fungals-1750943977.webp",
+         "alt": "مضادات فطريات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-fungals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/immunomodulator-infections",
+        "name": "منظم للمناعه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Immunomodulator-1749988852.webp",
+         "alt": "منظم للمناعه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "immunomodulator-infections"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-biotics",
+        "name": "مضادات الحيوية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Biotics-1750944035.webp",
+         "alt": "مضادات الحيوية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-biotics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-virals",
+        "name": "مضادات فيروسات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Virals-1749988832.webp",
+         "alt": "مضادات فيروسات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-virals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-acne-infections-20",
+        "name": "مستحضرات علاج حب الشباب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-%2520Acne-1749986491.webp",
+         "alt": "مستحضرات علاج حب الشباب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-acne-infections-20"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/vaccines",
+        "name": "الأمصال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Vaccines-1749986734.webp",
+         "alt": "الأمصال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "vaccines"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/weight-control-fitness",
+      "name": "ادوية التخسيس واللياقة",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "weight-control-fitness"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/weight-control-fitness/appetite-control-fat-burn",
+        "name": "ادوية التحكم في الشهية وحرق الدهون",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Appetite%2520Control%2520-%2520Fat%2520Burn-1750208433.webp",
+         "alt": "ادوية التحكم في الشهية وحرق الدهون"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "weight-control-fitness",
+          "appetite-control-fat-burn"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/weight-control-fitness/anabolic",
+        "name": "مستحضرات كمال الأجسام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anabolic-1750000633.webp",
+         "alt": "مستحضرات كمال الأجسام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "weight-control-fitness",
+          "anabolic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/weight-control-fitness/sugar-substitutes",
+        "name": "بدائل السكر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sugar%2520Substitutes-1750000620.webp",
+         "alt": "بدائل السكر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "weight-control-fitness",
+          "sugar-substitutes"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/musculo-skeletal-system",
+      "name": "الجهاز العضلى العظمى",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "musculo-skeletal-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/musculo-skeletal-system/mytonics",
+        "name": "يحسن انتقال الاشارات العصبية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mytonics-1749994101.webp",
+         "alt": "يحسن انتقال الاشارات العصبية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "mytonics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/gout-treatment",
+        "name": "أدوية لعلاج النقرس",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Gout%2520Treatment-1749993338.webp",
+         "alt": "أدوية لعلاج النقرس"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "gout-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/analgesic-a-rheumatic-medicine",
+        "name": "مسكن و مضاد روماتيزم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Analgesic-A-Rheumatic-1749993264.webp",
+         "alt": "مسكن و مضاد روماتيزم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "analgesic-a-rheumatic-medicine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/skeletal-muscle-relaxant",
+        "name": "الأدوية الباسطة للعضلات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skeletal%2520Muscle%2520Relaxant-1749999371.webp",
+         "alt": "الأدوية الباسطة للعضلات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "skeletal-muscle-relaxant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/osteoporosis-arthritis-manag",
+        "name": "علاج هشاشة العظام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Osteoporosis%2520Arthritis%2520Manag-1749998848.webp",
+         "alt": "علاج هشاشة العظام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "osteoporosis-arthritis-manag"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/other-anti-rheumatics",
+        "name": "أدوية لعلاج الروماتيزم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Other%2520Anti-Rheumatics-1749993324.webp",
+         "alt": "أدوية لعلاج الروماتيزم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "other-anti-rheumatics"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/respiratory-system",
+      "name": "ادوية الجهاز التنفسى",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "respiratory-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/respiratory-system/cough-expectorant-sedative",
+        "name": "مهدئ للكحة و طارد للبلغم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cough%20Expectorant%20%26%20Sedative-1751283046.webp",
+         "alt": "مهدئ للكحة و طارد للبلغم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "cough-expectorant-sedative"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/bronchodilator",
+        "name": "أدوية موسعة للشعب الهوائيه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Bronchodilator-1749983620.webp",
+         "alt": "أدوية موسعة للشعب الهوائيه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "bronchodilator"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/anti-catarrhals",
+        "name": "أدوية مضادة للرشح واعراض البرد",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Catarrhals-1749983657.webp",
+         "alt": "أدوية مضادة للرشح واعراض البرد"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "anti-catarrhals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/anti-histaminesanti-inflam",
+        "name": "مضادات (الحساسيه) والالتهابات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Histamines%26Anti-Inflam-1751283125.webp",
+         "alt": "مضادات (الحساسيه) والالتهابات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "anti-histaminesanti-inflam"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/nicotine-replacement-therapy",
+        "name": "العلاج ببدائل النيكوتين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nicotine%20Replacement%20Therapy-1751283139.webp",
+         "alt": "العلاج ببدائل النيكوتين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "nicotine-replacement-therapy"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/mucolytic-muco-regulator",
+        "name": "أدوية مذيبة للبلغم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mucolytic%2520%2520Muco-Regulator-1749983546.webp",
+         "alt": "أدوية مذيبة للبلغم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "mucolytic-muco-regulator"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/anti-tussive",
+        "name": "أدوية لعلاج الكحة الجافة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Tussive-1749983494.webp",
+         "alt": "أدوية لعلاج الكحة الجافة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "anti-tussive"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/gastro-intestinal-tract",
+      "name": "ادوية الجهاز الهضمى",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "gastro-intestinal-tract"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/gastro-intestinal-tract/antacids",
+        "name": "أدوية لعلاج الحموضة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Antacids-1749984080.webp",
+         "alt": "أدوية لعلاج الحموضة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "antacids"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/cathartic-laxative-purgative",
+        "name": "الأدوية الملينة و المسهلة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CatharticLaxativePurgative-1749983739.webp",
+         "alt": "الأدوية الملينة و المسهلة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "cathartic-laxative-purgative"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-flatulence",
+        "name": "ادوية لعلاج الانتفاخ",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Flatulence-1749984998.webp",
+         "alt": "ادوية لعلاج الانتفاخ"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-flatulence"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/plasma-substituent-expander-gastro",
+        "name": "بدائل بلازما (محاليل الدم)",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Plasma%2520Substituent%2520Expander-1749985711.webp",
+         "alt": "بدائل بلازما (محاليل الدم)"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "plasma-substituent-expander-gastro"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/liver-disease-management",
+        "name": "أدوية لعلاج أمراض الكبد",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Liver%2520Disease%2520Management-1749985041.webp",
+         "alt": "أدوية لعلاج أمراض الكبد"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "liver-disease-management"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-spasmodic",
+        "name": "أدوية لعلاج المغص و التقلصات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Spasmodic-1749985025.webp",
+         "alt": "أدوية لعلاج المغص و التقلصات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-spasmodic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/ulcer-treatment",
+        "name": "أدوية لعلاج القرحة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Ulcer%2520Treatment-1749984101.webp",
+         "alt": "أدوية لعلاج القرحة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "ulcer-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-dysenteric-amoebic-paras",
+        "name": "أدوية مضادة للطفيليات",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-DysentericAmoebicParas-1749985467.webp",
+         "alt": "أدوية مضادة للطفيليات"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-dysenteric-amoebic-paras"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-diarrhoeal",
+        "name": "أدوية لعلاج الاسهال",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Depressant-1749983760.webp",
+         "alt": "أدوية لعلاج الاسهال"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-diarrhoeal"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-emetic",
+        "name": "أدوية لعلاج القئ",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Emetic-1749984904.webp",
+         "alt": "أدوية لعلاج القئ"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-emetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/digestive",
+        "name": "أدوية مهضمة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Digestive-1749985620.webp",
+         "alt": "أدوية مهضمة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "digestive"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/lipids-regulation-gastro",
+        "name": "أدويه لتنظيم الدهون بالدم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lipids%2520Regulation-1749985698.webp",
+         "alt": "أدويه لتنظيم الدهون بالدم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "lipids-regulation-gastro"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/gynaecologyurinary-tract-dis",
+      "name": "ادوية النساء والمسالك البولية",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "gynaecologyurinary-tract-dis"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/prostatic-hyperplasia",
+        "name": "أدوية لعلاج تضخم البروستاتا",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Prostatic%2520Hyperplasia-1749986107.webp",
+         "alt": "أدوية لعلاج تضخم البروستاتا"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "prostatic-hyperplasia"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/menopausalgyn-disorders",
+        "name": "اضطرابات الدورة الشهرية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Menopausal%2526Gyn.%2520Disorders-1749986055.webp",
+         "alt": "اضطرابات الدورة الشهرية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "menopausalgyn-disorders"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/urinary-tract-antiseptic",
+        "name": "مستحضر مطهر للمسالك البولية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Urinary%2520Tract%2520Antiseptic-1749986195.webp",
+         "alt": "مستحضر مطهر للمسالك البولية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "urinary-tract-antiseptic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/nocturnal-enuresis",
+        "name": "أدوية لعلاج التبول اللاإرادى",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nocturnal%2520Enuresis-1749986090.webp",
+         "alt": "أدوية لعلاج التبول اللاإرادى"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "nocturnal-enuresis"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/infertility-treatment-gynaecologyurinary-tract-dis-4",
+        "name": "علاج العقم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Infertility%2520Treatment-1749986208.webp",
+         "alt": "علاج العقم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "infertility-treatment-gynaecologyurinary-tract-dis-4"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/immunological-system",
+      "name": "ادوية مؤثرة على الجهاز المناعى",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "immunological-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/immunological-system/interferons",
+        "name": "الأنترفيرون",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Interferons-1749991557.webp",
+         "alt": "الأنترفيرون"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "immunological-system",
+          "interferons"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/immunological-system/immuno-suppresives",
+        "name": "مستحضرات مثبطة لجهاز المناعة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Immuno-Suppresives-1749991578.webp",
+         "alt": "مستحضرات مثبطة لجهاز المناعة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "immunological-system",
+          "immuno-suppresives"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/cardio-vascular-system",
+      "name": "ادوية مؤثرة على القلب والأوعية",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "cardio-vascular-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/cardio-vascular-system/vascularitics",
+        "name": "أدوية الاضطرابات الوعائية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Vascularitics-1749991741.webp",
+         "alt": "أدوية الاضطرابات الوعائية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "vascularitics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-coagulants",
+        "name": "الأدوية المضادة لتجلط الدم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Coagulants-1749991630.webp",
+         "alt": "الأدوية المضادة لتجلط الدم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-coagulants"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/circulatory-disturbance-agent",
+        "name": "دواء لقصور الدورة الدموية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Circulatory%2520Disturbance%2520Agent-1749991846.webp",
+         "alt": "دواء لقصور الدورة الدموية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "circulatory-disturbance-agent"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/haemostatics-coagulants",
+        "name": "أدوية لعلاج النزيف",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/HaemostaticsCoagulants-1749991771.webp",
+         "alt": "أدوية لعلاج النزيف"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "haemostatics-coagulants"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/congestive-heart-failure",
+        "name": "الادوية المقويه لعضلة القلب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Congestive%2520Heart%2520Failure-1749991618.webp",
+         "alt": "الادوية المقويه لعضلة القلب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "congestive-heart-failure"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-hypotension",
+        "name": "أدوية لعلاج انخفاض ضغط الدم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hypotension-1749991790.webp",
+         "alt": "أدوية لعلاج انخفاض ضغط الدم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-hypotension"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-hypertensives",
+        "name": "أدوية مخفضة لضغط الدم المرتفع",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hypertensives-1749991804.webp",
+         "alt": "أدوية مخفضة لضغط الدم المرتفع"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-hypertensives"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/lipids-regulation",
+        "name": "أدوية لتنظيم الدهون بالدم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lipids%2520Regulation-1749991906.webp",
+         "alt": "أدوية لتنظيم الدهون بالدم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "lipids-regulation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-arrhythmics",
+        "name": "علاج عدم انتظام ضربات القلب",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Arrhythmics-1749991882.webp",
+         "alt": "علاج عدم انتظام ضربات القلب"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-arrhythmics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/angina-treatment",
+        "name": "أدوية علاج الذبحة الصدرية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Angina%2520Treatment-1749991757.webp",
+         "alt": "أدوية علاج الذبحة الصدرية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "angina-treatment"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/cancer-therapy",
+      "name": "علاج السرطان (العلاج الكيماوي)",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "cancer-therapy"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/cancer-therapy/alkylating-agent",
+        "name": "العوامل المؤلكة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Alkylating%2520Agent-1750000147.webp",
+         "alt": "العوامل المؤلكة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "alkylating-agent"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/monoclonal-antibodies",
+        "name": "الأجسام المضادة وحيدة النسيلة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Monoclonal%2520Antibodies-1750000134.webp",
+         "alt": "الأجسام المضادة وحيدة النسيلة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "monoclonal-antibodies"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/cytostatic-anti-androgen",
+        "name": "مضادات الأندروجين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cytostatic%2520Anti-Oestrogen-1750208366.webp",
+         "alt": "مضادات الأندروجين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "cytostatic-anti-androgen"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/cytostatic-elgonadtropin-analogu",
+        "name": "شبيهات الجونادوريلين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cytostatic%20Gonadtropin%20Analogu-1750944088.webp",
+         "alt": "شبيهات الجونادوريلين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "cytostatic-elgonadtropin-analogu"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/enzyme-inhibitor",
+        "name": "مضادات (مثبطات) الانزيم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Enzyme%2520Inhibitor-1750000272.webp",
+         "alt": "مضادات (مثبطات) الانزيم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "enzyme-inhibitor"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/cytostatic-anti-oestrogen",
+        "name": "مضادات الأستروجين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cytostatic%2520Anti-Oestrogen-1750000282.webp",
+         "alt": "مضادات الأستروجين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "cytostatic-anti-oestrogen"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/anti-metabolites",
+        "name": "دواء يؤثرعلي ايض خلايا السرطان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Metabolites-1750000234.webp",
+         "alt": "دواء يؤثرعلي ايض خلايا السرطان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "anti-metabolites"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/neutropenia",
+        "name": "اضطراب كرات الدم البيضاء",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Neutropenia-1750000122.webp",
+         "alt": "اضطراب كرات الدم البيضاء"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "neutropenia"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/immunomodulator-system",
+        "name": "منظم للمناعة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Immunomodulator-1749991601.webp",
+         "alt": "منظم للمناعة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "immunomodulator-system"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/nutrientsblood-electrolytes",
+      "name": "المغذيات ومعوضات الدم",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "nutrientsblood-electrolytes"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/nutrientsblood-electrolytes/plasma-substituent-expander",
+        "name": "بدائل البلازما (محاليل الدم)",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Plasma%2520Substituent%2520Expander-1749999005.webp",
+         "alt": "بدائل البلازما (محاليل الدم)"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "nutrientsblood-electrolytes",
+          "plasma-substituent-expander"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/endocrine-system",
+      "name": "ادوية الغدد الصماء",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "endocrine-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/endocrine-system/anti-hyper-thyroidism",
+        "name": "علاج زيادة افراز الثيروكسين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hyper%2520Thyroidism-1749985835.webp",
+         "alt": "علاج زيادة افراز الثيروكسين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "anti-hyper-thyroidism"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/analgesic-a-rheumatic",
+        "name": "مسكن ومضاد للروماتيزم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Analgesic-A-Rheumatic-1749985732.webp",
+         "alt": "مسكن ومضاد للروماتيزم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "analgesic-a-rheumatic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/hypo-glycaemics-antidiabetic",
+        "name": "أدوية علاج زيادة السكر فى الدم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hypo-Glycaemics%2520%2520Antidiabetic-1749985791.webp",
+         "alt": "أدوية علاج زيادة السكر فى الدم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "hypo-glycaemics-antidiabetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/gluco-corticoid",
+        "name": "أدوية الكورتيزون و مشتقاته",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Gluco-Corticoid-1749985759.webp",
+         "alt": "أدوية الكورتيزون و مشتقاته"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "gluco-corticoid"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/anti-hypo-thyroidism",
+        "name": "علاج نقص اقراز الثيروكسين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hypo%2520Thyroidism-1749985850.webp",
+         "alt": "علاج نقص اقراز الثيروكسين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "anti-hypo-thyroidism"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/anti-galactorrhoea",
+        "name": "أدوية لعلاج زيادة إدرار اللبن",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Galactorrhoea-1749985805.webp",
+         "alt": "أدوية لعلاج زيادة إدرار اللبن"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "anti-galactorrhoea"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/osteoporosis-arthritis-manag-endocrine",
+        "name": "علاج هشاشه العظام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Osteoporosis%2520Arthritis%2520Manag-1749985937.webp",
+         "alt": "علاج هشاشه العظام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "osteoporosis-arthritis-manag-endocrine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/female-sex-hormones",
+        "name": "أدوية الهرمونات الأنثوية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Female%2520Sex%2520Hormones-1749985777.webp",
+         "alt": "أدوية الهرمونات الأنثوية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "female-sex-hormones"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/male-sex-horm-androgens",
+        "name": "أدويه هرمونات الذكورة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Male-Sex-Horm-Androgens-1750944229.webp",
+         "alt": "أدويه هرمونات الذكورة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "male-sex-horm-androgens"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/insulins",
+        "name": "الأنسولين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Insulins-1749985743.webp",
+         "alt": "الأنسولين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "insulins"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/infertility-treatment",
+        "name": "علاج عقم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Infertility%2520Treatment-1749985886.webp",
+         "alt": "علاج عقم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "infertility-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/growth-hormone",
+        "name": "هرمونات للنمو",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Growth%2520Hormone-1749985862.webp",
+         "alt": "هرمونات للنمو"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "growth-hormone"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "cosmetics",
+    "name": "منتجات التجميل",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cosmetics-1749731148.webp",
+     "alt": "منتجات التجميل"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "cosmetics"
+     ]
+    },
+    "children": [
+     {
+      "id": "cosmetics/make-up",
+      "name": "المكياج",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "cosmetics",
+        "make-up"
+       ]
+      },
+      "children": [
+       {
+        "id": "cosmetics/make-up/face",
+        "name": "الوجه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Face-1750065533.webp",
+         "alt": "الوجه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "face"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "cosmetics/make-up/nail",
+        "name": "طلاء الاظافر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nail-1750065543.webp",
+         "alt": "طلاء الاظافر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "nail"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "cosmetics/make-up/eye-makeup",
+        "name": "العين",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye-1750065508.webp",
+         "alt": "العين"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "eye-makeup"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "cosmetics/make-up/lip",
+        "name": "الشفاه",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lip-1750065574.webp",
+         "alt": "الشفاه"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "lip"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "every-day-essentials",
+    "name": "منتجات العناية اليومية",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Every%20Day%20Essentials-1749731084.webp",
+     "alt": "منتجات العناية اليومية"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "every-day-essentials"
+     ]
+    },
+    "children": [
+     {
+      "id": "every-day-essentials/oral-care",
+      "name": "العناية بالفم والاسنان",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "oral-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/oral-care/dental-care",
+        "name": "العناية بالاسنان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Dental%2520Care-1750064018.webp",
+         "alt": "العناية بالاسنان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "dental-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/breath-fresheners",
+        "name": "معطرات الفم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Breath%2520Fresheners-1750064139.webp",
+         "alt": "معطرات الفم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "breath-fresheners"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/teeth-whitening",
+        "name": "تبييض الاسنان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Teeth%2520Whitening-1750064028.webp",
+         "alt": "تبييض الاسنان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "teeth-whitening"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/toothbrush",
+        "name": "فرشاة الاسنان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Toothbrush-1750064118.webp",
+         "alt": "فرشاة الاسنان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "toothbrush"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/mouthwash-gargle-oral-care",
+        "name": "غسول الفم والغرغرة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mouthwash%2520-%2520Gargle-1750064153.webp",
+         "alt": "غسول الفم والغرغرة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "mouthwash-gargle-oral-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/dental-floss",
+        "name": "خيط تنظيف الاسنان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Dental%2520Floss-1750064037.webp",
+         "alt": "خيط تنظيف الاسنان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "dental-floss"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/toothpaste",
+        "name": "معجون الاسنان",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Toothpaste-1750064130.webp",
+         "alt": "معجون الاسنان"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "toothpaste"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/women-care",
+      "name": "العناية بالمراة",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "women-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/women-care/hair-styling-electronics",
+        "name": "اجهزة تصفيف الشعر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Styling%2520Electronics-1750064220.webp",
+         "alt": "اجهزة تصفيف الشعر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "hair-styling-electronics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/hair-removal-products",
+        "name": "منتجات لازالة الشعر",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Removal%2520Products-1750064256.webp",
+         "alt": "منتجات لازالة الشعر"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "hair-removal-products"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/women-sanitary-care",
+        "name": "العناية الصحية بالمراة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Women%2520Sanitary%2520Care-1750064237.webp",
+         "alt": "العناية الصحية بالمراة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "women-sanitary-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/electric-hair-removal-machines",
+        "name": "اجهزة ازالة الشعر الكهربائية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Electric%2520Hair%2520Removal%2520Machines-1750064210.webp",
+         "alt": "اجهزة ازالة الشعر الكهربائية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "electric-hair-removal-machines"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/sanitary-napkins",
+        "name": "فوط صحية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sanitary%2520Napkins-1750064248.webp",
+         "alt": "فوط صحية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "sanitary-napkins"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/bath-body",
+      "name": "العناية بالجسم والاستحمام",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "bath-body"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/bath-body/bath-loof",
+        "name": "لوف الاستحمام",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Bath%2520Loof-1750063921.webp",
+         "alt": "لوف الاستحمام"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "bath-body",
+          "bath-loof"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/bath-body/hand-wash",
+        "name": "غسول للايدي",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hand%2520Wash-1750063901.webp",
+         "alt": "غسول للايدي"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "bath-body",
+          "hand-wash"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/bath-body/body-wash",
+        "name": "غسول للجسم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Wash-1750063910.webp",
+         "alt": "غسول للجسم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "bath-body",
+          "body-wash"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/body-fresheners",
+      "name": "معطرات الجسم",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "body-fresheners"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/body-fresheners/deodrant-cream",
+        "name": "مزيلات عرق كريم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Deodrant%2520Cream-1750064008.webp",
+         "alt": "مزيلات عرق كريم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "deodrant-cream"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/body-mist",
+        "name": "بادي ميست",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Mist-1750063930.webp",
+         "alt": "بادي ميست"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "body-mist"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/body-cologne",
+        "name": "كولونيا الجسم",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Cologne-1750063944.webp",
+         "alt": "كولونيا الجسم"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "body-cologne"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/deodrant-stick",
+        "name": "مزيلات عرق استيك",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Deodrant%2520Stick-1750063964.webp",
+         "alt": "مزيلات عرق استيك"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "deodrant-stick"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/body-spray",
+        "name": "مزيلات عرق اسبراي",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Spray-1750063953.webp",
+         "alt": "مزيلات عرق اسبراي"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "body-spray"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/deodrant-roll-on",
+        "name": "مزيلات عرق رول اون",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Deodrant%2520Roll%2520On-1750063984.webp",
+         "alt": "مزيلات عرق رول اون"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "deodrant-roll-on"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/man-care",
+      "name": "العناية بالرجل",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "man-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/man-care/shaving-machines",
+        "name": "ماكينات الحلاقة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Shaving%2520Machines-1750064183.webp",
+         "alt": "ماكينات الحلاقة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "shaving-machines"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/man-care/beard-care",
+        "name": "غسول اللحية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Beard%2520Care-1750064172.webp",
+         "alt": "غسول اللحية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "beard-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/man-care/shave-after-shave-products",
+        "name": "منتجات الحلاقة وبعد الحلاقة",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Shave%2520-%2520After%2520Shave%2520Products-1750064196.webp",
+         "alt": "منتجات الحلاقة وبعد الحلاقة"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "shave-after-shave-products"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/man-care/shaving-trimming-electronics",
+        "name": "اجهزة الحلاقة الكهربائية",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Shaving%2520-%2520Trimming%2520Electronics-1750064163.webp",
+         "alt": "اجهزة الحلاقة الكهربائية"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "shaving-trimming-electronics"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "hair-care",
+    "name": "العناية بالشعر",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%20Care-1749731119.webp",
+     "alt": "العناية بالشعر"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "hair-care"
+     ]
+    },
+    "children": []
+   },
+   {
+    "id": "sexual-health",
+    "name": "الصحة الجنسية",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sexual%20Health-1749730982.webp",
+     "alt": "الصحة الجنسية"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "sexual-health"
+     ]
+    },
+    "children": []
+   },
+   {
+    "id": "medical-equipment-supplies",
+    "name": "المعدات والمستلزمات الطبية",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%20Equipment%20%26%20Supplies-1749731006.webp",
+     "alt": "المعدات والمستلزمات الطبية"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "medical-equipment-supplies"
+     ]
+    },
+    "children": []
+   },
+   {
+    "id": "prescriptions",
+    "name": "الروشتة الالكترونية",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/prescription_3974864-1772472071.png",
+     "alt": "الروشتة الالكترونية"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "prescriptions"
+     ]
+    },
+    "children": []
+   }
+  ]
+ }
+}

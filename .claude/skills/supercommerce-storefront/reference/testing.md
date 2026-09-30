@@ -56,6 +56,7 @@ components. Never run it to make a check pass. The lock itself is tested in
 | `wishlist-compare.spec.ts` | Wishlist grid, remove, move to cart, pagination, compare table, remove, Arabic, guest empty states |
 | `product.spec.ts` | Product page: options as links, add with quantity, wishlist/compare, notify-me (email asked by the API, 409), coming soon, discount, gallery keyboard + video, redirect, reviews pages, 404, API down, Arabic, 360 px |
 | `shopper-actions.spec.ts` | Card buttons on the home page (add to cart as a guest, wishlist/compare toggles, `compare_full`), header counts |
+| `catalog.spec.ts` | Listings (filters, chips, clear all, sort, pages, price form), search + suggestions, every listing route, categories/brands pages, 404/invalid, Arabic, phone drawer, no-JS filters, unknown paths (301/302/410/404) |
 | `shopper-live.spec.ts` | The same flows against real staging as a guest and as the test customer (`E2E_LIVE=1`) |
 
 Helpers in `e2e/support.ts`: `signInAsCustomer(context)` (mock: `test-customer`; live: signs in with

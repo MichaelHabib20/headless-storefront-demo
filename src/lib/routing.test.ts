@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Target } from '@/sdk';
-import { resolveTarget, switchLocalePath } from './routing';
+import type { Locale, Target } from '@/sdk';
+import { isStorefrontPath, resolveTarget, routes, switchLocalePath } from './routing';
 
 describe('resolveTarget', () => {
   const cases: Array<[Target, string]> = [
@@ -43,6 +43,21 @@ describe('resolveTarget', () => {
     expect(resolveTarget(null, 'en')).toBeNull();
     expect(resolveTarget({ type: 'gift_card', slug: 'x' } as unknown as Target, 'en')).toBeNull();
     expect(resolveTarget({ type: 'list', slug: null, id: null }, 'en')).toBeNull();
+  });
+});
+
+describe('isStorefrontPath', () => {
+  it.each(Object.keys(routes))('knows the route %s as one of ours', (name) => {
+    const route = routes[name as keyof typeof routes] as (locale: Locale, arg: never) => string;
+    const href = route('en', (name === 'category' ? ['x'] : 'x') as never);
+    expect(isStorefrontPath(href), href).toBe(true);
+  });
+
+  it('leaves everything else to the backend resolver', () => {
+    expect(isStorefrontPath('/en/product/skin-care/face-care')).toBe(false);
+    expect(isStorefrontPath('/ar/old-page?x=1')).toBe(false);
+    expect(isStorefrontPath('/en')).toBe(true);
+    expect(isStorefrontPath('/en/c/x?sort=y')).toBe(true);
   });
 });
 

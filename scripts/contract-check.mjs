@@ -56,6 +56,11 @@ const RESPONSE_SCHEMA = {
   'product-recommendations': 'ProductRecommendationsResponse',
   'product-reviews': 'ProductReviewsResponse',
   'product-reviews-disabled': 'ProductReviewsResponse',
+  products: 'ProductListingResponse',
+  'products-empty': 'ProductListingResponse',
+  'search-suggestions': 'SearchSuggestionsResponse',
+  categories: 'CategoriesResponse',
+  brands: 'BrandsResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

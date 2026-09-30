@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Layout, Locale, Me } from '@/sdk';
+import { searchSuggestionsAction } from '@/lib/catalog.actions';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { HeaderBadges } from '../shopper/HeaderBadges';
@@ -7,6 +8,7 @@ import { Icon } from '../ui/Icon';
 import { TargetLink } from '../ui/TargetLink';
 import { DesktopNav } from './DesktopNav';
 import { MobileMenu } from './MobileMenu';
+import { SearchBox } from './SearchBox';
 import styles from './SiteHeader.module.css';
 
 interface SiteHeaderProps {
@@ -34,17 +36,21 @@ export function SiteHeader({ layout, locale, me = null }: SiteHeaderProps) {
           )}
         </Link>
 
-        <div className={styles.actions}>
-          <form action={routes.search(locale)} method="get" role="search" className={styles.search}>
-            <label htmlFor="site-search" className="visually-hidden">
-              {t('search')}
-            </label>
-            <input id="site-search" name="q" type="search" placeholder={header.searchPlaceholder ?? t('searchPlaceholder')} className={styles.searchInput} />
-            <button type="submit" className={styles.searchButton} aria-label={t('search')}>
-              <Icon name="search" size={20} />
-            </button>
-          </form>
+        <SearchBox
+          locale={locale}
+          suggest={searchSuggestionsAction}
+          className={styles.search}
+          labels={{
+            search: t('search'),
+            placeholder: header.searchPlaceholder ?? t('searchPlaceholder'),
+            suggestions: t('catalogSuggestions'),
+            count: t('catalogSuggestionsCount'),
+            none: t('catalogNoSuggestions'),
+            viewAll: t('catalogViewAllFor'),
+          }}
+        />
 
+        <div className={styles.actions}>
           {header.shortcuts.map((shortcut) => (
             <TargetLink key={shortcut.label} target={shortcut.target} locale={locale} className={styles.shortcut}>
               {shortcut.label}

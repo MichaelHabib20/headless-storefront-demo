@@ -1,0 +1,4008 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": "skin-care",
+    "name": "Skin Care",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin-Care-1749731184.webp",
+     "alt": "Skin Care"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "skin-care"
+     ]
+    },
+    "children": [
+     {
+      "id": "skin-care/body-care",
+      "name": "Body Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "skin-care",
+        "body-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "skin-care/body-care/scars-stretchmarks",
+        "name": "Scars & Stretchmarks",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Scars%20-%20Stretchmarks-1751272890.webp",
+         "alt": "Scars & Stretchmarks"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "body-care",
+          "scars-stretchmarks"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/body-care/body-scrub",
+        "name": "Body Scrub",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%20Scrub-1751272907.webp",
+         "alt": "Body Scrub"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "body-care",
+          "body-scrub"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/body-care/body-moisturizers",
+        "name": "Body Moisturizers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%20Moisturizers-1751272926.webp",
+         "alt": "Body Moisturizers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "body-care",
+          "body-moisturizers"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "skin-care/hand-care-foot",
+      "name": "Hand Care & Foot",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "skin-care",
+        "hand-care-foot"
+       ]
+      },
+      "children": [
+       {
+        "id": "skin-care/hand-care-foot/foot-care",
+        "name": "Foot Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Foot%20Care-1751272940.webp",
+         "alt": "Foot Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "hand-care-foot",
+          "foot-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/hand-care-foot/hand-moisturizers",
+        "name": "Hand Moisturizers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hand%20Moisturizers-1751272958.webp",
+         "alt": "Hand Moisturizers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "hand-care-foot",
+          "hand-moisturizers"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "skin-care/face-care",
+      "name": "Face Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "skin-care",
+        "face-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "skin-care/face-care/skin-cleansers",
+        "name": "Skin Cleansers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin%20Cleansers-1751272460.webp",
+         "alt": "Skin Cleansers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "skin-cleansers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/skin-moisturizers",
+        "name": "Skin Moisturizers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin%20Moisturizers-1751272491.webp",
+         "alt": "Skin Moisturizers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "skin-moisturizers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/sun-care",
+        "name": "Sun Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sun%20Care-1751272512.webp",
+         "alt": "Sun Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "sun-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/facial-toners-serums",
+        "name": "Facial Toners & Serums",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Facial%20Toners%20-%20Serums-1751272556.webp",
+         "alt": "Facial Toners & Serums"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "facial-toners-serums"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/eye-cream-contour",
+        "name": "Eye Cream & Contour",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Cream%2520-%2520Contour-1750065683.webp",
+         "alt": "Eye Cream & Contour"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "eye-cream-contour"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/makeup-removers",
+        "name": "Makeup Removers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Makeup%20Removers-1751272575.webp",
+         "alt": "Makeup Removers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "makeup-removers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "skin-care/face-care/facial-masks-scrubs",
+        "name": "Facial Masks & Scrubs",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Facial%20Masks%20-Scrubs-1751272863.webp",
+         "alt": "Facial Masks & Scrubs"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "skin-care",
+          "face-care",
+          "facial-masks-scrubs"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "mom-baby",
+    "name": "Mom & Baby",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+     "alt": "Mom & Baby"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    },
+    "children": [
+     {
+      "id": "mom-baby/baby-nutrition",
+      "name": "Baby Nutrition",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-nutrition"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-nutrition/baby-feeding-accessories",
+        "name": "Baby Feeding Accessories",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Feeding%20Accessories-1751281605.webp",
+         "alt": "Baby Feeding Accessories"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "baby-feeding-accessories"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-nutrition/baby-food",
+        "name": "Baby Food",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Food-1751281617.webp",
+         "alt": "Baby Food"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "baby-food"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-nutrition/nutrition-supplements",
+        "name": "Nutrition Supplements",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nutrition%20Supplements-1751281635.webp",
+         "alt": "Nutrition Supplements"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "nutrition-supplements"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-nutrition/baby-milk",
+        "name": "Baby Milk",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Milk-1751281646.webp",
+         "alt": "Baby Milk"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-nutrition",
+          "baby-milk"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/baby-care",
+      "name": "Baby Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-care/baby-skin-care",
+        "name": "Baby Skin Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Skin%20Care-1751281831.webp",
+         "alt": "Baby Skin Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-skin-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/nappy-care-diaper-cream",
+        "name": "Nappy Care & diaper cream",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nappy%20Care-diaper%20cream-1751281874.webp",
+         "alt": "Nappy Care & diaper cream"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "nappy-care-diaper-cream"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/kids-toothpaste",
+        "name": "Kids Toothpaste",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Kids%20Toothpaste-1751281888.webp",
+         "alt": "Kids Toothpaste"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "kids-toothpaste"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/baby-sun-care",
+        "name": "Baby Sun Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Sun%20Care-1751281900.webp",
+         "alt": "Baby Sun Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-sun-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/baby-health-care",
+        "name": "Baby Health Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Health%20Care-1751281918.webp",
+         "alt": "Baby Health Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-health-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-care/baby-toiletries-bath-accessories",
+        "name": "Baby Toiletries & Bath Accessories",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Toiletries%20%26%20Bath%20Accessories-1751281932.webp",
+         "alt": "Baby Toiletries & Bath Accessories"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-care",
+          "baby-toiletries-bath-accessories"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/baby-accessories",
+      "name": "Baby Accessories",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-accessories"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-accessories/medical-earrings",
+        "name": "Medical Earrings",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%20Earrings-1751281746.webp",
+         "alt": "Medical Earrings"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-accessories",
+          "medical-earrings"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-accessories/kids-toothbrush",
+        "name": "Kids Toothbrush",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Kids%20Toothbrush-1751281759.webp",
+         "alt": "Kids Toothbrush"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-accessories",
+          "kids-toothbrush"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-accessories/baby-equipment-pacifiers",
+        "name": "Baby Equipment& Pacifiers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Equipment-Pacifiers-1751281799.webp",
+         "alt": "Baby Equipment& Pacifiers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-accessories",
+          "baby-equipment-pacifiers"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/mom-care",
+      "name": "Mom Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "mom-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/mom-care/breastfeeding-supplies",
+        "name": "Breastfeeding Supplies",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Breastfeeding%20Supplies-1751281661.webp",
+         "alt": "Breastfeeding Supplies"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "breastfeeding-supplies"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/mom-care/pregnancy-check",
+        "name": "Pregnancy Check",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Pregnancy%20Check-1751281675.webp",
+         "alt": "Pregnancy Check"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "pregnancy-check"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/mom-care/ovulation-check",
+        "name": "Ovulation Check",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Ovulation%20Check-1751281688.webp",
+         "alt": "Ovulation Check"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "ovulation-check"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/mom-care/mom-skin-care",
+        "name": "Mom Skin Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom%20Skin%20Care-1751281703.webp",
+         "alt": "Mom Skin Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "mom-care",
+          "mom-skin-care"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "mom-baby/baby-diapers-wips",
+      "name": "Baby Diapers & Wips",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "mom-baby",
+        "baby-diapers-wips"
+       ]
+      },
+      "children": [
+       {
+        "id": "mom-baby/baby-diapers-wips/baby-diapers",
+        "name": "Baby Diapers",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Diapers-1751281718.webp",
+         "alt": "Baby Diapers"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-diapers-wips",
+          "baby-diapers"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "mom-baby/baby-diapers-wips/baby-wipes",
+        "name": "Baby Wipes",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Baby%20Wipes-1751281733.webp",
+         "alt": "Baby Wipes"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "mom-baby",
+          "baby-diapers-wips",
+          "baby-wipes"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "medicine",
+    "name": "Medicine",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medicine.1-1749729303.webp",
+     "alt": "Medicine"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "medicine"
+     ]
+    },
+    "children": [
+     {
+      "id": "medicine/headachefever",
+      "name": "Headache&Fever",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "headachefever"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/headachefever/migraine-treatment",
+        "name": "Migraine Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Migraine%2520Treatment-1750000656.webp",
+         "alt": "Migraine Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "headachefever",
+          "migraine-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/headachefever/non-narcotic-analgesic",
+        "name": "Non- Narcotic Analgesic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Narcotic%2520Analgesic-1750000645.webp",
+         "alt": "Non- Narcotic Analgesic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "headachefever",
+          "non-narcotic-analgesic"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/food-beverages",
+      "name": "Food & Beverages",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "food-beverages"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/food-beverages/salt-substitute",
+        "name": "Salt Substitute",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Salt%2520Substitute-1750000378.webp",
+         "alt": "Salt Substitute"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "food-beverages",
+          "salt-substitute"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/food-beverages/honey-bee-products",
+        "name": "Honey & Bee products",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Honey%2520%2526%2520Bee%2520products-1750000390.webp",
+         "alt": "Honey & Bee products"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "food-beverages",
+          "honey-bee-products"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/vitamins-or-minerals",
+      "name": "Vitamins &/Or Minerals",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "vitamins-or-minerals"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/vitamins-or-minerals/eye-aid-vitamin",
+        "name": "Eye Aid Vitamin",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Aid%2520Vitamin-1749998885.webp",
+         "alt": "Eye Aid Vitamin"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "vitamins-or-minerals",
+          "eye-aid-vitamin"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/vitamins-or-minerals/multivitamins",
+        "name": "Multivitamins",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Multivitamins-1749998897.webp",
+         "alt": "Multivitamins"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "vitamins-or-minerals",
+          "multivitamins"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/vitamins-or-minerals/hair-tonic-vitamin",
+        "name": "Hair Tonic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Tonic-1749998859.webp",
+         "alt": "Hair Tonic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "vitamins-or-minerals",
+          "hair-tonic-vitamin"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/mouth-gum-care",
+      "name": "Mouth & Gum Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "mouth-gum-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/mouth-gum-care/mouthwash-gargle-medicines",
+        "name": "Mouthwash & Gargle.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mouthwash%2520-%2520Gargle-1750000790.webp",
+         "alt": "Mouthwash & Gargle."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "mouthwash-gargle-medicines"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/mouth-gum-care/teeth-gum-care",
+        "name": "Teeth & Gum Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Teeth%2520-%2520Gum%2520Care-1750000762.webp",
+         "alt": "Teeth & Gum Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "teeth-gum-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/mouth-gum-care/lozenges",
+        "name": "Lozenges",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lozenges-1750000778.webp",
+         "alt": "Lozenges"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "lozenges"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/mouth-gum-care/topical-treatment-of-the-mouth",
+        "name": "Topical Treatment Of The Mouth",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Treatment%2520Of%2520The%2520Mouth-1750000668.webp",
+         "alt": "Topical Treatment Of The Mouth"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "mouth-gum-care",
+          "topical-treatment-of-the-mouth"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/topical-prepareation",
+      "name": "Topical Prepareation",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "topical-prepareation"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/topical-prepareation/anti-virals-medicine",
+        "name": "Anti-Virals",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Virals-1749999431.webp",
+         "alt": "Anti-Virals"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-virals-medicine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/soothing-protective",
+        "name": "Soothing / Protective",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Soothing-Protective-1749999239.webp",
+         "alt": "Soothing / Protective"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "soothing-protective"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/burns-wounds",
+        "name": "Burns/Wounds",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Burns-Wounds-1749999478.webp",
+         "alt": "Burns/Wounds"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "burns-wounds"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/skin-depigmentation",
+        "name": "Skin Depigmentation",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skin%2520Depigmentation-1749999574.webp",
+         "alt": "Skin Depigmentation"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "skin-depigmentation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/body-firming-anti-ageing",
+        "name": "Body Firming & Anti-Ageing",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body-Firming-Anti-Ageing-1751286214.webp",
+         "alt": "Body Firming & Anti-Ageing"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "body-firming-anti-ageing"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/alopecia-treatment",
+        "name": "Alopecia Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Alopecia%2520Treatment-1749999196.webp",
+         "alt": "Alopecia Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "alopecia-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/varicose-veins",
+        "name": "Varicose Veins",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Varicose%2520Veins-1749999208.webp",
+         "alt": "Varicose Veins"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "varicose-veins"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anthelmintics-gastro-intestinal-tract-4",
+        "name": "Anthelmintics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anthelmintics%252C-1749986240.webp",
+         "alt": "Anthelmintics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anthelmintics-gastro-intestinal-tract-4"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/psoriasis-eczema",
+        "name": "Psoriasis/Eczema",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Psoriasis-Eczema-1749999173.webp",
+         "alt": "Psoriasis/Eczema"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "psoriasis-eczema"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/sun-screen",
+        "name": "Sun Screen",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sun%2520Screen-1749999158.webp",
+         "alt": "Sun Screen"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "sun-screen"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/astringent",
+        "name": "Astringent",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Astringent-1749999455.webp",
+         "alt": "Astringent"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "astringent"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/local-anaesthetic",
+        "name": "Local Anaesthetic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Local%2520Anaesthetic-1749999054.webp",
+         "alt": "Local Anaesthetic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "local-anaesthetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-dandruff",
+        "name": "Anti-Dandruff",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Dandruff-1749999184.webp",
+         "alt": "Anti-Dandruff"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-dandruff"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-fungals",
+        "name": "Anti-Fungals",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Fungals-1749986762.webp",
+         "alt": "Anti-Fungals"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-fungals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/male-sex-horm-androgens",
+        "name": "Male Sex Horm. / Androgens",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Male%2520Sex%2520Horm%2520%2520Androgens-1749985953.webp",
+         "alt": "Male Sex Horm. / Androgens"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "male-sex-horm-androgens"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/hair-tonic",
+        "name": "Hair Tonic.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Tonic-1749999464.webp",
+         "alt": "Hair Tonic."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "hair-tonic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/medical-soap",
+        "name": "Medical Soap",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%2520Soap-1749999516.webp",
+         "alt": "Medical Soap"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "medical-soap"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/haemorrhoids-anal-fissures",
+        "name": "Haemorrhoids & Anal Fissures",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Haemorrhoids-Anal-Fissures-1749999029.webp",
+         "alt": "Haemorrhoids & Anal Fissures"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "haemorrhoids-anal-fissures"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/wartsanti-corn-preparations",
+        "name": "Warts&Anti-Corn Preparations",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Warts-Anti-Corn-Preparations-1749999606.webp",
+         "alt": "Warts&Anti-Corn Preparations"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "wartsanti-corn-preparations"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-biotics-medicine",
+        "name": "Anti-Biotics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Biotics-1749985984.webp",
+         "alt": "Anti-Biotics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-biotics-medicine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/topical-anti-biotic-topical-prepareation-4",
+        "name": "Topical Anti- Biotic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Anti-%2520Biotic-1749999039.webp",
+         "alt": "Topical Anti- Biotic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "topical-anti-biotic-topical-prepareation-4"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-acne",
+        "name": "Anti-Acne",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Acne-1749998950.webp",
+         "alt": "Anti-Acne"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-acne"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/blank",
+        "name": "Blank",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Blank-1749999442.webp",
+         "alt": "Blank"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "blank"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/anti-fungal-steroid",
+        "name": "Anti-Fungal & Steroid",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Fungal-Steroid-1749999148.webp",
+         "alt": "Anti-Fungal & Steroid"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "anti-fungal-steroid"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/antiseptic",
+        "name": "Antiseptic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Antiseptic-1749999129.webp",
+         "alt": "Antiseptic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "antiseptic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/scabies-lice",
+        "name": "Scabies & Lice",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Scabies-Lice-1749999561.webp",
+         "alt": "Scabies & Lice"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "scabies-lice"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/vitiligo-treatment",
+        "name": "Vitiligo Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Vitiligo-Treatment-1749999225.webp",
+         "alt": "Vitiligo Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "vitiligo-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/steroid",
+        "name": "Steroid",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Steroid-1749999503.webp",
+         "alt": "Steroid"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "steroid"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/topical-prepareation/steroid-anti-biotic",
+        "name": "Steroid & Anti-Biotic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Steroid-Anti-Biotic-1749999491.webp",
+         "alt": "Steroid & Anti-Biotic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "topical-prepareation",
+          "steroid-anti-biotic"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/eye-medicines",
+      "name": "Eye,Ear,Nose",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "eye-medicines"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/eye-medicines/topical-anti-biotic",
+        "name": "Topical Anti-Biotic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Anti-Biotic-1750000576.webp",
+         "alt": "Topical Anti-Biotic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-anti-biotic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/ear-preparation",
+        "name": "Ear Preparation",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Ear%2520Preparation-1750000521.webp",
+         "alt": "Ear Preparation"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "ear-preparation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/eye-irrigation",
+        "name": "Eye Irrigation",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Irrigation-1750000563.webp",
+         "alt": "Eye Irrigation"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "eye-irrigation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/contact-lens-care",
+        "name": "Contact Lens Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Contact%2520Lens%2520Care-1750000543.webp",
+         "alt": "Contact Lens Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "contact-lens-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/topical-steroid-anti-biotic",
+        "name": "Topical Steroid & Anti-Biotic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Steroid%2520%2526%2520Anti-Biotic-1750000485.webp",
+         "alt": "Topical Steroid & Anti-Biotic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-steroid-anti-biotic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/eye-local-anaesthetic",
+        "name": "Eye Local Anaesthetic.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Local%2520Anaesthetic.-1750000444.webp",
+         "alt": "Eye Local Anaesthetic."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "eye-local-anaesthetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/topical-anti-viral",
+        "name": "Topical Anti-Viral",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Anti-Viral-1750000586.webp",
+         "alt": "Topical Anti-Viral"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-anti-viral"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/glaucoma-treatment",
+        "name": "Glaucoma Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Glaucoma%2520Treatment-1750000494.webp",
+         "alt": "Glaucoma Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "glaucoma-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/nose-preparation",
+        "name": "Nose Preparation",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nose%2520Preparation-1750000531.webp",
+         "alt": "Nose Preparation"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "nose-preparation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/eye-allergy-inflammation",
+        "name": "Eye Allergy & Inflammation",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye%2520Allergy%2520%2526%2520Inflammation-1750000509.webp",
+         "alt": "Eye Allergy & Inflammation"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "eye-allergy-inflammation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/mydriatics",
+        "name": "Mydriatics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mydriatics-1750000554.webp",
+         "alt": "Mydriatics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "mydriatics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/eye-medicines/topical-steroid",
+        "name": "Topical Steroid",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Topical%2520Steroid-1750000471.webp",
+         "alt": "Topical Steroid"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "eye-medicines",
+          "topical-steroid"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/central-nervous-system",
+      "name": "Central Nervous System",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "central-nervous-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/central-nervous-system/local-anaesthetic-central",
+        "name": "Local Anaesthetic.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Local%2520Anaesthetic-1749991542.webp",
+         "alt": "Local Anaesthetic."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "local-anaesthetic-central"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/psychotic-disorders",
+        "name": "Psychotic Disorders",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Psychotic%2520Disorders-1749988915.webp",
+         "alt": "Psychotic Disorders"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "psychotic-disorders"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/sedatives-hypnotics",
+        "name": "Sedatives & Hypnotics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sedatives%2520%2526%2520Hypnotics-1749988869.webp",
+         "alt": "Sedatives & Hypnotics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "sedatives-hypnotics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/cerebral-stimulant",
+        "name": "Cerebral Stimulant",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cerebral%2520Stimulant-1749991484.webp",
+         "alt": "Cerebral Stimulant"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "cerebral-stimulant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/alzheimer-treatment",
+        "name": "Alzheimer Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Alzheimer%2520Treatment-1749988904.webp",
+         "alt": "Alzheimer Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "alzheimer-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/anti-parkinsonism",
+        "name": "Anti-Parkinsonism",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Parkinsonism-1749988938.webp",
+         "alt": "Anti-Parkinsonism"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "anti-parkinsonism"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/cns-stimulants",
+        "name": "Cns Stimulants",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cns%2520Stimulants-1749991531.webp",
+         "alt": "Cns Stimulants"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "cns-stimulants"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/general-anaesthetic",
+        "name": "General Anaesthetic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/General%2520Anaesthetic-1749991521.webp",
+         "alt": "General Anaesthetic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "general-anaesthetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/anti-epileptic-a-convulsant",
+        "name": "Anti-Epileptic & A. Convulsant",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Epileptic%2520-%2520A%2520%2520Convulsant-1749988891.webp",
+         "alt": "Anti-Epileptic & A. Convulsant"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "anti-epileptic-a-convulsant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/neurotonic",
+        "name": "Neurotonic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Neurotonic-1749991470.webp",
+         "alt": "Neurotonic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "neurotonic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/anti-depressant",
+        "name": "Anti-Depressant",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Depressant-1749988949.webp",
+         "alt": "Anti-Depressant"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "anti-depressant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/central-nervous-system/adhdattent-deficit-hyperac-d",
+        "name": "ADHD(Attent.Deficit.Hyperac.D)",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/ADHD%2528Attent.Deficit.Hyperac.D%2529-1749991511.webp",
+         "alt": "ADHD(Attent.Deficit.Hyperac.D)"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "central-nervous-system",
+          "adhdattent-deficit-hyperac-d"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/miscellaneous",
+      "name": "Miscellaneous",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "miscellaneous"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/miscellaneous/anti-dote",
+        "name": "Anti-Dote",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Dote-1749998993.webp",
+         "alt": "Anti-Dote"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "miscellaneous",
+          "anti-dote"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/miscellaneous/anaemia",
+        "name": "Anaemia",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anaemia-1749999716.webp",
+         "alt": "Anaemia"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "miscellaneous",
+          "anaemia"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/infections",
+      "name": "Infections",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "infections"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/infections/anthelmintics",
+        "name": "Anthelmintics,",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anthelmintics.-1750943901.webp",
+         "alt": "Anthelmintics,"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anthelmintics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-fungals",
+        "name": "Anti- Fungals",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-%20Fungals-1750943977.webp",
+         "alt": "Anti- Fungals"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-fungals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/immunomodulator-infections",
+        "name": "Immunomodulator.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Immunomodulator-1749988852.webp",
+         "alt": "Immunomodulator."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "immunomodulator-infections"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-biotics",
+        "name": "Anti -Biotics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Biotics-1750944035.webp",
+         "alt": "Anti -Biotics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-biotics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-virals",
+        "name": "Anti- Virals",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Virals-1749988832.webp",
+         "alt": "Anti- Virals"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-virals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/anti-acne-infections-20",
+        "name": "Anti- Acne",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-%2520Acne-1749986491.webp",
+         "alt": "Anti- Acne"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "anti-acne-infections-20"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/infections/vaccines",
+        "name": "Vaccines",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Vaccines-1749986734.webp",
+         "alt": "Vaccines"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "infections",
+          "vaccines"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/weight-control-fitness",
+      "name": "Weight Control & Fitness",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "weight-control-fitness"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/weight-control-fitness/appetite-control-fat-burn",
+        "name": "Appetite Control & Fat Burn",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Appetite%2520Control%2520-%2520Fat%2520Burn-1750208433.webp",
+         "alt": "Appetite Control & Fat Burn"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "weight-control-fitness",
+          "appetite-control-fat-burn"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/weight-control-fitness/anabolic",
+        "name": "Anabolic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anabolic-1750000633.webp",
+         "alt": "Anabolic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "weight-control-fitness",
+          "anabolic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/weight-control-fitness/sugar-substitutes",
+        "name": "Sugar Substitutes",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sugar%2520Substitutes-1750000620.webp",
+         "alt": "Sugar Substitutes"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "weight-control-fitness",
+          "sugar-substitutes"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/musculo-skeletal-system",
+      "name": "Musculo-Skeletal System",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "musculo-skeletal-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/musculo-skeletal-system/mytonics",
+        "name": "Mytonics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mytonics-1749994101.webp",
+         "alt": "Mytonics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "mytonics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/gout-treatment",
+        "name": "Gout Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Gout%2520Treatment-1749993338.webp",
+         "alt": "Gout Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "gout-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/analgesic-a-rheumatic-medicine",
+        "name": "Analgesic/A. Rheumatic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Analgesic-A-Rheumatic-1749993264.webp",
+         "alt": "Analgesic/A. Rheumatic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "analgesic-a-rheumatic-medicine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/skeletal-muscle-relaxant",
+        "name": "Skeletal Muscle Relaxant",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Skeletal%2520Muscle%2520Relaxant-1749999371.webp",
+         "alt": "Skeletal Muscle Relaxant"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "skeletal-muscle-relaxant"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/osteoporosis-arthritis-manag",
+        "name": "Osteoporosis/Arthritis Manag",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Osteoporosis%2520Arthritis%2520Manag-1749998848.webp",
+         "alt": "Osteoporosis/Arthritis Manag"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "osteoporosis-arthritis-manag"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/musculo-skeletal-system/other-anti-rheumatics",
+        "name": "Other Anti-Rheumatics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Other%2520Anti-Rheumatics-1749993324.webp",
+         "alt": "Other Anti-Rheumatics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "musculo-skeletal-system",
+          "other-anti-rheumatics"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/respiratory-system",
+      "name": "Respiratory System",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "respiratory-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/respiratory-system/cough-expectorant-sedative",
+        "name": "Cough Expectorant & Sedative",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cough%20Expectorant%20%26%20Sedative-1751283046.webp",
+         "alt": "Cough Expectorant & Sedative"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "cough-expectorant-sedative"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/bronchodilator",
+        "name": "Bronchodilator",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Bronchodilator-1749983620.webp",
+         "alt": "Bronchodilator"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "bronchodilator"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/anti-catarrhals",
+        "name": "Anti-Catarrhals",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Catarrhals-1749983657.webp",
+         "alt": "Anti-Catarrhals"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "anti-catarrhals"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/anti-histaminesanti-inflam",
+        "name": "Anti- Histamines&Anti-Inflam",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Histamines%26Anti-Inflam-1751283125.webp",
+         "alt": "Anti- Histamines&Anti-Inflam"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "anti-histaminesanti-inflam"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/nicotine-replacement-therapy",
+        "name": "Nicotine Replacement Therapy",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nicotine%20Replacement%20Therapy-1751283139.webp",
+         "alt": "Nicotine Replacement Therapy"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "nicotine-replacement-therapy"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/mucolytic-muco-regulator",
+        "name": "Mucolytic / Muco-Regulator",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mucolytic%2520%2520Muco-Regulator-1749983546.webp",
+         "alt": "Mucolytic / Muco-Regulator"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "mucolytic-muco-regulator"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/respiratory-system/anti-tussive",
+        "name": "Anti-Tussive",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Tussive-1749983494.webp",
+         "alt": "Anti-Tussive"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "respiratory-system",
+          "anti-tussive"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/gastro-intestinal-tract",
+      "name": "Gastro-Intestinal Tract",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "gastro-intestinal-tract"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/gastro-intestinal-tract/antacids",
+        "name": "Antacids",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Antacids-1749984080.webp",
+         "alt": "Antacids"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "antacids"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/cathartic-laxative-purgative",
+        "name": "Cathartic/Laxative/Purgative",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CatharticLaxativePurgative-1749983739.webp",
+         "alt": "Cathartic/Laxative/Purgative"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "cathartic-laxative-purgative"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-flatulence",
+        "name": "Anti-Flatulence",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Flatulence-1749984998.webp",
+         "alt": "Anti-Flatulence"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-flatulence"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/plasma-substituent-expander-gastro",
+        "name": "Plasma Substituent/ Expander",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Plasma%2520Substituent%2520Expander-1749985711.webp",
+         "alt": "Plasma Substituent/ Expander"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "plasma-substituent-expander-gastro"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/liver-disease-management",
+        "name": "Liver Disease Management",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Liver%2520Disease%2520Management-1749985041.webp",
+         "alt": "Liver Disease Management"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "liver-disease-management"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-spasmodic",
+        "name": "Anti-Spasmodic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Spasmodic-1749985025.webp",
+         "alt": "Anti-Spasmodic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-spasmodic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/ulcer-treatment",
+        "name": "Ulcer Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Ulcer%2520Treatment-1749984101.webp",
+         "alt": "Ulcer Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "ulcer-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-dysenteric-amoebic-paras",
+        "name": "Anti-Dysenteric/Amoebic/Paras",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-DysentericAmoebicParas-1749985467.webp",
+         "alt": "Anti-Dysenteric/Amoebic/Paras"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-dysenteric-amoebic-paras"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-diarrhoeal",
+        "name": "Anti-Diarrhoeal",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Depressant-1749983760.webp",
+         "alt": "Anti-Diarrhoeal"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-diarrhoeal"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/anti-emetic",
+        "name": "Anti-Emetic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Emetic-1749984904.webp",
+         "alt": "Anti-Emetic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "anti-emetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/digestive",
+        "name": "Digestive",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Digestive-1749985620.webp",
+         "alt": "Digestive"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "digestive"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gastro-intestinal-tract/lipids-regulation-gastro",
+        "name": "Lipids Regulation.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lipids%2520Regulation-1749985698.webp",
+         "alt": "Lipids Regulation."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gastro-intestinal-tract",
+          "lipids-regulation-gastro"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/gynaecologyurinary-tract-dis",
+      "name": "Gynaecology&Urinary Tract Dis",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "gynaecologyurinary-tract-dis"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/prostatic-hyperplasia",
+        "name": "Prostatic Hyperplasia",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Prostatic%2520Hyperplasia-1749986107.webp",
+         "alt": "Prostatic Hyperplasia"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "prostatic-hyperplasia"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/menopausalgyn-disorders",
+        "name": "Menopausal&Gyn. Disorders",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Menopausal%2526Gyn.%2520Disorders-1749986055.webp",
+         "alt": "Menopausal&Gyn. Disorders"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "menopausalgyn-disorders"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/urinary-tract-antiseptic",
+        "name": "Urinary Tract Antiseptic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Urinary%2520Tract%2520Antiseptic-1749986195.webp",
+         "alt": "Urinary Tract Antiseptic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "urinary-tract-antiseptic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/nocturnal-enuresis",
+        "name": "Nocturnal Enuresis",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nocturnal%2520Enuresis-1749986090.webp",
+         "alt": "Nocturnal Enuresis"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "nocturnal-enuresis"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/gynaecologyurinary-tract-dis/infertility-treatment-gynaecologyurinary-tract-dis-4",
+        "name": "Infertility Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Infertility%2520Treatment-1749986208.webp",
+         "alt": "Infertility Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "gynaecologyurinary-tract-dis",
+          "infertility-treatment-gynaecologyurinary-tract-dis-4"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/immunological-system",
+      "name": "Immunological System",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "immunological-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/immunological-system/interferons",
+        "name": "Interferons",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Interferons-1749991557.webp",
+         "alt": "Interferons"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "immunological-system",
+          "interferons"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/immunological-system/immuno-suppresives",
+        "name": "Immuno-Suppresives",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Immuno-Suppresives-1749991578.webp",
+         "alt": "Immuno-Suppresives"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "immunological-system",
+          "immuno-suppresives"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/cardio-vascular-system",
+      "name": "Cardio-Vascular System",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "cardio-vascular-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/cardio-vascular-system/vascularitics",
+        "name": "Vascularitics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Vascularitics-1749991741.webp",
+         "alt": "Vascularitics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "vascularitics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-coagulants",
+        "name": "Anti-Coagulants",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Coagulants-1749991630.webp",
+         "alt": "Anti-Coagulants"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-coagulants"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/circulatory-disturbance-agent",
+        "name": "Circulatory Disturbance Agent",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Circulatory%2520Disturbance%2520Agent-1749991846.webp",
+         "alt": "Circulatory Disturbance Agent"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "circulatory-disturbance-agent"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/haemostatics-coagulants",
+        "name": "Haemostatics/Coagulants",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/HaemostaticsCoagulants-1749991771.webp",
+         "alt": "Haemostatics/Coagulants"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "haemostatics-coagulants"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/congestive-heart-failure",
+        "name": "Congestive Heart Failure",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Congestive%2520Heart%2520Failure-1749991618.webp",
+         "alt": "Congestive Heart Failure"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "congestive-heart-failure"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-hypotension",
+        "name": "Anti-Hypotension",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hypotension-1749991790.webp",
+         "alt": "Anti-Hypotension"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-hypotension"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-hypertensives",
+        "name": "Anti-Hypertensives",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hypertensives-1749991804.webp",
+         "alt": "Anti-Hypertensives"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-hypertensives"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/lipids-regulation",
+        "name": "Lipids Regulation",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lipids%2520Regulation-1749991906.webp",
+         "alt": "Lipids Regulation"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "lipids-regulation"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/anti-arrhythmics",
+        "name": "Anti-Arrhythmics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Arrhythmics-1749991882.webp",
+         "alt": "Anti-Arrhythmics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "anti-arrhythmics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cardio-vascular-system/angina-treatment",
+        "name": "Angina Treatment",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Angina%2520Treatment-1749991757.webp",
+         "alt": "Angina Treatment"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cardio-vascular-system",
+          "angina-treatment"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/cancer-therapy",
+      "name": "Cancer Therapy",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "cancer-therapy"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/cancer-therapy/alkylating-agent",
+        "name": "Alkylating Agent",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Alkylating%2520Agent-1750000147.webp",
+         "alt": "Alkylating Agent"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "alkylating-agent"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/monoclonal-antibodies",
+        "name": "Monoclonal Antibodies",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Monoclonal%2520Antibodies-1750000134.webp",
+         "alt": "Monoclonal Antibodies"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "monoclonal-antibodies"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/cytostatic-anti-androgen",
+        "name": "Cytostatic Anti-Androgen",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cytostatic%2520Anti-Oestrogen-1750208366.webp",
+         "alt": "Cytostatic Anti-Androgen"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "cytostatic-anti-androgen"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/cytostatic-elgonadtropin-analogu",
+        "name": "Cytostatic ElGonadtropin Analogu",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cytostatic%20Gonadtropin%20Analogu-1750944088.webp",
+         "alt": "Cytostatic ElGonadtropin Analogu"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "cytostatic-elgonadtropin-analogu"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/enzyme-inhibitor",
+        "name": "Enzyme Inhibitor",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Enzyme%2520Inhibitor-1750000272.webp",
+         "alt": "Enzyme Inhibitor"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "enzyme-inhibitor"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/cytostatic-anti-oestrogen",
+        "name": "Cytostatic Anti-Oestrogen",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cytostatic%2520Anti-Oestrogen-1750000282.webp",
+         "alt": "Cytostatic Anti-Oestrogen"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "cytostatic-anti-oestrogen"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/anti-metabolites",
+        "name": "Anti-Metabolites",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Metabolites-1750000234.webp",
+         "alt": "Anti-Metabolites"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "anti-metabolites"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/neutropenia",
+        "name": "Neutropenia",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Neutropenia-1750000122.webp",
+         "alt": "Neutropenia"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "neutropenia"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/cancer-therapy/immunomodulator-system",
+        "name": "Immunomodulator",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Immunomodulator-1749991601.webp",
+         "alt": "Immunomodulator"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "cancer-therapy",
+          "immunomodulator-system"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/nutrientsblood-electrolytes",
+      "name": "Nutrients&Blood Electrolytes",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "nutrientsblood-electrolytes"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/nutrientsblood-electrolytes/plasma-substituent-expander",
+        "name": "Plasma Substituent/Expander",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Plasma%2520Substituent%2520Expander-1749999005.webp",
+         "alt": "Plasma Substituent/Expander"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "nutrientsblood-electrolytes",
+          "plasma-substituent-expander"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "medicine/endocrine-system",
+      "name": "Endocrine System",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "medicine",
+        "endocrine-system"
+       ]
+      },
+      "children": [
+       {
+        "id": "medicine/endocrine-system/anti-hyper-thyroidism",
+        "name": "Anti-Hyper Thyroidism",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hyper%2520Thyroidism-1749985835.webp",
+         "alt": "Anti-Hyper Thyroidism"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "anti-hyper-thyroidism"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/analgesic-a-rheumatic",
+        "name": "Analgesic A. Rheumatic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Analgesic-A-Rheumatic-1749985732.webp",
+         "alt": "Analgesic A. Rheumatic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "analgesic-a-rheumatic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/hypo-glycaemics-antidiabetic",
+        "name": "Hypo-Glycaemics / Antidiabetic",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hypo-Glycaemics%2520%2520Antidiabetic-1749985791.webp",
+         "alt": "Hypo-Glycaemics / Antidiabetic"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "hypo-glycaemics-antidiabetic"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/gluco-corticoid",
+        "name": "Gluco-Corticoid",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Gluco-Corticoid-1749985759.webp",
+         "alt": "Gluco-Corticoid"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "gluco-corticoid"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/anti-hypo-thyroidism",
+        "name": "Anti-Hypo Thyroidism",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Hypo%2520Thyroidism-1749985850.webp",
+         "alt": "Anti-Hypo Thyroidism"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "anti-hypo-thyroidism"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/anti-galactorrhoea",
+        "name": "Anti-Galactorrhoea",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Anti-Galactorrhoea-1749985805.webp",
+         "alt": "Anti-Galactorrhoea"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "anti-galactorrhoea"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/osteoporosis-arthritis-manag-endocrine",
+        "name": "Osteoporosis/ Arthritis Manag",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Osteoporosis%2520Arthritis%2520Manag-1749985937.webp",
+         "alt": "Osteoporosis/ Arthritis Manag"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "osteoporosis-arthritis-manag-endocrine"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/female-sex-hormones",
+        "name": "Female Sex Hormones",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Female%2520Sex%2520Hormones-1749985777.webp",
+         "alt": "Female Sex Hormones"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "female-sex-hormones"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/male-sex-horm-androgens",
+        "name": "Male Sex Horm / Androgens",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Male-Sex-Horm-Androgens-1750944229.webp",
+         "alt": "Male Sex Horm / Androgens"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "male-sex-horm-androgens"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/insulins",
+        "name": "Insulins",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Insulins-1749985743.webp",
+         "alt": "Insulins"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "insulins"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/infertility-treatment",
+        "name": "Infertility Treatment.",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Infertility%2520Treatment-1749985886.webp",
+         "alt": "Infertility Treatment."
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "infertility-treatment"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "medicine/endocrine-system/growth-hormone",
+        "name": "Growth Hormone",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Growth%2520Hormone-1749985862.webp",
+         "alt": "Growth Hormone"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "medicine",
+          "endocrine-system",
+          "growth-hormone"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "cosmetics",
+    "name": "Cosmetics",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Cosmetics-1749731148.webp",
+     "alt": "Cosmetics"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "cosmetics"
+     ]
+    },
+    "children": [
+     {
+      "id": "cosmetics/make-up",
+      "name": "Make Up",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "cosmetics",
+        "make-up"
+       ]
+      },
+      "children": [
+       {
+        "id": "cosmetics/make-up/face",
+        "name": "Face",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Face-1750065533.webp",
+         "alt": "Face"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "face"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "cosmetics/make-up/nail",
+        "name": "Nail",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Nail-1750065543.webp",
+         "alt": "Nail"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "nail"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "cosmetics/make-up/eye-makeup",
+        "name": "Eye",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Eye-1750065508.webp",
+         "alt": "Eye"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "eye-makeup"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "cosmetics/make-up/lip",
+        "name": "Lip",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Lip-1750065574.webp",
+         "alt": "Lip"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "cosmetics",
+          "make-up",
+          "lip"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "every-day-essentials",
+    "name": "Every Day Essentials",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Every%20Day%20Essentials-1749731084.webp",
+     "alt": "Every Day Essentials"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "every-day-essentials"
+     ]
+    },
+    "children": [
+     {
+      "id": "every-day-essentials/oral-care",
+      "name": "Oral Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "oral-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/oral-care/dental-care",
+        "name": "Dental Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Dental%2520Care-1750064018.webp",
+         "alt": "Dental Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "dental-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/breath-fresheners",
+        "name": "Breath Fresheners",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Breath%2520Fresheners-1750064139.webp",
+         "alt": "Breath Fresheners"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "breath-fresheners"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/teeth-whitening",
+        "name": "Teeth Whitening",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Teeth%2520Whitening-1750064028.webp",
+         "alt": "Teeth Whitening"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "teeth-whitening"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/toothbrush",
+        "name": "Toothbrush",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Toothbrush-1750064118.webp",
+         "alt": "Toothbrush"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "toothbrush"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/mouthwash-gargle-oral-care",
+        "name": "Mouthwash & Gargle",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mouthwash%2520-%2520Gargle-1750064153.webp",
+         "alt": "Mouthwash & Gargle"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "mouthwash-gargle-oral-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/dental-floss",
+        "name": "Dental Floss",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Dental%2520Floss-1750064037.webp",
+         "alt": "Dental Floss"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "dental-floss"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/oral-care/toothpaste",
+        "name": "Toothpaste",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Toothpaste-1750064130.webp",
+         "alt": "Toothpaste"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "oral-care",
+          "toothpaste"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/women-care",
+      "name": "Women Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "women-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/women-care/hair-styling-electronics",
+        "name": "Hair Styling Electronics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Styling%2520Electronics-1750064220.webp",
+         "alt": "Hair Styling Electronics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "hair-styling-electronics"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/hair-removal-products",
+        "name": "Hair Removal Products",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%2520Removal%2520Products-1750064256.webp",
+         "alt": "Hair Removal Products"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "hair-removal-products"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/women-sanitary-care",
+        "name": "Women Sanitary Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Women%2520Sanitary%2520Care-1750064237.webp",
+         "alt": "Women Sanitary Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "women-sanitary-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/electric-hair-removal-machines",
+        "name": "Electric Hair Removal Machines",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Electric%2520Hair%2520Removal%2520Machines-1750064210.webp",
+         "alt": "Electric Hair Removal Machines"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "electric-hair-removal-machines"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/women-care/sanitary-napkins",
+        "name": "Sanitary Napkins",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sanitary%2520Napkins-1750064248.webp",
+         "alt": "Sanitary Napkins"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "women-care",
+          "sanitary-napkins"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/bath-body",
+      "name": "Bath & Body",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "bath-body"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/bath-body/bath-loof",
+        "name": "Bath Loof",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Bath%2520Loof-1750063921.webp",
+         "alt": "Bath Loof"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "bath-body",
+          "bath-loof"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/bath-body/hand-wash",
+        "name": "Hand Wash",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hand%2520Wash-1750063901.webp",
+         "alt": "Hand Wash"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "bath-body",
+          "hand-wash"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/bath-body/body-wash",
+        "name": "Body Wash",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Wash-1750063910.webp",
+         "alt": "Body Wash"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "bath-body",
+          "body-wash"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/body-fresheners",
+      "name": "Body Fresheners",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "body-fresheners"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/body-fresheners/deodrant-cream",
+        "name": "Deodrant Cream",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Deodrant%2520Cream-1750064008.webp",
+         "alt": "Deodrant Cream"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "deodrant-cream"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/body-mist",
+        "name": "Body Mist",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Mist-1750063930.webp",
+         "alt": "Body Mist"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "body-mist"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/body-cologne",
+        "name": "Body Cologne",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Cologne-1750063944.webp",
+         "alt": "Body Cologne"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "body-cologne"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/deodrant-stick",
+        "name": "Deodrant Stick",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Deodrant%2520Stick-1750063964.webp",
+         "alt": "Deodrant Stick"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "deodrant-stick"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/body-spray",
+        "name": "Body Spray",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Body%2520Spray-1750063953.webp",
+         "alt": "Body Spray"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "body-spray"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/body-fresheners/deodrant-roll-on",
+        "name": "Deodrant Roll On",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Deodrant%2520Roll%2520On-1750063984.webp",
+         "alt": "Deodrant Roll On"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "body-fresheners",
+          "deodrant-roll-on"
+         ]
+        },
+        "children": []
+       }
+      ]
+     },
+     {
+      "id": "every-day-essentials/man-care",
+      "name": "Man Care",
+      "image": null,
+      "target": {
+       "type": "category",
+       "path": [
+        "every-day-essentials",
+        "man-care"
+       ]
+      },
+      "children": [
+       {
+        "id": "every-day-essentials/man-care/shaving-machines",
+        "name": "Shaving Machines",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Shaving%2520Machines-1750064183.webp",
+         "alt": "Shaving Machines"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "shaving-machines"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/man-care/beard-care",
+        "name": "Beard Care",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Beard%2520Care-1750064172.webp",
+         "alt": "Beard Care"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "beard-care"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/man-care/shave-after-shave-products",
+        "name": "Shave & After Shave Products",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Shave%2520-%2520After%2520Shave%2520Products-1750064196.webp",
+         "alt": "Shave & After Shave Products"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "shave-after-shave-products"
+         ]
+        },
+        "children": []
+       },
+       {
+        "id": "every-day-essentials/man-care/shaving-trimming-electronics",
+        "name": "Shaving & Trimming Electronics",
+        "image": {
+         "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Shaving%2520-%2520Trimming%2520Electronics-1750064163.webp",
+         "alt": "Shaving & Trimming Electronics"
+        },
+        "target": {
+         "type": "category",
+         "path": [
+          "every-day-essentials",
+          "man-care",
+          "shaving-trimming-electronics"
+         ]
+        },
+        "children": []
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "hair-care",
+    "name": "Hair Care",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Hair%20Care-1749731119.webp",
+     "alt": "Hair Care"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "hair-care"
+     ]
+    },
+    "children": []
+   },
+   {
+    "id": "sexual-health",
+    "name": "Sexual Health",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Sexual%20Health-1749730982.webp",
+     "alt": "Sexual Health"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "sexual-health"
+     ]
+    },
+    "children": []
+   },
+   {
+    "id": "medical-equipment-supplies",
+    "name": "Medical Equipment & Supplies",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Medical%20Equipment%20%26%20Supplies-1749731006.webp",
+     "alt": "Medical Equipment & Supplies"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "medical-equipment-supplies"
+     ]
+    },
+    "children": []
+   },
+   {
+    "id": "prescriptions",
+    "name": "Prescription",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/prescription_3974864-1772472071.png",
+     "alt": "Prescription"
+    },
+    "target": {
+     "type": "category",
+     "path": [
+      "prescriptions"
+     ]
+    },
+    "children": []
+   }
+  ]
+ }
+}

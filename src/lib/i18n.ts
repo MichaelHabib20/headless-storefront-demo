@@ -1,5 +1,6 @@
 import type { Locale } from '@/sdk';
 import { cartMessages } from './messages/cart';
+import { catalogMessages } from './messages/catalog';
 import { compareMessages } from './messages/compare';
 import { notificationsMessages } from './messages/notifications';
 import { productMessages } from './messages/product';
@@ -127,8 +128,8 @@ const coreAr: Record<keyof typeof en, string> = {
  * enforced by defineMessages). Add new areas here.
  */
 const dictionaries = {
-  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en },
-  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar },
+  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en },
+  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar },
 } satisfies Record<Locale, Record<string, string>>;
 
 export type MessageKey = keyof typeof dictionaries.en;

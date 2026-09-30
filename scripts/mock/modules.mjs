@@ -9,10 +9,11 @@
  * (session, me, cart, wishlist, compare, notifications). Every answer must match the contract:
  * test it like scripts/mock-shopper.test.mjs does.
  */
+import { createCatalogModule } from './catalog.mjs';
 import { createProductModule } from './product.mjs';
 import { createSettingsModule } from './settings.mjs';
 
-const FACTORIES = [createSettingsModule, createProductModule];
+const FACTORIES = [createSettingsModule, createProductModule, createCatalogModule];
 
 export function createModules(shopper) {
   return FACTORIES.map((create) => create(shopper));

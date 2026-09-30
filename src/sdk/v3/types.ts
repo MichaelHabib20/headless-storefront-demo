@@ -69,3 +69,16 @@ export const LOCALES = ['en', 'ar'] as const satisfies readonly Locale[];
 export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (LOCALES as readonly string[]).includes(value);
 }
+
+// listings, search, categories, brands, unknown paths
+export type ProductListing = Schemas['ProductListing'];
+export type ListingFacet = Schemas['ListingFacet'];
+export type ListingFacetValue = ListingFacet['values'][number];
+export type ListingRange = NonNullable<ListingFacet['range']>;
+export type ListingSortOption = ProductListing['sort'][number];
+export type AppliedFilter = ProductListing['appliedFilters'][number];
+export type SearchSuggestions = Schemas['SearchSuggestionsResponse']['data'];
+export type CategoryNode = Schemas['CategoryNode'];
+export type CategoryTree = Schemas['CategoriesResponse']['data'];
+export type BrandsPage = Schemas['BrandsResponse']['data'];
+export type Resolution = Schemas['Resolution'];

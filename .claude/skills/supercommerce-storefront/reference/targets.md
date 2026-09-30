@@ -38,6 +38,7 @@ The URL scheme belongs to the storefront. To change e.g. `/p/{slug}` to `/produc
 ## Pages that don't exist yet
 
 `src/app/[locale]/[...slug]/page.tsx` shows "Coming soon" for the planned first segments
-(`c, brands, lists, pages, l, forms, deals, search, checkout, track-order`). Anything
-else is a 404. When you build a real page (e.g. `src/app/[locale]/p/[slug]/page.tsx`), it takes
+(`pages, l, forms, checkout, track-order`). Paths outside the storefront's routes are resolved
+by the backend in `src/middleware.ts` (redirect, 410 or 404, see [catalog.md](catalog.md#unknown-paths)).
+A new route also needs its first segment in `OWN_SECTIONS` in `routing.ts`. When you build a real page (e.g. `src/app/[locale]/p/[slug]/page.tsx`), it takes
 precedence automatically; remove its segment from `PLANNED`.

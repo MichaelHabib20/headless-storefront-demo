@@ -1,0 +1,245 @@
+{
+ "data": {
+  "query": "johnson",
+  "products": [
+   {
+    "id": 36480,
+    "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+    "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+     "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 18,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "18 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+    }
+   },
+   {
+    "id": 7346,
+    "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new",
+    "name": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+     "alt": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 160,
+     "compareAt": 200,
+     "discountPercent": 20,
+     "display": "160 EGP",
+     "compareAtDisplay": "200 EGP",
+     "discountLabel": "20 %"
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+    }
+   },
+   {
+    "id": 8412,
+    "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new",
+    "name": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+     "alt": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 105,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "105 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+    }
+   },
+   {
+    "id": 8658,
+    "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+    "name": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+     "alt": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 200,
+     "compareAt": 250,
+     "discountPercent": 20,
+     "display": "200 EGP",
+     "compareAtDisplay": "250 EGP",
+     "discountLabel": "20 %"
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+    }
+   },
+   {
+    "id": 33594,
+    "slug": "jj-baby-bath-500ml",
+    "name": "J&J Baby Bath 500Ml",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/251465-1754482083.webp",
+     "alt": "J&J Baby Bath 500Ml"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 200,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "200 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bath-500ml"
+    }
+   },
+   {
+    "id": 9822,
+    "slug": "jj-baby-cologne-100ml-dream-احلام",
+    "name": "J&J Baby Cologne 100Ml Dream احلام",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+     "alt": "J&J Baby Cologne 100Ml Dream احلام"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 135,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "135 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-cologne-100ml-dream-احلام"
+    }
+   }
+  ],
+  "viewAll": {
+   "type": "search",
+   "query": "johnson"
+  }
+ }
+}

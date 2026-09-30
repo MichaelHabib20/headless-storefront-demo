@@ -1,0 +1,287 @@
+{
+ "data": {
+  "context": {
+   "type": "category",
+   "title": "Mom & Baby",
+   "description": {
+    "html": "<p>Everything for <strong>mom and baby</strong>: bath time, skin care and more. <a href=\"https://example.com/baby-guide\">Read our guide</a>.</p>"
+   },
+   "image": {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+    "alt": "Mom & Baby"
+   },
+   "query": null
+  },
+  "breadcrumbs": [
+   {
+    "label": "Home",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "Mom & Baby",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   }
+  ],
+  "items": [
+   {
+    "id": 36480,
+    "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+    "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+     "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 18,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "18 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+    }
+   },
+   {
+    "id": 15472,
+    "slug": "jj-baby-sleep-time-bath-300ml-lavender-new",
+    "name": "J&J Baby Sleep Time Bath 300Ml Lavender (New)",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp",
+     "alt": "J&J Baby Sleep Time Bath 300Ml Lavender (New)"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 160,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "160 EGP",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-sleep-time-bath-300ml-lavender-new"
+    }
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 2,
+   "total": 3,
+   "totalPages": 2
+  },
+  "sort": [
+   {
+    "label": "Featured",
+    "selected": false,
+    "query": "options=color-lavender"
+   },
+   {
+    "label": "Price: low to high",
+    "selected": true,
+    "query": "options=color-lavender&sort=price_asc"
+   },
+   {
+    "label": "Price: high to low",
+    "selected": false,
+    "query": "options=color-lavender&sort=price_desc"
+   },
+   {
+    "label": "Name: A to Z",
+    "selected": false,
+    "query": "options=color-lavender&sort=name_asc"
+   }
+  ],
+  "facets": [
+   {
+    "key": "category",
+    "label": "Category",
+    "kind": "options",
+    "display": "list",
+    "values": [
+     {
+      "label": "Baby Care",
+      "selected": false,
+      "count": 3,
+      "color": null,
+      "image": null,
+      "query": "categories=mom-baby%2Fbaby-care&options=color-lavender&sort=price_asc"
+     }
+    ],
+    "range": null
+   },
+   {
+    "key": "brand",
+    "label": "Brand",
+    "kind": "options",
+    "display": "image",
+    "values": [
+     {
+      "label": "JOHNSON & JOHNSON",
+      "selected": false,
+      "count": 3,
+      "color": null,
+      "image": "https://seif-online.com/storage/seif-pharmacies/uploads/JOHNSON-&-JOHNSON.webp",
+      "query": "brands=johnson-johnson&options=color-lavender&sort=price_asc"
+     }
+    ],
+    "range": null
+   },
+   {
+    "key": "color",
+    "label": "Color",
+    "kind": "options",
+    "display": "color",
+    "values": [
+     {
+      "label": "Lavender",
+      "selected": true,
+      "count": 3,
+      "color": "#b39ddb",
+      "image": null,
+      "query": "sort=price_asc"
+     },
+     {
+      "label": "Blue",
+      "selected": false,
+      "count": 1,
+      "color": "#64b5f6",
+      "image": null,
+      "query": "options=color-lavender%2Ccolor-blue&sort=price_asc"
+     },
+     {
+      "label": "Yellow",
+      "selected": false,
+      "count": 1,
+      "color": "#ffd54f",
+      "image": null,
+      "query": "options=color-lavender%2Ccolor-yellow&sort=price_asc"
+     }
+    ],
+    "range": null
+   },
+   {
+    "key": "price",
+    "label": "Price",
+    "kind": "range",
+    "display": "list",
+    "values": [],
+    "range": {
+     "min": {
+      "amount": 18,
+      "currency": "EGP",
+      "display": "18 EGP"
+     },
+     "max": {
+      "amount": 200,
+      "currency": "EGP",
+      "display": "200 EGP"
+     },
+     "selectedMin": null,
+     "selectedMax": null,
+     "query": "options=color-lavender&sort=price_asc"
+    }
+   },
+   {
+    "key": "availability",
+    "label": "Availability",
+    "kind": "options",
+    "display": "list",
+    "values": [
+     {
+      "label": "In stock only",
+      "selected": false,
+      "count": 3,
+      "color": null,
+      "image": null,
+      "query": "options=color-lavender&inStock=true&sort=price_asc"
+     }
+    ],
+    "range": null
+   }
+  ],
+  "appliedFilters": [
+   {
+    "label": "Lavender",
+    "removeQuery": "sort=price_asc"
+   }
+  ],
+  "clearFiltersQuery": "sort=price_asc",
+  "seo": {
+   "title": "Mom & Baby",
+   "description": "Mom & Baby · Seif Online",
+   "canonical": {
+    "type": "category",
+    "path": [
+     "mom-baby"
+    ]
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    }
+   ],
+   "index": false
+  }
+ }
+}
