@@ -42,7 +42,7 @@ export function AddressForm({ locale, form, locations, address, next, cancelHref
 
   // After a refused save, move to the first message so keyboard and screen reader users find it.
   useEffect(() => {
-    formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"], [data-form-message]')?.focus();
+    formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]:not(:disabled), [data-form-message]')?.focus();
   }, [state]);
 
   // Submitted without resetting the form, so everything typed stays when the API refuses it.

@@ -65,6 +65,17 @@ describe('signInAction', () => {
     expect(forgetGuest).not.toHaveBeenCalled();
   });
 
+  it('goes back to the local page that asked for the sign-in, and nowhere else', async () => {
+    const { redirect } = await import('next/navigation');
+    vi.mocked(guestToken).mockResolvedValue(null);
+
+    await signInAction({}, form({ locale: 'en', identifier: 'a@b.test', password: 'secret123', next: '/en/account/orders' }));
+    expect(redirect).toHaveBeenLastCalledWith('/en/account/orders');
+
+    await signInAction({}, form({ locale: 'en', identifier: 'a@b.test', password: 'secret123', next: 'https://evil.test' }));
+    expect(redirect).toHaveBeenLastCalledWith('/en/account');
+  });
+
   it('keeps the guest session when sign-in fails', async () => {
     vi.mocked(guestToken).mockResolvedValue('guest-7');
     vi.mocked(login).mockRejectedValue(new ApiError('invalid_credentials', 403, 'The details you entered are not correct.'));
