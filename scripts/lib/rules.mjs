@@ -83,10 +83,45 @@ export const RULES = [
   },
 ];
 
+/**
+ * Server actions (…Action) are writes. Calling one inside a useEffect writes just because a page
+ * opened (e.g. "mark all as read on load") — GET/viewing must never change data.
+ * Found by the AI guardrail trial; needs the effect's body, so it's a file-level check.
+ */
+const WRITE_ON_LOAD = {
+  id: 'no-write-on-load',
+  message: 'Viewing a page must never change data: do not call server actions (…Action) from useEffect. Writes happen only on a user action (click/submit).',
+};
+
+function effectBodies(source) {
+  const bodies = [];
+  const pattern = /\buseEffect\s*\(/g;
+  let match;
+  while ((match = pattern.exec(source))) {
+    let depth = 1;
+    let i = match.index + match[0].length;
+    for (; i < source.length && depth > 0; i++) {
+      if (source[i] === '(') depth++;
+      else if (source[i] === ')') depth--;
+    }
+    bodies.push({ start: match.index, text: source.slice(match.index, i) });
+  }
+  return bodies;
+}
+
 /** @returns {{rule: string, file: string, line: number, text: string, message: string}[]} */
 export function checkSource(file, source) {
   const violations = [];
   const lines = source.split(/\r?\n/);
+
+  if (/^src\/(app|components)\//.test(file) && !isTest(file)) {
+    for (const effect of effectBodies(source)) {
+      const call = effect.text.match(/\b\w+Action\s*\(/);
+      if (!call) continue;
+      const line = source.slice(0, effect.start + effect.text.indexOf(call[0])).split(/\r?\n/).length;
+      violations.push({ rule: WRITE_ON_LOAD.id, file, line, text: lines[line - 1].trim(), message: WRITE_ON_LOAD.message });
+    }
+  }
   for (const rule of RULES) {
     if (!rule.applies(file) || (rule.when && !rule.when(source))) continue;
     lines.forEach((text, index) => {
