@@ -72,6 +72,30 @@ test.describe('shopper actions', () => {
     await expect(card(page, 0).getByRole('button', { name: 'Save to wishlist' })).toHaveAttribute('aria-pressed', 'false');
   });
 
+  // Regression (found on live staging): quick clicks before the first write finishes used to start
+  // two guest sessions, and the second session's cookie orphaned the first write.
+  test('quick clicks on a slow backend all land in one guest session', async ({ page, request, context }) => {
+    await request.post(`${MOCK}/__mode`, { data: { delayMs: 600 } });
+    await page.goto('/en');
+    await page.waitForLoadState('networkidle');
+
+    const first = card(page, 0);
+    const second = card(page, 1);
+    await first.getByRole('button', { name: 'Save to wishlist' }).click();
+    await first.getByRole('button', { name: 'Compare', exact: true }).click();
+    await second.getByRole('button', { name: 'Save to wishlist' }).click();
+
+    await expect(header(page).getByRole('link', { name: 'Wishlist, 2 items' })).toBeVisible({ timeout: 15_000 });
+    await expect(header(page).getByRole('link', { name: 'Compare, 1 product' })).toBeVisible();
+    expect((await context.cookies()).filter((c) => c.name === 'sc_guest')).toHaveLength(1);
+
+    await request.post(`${MOCK}/__mode`, { data: { delayMs: 0 } });
+    await page.reload();
+    await expect(card(page, 0).getByRole('button', { name: 'Save to wishlist' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(card(page, 0).getByRole('button', { name: 'Compare', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(card(page, 1).getByRole('button', { name: 'Save to wishlist' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
   test('the signed-in customer sees their counts and state on the cards', async ({ page }) => {
     await signInAsTestCustomer(page);
     await page.goto('/en');

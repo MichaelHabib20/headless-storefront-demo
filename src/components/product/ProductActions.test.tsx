@@ -115,12 +115,29 @@ describe('ProductActions', () => {
     await userEvent.setup().click(heart);
     expect(toggleWishlistAction).toHaveBeenCalledWith('en', 9822, true);
     expect(heart).toHaveAttribute('aria-pressed', 'true');
-    expect(heart).toHaveAttribute('aria-disabled', 'true');
+    expect(heart).toHaveAttribute('aria-busy', 'true');
 
     await act(async () => pending.resolve({ ok: true, message: 'Saved to your wishlist.' }));
     expect(heart).toHaveAttribute('aria-pressed', 'true');
-    expect(heart).not.toHaveAttribute('aria-disabled');
+    expect(heart).not.toHaveAttribute('aria-busy');
     expect(within(group).getByRole('status')).toHaveTextContent('Saved to your wishlist.');
+  });
+
+  // Regression (live staging): two quick first clicks started two guest sessions.
+  it('runs writes one at a time: the second starts only after the first finished', async () => {
+    const wishlist = deferred();
+    vi.mocked(toggleWishlistAction).mockReturnValue(wishlist.promise);
+    vi.mocked(toggleCompareAction).mockResolvedValue({ ok: true, message: 'Added to compare.' });
+    const { group } = renderCard(product(9822));
+    const user = userEvent.setup();
+
+    await user.click(within(group).getByRole('button', { name: 'Save to wishlist' }));
+    await user.click(within(group).getByRole('button', { name: 'Compare' }));
+    expect(toggleWishlistAction).toHaveBeenCalledTimes(1);
+    expect(toggleCompareAction).not.toHaveBeenCalled();
+
+    await act(async () => wishlist.resolve({ ok: true, message: 'Saved to your wishlist.' }));
+    expect(toggleCompareAction).toHaveBeenCalledWith('en', 9822, true);
   });
 
   it('removes from the wishlist when it is already saved', async () => {

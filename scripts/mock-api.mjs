@@ -15,6 +15,7 @@ const port = Number(process.env.MOCK_API_PORT ?? 4010);
 const dir = path.resolve('src/test/fixtures/v3');
 const store = createShopperStore();
 let fail = false;
+let delayMs = 0; // simulate a slow backend (races only show up when writes overlap)
 
 function readBody(req) {
   return new Promise((resolve) => {
@@ -39,13 +40,18 @@ http
     };
 
     if (url.pathname === '/__mode' && req.method === 'POST') {
-      fail = Boolean((await readBody(req))?.fail);
-      return send(200, { fail });
+      const mode = (await readBody(req)) ?? {};
+      fail = Boolean(mode.fail);
+      delayMs = Math.max(0, Number(mode.delayMs ?? 0));
+      return send(200, { fail, delayMs });
     }
     if (url.pathname === '/__reset' && req.method === 'POST') {
       store.reset();
+      fail = false;
+      delayMs = 0;
       return send(200, { reset: true });
     }
+    if (delayMs && url.pathname.startsWith('/api/')) await new Promise((resolve) => setTimeout(resolve, delayMs));
     if (url.pathname === '/health') return send(200, { ok: true });
 
     const prefix = '/api/customer/v3';

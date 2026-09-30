@@ -7,7 +7,7 @@ import { routes } from '@/lib/routing';
 import { addToCartAction, toggleCompareAction, toggleWishlistAction, type ShopperActionResult } from '@/lib/shopper.actions';
 import { withCount } from '../shopper/labels';
 import { ShopperIcon } from '../shopper/ShopperIcon';
-import { useProductShopperState } from '../shopper/ShopperStateProvider';
+import { useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
 import type { ProductShopperState } from '../shopper/state';
 import { Icon } from '../ui/Icon';
 import styles from './ProductActions.module.css';
@@ -62,22 +62,23 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     setState(server);
   }
 
-  const [busy, setBusy] = useState<Field | null>(null);
+  const [pending, setPending] = useState<Partial<Record<Field, number>>>({});
   const [status, setStatus] = useState<{ text: string; error: boolean } | null>(null);
-  const running = useRef(false);
   const focusCartLink = useRef(false);
+  const runInOrder = useRunInOrder();
+
+  const track = (field: Field, delta: number) => setPending((current) => ({ ...current, [field]: Math.max(0, (current[field] ?? 0) + delta) }));
 
   async function perform({ field, change, undo, call }: Step) {
-    if (running.current) return;
-    running.current = true;
     // The cart is not optimistic: the "In cart" link appears once the backend accepted it.
     const optimistic = field !== 'cartQuantity';
 
-    setBusy(field);
+    track(field, 1);
     setStatus(null);
     if (optimistic) setState((current) => ({ ...current, ...change }));
 
-    const result = await call().catch((): ShopperActionResult => ({ ok: false }));
+    // Writes from every card run one at a time, so two quick first clicks share one guest session.
+    const result = await runInOrder(call).catch((): ShopperActionResult => ({ ok: false }));
 
     if (result.ok) {
       setState((current) => ({ ...current, ...change }));
@@ -86,8 +87,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
       setState((current) => ({ ...current, ...undo }));
     }
     setStatus({ text: result.message ?? labels.failed, error: !result.ok });
-    setBusy(null);
-    running.current = false;
+    track(field, -1);
   }
 
   const addToCart = () =>
@@ -108,7 +108,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     });
 
   return (
-    <div className={styles.actions} role="group" aria-label={productName} aria-busy={busy !== null}>
+    <div className={styles.actions} role="group" aria-label={productName} aria-busy={Object.values(pending).some(Boolean)}>
       {state.cartQuantity > 0 ? (
         <Link
           href={routes.cart(locale)}
@@ -123,7 +123,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
           {withCount(labels.inCart, state.cartQuantity, locale)}
         </Link>
       ) : (
-        <button type="button" className={styles.add} disabled={!canAddToCart} aria-disabled={busy === 'cartQuantity' || undefined} onClick={addToCart}>
+        <button type="button" className={styles.add} disabled={!canAddToCart} aria-disabled={Boolean(pending.cartQuantity) || undefined} onClick={addToCart}>
           <Icon name="bag" size={16} />
           <span>{labels.addToCart}</span>
         </button>
@@ -135,7 +135,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
           className={`${styles.toggle} ${styles.heart}`}
           aria-label={labels.wishlist}
           aria-pressed={state.inWishlist}
-          aria-disabled={busy === 'inWishlist' || undefined}
+          aria-busy={Boolean(pending.inWishlist) || undefined}
           onClick={toggleWishlist}
         >
           {state.inWishlist ? <ShopperIcon name="heartFilled" size={20} /> : <Icon name="heart" size={20} />}
@@ -148,7 +148,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
           className={styles.toggle}
           aria-label={labels.compare}
           aria-pressed={state.inCompare}
-          aria-disabled={busy === 'inCompare' || undefined}
+          aria-busy={Boolean(pending.inCompare) || undefined}
           onClick={toggleCompare}
         >
           <ShopperIcon name="compare" size={20} />
