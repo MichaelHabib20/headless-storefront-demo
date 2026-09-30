@@ -6,7 +6,7 @@ import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 
 /** First path segments of routes that exist in the URL scheme but aren't built yet. */
-const PLANNED = new Set(['p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'deals', 'search', 'checkout', 'track-order']);
+const PLANNED = new Set(['p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'deals', 'search', 'track-order']);
 
 type Params = Promise<{ locale: string; slug: string[] }>;
 

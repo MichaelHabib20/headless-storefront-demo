@@ -48,6 +48,15 @@ const RESPONSE_SCHEMA = {
   wishlist: 'WishlistResponse',
   compare: 'CompareResponse',
   notifications: 'NotificationsResponse',
+  // checkout (scripts/build-checkout-fixtures.mjs)
+  checkout: 'CheckoutResponse',
+  'checkout-first': 'CheckoutResponse',
+  'checkout-pickup': 'CheckoutResponse',
+  'checkout-guest': 'CheckoutResponse',
+  'checkout-result': 'CheckoutResultResponse',
+  'checkout-result-pending': 'CheckoutResultResponse',
+  'checkout-result-failed': 'CheckoutResultResponse',
+  'pickup-branches': 'PickupBranchesResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

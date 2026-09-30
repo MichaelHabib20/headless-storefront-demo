@@ -49,6 +49,22 @@ export type CheckoutSettings = Schemas['CheckoutSettings'];
 export type AddressFormField = CheckoutSettings['addressForm']['fields'][number];
 export type Locations = Schemas['LocationsResponse']['data'];
 
+// checkout and its result page
+export type CheckoutSelections = Schemas['CheckoutSelections'];
+export type Checkout = Schemas['Checkout'];
+export type CheckoutContact = Schemas['CheckoutContact'];
+export type CheckoutNotice = Schemas['CheckoutNotice'];
+export type CheckoutMessage = Checkout['messages'][number];
+export type CheckoutTotalLine = Schemas['TotalLine'];
+export type CheckoutFulfilmentOption = Checkout['fulfilment']['options'][number];
+export type CheckoutAddress = Checkout['fulfilment']['addresses'][number];
+export type CheckoutPaymentMethod = Checkout['payment']['methods'][number];
+export type PickupBranch = Schemas['PickupBranch'];
+export type UploadedFile = Schemas['UploadedFile'];
+export type PlaceOrderResult = Schemas['PlaceOrderResponse']['data'];
+export type CheckoutResult = Schemas['CheckoutResultResponse']['data'];
+export type CheckoutOrder = NonNullable<CheckoutResult['order']>;
+
 export const LOCALES = ['en', 'ar'] as const satisfies readonly Locale[];
 
 export function isLocale(value: unknown): value is Locale {

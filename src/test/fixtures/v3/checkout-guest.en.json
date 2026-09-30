@@ -1,0 +1,244 @@
+{
+ "data": {
+  "cart": {
+   "items": [
+    {
+     "product": {
+      "id": 8658,
+      "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+      "name": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+       "alt": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 200,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "200 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     },
+     "quantity": 2,
+     "quantityStep": 1,
+     "unitPrice": {
+      "currency": "EGP",
+      "amount": 200,
+      "compareAt": null,
+      "discountPercent": null,
+      "display": "200 EGP",
+      "compareAtDisplay": null,
+      "discountLabel": null
+     },
+     "lineTotal": {
+      "amount": 400,
+      "currency": "EGP",
+      "display": "400 EGP"
+     },
+     "availability": {
+      "status": "available",
+      "message": null,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     }
+    }
+   ],
+   "summary": {
+    "itemCount": 2,
+    "subtotal": {
+     "amount": 400,
+     "currency": "EGP",
+     "display": "400.00 EGP"
+    },
+    "discount": null,
+    "total": {
+     "amount": 400,
+     "currency": "EGP",
+     "display": "400.00 EGP"
+    }
+   },
+   "checkout": {
+    "allowed": true,
+    "blockers": [],
+    "minimumOrder": {
+     "amount": {
+      "amount": 300,
+      "currency": "EGP",
+      "display": "300.00 EGP"
+     },
+     "remaining": {
+      "amount": 0,
+      "currency": "EGP",
+      "display": "0.00 EGP"
+     },
+     "progressPercent": 100
+    }
+   },
+   "requiresPrescription": false
+  },
+  "contact": {
+   "isGuest": true,
+   "name": null,
+   "phone": null,
+   "email": null
+  },
+  "fulfilment": {
+   "options": [
+    {
+     "type": "delivery",
+     "label": "Delivery",
+     "available": true,
+     "reason": null
+    },
+    {
+     "type": "pickup",
+     "label": "Click & Collect",
+     "available": true,
+     "reason": null
+    }
+   ],
+   "selected": null,
+   "addresses": [],
+   "addressId": null,
+   "branch": null,
+   "delivery": null
+  },
+  "payment": {
+   "methods": [
+    {
+     "id": 1,
+     "name": "Cash on delivery",
+     "icon": null,
+     "online": false,
+     "fee": null,
+     "note": null,
+     "plans": []
+    },
+    {
+     "id": 2,
+     "name": "Card on delivery",
+     "icon": null,
+     "online": false,
+     "fee": {
+      "amount": 10,
+      "currency": "EGP",
+      "display": "10.00 EGP"
+     },
+     "note": "The courier brings a card machine.",
+     "plans": []
+    },
+    {
+     "id": 3,
+     "name": "Credit / debit card",
+     "icon": null,
+     "online": true,
+     "fee": null,
+     "note": null,
+     "plans": []
+    },
+    {
+     "id": 4,
+     "name": "Installments",
+     "icon": null,
+     "online": true,
+     "fee": null,
+     "note": "Pay in monthly installments.",
+     "plans": [
+      {
+       "id": 41,
+       "name": "6 months"
+      },
+      {
+       "id": 42,
+       "name": "12 months"
+      }
+     ]
+    }
+   ],
+   "selected": null
+  },
+  "promo": {
+   "code": null,
+   "applied": false,
+   "message": null
+  },
+  "requirements": {
+   "prescription": {
+    "required": false,
+    "files": []
+   }
+  },
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "Subtotal",
+     "amount": {
+      "amount": 400,
+      "currency": "EGP",
+      "display": "400.00 EGP"
+     },
+     "text": null
+    }
+   ],
+   "total": {
+    "amount": 400,
+    "currency": "EGP",
+    "display": "400.00 EGP"
+   }
+  },
+  "minimumOrder": {
+   "amount": {
+    "amount": 300,
+    "currency": "EGP",
+    "display": "300.00 EGP"
+   },
+   "remaining": {
+    "amount": 0,
+    "currency": "EGP",
+    "display": "0.00 EGP"
+   },
+   "progressPercent": 100
+  },
+  "missing": [
+   {
+    "code": "contact",
+    "message": "Add your contact details."
+   },
+   {
+    "code": "fulfilment",
+    "message": "Choose delivery or pickup."
+   },
+   {
+    "code": "payment_method",
+    "message": "Choose a payment method."
+   }
+  ],
+  "blockers": [],
+  "messages": [],
+  "canPlaceOrder": false
+ }
+}

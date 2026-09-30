@@ -9,6 +9,11 @@ const inUi = (file) => /^src\/(app|components|lib)\//.test(file);
 /** SuperCommerce's money components (locked: scripts/lib/money-lock.mjs). */
 const inMoney = (file) => file.startsWith('src/money/');
 
+/** The checkout page: its route (page, server actions, result page) and its components. */
+const CHECKOUT_ACTIONS = 'src/app/[locale]/checkout/actions.ts';
+const inCheckoutRoute = (file) => file.startsWith('src/app/[locale]/checkout/');
+const inCheckout = (file) => inCheckoutRoute(file) || file.startsWith('src/components/checkout/');
+
 const SHOW_MONEY = 'Render <Money value={...} /> or <Price price={...} locale={locale} /> from @/money (style them with className / classNames).';
 
 const TARGET_TYPES = 'product|category|brand|list|page|landing_page|form|deals|home|url|tag|search';
@@ -127,6 +132,55 @@ export const RULES = [
     patterns: [/witheldokan\.com|seif-online\.com|cdn\.supercommerce\.io/],
     message: 'Store URLs come from environment variables and the API, never from code.',
   },
+  // --- checkout: a shopper must never pay a total they did not see -------------------------
+  {
+    // One door to POST /orders: the server action of the checkout page, called by the checkout view.
+    id: 'place-order-one-door',
+    applies: (f) => f.startsWith('src/') && !inSdk(f) && !isTest(f) && !inCheckoutRoute(f),
+    patterns: [/\bplaceOrder\s*\(/, /\bplaceOrderAction\b/],
+    message: `Orders are placed in ONE place: placeOrderAction in ${CHECKOUT_ACTIONS}, called by the checkout page with the checkout on screen. Do not call placeOrder() or placeOrderAction from anywhere else (no "buy now" shortcut that skips the checkout the shopper confirms).`,
+  },
+  {
+    // `expectedTotal` is read by the SDK from the checkout that was shown. Anything else could
+    // make the shopper pay a total that was never on screen.
+    id: 'total-from-checkout',
+    applies: (f) => f.startsWith('src/') && !inSdk(f) && !isTest(f),
+    patterns: [
+      /\bexpectedTotal\b/,
+      // a checkout handed on with other totals than the backend's: { ...checkout, totals: … }
+      /\.\.\.\s*[\w.?]*checkout\b[^}\n]*\btotals?\s*:/i,
+      /\btotals\.total\s*=[^=]/,
+    ],
+    message: 'The total an order is placed for is the one of the checkout on screen: give that checkout, unchanged, to placeOrder() from @/sdk, which reads its choices and its total. Never build `expectedTotal`, never change `totals` of a checkout.',
+  },
+  {
+    // The backend's switch for the place-order button.
+    id: 'place-order-gate',
+    applies: (f) => /^src\/(app|components)\//.test(f) && !isTest(f),
+    patterns: [
+      // enabling by an own condition: canPlaceOrder || x,  x || canPlaceOrder
+      /\bcanPlaceOrder\b[^;\n]*\|\|/,
+      /\|\|[^;\n]*\bcanPlaceOrder\b/,
+      // disabled only when something else is also true: !canPlaceOrder && x,  x && !canPlaceOrder
+      /!\s*[\w.?]*\bcanPlaceOrder\b\s*&&/,
+      /&&\s*!\s*[\w.?]*\bcanPlaceOrder\b/,
+      // overriding it: canPlaceOrder: true,  checkout.canPlaceOrder = true
+      /\bcanPlaceOrder\s*[:=](?!=)/,
+    ],
+    message: 'The place-order button is enabled by the backend (`checkout.canPlaceOrder`), narrowed only by the ticked terms and a pending change. Never enable it by your own condition and never override `canPlaceOrder`: what is missing, minimum orders, stock and payment rules are already inside it. Show `missing` / `blockers` messages instead.',
+  },
+  {
+    // The API answer is the state: the backend preselects and echoes the choices it used.
+    id: 'checkout-no-own-defaults',
+    applies: (f) => inCheckout(f) && !isTest(f),
+    patterns: [
+      // the first option as a default: methods[0], addresses?.[0], plans.at(0)
+      /\b(methods|addresses|options|plans|branches)\s*(\?\.)?\s*(\[\s*0\s*\]|\.at\(\s*0\s*\))/,
+      // the default address picked by the storefront
+      /\.(find|filter)\(\s*\(?\s*\w+\s*\)?\s*=>\s*\w+\.isDefault\b/,
+    ],
+    message: 'Checkout never picks for the shopper: no default address, payment method, branch or plan in the storefront. Send only what the shopper chose; the backend preselects and echoes the choices it used (checkoutSelections(checkout) from @/sdk).',
+  },
 ];
 
 /**
@@ -166,7 +220,7 @@ export function checkSource(file, source) {
     for (const effect of effectBodies(source)) {
       // Server actions (…Action) and write-style calls, including actions passed in as props
       // (e.g. `markAllRead()`); browser APIs like addEventListener / clearTimeout are fine.
-      const calls = [...effect.text.matchAll(/\b(\w+Action|(?:mark|add|remove|toggle|clear|move|delete|save|submit)[A-Z]\w*)\s*\(/g)];
+      const calls = [...effect.text.matchAll(/\b(\w+Action|(?:mark|add|remove|toggle|clear|move|delete|save|submit|place)[A-Z]\w*)\s*\(/g)];
       const call = calls.find((c) => !SAFE_EFFECT_CALLS.has(c[1]));
       if (!call) continue;
       const line = source.slice(0, effect.start + effect.text.indexOf(call[0])).split(/\r?\n/).length;

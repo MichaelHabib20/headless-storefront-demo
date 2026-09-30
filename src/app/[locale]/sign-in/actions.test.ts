@@ -75,4 +75,15 @@ describe('signInAction', () => {
     expect(saveSession).not.toHaveBeenCalled();
     expect(forgetGuest).not.toHaveBeenCalled();
   });
+
+  it('goes back to checkout when the shopper came from there, and never to a URL from the form', async () => {
+    const { redirect } = await import('next/navigation');
+    vi.mocked(guestToken).mockResolvedValue(null);
+
+    await signInAction({}, form({ locale: 'ar', identifier: 'a@b.test', password: 'secret123', next: 'checkout' }));
+    expect(redirect).toHaveBeenLastCalledWith('/ar/checkout');
+
+    await signInAction({}, form({ locale: 'en', identifier: 'a@b.test', password: 'secret123', next: 'https://evil.example' }));
+    expect(redirect).toHaveBeenLastCalledWith('/en/account');
+  });
 });

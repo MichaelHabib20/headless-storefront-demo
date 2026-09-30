@@ -1,0 +1,20 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 71,
+    "name": "Nasr City branch",
+    "address": "45 Makram Ebeid St, Nasr City, Cairo",
+    "phone": "0221234567",
+    "mapUrl": "https://maps.example.com/?q=nasr-city-branch"
+   },
+   {
+    "id": 72,
+    "name": "Dokki branch",
+    "address": "8 Tahrir St, Dokki, Giza",
+    "phone": null,
+    "mapUrl": null
+   }
+  ]
+ }
+}

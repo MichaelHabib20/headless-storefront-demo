@@ -18,6 +18,8 @@ export interface RequestOptions {
   token?: string | null;
   body?: unknown;
   query?: Record<string, string | number | boolean | null | undefined>;
+  /** Extra request headers the contract asks for (e.g. `Idempotency-Key`). They never replace the standard ones. */
+  headers?: Record<string, string>;
 }
 
 export interface UploadOptions {
@@ -79,8 +81,8 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
   const root = `${options.baseUrl.replace(/\/+$/, '')}/api/customer/v3/`;
   const doFetch = options.fetch ?? fetch;
 
-  function request<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, body, query }: RequestOptions): Promise<T> {
-    return send<T>(method, path, { locale, token, query, body: body === undefined ? undefined : JSON.stringify(body), json: body !== undefined });
+  function request<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, body, query, headers }: RequestOptions): Promise<T> {
+    return send<T>(method, path, { locale, token, query, extraHeaders: headers, body: body === undefined ? undefined : JSON.stringify(body), json: body !== undefined });
   }
 
   function upload<T>(path: string, { locale, token, form }: UploadOptions): Promise<T> {
@@ -93,11 +95,12 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
     query?: RequestOptions['query'];
     body?: BodyInit;
     json: boolean;
+    extraHeaders?: Record<string, string>;
   }
 
-  async function send<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, query, body, json }: Sending): Promise<T> {
+  async function send<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, { locale, token, query, body, json, extraHeaders }: Sending): Promise<T> {
     // device-type: web → the store applies its website rules (e.g. default area for new guests).
-    const headers: Record<string, string> = { Accept: 'application/json', 'Accept-Language': locale, 'device-type': 'web' };
+    const headers: Record<string, string> = { ...extraHeaders, Accept: 'application/json', 'Accept-Language': locale, 'device-type': 'web' };
     if (options.apiKey) headers['api-key'] = options.apiKey;
     if (token) headers.Authorization = `Bearer ${token}`;
     if (json) headers['Content-Type'] = 'application/json';

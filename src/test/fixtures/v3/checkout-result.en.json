@@ -1,0 +1,120 @@
+{
+ "data": {
+  "status": "placed",
+  "message": "Thank you! We received your order.",
+  "order": {
+   "id": "mock-order-48211",
+   "number": "48211",
+   "placedAt": "2026-09-29T10:00:00.000Z",
+   "status": {
+    "code": "processing",
+    "label": "Processing",
+    "active": true
+   },
+   "timeline": [
+    {
+     "label": "Order placed",
+     "done": true,
+     "current": false
+    },
+    {
+     "label": "Processing",
+     "done": false,
+     "current": true
+    },
+    {
+     "label": "On its way",
+     "done": false,
+     "current": false
+    },
+    {
+     "label": "Delivered",
+     "done": false,
+     "current": false
+    }
+   ],
+   "fulfilment": {
+    "type": "delivery",
+    "address": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+    "branch": null
+   },
+   "payment": {
+    "method": "Cash on delivery",
+    "online": false
+   },
+   "items": [
+    {
+     "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+     "image": {
+      "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+      "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+     },
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+     },
+     "quantity": 2,
+     "lineTotal": {
+      "amount": 36,
+      "currency": "EGP",
+      "display": "36 EGP"
+     },
+     "compareAt": null
+    },
+    {
+     "name": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)",
+     "image": {
+      "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+      "alt": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)"
+     },
+     "target": {
+      "type": "product",
+      "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+     },
+     "quantity": 2,
+     "lineTotal": {
+      "amount": 320,
+      "currency": "EGP",
+      "display": "320 EGP"
+     },
+     "compareAt": null
+    }
+   ],
+   "totals": {
+    "lines": [
+     {
+      "kind": "subtotal",
+      "label": "Subtotal",
+      "amount": {
+       "amount": 356,
+       "currency": "EGP",
+       "display": "356.00 EGP"
+      },
+      "text": null
+     },
+     {
+      "kind": "delivery",
+      "label": "Delivery",
+      "amount": {
+       "amount": 25,
+       "currency": "EGP",
+       "display": "25.00 EGP"
+      },
+      "text": null
+     }
+    ],
+    "total": {
+     "amount": 381,
+     "currency": "EGP",
+     "display": "381.00 EGP"
+    }
+   },
+   "note": "Ring the bell twice",
+   "actions": {
+    "canCancel": true,
+    "canReorder": true
+   }
+  },
+  "retry": false
+ }
+}
