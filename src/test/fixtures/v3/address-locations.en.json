@@ -1,0 +1,38 @@
+{
+ "data": {
+  "cities": [
+   {
+    "id": 1,
+    "name": "Cairo",
+    "areas": [
+     {
+      "id": 11,
+      "name": "Nasr City",
+      "districts": []
+     },
+     {
+      "id": 12,
+      "name": "Maadi",
+      "districts": []
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "name": "Giza",
+    "areas": [
+     {
+      "id": 21,
+      "name": "Dokki",
+      "districts": []
+     },
+     {
+      "id": 22,
+      "name": "Remote Oasis",
+      "districts": []
+     }
+    ]
+   }
+  ]
+ }
+}

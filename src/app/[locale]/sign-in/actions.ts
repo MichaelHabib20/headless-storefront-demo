@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { getAuthConfig, isLocale, login, type LoginInput } from '@/sdk';
 import { field, toFormState, type FormState } from '@/lib/form';
-import { routes } from '@/lib/routing';
+import { routes, signInReturn } from '@/lib/routing';
 import { saveSession } from '@/lib/session';
 import { forgetGuest, guestToken } from '@/lib/shopper.server';
 import { storeClient } from '@/lib/store';
@@ -29,6 +29,7 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
     return toFormState(error, values, { email: 'identifier', phone: 'identifier' });
   }
 
-  // Only a known page, never a URL from the form: checkout sends shoppers here with ?next=checkout.
-  redirect(formData.get('next') === 'checkout' ? routes.checkout(locale) : routes.account(locale));
+  // Back to the page that asked for the sign-in: checkout (?next=checkout) or a local page, checked again here.
+  const next = formData.get('next');
+  redirect(signInReturn(locale, typeof next === 'string' ? next : null) ?? routes.account(locale));
 }

@@ -2,19 +2,25 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { isLocale } from '@/sdk';
 import { loadAuthConfig } from '@/lib/config';
-import { routes } from '@/lib/routing';
+import { routes, signInReturn } from '@/lib/routing';
 import { readSession } from '@/lib/session';
 import { SignInForm } from './SignInForm';
 import '../auth.css';
 
 export const dynamic = 'force-dynamic';
 
-export default async function SignInPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams?: Promise<{ next?: string | string[] }> }) {
+export default async function SignInPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  // Checkout sends shoppers here with ?next=checkout and gets them back after sign-in.
-  const next = (await searchParams)?.next === 'checkout' ? 'checkout' : undefined;
-  if (await readSession()) redirect(next ? routes.checkout(locale) : routes.account(locale));
+  // `?next=`: checkout, or a page of this storefront to come back to (e.g. the orders page); anything else is ignored.
+  const next = signInReturn(locale, (await searchParams).next);
+  if (await readSession()) redirect(next ?? routes.account(locale));
   const result = await loadAuthConfig(locale);
 
   return (

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Locale, Target } from '@/sdk';
-import { isStorefrontPath, resolveTarget, routes, switchLocalePath } from './routing';
+import { addressReturn, addressReturnHref, externalHref, isStorefrontPath, resolveTarget, routes, safeReturnPath, signInReturn, switchLocalePath } from './routing';
 
 describe('resolveTarget', () => {
   const cases: Array<[Target, string]> = [
@@ -58,6 +58,49 @@ describe('isStorefrontPath', () => {
     expect(isStorefrontPath('/ar/old-page?x=1')).toBe(false);
     expect(isStorefrontPath('/en')).toBe(true);
     expect(isStorefrontPath('/en/c/x?sort=y')).toBe(true);
+  });
+});
+
+describe('account routes', () => {
+  it('builds the address book links with their return page and the saved address', () => {
+    expect(routes.addresses('en')).toBe('/en/account/addresses');
+    expect(routes.addresses('ar', { next: 'checkout', saved: 602 })).toBe('/ar/account/addresses?next=checkout&saved=602');
+    expect(routes.newAddress('en', 'checkout')).toBe('/en/account/addresses/new?next=checkout');
+    expect(routes.editAddress('en', 501)).toBe('/en/account/addresses/501/edit');
+    expect(routes.order('en', 'mock-order-48201')).toBe('/en/account/orders/mock-order-48201');
+  });
+
+  it('accepts only the known return page (no open redirect)', () => {
+    expect(addressReturn('checkout')).toBe('checkout');
+    expect(addressReturn(['checkout', 'x'])).toBe('checkout');
+    for (const value of ['https://evil.test', '//evil.test', '/en/checkout', 'CHECKOUT', '', undefined, null]) {
+      expect(addressReturn(value)).toBeNull();
+    }
+    expect(addressReturnHref('ar', 'checkout')).toBe('/ar/checkout');
+    expect(addressReturnHref('en', null)).toBeNull();
+  });
+
+  it('signs in and comes back to a local page only', () => {
+    expect(routes.signIn('en')).toBe('/en/sign-in');
+    expect(routes.signIn('en', '/en/account/orders')).toBe('/en/sign-in?next=%2Fen%2Faccount%2Forders');
+    expect(safeReturnPath('/en/account/orders')).toBe('/en/account/orders');
+    expect(safeReturnPath('/ar/account/orders/mock-order-1?x=1')).toBe('/ar/account/orders/mock-order-1?x=1');
+    for (const value of ['https://evil.test', '//evil.test', '/\\evil.test', '/en//evil.test', '/fr/x', 'en/x', '/english', ' /en', '/constructor', undefined]) {
+      expect(safeReturnPath(value), String(value)).toBeNull();
+    }
+  });
+
+  it('sends sign-in back to checkout or a local page only', () => {
+    expect(signInReturn('ar', 'checkout')).toBe('/ar/checkout');
+    expect(signInReturn('en', '/en/account/orders')).toBe('/en/account/orders');
+    expect(signInReturn('en', 'https://evil.test')).toBeNull();
+    expect(signInReturn('en', undefined)).toBeNull();
+  });
+
+  it('keeps only web links from the API as external links', () => {
+    expect(externalHref('https://maps.example.com/?q=x')).toBe('https://maps.example.com/?q=x');
+    expect(externalHref('javascript:alert(1)')).toBeNull();
+    expect(externalHref(null)).toBeNull();
   });
 });
 

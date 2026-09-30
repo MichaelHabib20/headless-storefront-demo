@@ -1,0 +1,134 @@
+{
+ "data": {
+  "id": "mock-order-48201",
+  "number": "48201",
+  "placedAt": "2026-09-28T09:30:00.000Z",
+  "status": {
+   "code": "processing",
+   "label": "Being prepared",
+   "active": true
+  },
+  "timeline": [
+   {
+    "label": "Order placed",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "Confirmed",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "Being prepared",
+    "done": false,
+    "current": true
+   },
+   {
+    "label": "Out for delivery",
+    "done": false,
+    "current": false
+   },
+   {
+    "label": "Delivered",
+    "done": false,
+    "current": false
+   }
+  ],
+  "fulfilment": {
+   "type": "delivery",
+   "address": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+   "branch": null
+  },
+  "payment": {
+   "method": "Cash on delivery",
+   "online": false
+  },
+  "items": [
+   {
+    "name": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+     "alt": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)"
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+    },
+    "quantity": 1,
+    "lineTotal": {
+     "amount": 160,
+     "currency": "EGP",
+     "display": "160 EGP"
+    },
+    "compareAt": null
+   },
+   {
+    "name": "J&J Baby Cologne 100Ml Dream احلام",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+     "alt": "J&J Baby Cologne 100Ml Dream احلام"
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-cologne-100ml-dream-احلام"
+    },
+    "quantity": 2,
+    "lineTotal": {
+     "amount": 243,
+     "currency": "EGP",
+     "display": "243 EGP"
+    },
+    "compareAt": {
+     "amount": 270,
+     "currency": "EGP",
+     "display": "270 EGP"
+    }
+   }
+  ],
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "Subtotal",
+     "amount": {
+      "amount": 403,
+      "currency": "EGP",
+      "display": "403.00 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "promo_code",
+     "label": "Promo code SAVE20",
+     "amount": {
+      "amount": -20,
+      "currency": "EGP",
+      "display": "-20.00 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "delivery",
+     "label": "Delivery",
+     "amount": {
+      "amount": 25,
+      "currency": "EGP",
+      "display": "25.00 EGP"
+     },
+     "text": null
+    }
+   ],
+   "total": {
+    "amount": 408,
+    "currency": "EGP",
+    "display": "408.00 EGP"
+   }
+  },
+  "note": "Please call me before you arrive.",
+  "actions": {
+   "canCancel": true,
+   "canReorder": false
+  }
+ }
+}

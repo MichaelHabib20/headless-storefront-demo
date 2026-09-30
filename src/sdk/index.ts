@@ -14,4 +14,5 @@ export { getCheckoutSettings, getLocations } from './v3/settings';
 export { getProduct, getProductRecommendations, getProductReviews, notifyWhenAvailable } from './v3/product';
 export { getBrands, getCategories, getProducts, getSearchSuggestions, listingQuery, resolvePath, type ListingParams, type ListingScope } from './v3/catalog';
 export * from './v3/checkout';
+export * from './v3/account';
 export * from './v3/types';

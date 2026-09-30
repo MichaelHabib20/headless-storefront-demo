@@ -1,0 +1,57 @@
+{
+ "data": {
+  "guestCheckout": true,
+  "guestEmail": "optional",
+  "pickup": {
+   "enabled": true,
+   "label": "استلم من الفرع"
+  },
+  "promoCode": true,
+  "orderNote": true,
+  "notice": "الطلبات قبل الساعة 6 مساءً يتم توصيلها في نفس اليوم.",
+  "addressForm": {
+   "levels": [
+    "city",
+    "area"
+   ],
+   "fields": [
+    {
+     "name": "label",
+     "label": "اسم العنوان",
+     "required": false,
+     "kind": "text"
+    },
+    {
+     "name": "street",
+     "label": "الشارع",
+     "required": true,
+     "kind": "text"
+    },
+    {
+     "name": "building",
+     "label": "المبنى",
+     "required": true,
+     "kind": "text"
+    },
+    {
+     "name": "floor",
+     "label": "الدور",
+     "required": false,
+     "kind": "text"
+    },
+    {
+     "name": "apartment",
+     "label": "الشقة",
+     "required": false,
+     "kind": "text"
+    },
+    {
+     "name": "phone",
+     "label": "رقم الهاتف",
+     "required": true,
+     "kind": "phone"
+    }
+   ]
+  }
+ }
+}

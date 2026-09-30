@@ -220,6 +220,37 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/checkout/AutoPlace.tsx', "'use client';\nuseEffect(() => {\n  placeOrder();\n}, []);")).toContain('no-write-on-load');
   });
 
+  it('catches order actions decided by the storefront (account pages)', () => {
+    const fails = [
+      "{order.status.code === 'pending' && <CancelButton />}",
+      "const canCancel = order.status.code !== 'delivered';",
+      "if ('processing' === summary.status.code) {",
+      'switch (order.status.code) {',
+      "const cancellable = ['pending', 'confirmed'].includes(order.status.code);",
+      'const recent = Date.now() - new Date(order.placedAt).getTime() < DAY;',
+      'const age = new Date(order.placedAt).getTime();',
+    ];
+    for (const line of fails) expect(rulesHit('src/components/account/X.tsx', line), line).toContain('order-actions-from-api');
+
+    const passes = [
+      '{order.actions.canCancel && <button type="button">{t(\'orderCancel\')}</button>}',
+      '<span data-status={status.code} data-tone={statusTone(status.code)}>{status.label}</span>',
+      '<time dateTime={order.placedAt}>{formatDate(order.placedAt, locale)}</time>',
+      "if (error.kind === 'cannot_cancel') {",
+      "reached={!checkout.blockers.some((blocker) => blocker.code === 'minimum_order')}",
+    ];
+    for (const line of passes) expect(rulesHit('src/components/account/X.tsx', line), line).toEqual([]);
+  });
+
+  it('catches address fields the storefront adds itself', () => {
+    expect(rulesHit('src/components/account/AddressForm.tsx', '<input name="street" required />')).toContain('address-form-from-api');
+    expect(rulesHit('src/app/[locale]/account/addresses/new/page.tsx', "<input name='field.landmark' />")).toContain('address-form-from-api');
+    expect(rulesHit('src/components/checkout/X.tsx', '<input name={"building"} />')).toContain('address-form-from-api');
+    // drawn from the API's list
+    expect(rulesHit('src/components/account/AddressForm.tsx', 'name={`${FIELD_PREFIX}${field.name}`}')).toEqual([]);
+    expect(rulesHit('src/components/account/AddressForm.tsx', '<input type="hidden" name="locale" value={locale} />')).toEqual([]);
+  });
+
   it('ignores tests and comments', () => {
     expect(rulesHit('src/components/X.test.tsx', "fetch('/api/customer/x')")).toEqual([]);
     expect(rulesHit('src/components/X.tsx', '// never call fetch( here')).toEqual([]);

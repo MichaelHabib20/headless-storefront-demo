@@ -1,0 +1,134 @@
+{
+ "data": {
+  "id": "mock-order-48201",
+  "number": "48201",
+  "placedAt": "2026-09-28T09:30:00.000Z",
+  "status": {
+   "code": "processing",
+   "label": "قيد التجهيز",
+   "active": true
+  },
+  "timeline": [
+   {
+    "label": "تم استلام الطلب",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "تم التأكيد",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "قيد التجهيز",
+    "done": false,
+    "current": true
+   },
+   {
+    "label": "في الطريق إليك",
+    "done": false,
+    "current": false
+   },
+   {
+    "label": "تم التوصيل",
+    "done": false,
+    "current": false
+   }
+  ],
+  "fulfilment": {
+   "type": "delivery",
+   "address": "12، 12 Abbas El Akkad St، مدينة نصر، القاهرة",
+   "branch": null
+  },
+  "payment": {
+   "method": "الدفع عند الاستلام",
+   "online": false
+  },
+  "items": [
+   {
+    "name": "جونسون اند جونسون كيدز لاتشابك بلسم سبراي 200 مل",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+     "alt": "جونسون اند جونسون كيدز لاتشابك بلسم سبراي 200 مل"
+    },
+    "target": {
+     "type": "product",
+     "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب"
+    },
+    "quantity": 1,
+    "lineTotal": {
+     "amount": 160,
+     "currency": "EGP",
+     "display": "160 جنية"
+    },
+    "compareAt": null
+   },
+   {
+    "name": "جونسون اند جونسون بيبي كولوجين احلام 125 مل",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+     "alt": "جونسون اند جونسون بيبي كولوجين احلام 125 مل"
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-cologne-100ml-dream-احلام"
+    },
+    "quantity": 2,
+    "lineTotal": {
+     "amount": 243,
+     "currency": "EGP",
+     "display": "243 جنية"
+    },
+    "compareAt": {
+     "amount": 270,
+     "currency": "EGP",
+     "display": "270 جنية"
+    }
+   }
+  ],
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "المجموع الفرعي",
+     "amount": {
+      "amount": 403,
+      "currency": "EGP",
+      "display": "403.00 جنية"
+     },
+     "text": null
+    },
+    {
+     "kind": "promo_code",
+     "label": "كود الخصم SAVE20",
+     "amount": {
+      "amount": -20,
+      "currency": "EGP",
+      "display": "-20.00 جنية"
+     },
+     "text": null
+    },
+    {
+     "kind": "delivery",
+     "label": "التوصيل",
+     "amount": {
+      "amount": 25,
+      "currency": "EGP",
+      "display": "25.00 جنية"
+     },
+     "text": null
+    }
+   ],
+   "total": {
+    "amount": 408,
+    "currency": "EGP",
+    "display": "408.00 جنية"
+   }
+  },
+  "note": "من فضلك اتصل بي قبل الوصول.",
+  "actions": {
+   "canCancel": true,
+   "canReorder": false
+  }
+ }
+}

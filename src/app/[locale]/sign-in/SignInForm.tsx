@@ -5,7 +5,7 @@ import type { AuthConfig, Locale } from '@/sdk';
 import type { FormState } from '@/lib/form';
 import { signInAction } from './actions';
 
-export function SignInForm({ loginMethod, locale, next }: { loginMethod: AuthConfig['loginMethod']; locale: Locale; next?: 'checkout' }) {
+export function SignInForm({ loginMethod, locale, next = null }: { loginMethod: AuthConfig['loginMethod']; locale: Locale; next?: string | null }) {
   const [state, action, pending] = useActionState<FormState, FormData>(signInAction, {});
   const errors = state.fieldErrors ?? {};
   const isPhone = loginMethod === 'phone';

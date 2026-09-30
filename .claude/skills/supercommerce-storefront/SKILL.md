@@ -62,6 +62,7 @@ them and **blocks the deploy** when one is broken.
 | `src/components/home/` | Home blocks: `PromoStrip`, `CategoryTiles`, `BrandRail`, `PopupHost`, `sections/HomeSection` + `sections/BannerLayouts` |
 | `src/components/product/ProductCard.tsx` | Product card |
 | `src/components/notifications/` | Notifications page blocks, helpers, local pagination |
+| `src/components/account/` | Address book, address form (drawn from the API), orders list/details, cancel dialog, reorder notice |
 | `src/app/[locale]/layout.tsx` | Loads `layout`, renders chrome for every page |
 | `src/app/[locale]/page.tsx` | The home page: composition of home blocks |
 | `src/app/[locale]/<area>/page.tsx` + `actions.ts` | Shopper pages (reads) and their server actions (writes) |
@@ -90,6 +91,7 @@ them and **blocks the deploy** when one is broken.
 | Notifications page, bell badge, mark as read | [reference/notifications.md](reference/notifications.md) |
 | Product page, options, gallery, notify-me, reviews, recommendations | [reference/product.md](reference/product.md) |
 | Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
+| Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 
 ## Common requests → how
@@ -120,6 +122,8 @@ them and **blocks the deploy** when one is broken.
 | "Add a filter / sort option" | Backend facet or sort option; links are its `query` strings (`listingHref`) | Build `?brands=…` or sort `items` yourself |
 | "Show N results" | `pagination.total` with `formatNumber()` | `items.length` |
 | "Redirect an old URL" | The merchant's redirect table (`GET /resolve`, handled in `src/middleware.ts`) | Hardcoded redirects |
+| "Add a field to the address form" | It comes from `CheckoutSettings.addressForm` → "needs backend support" | `<input name="landmark">` of your own |
+| "Only let pending orders be cancelled" | Nothing: show cancel only when `order.actions.canCancel` | `status.code === 'pending'`, date math on `placedAt` |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
 
 ## Before you say "done"

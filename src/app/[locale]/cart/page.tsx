@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCart, isApiError, isLocale, type Cart, type Locale } from '@/sdk';
+import { ReorderNotice } from '@/components/account/ReorderNotice';
 import { CartEmpty } from '@/components/cart/CartEmpty';
 import { CartView } from '@/components/cart/CartView';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
@@ -50,6 +51,8 @@ export default async function CartPage({ params }: { params: Params }) {
   return (
     <div className={`container ${styles.page}`}>
       <h1 className={styles.title}>{t('cartTitle')}</h1>
+      {/* After "Order again" on an order page: what the API skipped. */}
+      <ReorderNotice locale={locale} />
       {cart?.items.length ? (
         <CartView cart={cart} locale={locale} setQuantityAction={setQuantity} removeItemAction={removeItem} clearCartAction={clearCart} />
       ) : (

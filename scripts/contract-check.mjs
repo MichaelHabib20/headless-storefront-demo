@@ -70,6 +70,16 @@ const RESPONSE_SCHEMA = {
   'checkout-result-pending': 'CheckoutResultResponse',
   'checkout-result-failed': 'CheckoutResultResponse',
   'pickup-branches': 'PickupBranchesResponse',
+  // account pages (scripts/build-account-fixtures.mjs)
+  'address-form-settings': 'CheckoutSettingsResponse',
+  'address-locations': 'LocationsResponse',
+  addresses: 'AddressesResponse',
+  orders: 'OrdersResponse',
+  order: 'OrderResponse',
+  'order-delivered': 'OrderResponse',
+  'order-pickup': 'OrderResponse',
+  'cancellation-reasons': 'CancellationReasonsResponse',
+  reorder: 'ReorderResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

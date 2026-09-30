@@ -1,0 +1,78 @@
+{
+ "data": {
+  "id": "mock-order-48199",
+  "number": "48199",
+  "placedAt": "2026-09-15T12:00:00.000Z",
+  "status": {
+   "code": "picked_up",
+   "label": "Picked up",
+   "active": false
+  },
+  "timeline": [],
+  "fulfilment": {
+   "type": "pickup",
+   "address": null,
+   "branch": {
+    "id": 3,
+    "name": "Nasr City branch",
+    "address": "5 Makram Ebeid St, Nasr City, Cairo",
+    "phone": "0222222222",
+    "mapUrl": "https://maps.example.com/?q=nasr-city-branch"
+   }
+  },
+  "payment": {
+   "method": "Pay at the branch",
+   "online": false
+  },
+  "items": [
+   {
+    "name": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+     "alt": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile"
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+    },
+    "quantity": 1,
+    "lineTotal": {
+     "amount": 200,
+     "currency": "EGP",
+     "display": "200 EGP"
+    },
+    "compareAt": null
+   }
+  ],
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "Subtotal",
+     "amount": {
+      "amount": 200,
+      "currency": "EGP",
+      "display": "200.00 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "delivery",
+     "label": "Pickup from the branch",
+     "amount": null,
+     "text": "Free"
+    }
+   ],
+   "total": {
+    "amount": 200,
+    "currency": "EGP",
+    "display": "200.00 EGP"
+   }
+  },
+  "note": null,
+  "actions": {
+   "canCancel": false,
+   "canReorder": true
+  }
+ }
+}

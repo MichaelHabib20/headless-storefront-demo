@@ -78,6 +78,21 @@ export type UploadedFile = Schemas['UploadedFile'];
 export type PlaceOrderResult = Schemas['PlaceOrderResponse']['data'];
 export type CheckoutResult = Schemas['CheckoutResultResponse']['data'];
 export type CheckoutOrder = NonNullable<CheckoutResult['order']>;
+// address book and orders (account pages)
+export type Address = Schemas['Address'];
+export type AddressInput = Schemas['AddressInput'];
+export type AddressBook = Schemas['AddressesResponse']['data'];
+export type AddressSaved = Schemas['AddressSavedResponse']['data'];
+export type OrderStatus = Schemas['OrderStatus'];
+export type OrderSummary = Schemas['OrderSummary'];
+export type OrdersPage = Schemas['OrdersResponse']['data'];
+export type Order = Schemas['Order'];
+export type OrderItem = Order['items'][number];
+export type TotalLine = Schemas['TotalLine'];
+export type CancellationReason = Schemas['CancellationReasonsResponse']['data']['items'][number];
+export type CancellationReasons = Schemas['CancellationReasonsResponse']['data'];
+export type CancelOrderInput = { reasonId: number; note?: string | null };
+export type ReorderResult = Schemas['ReorderResponse']['data'];
 
 export const LOCALES = ['en', 'ar'] as const satisfies readonly Locale[];
 
