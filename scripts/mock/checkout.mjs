@@ -10,7 +10,8 @@
  *   GET  /__pay?ref=                 → the mock bank's payment page (HTML)
  *   GET  /__pay/finish?ref=&outcome= → records paid | failed | cancelled | pending | stuck, then sends the
  *                                       browser back to the order's `returnUrl` with `?checkout=<reference>`
- *   POST /__checkout {…}             → control switches (see `freshMode()`); GET /__checkout → switches + the order requests received
+ *   POST /__checkout {…}             → control switches (see `freshMode()`); GET /__checkout → switches, the order requests
+ *                                       received and (with a token) that shopper's order numbers
  *
  * The cart and the shopper come from the shopper store, the address book and the orders from
  * account-state.mjs. The rules here are only good enough to reach every state of the checkout
@@ -587,13 +588,15 @@ ${link('stuck', 'Pay — the bank never confirms')}
     return [302, '', { Location: back.toString(), 'Content-Type': 'text/plain' }];
   }
 
-  function control(method, body) {
+  function control(method, body, token) {
     if (method === 'POST') {
       const input = body && typeof body === 'object' ? body : {};
       for (const name of Object.keys(mode)) if (name in input) mode[name] = input[name];
       if (input.price && isId(input.price.productId) && typeof input.price.amount === 'number') setPrice(input.price.productId, input.price.amount);
     }
-    return [200, { mode: { ...mode }, orderRequests }];
+    const session = shopper.session(token);
+    // with a shopper token: the numbers of that shopper's orders, newest first (what did checkout create?)
+    return [200, { mode: { ...mode }, orderRequests, orders: session ? orderRows(session).map((row) => row.en.number) : [] }];
   }
 
   return {
@@ -601,7 +604,7 @@ ${link('stuck', 'Pay — the bank never confirms')}
       const { method, pathname, query, token, locale, body } = request;
       settle();
 
-      if (pathname === '/__checkout' && (method === 'POST' || method === 'GET')) return control(method, body);
+      if (pathname === '/__checkout' && (method === 'POST' || method === 'GET')) return control(method, body, token);
       if (pathname === '/__pay' && method === 'GET') return paymentPage(query);
       if (pathname === '/__pay/finish' && method === 'GET') return finishPayment(query);
 

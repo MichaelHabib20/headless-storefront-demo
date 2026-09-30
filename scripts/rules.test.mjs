@@ -159,6 +159,53 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/C.tsx', "'use client';\nuseEffect(() => { const t = setTimeout(go, 9); return () => clearTimeout(t); }, []);")).toEqual([]);
   });
 
+  it('places orders only through the checkout page action', () => {
+    expect(rulesHit('src/components/product/BuyNow.tsx', 'await placeOrder(storefrontClient(), ctx, input);')).toContain('place-order-one-door');
+    expect(rulesHit('src/app/[locale]/p/[slug]/actions.ts', "import { placeOrderAction } from '../../checkout/actions';")).toContain('place-order-one-door');
+    expect(rulesHit('src/lib/quick-order.ts', 'return placeOrder(client, ctx, { checkout, acceptTerms: true });')).toContain('place-order-one-door');
+    // the checkout route and the SDK are the door
+    expect(rulesHit('src/app/[locale]/checkout/actions.ts', '({ next } = await placeOrder(storefrontClient(), ctx, {')).toEqual([]);
+    expect(rulesHit('src/app/[locale]/checkout/page.tsx', 'placeAction={placeOrderAction}')).toEqual([]);
+    expect(rulesHit('src/sdk/v3/checkout.ts', 'export function placeOrder(client, ctx, input) {')).toEqual([]);
+  });
+
+  it('never lets the storefront build the total an order is placed for', () => {
+    expect(rulesHit('src/app/[locale]/checkout/actions.ts', 'body: { selections, expectedTotal: checkout.totals.total.amount }')).toContain('total-from-checkout');
+    expect(rulesHit('src/components/checkout/X.tsx', 'const expectedTotal = subtotal + deliveryFee;')).toContain('total-from-checkout');
+    expect(rulesHit('src/app/[locale]/checkout/actions.ts', 'const shown = { ...checkout, totals: firstCheckout.totals };')).toContain('total-from-checkout');
+    expect(rulesHit('src/components/checkout/X.tsx', 'checkout.totals.total = lastTotal;')).toContain('total-from-checkout');
+    // handing the checkout on unchanged, and reading its total for display, are fine
+    expect(rulesHit('src/components/checkout/X.tsx', 'placeAction(locale, { checkout, note, acceptTerms: terms, attemptKey, acceptPaymentChange: consent })')).toEqual([]);
+    expect(rulesHit('src/components/checkout/X.tsx', '<TotalLines lines={checkout.totals.lines} total={checkout.totals.total} locale={locale} />')).toEqual([]);
+    expect(rulesHit('src/sdk/v3/checkout.ts', 'expectedTotal: checkout.totals.total.amount,')).toEqual([]);
+  });
+
+  it('enables the place-order button only by canPlaceOrder', () => {
+    const hits = (line) => rulesHit('src/components/checkout/PlaceOrder.tsx', line);
+    expect(hits('const enabled = (checkout.canPlaceOrder || checkout.missing.length === 0) && termsAccepted;')).toContain('place-order-gate');
+    expect(hits('const enabled = checkout.blockers.length === 0 || checkout.canPlaceOrder;')).toContain('place-order-gate');
+    expect(hits('<button disabled={!checkout.canPlaceOrder && checkout.blockers.length > 0}>')).toContain('place-order-gate');
+    expect(hits('const ready = { ...checkout, canPlaceOrder: true };')).toContain('place-order-gate');
+    expect(hits('checkout.canPlaceOrder = !missing.length;')).toContain('place-order-gate');
+    // the backend switch, narrowed by the terms and a pending change
+    expect(hits('const enabled = checkout.canPlaceOrder && termsAccepted && !pending && !placing;')).toEqual([]);
+    expect(hits("if (checkout.canPlaceOrder !== true) return { ok: false, message: t('checkoutErrorNotReady'), attemptKey };")).toEqual([]);
+  });
+
+  it('never picks a default choice in checkout', () => {
+    expect(rulesHit('src/components/checkout/PaymentSection.tsx', 'const chosen = shown.paymentMethodId ?? methods[0].id;')).toContain('checkout-no-own-defaults');
+    expect(rulesHit('src/components/checkout/F.tsx', 'const address = addresses?.[0];')).toContain('checkout-no-own-defaults');
+    expect(rulesHit('src/components/checkout/F.tsx', 'const address = checkout.fulfilment.addresses.find((a) => a.isDefault);')).toContain('checkout-no-own-defaults');
+    expect(rulesHit('src/app/[locale]/checkout/page.tsx', 'const first = { paymentMethodId: checkout.payment.methods.at(0)?.id };')).toContain('checkout-no-own-defaults');
+    // drawing the list and the backend echo is fine
+    expect(rulesHit('src/components/checkout/F.tsx', '{addresses.map((address) => (')).toEqual([]);
+    expect(rulesHit('src/components/checkout/F.tsx', '{address.isDefault && <span>{t("checkoutAddressDefault")}</span>}')).toEqual([]);
+  });
+
+  it('catches placing an order on page load', () => {
+    expect(rulesHit('src/components/checkout/AutoPlace.tsx', "'use client';\nuseEffect(() => {\n  placeOrder();\n}, []);")).toContain('no-write-on-load');
+  });
+
   it('ignores tests and comments', () => {
     expect(rulesHit('src/components/X.test.tsx', "fetch('/api/customer/x')")).toEqual([]);
     expect(rulesHit('src/components/X.tsx', '// never call fetch( here')).toEqual([]);
