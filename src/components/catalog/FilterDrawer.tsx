@@ -102,7 +102,7 @@ export function FilterPanel({ labels, children }: FilterPanelProps) {
         role={open ? 'dialog' : undefined}
         aria-modal={open ? true : undefined}
         aria-labelledby={titleId}
-        data-filters-panel
+        data-filters-panel=""
         data-testid="listing-filters"
       >
         <div className={styles.panelHead}>

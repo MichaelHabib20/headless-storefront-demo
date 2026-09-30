@@ -1,0 +1,83 @@
+{
+ "data": {
+  "context": {
+   "type": "search",
+   "title": "Search results for \"zzzz\"",
+   "description": null,
+   "image": null,
+   "query": "zzzz"
+  },
+  "breadcrumbs": [
+   {
+    "label": "Home",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "Search",
+    "target": {
+     "type": "search",
+     "query": "zzzz"
+    }
+   }
+  ],
+  "items": [],
+  "pagination": {
+   "page": 1,
+   "perPage": 8,
+   "total": 0,
+   "totalPages": 0
+  },
+  "sort": [
+   {
+    "label": "Featured",
+    "selected": true,
+    "query": ""
+   },
+   {
+    "label": "Price: low to high",
+    "selected": false,
+    "query": "sort=price_asc"
+   },
+   {
+    "label": "Price: high to low",
+    "selected": false,
+    "query": "sort=price_desc"
+   },
+   {
+    "label": "Name: A to Z",
+    "selected": false,
+    "query": "sort=name_asc"
+   }
+  ],
+  "facets": [],
+  "appliedFilters": [],
+  "clearFiltersQuery": null,
+  "seo": {
+   "title": "Search results for \"zzzz\"",
+   "description": null,
+   "canonical": {
+    "type": "search",
+    "query": "zzzz"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "search",
+      "query": "zzzz"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "search",
+      "query": "zzzz"
+     }
+    }
+   ],
+   "index": false
+  }
+ }
+}

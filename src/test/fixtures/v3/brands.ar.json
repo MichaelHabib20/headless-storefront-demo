@@ -1,0 +1,300 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": 758,
+    "name": "BIODERMA",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/bioderma-logo-png_seeklogo-19622.png",
+     "alt": "BIODERMA"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "bioderma"
+    }
+   },
+   {
+    "id": 21,
+    "name": "BOBAI",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/BOBAI.webp",
+     "alt": "BOBAI"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "bobai"
+    }
+   },
+   {
+    "id": 27,
+    "name": "CAPIXY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CAPIXY.webp",
+     "alt": "CAPIXY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "capixy"
+    }
+   },
+   {
+    "id": 170,
+    "name": "CERAVE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CERAVE.webp",
+     "alt": "CERAVE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "cerave"
+    }
+   },
+   {
+    "id": 31,
+    "name": "CLARY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/CLARY-LOGO-454x454.png-1755121350.webp",
+     "alt": "CLARY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "clary"
+    }
+   },
+   {
+    "id": 619,
+    "name": "DARIVIKA",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/تصميم بدون عنوان (7)-1762330370.png",
+     "alt": "DARIVIKA"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "darivika"
+    }
+   },
+   {
+    "id": 369,
+    "name": "GLAMYLAB",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/GLAMYLAB.webp",
+     "alt": "GLAMYLAB"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "glamylab"
+    }
+   },
+   {
+    "id": 516,
+    "name": "JOHNSON & JOHNSON",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/JOHNSON-&-JOHNSON.webp",
+     "alt": "JOHNSON & JOHNSON"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "id": 519,
+    "name": "KOLAGRA",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/KOLAGRA.webp",
+     "alt": "KOLAGRA"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "kolagra"
+    }
+   },
+   {
+    "id": 719,
+    "name": "LA ROCHE-POSAY",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/la roche posay webp-1754388497.webp",
+     "alt": "LA ROCHE-POSAY"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "LA ROCHE-POSAY"
+    }
+   },
+   {
+    "id": 229,
+    "name": "LISTERINE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/LISTERINE.webp",
+     "alt": "LISTERINE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "listerine"
+    }
+   },
+   {
+    "id": 82,
+    "name": "LOREAL",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/LOREAL.webp",
+     "alt": "LOREAL"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "loreal"
+    }
+   },
+   {
+    "id": 240,
+    "name": "MOLFIX",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/MOLFIX.webp",
+     "alt": "MOLFIX"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "molfix"
+    }
+   },
+   {
+    "id": 540,
+    "name": "MOVELEX",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/MOVELEX.webp",
+     "alt": "MOVELEX"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "movelex"
+    }
+   },
+   {
+    "id": 99,
+    "name": "OGX",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/OGX.webp",
+     "alt": "OGX"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "ogx"
+    }
+   },
+   {
+    "id": 557,
+    "name": "PENDULINE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/PENDULINE.webp",
+     "alt": "PENDULINE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "penduline"
+    }
+   },
+   {
+    "id": 109,
+    "name": "PENTAJ",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/PENTAJ.webp",
+     "alt": "PENTAJ"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "pentaj"
+    }
+   },
+   {
+    "id": 123,
+    "name": "SEROPIPE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SEROPIPE-1749989062.webp",
+     "alt": "SEROPIPE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "seropipe"
+    }
+   },
+   {
+    "id": 124,
+    "name": "SHAAN",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SHAAN -1750168073.webp",
+     "alt": "SHAAN"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "shaan"
+    }
+   },
+   {
+    "id": 577,
+    "name": "SORALONE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SORALONE.webp",
+     "alt": "SORALONE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "soralone"
+    }
+   },
+   {
+    "id": 278,
+    "name": "STARVILLE",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/STARVILLE.webp",
+     "alt": "STARVILLE"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "starville"
+    }
+   },
+   {
+    "id": 424,
+    "name": "STRONGVILLE ",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/STRONGVILLE .webp",
+     "alt": "STRONGVILLE "
+    },
+    "target": {
+     "type": "brand",
+     "slug": "strongville"
+    }
+   },
+   {
+    "id": 426,
+    "name": "SUPERKIDS",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/SUPERKIDS.webp",
+     "alt": "SUPERKIDS"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "superkids"
+    }
+   },
+   {
+    "id": 436,
+    "name": "VACATION",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/VACATION.webp",
+     "alt": "VACATION"
+    },
+    "target": {
+     "type": "brand",
+     "slug": "vacation"
+    }
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 24,
+   "total": 25,
+   "totalPages": 2
+  }
+ }
+}

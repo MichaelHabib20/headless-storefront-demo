@@ -1,0 +1,287 @@
+{
+ "data": {
+  "context": {
+   "type": "category",
+   "title": "العناية بالام والطفل",
+   "description": {
+    "html": "<p>كل ما تحتاجه <strong>الأم والطفل</strong>: الاستحمام والعناية بالبشرة والمزيد.</p>"
+   },
+   "image": {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+    "alt": "العناية بالام والطفل"
+   },
+   "query": null
+  },
+  "breadcrumbs": [
+   {
+    "label": "الرئيسية",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "العناية بالام والطفل",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   }
+  ],
+  "items": [
+   {
+    "id": 36480,
+    "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+    "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+     "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 18,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "18 جنية",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+    }
+   },
+   {
+    "id": 15472,
+    "slug": "جونسون-اند-جونسون-بيبي-باث-وقت-النوم-با",
+    "name": "جونسون اند جونسون بيبي باث وقت النوم بالافندر 300 مل",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp",
+     "alt": "جونسون اند جونسون بيبي باث وقت النوم بالافندر 300 مل"
+    },
+    "brand": {
+     "name": "JOHNSON & JOHNSON",
+     "slug": "johnson-johnson",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    "price": {
+     "currency": "EGP",
+     "amount": 160,
+     "compareAt": null,
+     "discountPercent": null,
+     "display": "160 جنية",
+     "compareAtDisplay": null,
+     "discountLabel": null
+    },
+    "inStock": true,
+    "badges": [],
+    "rating": null,
+    "requiresPrescription": false,
+    "purchase": {
+     "canAddToCart": true,
+     "minQuantity": 1,
+     "maxQuantity": 5
+    },
+    "target": {
+     "type": "product",
+     "slug": "جونسون-اند-جونسون-بيبي-باث-وقت-النوم-با"
+    }
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 2,
+   "total": 3,
+   "totalPages": 2
+  },
+  "sort": [
+   {
+    "label": "المميز",
+    "selected": false,
+    "query": "options=color-lavender"
+   },
+   {
+    "label": "السعر: من الأقل للأعلى",
+    "selected": true,
+    "query": "options=color-lavender&sort=price_asc"
+   },
+   {
+    "label": "السعر: من الأعلى للأقل",
+    "selected": false,
+    "query": "options=color-lavender&sort=price_desc"
+   },
+   {
+    "label": "الاسم: أ إلى ي",
+    "selected": false,
+    "query": "options=color-lavender&sort=name_asc"
+   }
+  ],
+  "facets": [
+   {
+    "key": "category",
+    "label": "الفئة",
+    "kind": "options",
+    "display": "list",
+    "values": [
+     {
+      "label": "العناية بالطفل",
+      "selected": false,
+      "count": 3,
+      "color": null,
+      "image": null,
+      "query": "categories=mom-baby%2Fbaby-care&options=color-lavender&sort=price_asc"
+     }
+    ],
+    "range": null
+   },
+   {
+    "key": "brand",
+    "label": "الماركة",
+    "kind": "options",
+    "display": "image",
+    "values": [
+     {
+      "label": "JOHNSON & JOHNSON",
+      "selected": false,
+      "count": 3,
+      "color": null,
+      "image": "https://seif-online.com/storage/seif-pharmacies/uploads/JOHNSON-&-JOHNSON.webp",
+      "query": "brands=johnson-johnson&options=color-lavender&sort=price_asc"
+     }
+    ],
+    "range": null
+   },
+   {
+    "key": "color",
+    "label": "اللون",
+    "kind": "options",
+    "display": "color",
+    "values": [
+     {
+      "label": "لافندر",
+      "selected": true,
+      "count": 3,
+      "color": "#b39ddb",
+      "image": null,
+      "query": "sort=price_asc"
+     },
+     {
+      "label": "أزرق",
+      "selected": false,
+      "count": 1,
+      "color": "#64b5f6",
+      "image": null,
+      "query": "options=color-lavender%2Ccolor-blue&sort=price_asc"
+     },
+     {
+      "label": "أصفر",
+      "selected": false,
+      "count": 1,
+      "color": "#ffd54f",
+      "image": null,
+      "query": "options=color-lavender%2Ccolor-yellow&sort=price_asc"
+     }
+    ],
+    "range": null
+   },
+   {
+    "key": "price",
+    "label": "السعر",
+    "kind": "range",
+    "display": "list",
+    "values": [],
+    "range": {
+     "min": {
+      "amount": 18,
+      "currency": "EGP",
+      "display": "18 جنية"
+     },
+     "max": {
+      "amount": 200,
+      "currency": "EGP",
+      "display": "200 جنية"
+     },
+     "selectedMin": null,
+     "selectedMax": null,
+     "query": "options=color-lavender&sort=price_asc"
+    }
+   },
+   {
+    "key": "availability",
+    "label": "التوفر",
+    "kind": "options",
+    "display": "list",
+    "values": [
+     {
+      "label": "المتوفر فقط",
+      "selected": false,
+      "count": 3,
+      "color": null,
+      "image": null,
+      "query": "options=color-lavender&inStock=true&sort=price_asc"
+     }
+    ],
+    "range": null
+   }
+  ],
+  "appliedFilters": [
+   {
+    "label": "لافندر",
+    "removeQuery": "sort=price_asc"
+   }
+  ],
+  "clearFiltersQuery": "sort=price_asc",
+  "seo": {
+   "title": "العناية بالام والطفل",
+   "description": "العناية بالام والطفل · سيف أونلاين",
+   "canonical": {
+    "type": "category",
+    "path": [
+     "mom-baby"
+    ]
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    }
+   ],
+   "index": false
+  }
+ }
+}

@@ -29,7 +29,7 @@ export function ListingFilters({ facets, locale, links }: ListingFiltersProps) {
   return (
     <div className={styles.facets}>
       {facets.map((facet) => {
-        const body = facet.kind === 'options' ? <FacetValues facet={facet} locale={locale} links={links} /> : facet.kind === 'range' && facet.range ? <RangeForm facet={facet} range={facet.range} locale={locale} links={links} /> : null;
+        const body = facetBody(facet, locale, links);
         if (!body) return null;
         return (
           <details key={facet.key} className={styles.facet} open data-testid="facet" data-facet={facet.key}>
@@ -40,6 +40,13 @@ export function ListingFilters({ facets, locale, links }: ListingFiltersProps) {
       })}
     </div>
   );
+}
+
+/** The values of an `options` facet, the form of a `range` facet; null for kinds this storefront does not know. */
+function facetBody(facet: ListingFacet, locale: Locale, links: ListingLinks) {
+  if (facet.kind === 'options') return <FacetValues facet={facet} locale={locale} links={links} />;
+  if (facet.kind === 'range' && facet.range) return <RangeForm facet={facet} range={facet.range} locale={locale} links={links} />;
+  return null;
 }
 
 function FacetValues({ facet, locale, links }: { facet: ListingFacet; locale: Locale; links: ListingLinks }) {
@@ -69,7 +76,7 @@ function FacetValues({ facet, locale, links }: { facet: ListingFacet; locale: Lo
 }
 
 /** How a value looks, by the facet's `display` hint. Unknown hints and missing data → a check box. */
-function ValueMark({ hint, value }: { hint: ListingFacet['display']; value: ListingFacetValue }) {
+function ValueMark({ hint, value }: { hint: string; value: ListingFacetValue }) {
   const color = hint === 'color' ? swatchColor(value.color) : null;
   if (color) return <span className={styles.swatch} style={{ backgroundColor: color }} aria-hidden="true" />;
   if (hint === 'image' && value.image) {

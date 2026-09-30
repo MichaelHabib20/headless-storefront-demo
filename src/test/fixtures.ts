@@ -21,6 +21,17 @@ import notificationsAr from './fixtures/v3/notifications.ar.json';
 import notificationsEn from './fixtures/v3/notifications.en.json';
 import wishlistAr from './fixtures/v3/wishlist.ar.json';
 import wishlistEn from './fixtures/v3/wishlist.en.json';
+import type { BrandsPage, CategoryTree, ProductListing, SearchSuggestions } from '@/sdk';
+import brandsAr from './fixtures/v3/brands.ar.json';
+import brandsEn from './fixtures/v3/brands.en.json';
+import categoriesAr from './fixtures/v3/categories.ar.json';
+import categoriesEn from './fixtures/v3/categories.en.json';
+import productsEmptyAr from './fixtures/v3/products-empty.ar.json';
+import productsEmptyEn from './fixtures/v3/products-empty.en.json';
+import productsAr from './fixtures/v3/products.ar.json';
+import productsEn from './fixtures/v3/products.en.json';
+import suggestionsAr from './fixtures/v3/search-suggestions.ar.json';
+import suggestionsEn from './fixtures/v3/search-suggestions.en.json';
 
 type ByLocale<T> = Record<Locale, T>;
 const pick = <T,>(files: ByLocale<{ data: unknown }>, locale: Locale): T => structuredClone(files[locale].data) as T;
@@ -33,4 +44,9 @@ export const cartFixture = (locale: Locale = 'en') => pick<Cart>({ en: cartEn, a
 export const emptyCartFixture = (locale: Locale = 'en') => pick<Cart>({ en: cartEmptyEn, ar: cartEmptyAr }, locale);
 export const wishlistFixture = (locale: Locale = 'en') => pick<WishlistPage>({ en: wishlistEn, ar: wishlistAr }, locale);
 export const compareFixture = (locale: Locale = 'en') => pick<CompareData>({ en: compareEn, ar: compareAr }, locale);
-export const notificationsFixture = (locale: Locale = 'en') => pick<NotificationsPage>({ en: notificationsEn, ar: notificationsAr }, locale);
+export const productsFixture = (locale: Locale = 'en') => pick<ProductListing>({ en: productsEn, ar: productsAr }, locale);
+export const emptyProductsFixture = (locale: Locale = 'en') => pick<ProductListing>({ en: productsEmptyEn, ar: productsEmptyAr }, locale);
+export const suggestionsFixture = (locale: Locale = 'en') => pick<SearchSuggestions>({ en: suggestionsEn, ar: suggestionsAr }, locale);
+export const categoriesFixture = (locale: Locale = 'en') => pick<CategoryTree>({ en: categoriesEn, ar: categoriesAr }, locale);
+export const brandsFixture = (locale: Locale = 'en') => pick<BrandsPage>({ en: brandsEn, ar: brandsAr }, locale);
+export const notificationsFixture =(locale: Locale = 'en') => pick<NotificationsPage>({ en: notificationsEn, ar: notificationsAr }, locale);

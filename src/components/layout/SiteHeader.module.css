@@ -8,9 +8,17 @@
 
 .inner {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
-  height: var(--header-height);
+  gap: 0 var(--space-4);
+  min-height: var(--header-height);
+}
+@media (min-width: 1024px) {
+  .inner {
+    flex-wrap: nowrap;
+    gap: var(--space-4);
+    height: var(--header-height);
+  }
 }
 
 .logo {
@@ -18,7 +26,7 @@
   align-items: center;
   flex-shrink: 0;
   min-width: 0;
-  height: 100%;
+  height: var(--header-height);
   padding-block: var(--space-2);
   text-decoration: none;
 }
@@ -51,42 +59,23 @@
   margin-inline-start: auto;
 }
 
+/* Phones: the search box is its own row under the logo; wide screens: before the icons. */
 .search {
-  display: none;
-  align-items: center;
-  background: var(--color-surface);
+  order: 10;
+  flex: 1 0 100%;
+  margin-bottom: var(--space-2);
 }
 
 @media (min-width: 1024px) {
   .search {
-    display: flex;
+    order: 0;
+    flex: 0 1 auto;
+    margin-bottom: 0;
+    margin-inline-start: auto;
   }
-}
-
-.searchInput {
-  width: clamp(200px, 22vw, 320px);
-  height: 36px;
-  padding-inline: var(--space-3);
-  border: 0;
-  background: transparent;
-  font: inherit;
-  font-size: 0.875rem;
-}
-.searchInput:focus {
-  outline: none;
-}
-.search:focus-within {
-  outline: 2px solid var(--color-focus);
-}
-
-.searchButton {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  background: none;
-  cursor: pointer;
+  .actions {
+    margin-inline-start: 0;
+  }
 }
 
 .navRow {

@@ -162,7 +162,6 @@ const loadBrands = () => ({ en: readJson('home.en.json').featuredBrands, ar: rea
 
 // ------------------------------------------------------------------ filters and their query strings
 
-const FILTER_KEYS = ['categories', 'brands', 'options', 'inStock', 'priceMin', 'priceMax', 'sort'];
 const SORTS = ['featured', 'price_asc', 'price_desc', 'name_asc'];
 
 /**
