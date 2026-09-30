@@ -55,7 +55,8 @@ export const RULES = [
     applies: (f) => /^src\/components\/.*\.tsx$/.test(f) && !isTest(f),
     patterns: [
       // JSX text with words: >You save<  or  >Free delivery {x}<
-      />[^<>{}=]*\b[A-Za-z]{3,}\b[^<>{}]*(<|\{)/,
+      // (the `>` must not be part of an arrow `=>`, which is code, not JSX)
+      /(?<![=\-])>[^<>{}=]*\b[A-Za-z]{3,}\b[^<>{}]*(<|\{)/,
       // a JSX line that is only words:     Free delivery
       /^\s+[A-Za-z][A-Za-z ,.'!?&-]{3,}$/,
     ],

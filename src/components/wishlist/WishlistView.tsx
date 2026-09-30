@@ -46,7 +46,8 @@ export function WishlistView({ state, locale, pageQuery, onRemove, onMoveToCart 
               productId: product.id,
               name: product.name,
               canAddToCart: product.purchase.canAddToCart,
-              card: <ProductCard product={product} locale={locale} />,
+              // The wishlist has its own Remove / Move to cart buttons: no duplicate card actions.
+      card: <ProductCard product={product} locale={locale} showActions={false} />,
             }))}
             locale={locale}
             cartHref={routes.cart(locale)}

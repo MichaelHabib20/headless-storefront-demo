@@ -41,7 +41,7 @@ interface NotificationsPage { items: Notification[]; pagination: Pagination; unr
 - `NotificationsView` renders heading, `unreadCount`, "Mark all as read" (only when `unreadCount > 0`),
   the list (`NotificationItem`), and `NotificationsPagination` (local prev/next from `pagination`).
 - Server actions (`actions.ts`): `markNotificationReadAction(locale, id)` and
-  `markAllNotificationsReadAction(locale)` → `ensureShopperContext` → SDK →
+  `markAllNotificationsReadAction(locale)` → `withShopper` → SDK →
   `revalidatePath('/[locale]', 'layout')` (list + header badge). The view binds them per item.
 - Opening an unread notification's link marks it read: `OpenMarksRead` (client) calls the bound action
   in the click capture phase; navigation is never blocked.

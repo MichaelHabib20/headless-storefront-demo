@@ -13,7 +13,9 @@ vi.mock('@/sdk', async (importOriginal) => ({
   clearCart: vi.fn(),
 }));
 vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({})) }));
-vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn() }));
+// guestToken → null: the token belongs to a signed-in customer, so a 401 is not retried
+// (the guest retry is covered in src/lib/shopper.actions.test.ts).
+vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn(), guestToken: vi.fn(async () => null), forgetGuest: vi.fn() }));
 
 describe('cart server actions', () => {
   beforeEach(() => {

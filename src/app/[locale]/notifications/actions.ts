@@ -2,12 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 import { isLocale, markAllNotificationsRead, markNotificationRead, type Locale } from '@/sdk';
-import { ensureShopperContext } from '@/lib/shopper.server';
+import { withShopper } from '@/lib/shopper.write';
 import { storefrontClient } from '@/lib/storefront.server';
 
 /**
  * Notification writes. Server actions are the only place allowed to use
- * ensureShopperContext (it may start a guest session); pages only read.
+ * withShopper (it may start a guest session); pages only read.
  * Failures are logged and swallowed: the refreshed page shows the backend's real state.
  */
 
@@ -20,7 +20,7 @@ function refreshShopperViews() {
 export async function markNotificationReadAction(locale: Locale, notificationId: number): Promise<void> {
   if (!isLocale(locale) || !Number.isInteger(notificationId) || notificationId < 1) return;
   try {
-    await markNotificationRead(storefrontClient(), await ensureShopperContext(locale), notificationId);
+    await withShopper(locale, (ctx) => markNotificationRead(storefrontClient(), ctx, notificationId));
   } catch (error) {
     console.error('marking a notification as read failed', error);
   }
@@ -31,7 +31,7 @@ export async function markNotificationReadAction(locale: Locale, notificationId:
 export async function markAllNotificationsReadAction(locale: Locale): Promise<void> {
   if (!isLocale(locale)) return;
   try {
-    await markAllNotificationsRead(storefrontClient(), await ensureShopperContext(locale));
+    await withShopper(locale, (ctx) => markAllNotificationsRead(storefrontClient(), ctx));
   } catch (error) {
     console.error('marking all notifications as read failed', error);
   }

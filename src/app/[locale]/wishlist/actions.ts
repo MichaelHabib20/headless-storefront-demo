@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { isApiError, isLocale, moveWishlistItemToCart, removeFromWishlist, type Locale, type ShopperContext, type StorefrontClient } from '@/sdk';
 import { translator } from '@/lib/i18n';
-import { ensureShopperContext } from '@/lib/shopper.server';
+import { withShopper } from '@/lib/shopper.write';
 import { storefrontClient } from '@/lib/storefront.server';
 
 type Result = { ok: true } | { ok: false; message: string };
@@ -18,7 +18,7 @@ async function run(locale: unknown, productId: unknown, call: (client: Storefron
     return { ok: false, message: t('wishlistActionError') };
   }
   try {
-    await call(storefrontClient(), await ensureShopperContext(lang), productId);
+    await withShopper(lang, (ctx) => call(storefrontClient(), ctx, productId));
   } catch (error) {
     if (isApiError(error) && SHOW_API_MESSAGE.has(error.kind)) return { ok: false, message: error.message };
     console.error('wishlist action failed', error);

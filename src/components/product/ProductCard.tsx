@@ -8,6 +8,8 @@ import styles from './ProductCard.module.css';
 interface ProductCardProps {
   product: ProductCardData;
   locale: Locale;
+  /** Add-to-cart / wishlist / compare buttons. Off where the page has its own actions (e.g. wishlist). */
+  showActions?: boolean;
 }
 
 /**
@@ -15,7 +17,7 @@ interface ProductCardProps {
  * the cart. It never computes a price or an eligibility rule itself. The shopper's own state
  * (in cart / wishlist / compare) reaches ProductActions through ShopperStateProvider.
  */
-export function ProductCard({ product, locale }: ProductCardProps) {
+export function ProductCard({ product, locale, showActions = true }: ProductCardProps) {
   const t = translator(locale);
   const price = product.price ? formatPrice(product.price, locale) : null;
 
@@ -52,20 +54,22 @@ export function ProductCard({ product, locale }: ProductCardProps) {
           </ul>
         </div>
       </TargetLink>
-      <ProductActions
-        productId={product.id}
-        productName={product.name}
-        locale={locale}
-        canAddToCart={product.purchase.canAddToCart}
-        addQuantity={product.purchase.minQuantity}
-        labels={{
-          addToCart: t('addToCart'),
-          inCart: t('cardInCart'),
-          wishlist: t('cardWishlist'),
-          compare: t('cardCompare'),
-          failed: t('statusActionFailed'),
-        }}
-      />
+      {showActions && (
+        <ProductActions
+          productId={product.id}
+          productName={product.name}
+          locale={locale}
+          canAddToCart={product.purchase.canAddToCart}
+          addQuantity={product.purchase.minQuantity}
+          labels={{
+            addToCart: t('addToCart'),
+            inCart: t('cardInCart'),
+            wishlist: t('cardWishlist'),
+            compare: t('cardCompare'),
+            failed: t('statusActionFailed'),
+          }}
+        />
+      )}
     </article>
   );
 }

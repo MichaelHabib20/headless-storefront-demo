@@ -48,7 +48,7 @@ interface CompareData {
 4. **Move to cart is one call.** Use `moveWishlistItemToCart`; don't chain add-to-cart + remove.
    Render the returned `cart` and `wishlist` states.
 5. **Pagination comes from `pagination`.** Prev/next from `page` and `totalPages`; don't count items.
-6. **Writes are server actions** (`ensureShopperContext` → SDK → `revalidatePath('/[locale]', 'layout')`)
+6. **Writes are server actions** (`withShopper` → SDK → `revalidatePath('/[locale]', 'layout')`)
    so the header counts update. Reads use `shopperContext`; no token → empty state, no call.
 7. **No prices math** on the cards — same rules as the product card ([home.md](home.md)).
 

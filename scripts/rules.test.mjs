@@ -39,6 +39,9 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/P.tsx', '<span className={s.save}>You save {amount}</span>')).toContain('ui-text-in-i18n');
     expect(rulesHit('src/components/P.tsx', '          Free delivery')).toContain('ui-text-in-i18n');
     expect(rulesHit('src/components/P.tsx', '<span>{t("freeDelivery")}</span>')).toEqual([]);
+    // arrow functions are code, not JSX text (false positive reported by the cart agent)
+    expect(rulesHit('src/components/P.tsx', '    startTransition(() => setState({ busy: true }));')).toEqual([]);
+    expect(rulesHit('src/components/P.tsx', '  const items = cart.items.map((item) => toLine({ item, locale }));')).toEqual([]);
     expect(rulesHit('src/components/P.tsx', '<a href="/en/deals">')).toContain('links-via-routing');
   });
 

@@ -14,7 +14,7 @@ import {
   type ShopperContext,
 } from '@/sdk';
 import { translator, type MessageKey } from './i18n';
-import { ensureShopperContext, forgetGuest, guestToken } from './shopper.server';
+import { withShopper } from './shopper.write';
 import { storefrontClient } from './storefront.server';
 
 /** What a card action tells the button: whether it worked, and a message for its status region. */
@@ -48,15 +48,7 @@ function failure(locale: Locale, error?: unknown): ShopperActionResult {
  */
 async function perform(locale: Locale, operation: Operation, success: MessageKey): Promise<ShopperActionResult> {
   try {
-    const ctx = await ensureShopperContext(locale);
-    try {
-      await operation(ctx);
-    } catch (error) {
-      // The backend no longer knows this guest (expired session): start a fresh one and retry once.
-      if (!isApiError(error) || error.kind !== 'unauthenticated' || !ctx.token || ctx.token !== (await guestToken())) throw error;
-      await forgetGuest();
-      await operation(await ensureShopperContext(locale));
-    }
+    await withShopper(locale, operation);
   } catch (error) {
     return failure(locale, error);
   }

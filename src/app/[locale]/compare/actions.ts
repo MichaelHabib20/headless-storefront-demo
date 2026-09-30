@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { isApiError, isLocale, removeFromCompare, type Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
-import { ensureShopperContext } from '@/lib/shopper.server';
+import { withShopper } from '@/lib/shopper.write';
 import { storefrontClient } from '@/lib/storefront.server';
 
 type Result = { ok: true } | { ok: false; message: string };
@@ -18,7 +18,7 @@ export async function removeFromCompareAction(locale: Locale, productId: number)
     return { ok: false, message: t('compareActionError') };
   }
   try {
-    await removeFromCompare(storefrontClient(), await ensureShopperContext(lang), productId);
+    await withShopper(lang, (ctx) => removeFromCompare(storefrontClient(), ctx, productId));
   } catch (error) {
     if (isApiError(error) && SHOW_API_MESSAGE.has(error.kind)) return { ok: false, message: error.message };
     console.error('compare action failed', error);

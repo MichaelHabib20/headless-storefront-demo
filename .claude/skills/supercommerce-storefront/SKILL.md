@@ -35,7 +35,7 @@ them and **blocks the deploy** when one is broken.
 7. **Secrets stay on the server.** No `process.env` in `'use client'` files. No hardcoded
    store URLs or hosts. No `dangerouslySetInnerHTML`. Shopper tokens live only in httpOnly cookies.
 8. **Reads never write.** Pages read with `shopperContext`; writes happen only in server actions
-   with `ensureShopperContext`. Never create a guest session while rendering; a GET (or opening a
+   with `withShopper`. Never create a guest session while rendering; a GET (or opening a
    page) never changes data — e.g. viewing notifications never marks them read.
 9. **UI is yours.** Layout, spacing, colors, typography, component structure, copy — change
    freely. Theme tokens live in `src/app/globals.css`.
@@ -91,7 +91,7 @@ them and **blocks the deploy** when one is broken.
 | "Limit compare to 3" | It's `maxItems` from the backend → report a backend setting | Hardcode a number |
 | "Cart / wishlist count in the header" | `me.counts.*` from `getMe` | `items.length` or a count in `localStorage` |
 | "Mark notifications read when the page opens" | Not allowed: only a click marks read | Call mark-read on render / `useEffect` |
-| "Add to cart / heart for guests" | Server action with `ensureShopperContext` | Create a guest while rendering; token in the browser |
+| "Add to cart / heart for guests" | Server action with `withShopper` | Create a guest while rendering; token in the browser |
 | "Add a new text/button" | Add the key to `en` **and** `ar` in `src/lib/i18n.ts` or `src/lib/messages/<area>.ts` | Hardcode English |
 | "Link the logo somewhere else" | `routes.*` in `src/lib/routing.ts` | Write `'/en/...'` strings |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |

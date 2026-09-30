@@ -65,7 +65,7 @@ interface ProductCard {
 - `price: null` → show no price (do not show 0).
 - Badges with `text: null` get a translated label from i18n (`preorder`, `comingSoonBadge`).
 - "Add to cart" / heart / compare buttons: enable from `purchase.canAddToCart`, write through a
-  server action (`ensureShopperContext` → `setCartItem` / `addToWishlist` / `addToCompare`), and mark
+  server action (`withShopper` → `setCartItem` / `addToWishlist` / `addToCompare`), and mark
   "in cart"/"in wishlist" from `getMe`. See [session.md](session.md), [cart.md](cart.md),
   [wishlist-compare.md](wishlist-compare.md).
 

@@ -65,7 +65,7 @@ interface Cart {
    may pick a style; it never produces your own sentence. Unknown statuses → show the message, no crash.
 5. **Quantity bounds are hints.** Stepper moves by `quantityStep` between `minQuantity` and
    `maxQuantity`; the backend validates (`quantity_not_allowed`, `validation` → `fieldErrors.quantity`).
-6. **Writes are server actions** with `ensureShopperContext` (the first add creates the guest), then
+6. **Writes are server actions** with `withShopper` (the first add creates the guest), then
    `revalidatePath('/[locale]', 'layout')` so the header count updates.
 7. **No delivery in the cart.** `total` is before delivery. Don't show a fee, an estimate or a
    "free delivery above X" rule.

@@ -27,12 +27,13 @@ interface Me {
 | Cookie (all httpOnly, `sameSite: lax`, `secure` in production) | Set by | Holds |
 |---|---|---|
 | `sc_token` (+ `sc_customer` profile) | sign-in / sign-up (`saveSession`, `src/lib/session.ts`) | customer token — wins over the guest one |
-| `sc_guest` | `ensureShopperContext` on the first write | guest token (90 days) |
+| `sc_guest` | `withShopper` on the first write | guest token (90 days) |
 
 | Helper | Where | Does |
 |---|---|---|
 | `shopperContext(locale)` | pages, layouts, server components (**reads**) | `{ locale, token }`; `token` may be `null`. Never creates anything. |
-| `ensureShopperContext(locale)` | server actions / route handlers (**writes**) only | Returns a token; creates a guest session + cookie when there is none |
+| `withShopper(locale, (ctx) => sdkCall(ctx))` | server actions (**writes**): use this | Gets a token (creates the guest session + cookie on the first write); if an expired guest token is rejected (401) it starts a new guest session and retries once |
+| `ensureShopperContext(locale)` | only inside `withShopper` | Low-level: returns a token, creating a guest session when there is none |
 | `forgetGuest()` | after sign-in / sign-up | Deletes `sc_guest` (the backend has merged it) |
 
 ## What the backend decides vs what you decide
@@ -50,7 +51,7 @@ interface Me {
    HTML, a URL, `localStorage` or a log. Client components call server actions; the action reads the cookie.
 2. **Reads use `shopperContext`.** No token → don't call personal endpoints (they answer 401): render
    the empty state. `getMe` is the exception: call it without a token, it answers zeros.
-3. **Never create a guest while rendering.** `createGuestSession` / `ensureShopperContext` only in
+3. **Never create a guest while rendering.** `createGuestSession` / `withShopper` only in
    `'use server'` actions or route handlers, and only for a write the visitor asked for (add to cart,
    heart, compare, mark read). A GET, a page view or a prefetch never creates a guest.
 4. **401 on a read = no session.** Show the empty state; don't retry, don't create a guest to "fix" it.
@@ -67,7 +68,7 @@ interface Me {
 
 - **Header badges** → layout/header: `getMe(storefrontClient(), await shopperContext(locale))` →
   `me.counts.cart`, `.wishlist`, `.compare`, `.unreadNotifications`. Gate each icon by `layout.features.*`.
-- **"Add" button on a product card** → client button → server action: `ensureShopperContext(locale)` →
+- **"Add" button on a product card** → client button → server action: `withShopper(locale, …)` →
   SDK write → `revalidatePath('/[locale]', 'layout')`. Enable it from `purchase.canAddToCart`.
 - **Filled heart / "in cart" mark** → `me.wishlistProductIds.includes(id)`, `me.cartQuantities[String(id)]`.
 - **"Hi, Sara"** → `me.customer?.firstName` (null for guests and anonymous visitors).

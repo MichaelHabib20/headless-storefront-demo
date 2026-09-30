@@ -13,7 +13,7 @@ import {
 } from '@/sdk';
 import type { CartActionResult } from '@/components/cart/types';
 import { translator } from '@/lib/i18n';
-import { ensureShopperContext } from '@/lib/shopper.server';
+import { withShopper } from '@/lib/shopper.write';
 import { storefrontClient } from '@/lib/storefront.server';
 
 /*
@@ -39,7 +39,7 @@ export async function clearCart(locale: Locale): Promise<CartActionResult> {
 async function write(requested: unknown, call: (ctx: ShopperContext) => Promise<Cart>): Promise<CartActionResult> {
   const locale = safeLocale(requested);
   try {
-    const cart = await call(await ensureShopperContext(locale));
+    const cart = await withShopper(locale, call);
     // Header badges (cart count) are rendered by the layout: refresh every page under it.
     revalidatePath('/[locale]', 'layout');
     return { ok: true, cart };

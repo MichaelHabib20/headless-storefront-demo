@@ -37,7 +37,13 @@ CI runs the same command (`.github/workflows/verify.yml`), so a failing change c
 | `home.spec.ts` | Chrome, home content, links, language switch, 404, cookie notice, API down |
 | `mobile.spec.ts` | Mobile menu and layout (mobile project only) |
 | `notifications.spec.ts` | List + unread state, mark one, mark all, opening marks read, reading never marks read, pagination, Arabic, no guest for anonymous visitors |
-| `cart.spec.ts`, `wishlist.spec.ts`, `compare.spec.ts` | Shopper areas (same patterns as below) |
+| `cart.spec.ts` | Cart lines, quantity changes (totals from the API), remove, blockers, guest empty cart, Arabic |
+| `wishlist-compare.spec.ts` | Wishlist grid, remove, move to cart, pagination, compare table, remove, Arabic, guest empty states |
+| `shopper-actions.spec.ts` | Card buttons on the home page (add to cart as a guest, wishlist/compare toggles, `compare_full`), header counts |
+| `shopper-live.spec.ts` | The same flows against real staging as a guest and as the test customer (`E2E_LIVE=1`) |
+
+Helpers in `e2e/support.ts`: `signInAsCustomer(context)` (mock: `test-customer`; live: signs in with
+`E2E_PHONE`/`E2E_PASSWORD` from `.env.local`), `resetMock(page)`, `acceptCookies(page)`, `live`.
 
 ## The mock API (e2e + `npm run dev` without a backend)
 
