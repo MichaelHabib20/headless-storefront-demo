@@ -3,6 +3,7 @@ import type { Locale, NotificationsPage } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { fill, formatCount, notificationsPageHref, type MarkAllReadAction, type MarkReadAction } from './helpers';
+import { MarkAllReadOnLoad } from './MarkAllReadOnLoad';
 import { NotificationItem } from './NotificationItem';
 import { NotificationsPagination } from './NotificationsPagination';
 import { PendingButton } from './PendingButton';
@@ -36,6 +37,7 @@ export function NotificationsView({ result, locale, now, timeZone, markRead, mar
 
   return (
     <div className={`container ${styles.page}`} data-testid="notifications">
+      {unread > 0 && <MarkAllReadOnLoad markAllRead={markAllRead.bind(null, locale)} />}
       <header className={styles.header}>
         <div className={styles.headingGroup}>
           <h1 className={styles.heading}>{t('notificationsTitle')}</h1>
