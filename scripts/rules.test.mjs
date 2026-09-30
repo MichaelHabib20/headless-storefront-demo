@@ -61,6 +61,11 @@ describe('architecture rules', () => {
     // a write in a click handler is fine; an effect without a server action is fine
     expect(rulesHit('src/components/N.tsx', "'use client';\nconst onClick = () => markAllNotificationsReadAction(locale);")).toEqual([]);
     expect(rulesHit('src/components/N.tsx', "'use client';\nuseEffect(() => { window.addEventListener('resize', update); }, []);")).toEqual([]);
+    // the action passed in as a prop under another name (how the trial agent wrote it)
+    const viaProp = "'use client';\nuseEffect(() => {\n  markAllRead().catch(() => undefined);\n}, [markAllRead]);";
+    expect(rulesHit('src/components/notifications/MarkAllReadOnLoad.tsx', viaProp)).toContain('no-write-on-load');
+    expect(rulesHit('src/components/C.tsx', "'use client';\nuseEffect(() => { addToCart(id); }, [id]);")).toContain('no-write-on-load');
+    expect(rulesHit('src/components/C.tsx', "'use client';\nuseEffect(() => { const t = setTimeout(go, 9); return () => clearTimeout(t); }, []);")).toEqual([]);
   });
 
   it('ignores tests and comments', () => {
