@@ -1,0 +1,300 @@
+{
+ "data": {
+  "sections": [
+   {
+    "key": "related",
+    "title": "قد يعجبك أيضاً",
+    "products": [
+     {
+      "id": 14400,
+      "slug": "jj-baby-cologne-100ml-morning-dew",
+      "name": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+       "alt": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 135,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "135 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": false,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": false,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-morning-dew"
+      }
+     },
+     {
+      "id": 14482,
+      "slug": "جونسون-اند-جونسون-بيبي-كولوجين-بالليم",
+      "name": "جونسون اند جونسون بيبي كولوجين بالليمون المنعش 125 مل",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/365763.webp",
+       "alt": "جونسون اند جونسون بيبي كولوجين بالليمون المنعش 125 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 110,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "110 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "جونسون-اند-جونسون-بيبي-كولوجين-بالليم"
+      }
+     },
+     {
+      "id": 36510,
+      "slug": "jj-baby-cologne-200ml-dream-ahlam",
+      "name": "جونسون اند جونسون بيبي كولوجين احلام 200 مل",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/366631-1760536568.webp",
+       "alt": "جونسون اند جونسون بيبي كولوجين احلام 200 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 75,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "75 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-200ml-dream-ahlam"
+      }
+     },
+     {
+      "id": 36480,
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+      "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+       "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 18,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "18 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     }
+    ],
+    "total": null
+   },
+   {
+    "key": "frequently_bought_together",
+    "title": "يُشترى معاً عادةً",
+    "products": [
+     {
+      "id": 9822,
+      "slug": "jj-baby-cologne-100ml-dream-احلام",
+      "name": "جونسون اند جونسون بيبي كولوجين احلام 125 مل",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+       "alt": "جونسون اند جونسون بيبي كولوجين احلام 125 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 135,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "135 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": {
+       "average": 4.1,
+       "count": 23
+      },
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-dream-احلام"
+      }
+     },
+     {
+      "id": 36480,
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+      "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+       "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 18,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "18 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     {
+      "id": 8412,
+      "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new",
+      "name": "جونسون اند جونسون شامبو للاطفال وقت النوم طبيعي هادئ 200 مل",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+       "alt": "جونسون اند جونسون شامبو للاطفال وقت النوم طبيعي هادئ 200 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 105,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "105 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+      }
+     }
+    ],
+    "total": {
+     "amount": 258,
+     "currency": "EGP",
+     "display": "258.00 جنية"
+    }
+   }
+  ]
+ }
+}

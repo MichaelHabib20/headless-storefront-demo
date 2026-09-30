@@ -1,0 +1,16 @@
+.section {
+  margin-block: var(--space-7);
+}
+
+.total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: calc(var(--space-2) * -1) 0 var(--space-4);
+  font-size: 0.9375rem;
+}
+
+.totalValue {
+  font-size: 1.125rem;
+}

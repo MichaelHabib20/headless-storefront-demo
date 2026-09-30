@@ -89,6 +89,12 @@ describe('Pagination', () => {
     expect(screen.queryByRole('link', { name: 'Next' })).toBeNull();
   });
 
+  it('can bring the reader back to the list on the new page (fragment)', () => {
+    render(<Pagination pagination={{ page: 1, totalPages: 3 }} baseHref="/en/p/jj-bath" locale="en" labels={labels} fragment="reviews" />);
+    expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/p/jj-bath?page=2#reviews');
+    expect(screen.getByRole('link', { name: 'Page 1' })).toHaveAttribute('href', '/en/p/jj-bath#reviews');
+  });
+
   it('marks gaps and shows Arabic digits in Arabic', () => {
     render(
       <Pagination

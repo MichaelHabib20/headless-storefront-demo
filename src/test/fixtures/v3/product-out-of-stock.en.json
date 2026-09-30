@@ -1,0 +1,194 @@
+{
+ "data": {
+  "product": {
+   "id": 14400,
+   "slug": "jj-baby-cologne-100ml-morning-dew",
+   "name": "J&J Baby Cologne 100Ml Morning Dew",
+   "image": {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+    "alt": "J&J Baby Cologne 100Ml Morning Dew"
+   },
+   "brand": {
+    "name": "JOHNSON & JOHNSON",
+    "slug": "johnson-johnson",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   "price": {
+    "currency": "EGP",
+    "amount": 135,
+    "compareAt": null,
+    "discountPercent": null,
+    "display": "135 EGP",
+    "compareAtDisplay": null,
+    "discountLabel": null
+   },
+   "inStock": false,
+   "badges": [],
+   "rating": null,
+   "requiresPrescription": false,
+   "purchase": {
+    "canAddToCart": false,
+    "minQuantity": 1,
+    "maxQuantity": 5
+   },
+   "target": {
+    "type": "product",
+    "slug": "jj-baby-cologne-100ml-morning-dew"
+   }
+  },
+  "redirect": null,
+  "sku": "JJ-14400",
+  "gallery": [
+   {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+    "alt": "J&J Baby Cologne 100Ml Morning Dew"
+   }
+  ],
+  "video": null,
+  "options": [
+   {
+    "id": 11,
+    "name": "Size",
+    "display": "buttons",
+    "values": [
+     {
+      "id": 111,
+      "label": "100 ml",
+      "color": null,
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 112,
+      "label": "200 ml",
+      "color": null,
+      "image": null,
+      "state": "unavailable",
+      "target": null
+     }
+    ]
+   },
+   {
+    "id": 12,
+    "name": "Scent",
+    "display": "color",
+    "values": [
+     {
+      "id": 121,
+      "label": "Dream",
+      "color": "#b39ddb",
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-dream-احلام"
+      }
+     },
+     {
+      "id": 122,
+      "label": "Morning Dew",
+      "color": "#80deea",
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 123,
+      "label": "Lemon Fresh",
+      "color": "#fff176",
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-lemon-fresh"
+      }
+     }
+    ]
+   }
+  ],
+  "availability": {
+   "status": "out_of_stock",
+   "message": "Out of stock",
+   "notifyMe": true
+  },
+  "quantityStep": 1,
+  "breadcrumbs": [
+   {
+    "label": "Home",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "Mom & Baby",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   },
+   {
+    "label": "JOHNSON & JOHNSON",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "label": "J&J Baby Cologne 100Ml Morning Dew",
+    "target": null
+   }
+  ],
+  "summary": {
+   "html": "<p>J&amp;J Baby Cologne 100Ml Morning Dew: gentle care made for your baby's delicate skin.</p>"
+  },
+  "description": {
+   "html": "<h3>Why parents love it</h3><p>Clinically proven mildness, tested by dermatologists and pediatricians. Free of parabens, phthalates, sulfates and dyes.</p><ul><li>Gentle enough for every day</li><li>Hypoallergenic formula</li><li>Fresh scent that lasts</li></ul><p><strong>J&amp;J Baby Cologne 100Ml Morning Dew</strong></p>"
+  },
+  "specifications": [
+   {
+    "name": "Brand",
+    "value": "JOHNSON & JOHNSON"
+   },
+   {
+    "name": "Country of origin",
+    "value": "Egypt"
+   },
+   {
+    "name": "Package",
+    "value": "Bottle"
+   }
+  ],
+  "notices": [],
+  "seo": {
+   "title": "J&J Baby Cologne 100Ml Morning Dew",
+   "description": "Buy J&J Baby Cologne 100Ml Morning Dew online with fast delivery.",
+   "canonical": {
+    "type": "product",
+    "slug": "jj-baby-cologne-100ml-morning-dew"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-cologne-100ml-morning-dew"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-cologne-100ml-morning-dew"
+     }
+    }
+   ],
+   "index": true
+  }
+ }
+}

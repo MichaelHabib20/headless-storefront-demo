@@ -1,0 +1,175 @@
+{
+ "data": {
+  "product": {
+   "id": 36480,
+   "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+   "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+   "image": {
+    "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+    "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+   },
+   "brand": {
+    "name": "JOHNSON & JOHNSON",
+    "slug": "johnson-johnson",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   "price": {
+    "currency": "EGP",
+    "amount": 18,
+    "compareAt": null,
+    "discountPercent": null,
+    "display": "18 EGP",
+    "compareAtDisplay": null,
+    "discountLabel": null
+   },
+   "inStock": true,
+   "badges": [],
+   "rating": null,
+   "requiresPrescription": false,
+   "purchase": {
+    "canAddToCart": true,
+    "minQuantity": 1,
+    "maxQuantity": 5
+   },
+   "target": {
+    "type": "product",
+    "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+   }
+  },
+  "redirect": null,
+  "sku": "JJ-36480",
+  "gallery": [
+   {
+    "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+    "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+   },
+   {
+    "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+    "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile, view 2"
+   },
+   {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp",
+    "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile, view 3"
+   },
+   {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+    "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile, view 4"
+   }
+  ],
+  "video": {
+   "url": "https://www.youtube.com/watch?v=jjBedtimeBath",
+   "thumbnail": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp"
+  },
+  "options": [
+   {
+    "id": 21,
+    "name": "Size",
+    "display": "dropdown",
+    "values": [
+     {
+      "id": 211,
+      "label": "125 ml",
+      "color": null,
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 212,
+      "label": "500 ml",
+      "color": null,
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     }
+    ]
+   }
+  ],
+  "availability": {
+   "status": "available",
+   "message": null,
+   "notifyMe": false
+  },
+  "quantityStep": 1,
+  "breadcrumbs": [
+   {
+    "label": "Home",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "Mom & Baby",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   },
+   {
+    "label": "JOHNSON & JOHNSON",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "label": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+    "target": null
+   }
+  ],
+  "summary": {
+   "html": "<p>J&amp;J Baby Bedtime Bath 125Ml Lavender&amp;Camomile: gentle care made for your baby's delicate skin.</p>"
+  },
+  "description": {
+   "html": "<h3>Why parents love it</h3><p>Clinically proven mildness, tested by dermatologists and pediatricians. Free of parabens, phthalates, sulfates and dyes.</p><ul><li>Gentle enough for every day</li><li>Hypoallergenic formula</li><li>Fresh scent that lasts</li></ul><p><strong>J&amp;J Baby Bedtime Bath 125Ml Lavender&amp;Camomile</strong></p>"
+  },
+  "specifications": [
+   {
+    "name": "Brand",
+    "value": "JOHNSON & JOHNSON"
+   },
+   {
+    "name": "Country of origin",
+    "value": "Egypt"
+   },
+   {
+    "name": "Package",
+    "value": "Bottle"
+   }
+  ],
+  "notices": [],
+  "seo": {
+   "title": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+   "description": "Buy J&J Baby Bedtime Bath 125Ml Lavender&Camomile online with fast delivery.",
+   "canonical": {
+    "type": "product",
+    "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+     }
+    }
+   ],
+   "index": true
+  }
+ }
+}

@@ -1,0 +1,209 @@
+{
+ "data": {
+  "product": {
+   "id": 9822,
+   "slug": "jj-baby-cologne-100ml-dream-احلام",
+   "name": "J&J Baby Cologne 100Ml Dream احلام",
+   "image": {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+    "alt": "J&J Baby Cologne 100Ml Dream احلام"
+   },
+   "brand": {
+    "name": "JOHNSON & JOHNSON",
+    "slug": "johnson-johnson",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   "price": {
+    "currency": "EGP",
+    "amount": 135,
+    "compareAt": null,
+    "discountPercent": null,
+    "display": "135 EGP",
+    "compareAtDisplay": null,
+    "discountLabel": null
+   },
+   "inStock": true,
+   "badges": [],
+   "rating": {
+    "average": 4.1,
+    "count": 23
+   },
+   "requiresPrescription": false,
+   "purchase": {
+    "canAddToCart": true,
+    "minQuantity": 1,
+    "maxQuantity": 5
+   },
+   "target": {
+    "type": "product",
+    "slug": "jj-baby-cologne-100ml-dream-احلام"
+   }
+  },
+  "redirect": null,
+  "sku": "JJ-9822",
+  "gallery": [
+   {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+    "alt": "J&J Baby Cologne 100Ml Dream احلام"
+   }
+  ],
+  "video": null,
+  "options": [
+   {
+    "id": 11,
+    "name": "Size",
+    "display": "buttons",
+    "values": [
+     {
+      "id": 111,
+      "label": "100 ml",
+      "color": null,
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 112,
+      "label": "200 ml",
+      "color": null,
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-200ml-dream-ahlam"
+      }
+     }
+    ]
+   },
+   {
+    "id": 12,
+    "name": "Scent",
+    "display": "color",
+    "values": [
+     {
+      "id": 121,
+      "label": "Dream",
+      "color": "#b39ddb",
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 122,
+      "label": "Morning Dew",
+      "color": "#80deea",
+      "image": null,
+      "state": "out_of_stock",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-morning-dew"
+      }
+     },
+     {
+      "id": 123,
+      "label": "Lemon Fresh",
+      "color": "#fff176",
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-lemon-fresh"
+      }
+     }
+    ]
+   }
+  ],
+  "availability": {
+   "status": "available",
+   "message": null,
+   "notifyMe": false
+  },
+  "quantityStep": 1,
+  "breadcrumbs": [
+   {
+    "label": "Home",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "Mom & Baby",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   },
+   {
+    "label": "JOHNSON & JOHNSON",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "label": "J&J Baby Cologne 100Ml Dream احلام",
+    "target": null
+   }
+  ],
+  "summary": {
+   "html": "<p>J&amp;J Baby Cologne 100Ml Dream احلام: gentle care made for your baby's delicate skin.</p>"
+  },
+  "description": {
+   "html": "<h3>Why parents love it</h3><p>Clinically proven mildness, tested by dermatologists and pediatricians. Free of parabens, phthalates, sulfates and dyes.</p><ul><li>Gentle enough for every day</li><li>Hypoallergenic formula</li><li>Fresh scent that lasts</li></ul><p><strong>J&amp;J Baby Cologne 100Ml Dream احلام</strong></p>"
+  },
+  "specifications": [
+   {
+    "name": "Brand",
+    "value": "JOHNSON & JOHNSON"
+   },
+   {
+    "name": "Country of origin",
+    "value": "Egypt"
+   },
+   {
+    "name": "Package",
+    "value": "Bottle"
+   }
+  ],
+  "notices": [
+   {
+    "kind": "promotion",
+    "text": "Buy 2 and get 10% off the second one"
+   },
+   {
+    "kind": "payment_offer",
+    "text": "Pay in 4 installments with no interest"
+   }
+  ],
+  "seo": {
+   "title": "J&J Baby Cologne 100Ml Dream احلام",
+   "description": "Buy J&J Baby Cologne 100Ml Dream احلام online with fast delivery.",
+   "canonical": {
+    "type": "product",
+    "slug": "jj-baby-cologne-100ml-dream-احلام"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-cologne-100ml-dream-احلام"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-cologne-100ml-dream-احلام"
+     }
+    }
+   ],
+   "index": true
+  }
+ }
+}

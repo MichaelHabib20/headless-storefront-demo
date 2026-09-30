@@ -77,8 +77,15 @@ describe('architecture rules', () => {
       "<div style={{ display: 'grid', gap: 8 }}>",
       "<div style={{ display }}>",
       "const visible = getComputedStyle(node).display !== 'none';",
+      // a product option's drawing hint is not money (ProductOption.display)
+      "return LOOKS.has(option.display) ? option.display : 'buttons';",
+      "const swatches = option?.display === 'color';",
     ];
     for (const line of passes) expect(rulesHit('src/components/cart/X.tsx', line), line).toEqual([]);
+    // …but only under that name: a price, or a list of options, is still caught
+    for (const line of ['const text = options.display;', 'const text = optionPrice.display;', '<span>{product.price.display}</span>']) {
+      expect(rulesHit('src/components/product/X.tsx', line), line).toContain('money-via-components');
+    }
     // the money components themselves, and tests checking what the API sent
     expect(rulesHit('src/money/Price.tsx', '{price.compareAtDisplay}')).toEqual([]);
     expect(rulesHit('src/components/cart/X.test.tsx', 'expect(total.textContent).toBe(cart.summary.total.display);')).toEqual([]);

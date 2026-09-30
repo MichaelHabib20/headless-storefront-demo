@@ -1,0 +1,79 @@
+{
+ "data": {
+  "enabled": true,
+  "summary": {
+   "average": 4.1,
+   "count": 23,
+   "distribution": [
+    {
+     "stars": 5,
+     "count": 12,
+     "percent": 52
+    },
+    {
+     "stars": 4,
+     "count": 6,
+     "percent": 26
+    },
+    {
+     "stars": 3,
+     "count": 2,
+     "percent": 9
+    },
+    {
+     "stars": 2,
+     "count": 2,
+     "percent": 9
+    },
+    {
+     "stars": 1,
+     "count": 1,
+     "percent": 4
+    }
+   ]
+  },
+  "items": [
+   {
+    "id": 982223,
+    "author": "Sara M.",
+    "rating": 5,
+    "comment": "Lovely scent that lasts all day.",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+   },
+   {
+    "id": 982222,
+    "author": "Ahmed K.",
+    "rating": 5,
+    "comment": "Gentle on my baby's skin.",
+    "createdAt": "2026-09-25T10:00:00.000Z"
+   },
+   {
+    "id": 982221,
+    "author": "Mona A.",
+    "rating": 4,
+    "comment": "Good, but the bottle is small.",
+    "createdAt": "2026-09-22T10:00:00.000Z"
+   },
+   {
+    "id": 982220,
+    "author": null,
+    "rating": 5,
+    "comment": "Arrived quickly and well packed.",
+    "createdAt": "2026-09-19T10:00:00.000Z"
+   },
+   {
+    "id": 982219,
+    "author": "Nour S.",
+    "rating": 3,
+    "comment": "We buy it every month.",
+    "createdAt": "2026-09-16T10:00:00.000Z"
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 5,
+   "total": 23,
+   "totalPages": 5
+  }
+ }
+}

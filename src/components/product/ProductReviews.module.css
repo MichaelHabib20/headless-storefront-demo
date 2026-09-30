@@ -1,0 +1,138 @@
+.reviews {
+  margin-block: var(--space-7);
+  scroll-margin-top: var(--space-5);
+}
+
+.title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+}
+
+.average {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+.averageNumber {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.bigStars {
+  font-size: 1.375rem;
+}
+
+.basedOn {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.distribution {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+}
+.rowCount {
+  text-align: end;
+  color: var(--color-muted);
+}
+
+.bar {
+  height: 6px;
+  background: var(--color-bg);
+}
+/* The share comes from the API (`percent`): used as it is. */
+.fill {
+  display: block;
+  width: var(--review-share);
+  height: 100%;
+  background: var(--color-text);
+}
+
+.listColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--color-border);
+}
+.review:first-child {
+  padding-block-start: 0;
+}
+
+.reviewHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.author {
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.date {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+
+.comment {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
+}

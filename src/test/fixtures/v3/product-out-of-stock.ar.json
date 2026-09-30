@@ -1,0 +1,194 @@
+{
+ "data": {
+  "product": {
+   "id": 14400,
+   "slug": "jj-baby-cologne-100ml-morning-dew",
+   "name": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+   "image": {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+    "alt": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل"
+   },
+   "brand": {
+    "name": "JOHNSON & JOHNSON",
+    "slug": "johnson-johnson",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   "price": {
+    "currency": "EGP",
+    "amount": 135,
+    "compareAt": null,
+    "discountPercent": null,
+    "display": "135 جنية",
+    "compareAtDisplay": null,
+    "discountLabel": null
+   },
+   "inStock": false,
+   "badges": [],
+   "rating": null,
+   "requiresPrescription": false,
+   "purchase": {
+    "canAddToCart": false,
+    "minQuantity": 1,
+    "maxQuantity": 5
+   },
+   "target": {
+    "type": "product",
+    "slug": "jj-baby-cologne-100ml-morning-dew"
+   }
+  },
+  "redirect": null,
+  "sku": "JJ-14400",
+  "gallery": [
+   {
+    "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+    "alt": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل"
+   }
+  ],
+  "video": null,
+  "options": [
+   {
+    "id": 11,
+    "name": "الحجم",
+    "display": "buttons",
+    "values": [
+     {
+      "id": 111,
+      "label": "100 مل",
+      "color": null,
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 112,
+      "label": "200 مل",
+      "color": null,
+      "image": null,
+      "state": "unavailable",
+      "target": null
+     }
+    ]
+   },
+   {
+    "id": 12,
+    "name": "الرائحة",
+    "display": "color",
+    "values": [
+     {
+      "id": 121,
+      "label": "أحلام",
+      "color": "#b39ddb",
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-dream-احلام"
+      }
+     },
+     {
+      "id": 122,
+      "label": "ندى الصباح",
+      "color": "#80deea",
+      "image": null,
+      "state": "selected",
+      "target": null
+     },
+     {
+      "id": 123,
+      "label": "ليمون منعش",
+      "color": "#fff176",
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "جونسون-اند-جونسون-بيبي-كولوجين-بالليم"
+      }
+     }
+    ]
+   }
+  ],
+  "availability": {
+   "status": "out_of_stock",
+   "message": "غير متوفر",
+   "notifyMe": true
+  },
+  "quantityStep": 1,
+  "breadcrumbs": [
+   {
+    "label": "الرئيسية",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "العناية بالام والطفل",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   },
+   {
+    "label": "JOHNSON & JOHNSON",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "label": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+    "target": null
+   }
+  ],
+  "summary": {
+   "html": "<p>جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل: عناية لطيفة مصممة لبشرة طفلك الحساسة.</p>"
+  },
+  "description": {
+   "html": "<h3>لماذا يحبه الآباء</h3><p>لطيف ومثبت إكلينيكياً، ومختبر من أطباء الجلدية والأطفال. خالٍ من البارابين والفثالات والكبريتات والأصباغ.</p><ul><li>لطيف بما يكفي للاستخدام اليومي</li><li>تركيبة مضادة للحساسية</li><li>رائحة منعشة تدوم</li></ul><p><strong>جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل</strong></p>"
+  },
+  "specifications": [
+   {
+    "name": "الماركة",
+    "value": "JOHNSON & JOHNSON"
+   },
+   {
+    "name": "بلد المنشأ",
+    "value": "مصر"
+   },
+   {
+    "name": "العبوة",
+    "value": "زجاجة"
+   }
+  ],
+  "notices": [],
+  "seo": {
+   "title": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+   "description": "اشترِ جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل أونلاين مع توصيل سريع.",
+   "canonical": {
+    "type": "product",
+    "slug": "jj-baby-cologne-100ml-morning-dew"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-cologne-100ml-morning-dew"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-cologne-100ml-morning-dew"
+     }
+    }
+   ],
+   "index": true
+  }
+ }
+}

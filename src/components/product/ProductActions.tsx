@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import type { Locale } from '@/sdk';
 import { routes } from '@/lib/routing';
 import { addToCartAction, toggleCompareAction, toggleWishlistAction, type ShopperActionResult } from '@/lib/shopper.actions';
+import { formatQuantity, stepDown, stepUp, type QuantityLimits } from '../cart/quantity';
 import { withCount } from '../shopper/labels';
 import { ShopperIcon } from '../shopper/ShopperIcon';
 import { useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
@@ -22,6 +23,17 @@ export interface ProductActionsLabels {
   failed: string;
 }
 
+/**
+ * A quantity stepper next to the add button (the product page). The limits are the backend's
+ * (`quantityStep`, `purchase.minQuantity` / `maxQuantity`); the backend still validates the quantity.
+ * The button sets the cart line to the chosen quantity (`PUT /cart/items/{id}`), so once the product
+ * is in the cart the stepper starts from the cart quantity and the button updates it.
+ */
+export interface QuantityPicker {
+  limits: QuantityLimits;
+  labels: { quantity: string; decrease: string; increase: string; update: string };
+}
+
 interface ProductActionsProps {
   productId: number;
   productName: string;
@@ -31,6 +43,8 @@ interface ProductActionsProps {
   /** Quantity put in the cart: the backend's `purchase.minQuantity`. */
   addQuantity: number;
   labels: ProductActionsLabels;
+  /** Show a quantity stepper (product page). Without it the button adds `addQuantity` (cards). */
+  quantity?: QuantityPicker;
 }
 
 type Field = keyof ProductShopperState;
@@ -46,20 +60,22 @@ interface Step {
 }
 
 /**
- * Add to cart, wishlist and compare buttons for a product card. The starting state comes from
- * `GET /me` (ShopperStateProvider). Wishlist/compare toggle optimistically and roll back when the
- * server action fails; the action revalidates the layout, which refreshes the provider.
+ * Add to cart, wishlist and compare buttons for a product card or the product page. The starting
+ * state comes from `GET /me` (ShopperStateProvider). Wishlist/compare toggle optimistically and roll
+ * back when the server action fails; the action revalidates the layout, which refreshes the provider.
  */
-export function ProductActions({ productId, productName, locale, canAddToCart, addQuantity, labels }: ProductActionsProps) {
+export function ProductActions({ productId, productName, locale, canAddToCart, addQuantity, labels, quantity }: ProductActionsProps) {
   const { features, ...server } = useProductShopperState(productId);
 
   // Local copy so toggles can be optimistic; replaced whenever the server state changes.
   const [state, setState] = useState<ProductShopperState>(server);
+  const [chosen, setChosen] = useState(server.cartQuantity || addQuantity);
   const serverKey = `${server.cartQuantity}|${server.inWishlist}|${server.inCompare}`;
   const [seenKey, setSeenKey] = useState(serverKey);
   if (seenKey !== serverKey) {
     setSeenKey(serverKey);
     setState(server);
+    setChosen(server.cartQuantity || addQuantity);
   }
 
   const [pending, setPending] = useState<Partial<Record<Field, number>>>({});
@@ -90,8 +106,8 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     track(field, -1);
   }
 
-  const addToCart = () =>
-    perform({ field: 'cartQuantity', change: { cartQuantity: addQuantity }, undo: {}, call: () => addToCartAction(locale, productId, addQuantity) });
+  const putInCart = (cartQuantity: number) =>
+    perform({ field: 'cartQuantity', change: { cartQuantity }, undo: {}, call: () => addToCartAction(locale, productId, cartQuantity) });
   const toggleWishlist = () =>
     perform({
       field: 'inWishlist',
@@ -107,27 +123,72 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
       call: () => toggleCompareAction(locale, productId, !state.inCompare),
     });
 
-  return (
-    <div className={styles.actions} role="group" aria-label={productName} aria-busy={Object.values(pending).some(Boolean)}>
-      {state.cartQuantity > 0 ? (
-        <Link
-          href={routes.cart(locale)}
-          className={styles.inCart}
-          ref={(element) => {
-            if (element && focusCartLink.current) {
-              focusCartLink.current = false;
-              element.focus();
-            }
-          }}
+  const cartLink = (className: string) => (
+    <Link
+      href={routes.cart(locale)}
+      className={className}
+      ref={(element) => {
+        if (element && focusCartLink.current) {
+          focusCartLink.current = false;
+          element.focus();
+        }
+      }}
+    >
+      {withCount(labels.inCart, state.cartQuantity, locale)}
+    </Link>
+  );
+
+  let cartControls;
+  if (quantity) {
+    const down = canAddToCart ? stepDown(chosen, quantity.limits) : null;
+    const up = canAddToCart ? stepUp(chosen, quantity.limits) : null;
+    const inCart = state.cartQuantity > 0;
+    cartControls = (
+      <>
+        <div className={styles.stepper} role="group" aria-label={quantity.labels.quantity}>
+          <button type="button" className={styles.step} aria-label={quantity.labels.decrease} disabled={down === null} onClick={() => down !== null && setChosen(down)}>
+            <span aria-hidden="true">−</span>
+          </button>
+          <output className={styles.quantity} aria-live="polite" data-testid="product-quantity">
+            {formatQuantity(chosen, locale)}
+          </output>
+          <button type="button" className={styles.step} aria-label={quantity.labels.increase} disabled={up === null} onClick={() => up !== null && setChosen(up)}>
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
+        <button
+          type="button"
+          className={styles.add}
+          disabled={!canAddToCart || (inCart && chosen === state.cartQuantity)}
+          aria-disabled={Boolean(pending.cartQuantity) || undefined}
+          onClick={() => putInCart(chosen)}
         >
-          {withCount(labels.inCart, state.cartQuantity, locale)}
-        </Link>
+          <Icon name="bag" size={16} />
+          <span>{inCart ? quantity.labels.update : labels.addToCart}</span>
+        </button>
+        {inCart && cartLink(styles.cartLink)}
+      </>
+    );
+  } else {
+    cartControls =
+      state.cartQuantity > 0 ? (
+        cartLink(styles.inCart)
       ) : (
-        <button type="button" className={styles.add} disabled={!canAddToCart} aria-disabled={Boolean(pending.cartQuantity) || undefined} onClick={addToCart}>
+        <button type="button" className={styles.add} disabled={!canAddToCart} aria-disabled={Boolean(pending.cartQuantity) || undefined} onClick={() => putInCart(addQuantity)}>
           <Icon name="bag" size={16} />
           <span>{labels.addToCart}</span>
         </button>
-      )}
+      );
+  }
+
+  return (
+    <div
+      className={quantity ? `${styles.actions} ${styles.withQuantity}` : styles.actions}
+      role="group"
+      aria-label={productName}
+      aria-busy={Object.values(pending).some(Boolean)}
+    >
+      {cartControls}
 
       {features.wishlist && (
         <button

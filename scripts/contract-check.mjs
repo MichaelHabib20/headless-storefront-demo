@@ -48,6 +48,14 @@ const RESPONSE_SCHEMA = {
   wishlist: 'WishlistResponse',
   compare: 'CompareResponse',
   notifications: 'NotificationsResponse',
+  // product page (scripts/build-product-fixtures.mjs)
+  product: 'ProductDetailsResponse',
+  'product-out-of-stock': 'ProductDetailsResponse',
+  'product-discounted': 'ProductDetailsResponse',
+  'product-gallery': 'ProductDetailsResponse',
+  'product-recommendations': 'ProductRecommendationsResponse',
+  'product-reviews': 'ProductReviewsResponse',
+  'product-reviews-disabled': 'ProductReviewsResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

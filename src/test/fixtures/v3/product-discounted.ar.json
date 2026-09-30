@@ -1,0 +1,171 @@
+{
+ "data": {
+  "product": {
+   "id": 8658,
+   "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+   "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل",
+   "image": {
+    "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+    "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل"
+   },
+   "brand": {
+    "name": "JOHNSON & JOHNSON",
+    "slug": "johnson-johnson",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   "price": {
+    "currency": "EGP",
+    "amount": 180,
+    "compareAt": 200,
+    "discountPercent": 10,
+    "display": "180 جنية",
+    "compareAtDisplay": "200 جنية",
+    "discountLabel": "10 %"
+   },
+   "inStock": true,
+   "badges": [
+    {
+     "kind": "promotion",
+     "text": "عرض لفترة محدودة",
+     "color": "#e32b2b"
+    }
+   ],
+   "rating": null,
+   "requiresPrescription": false,
+   "purchase": {
+    "canAddToCart": true,
+    "minQuantity": 1,
+    "maxQuantity": 5
+   },
+   "target": {
+    "type": "product",
+    "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+   }
+  },
+  "redirect": null,
+  "sku": "JJ-8658",
+  "gallery": [
+   {
+    "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+    "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل"
+   }
+  ],
+  "video": null,
+  "options": [
+   {
+    "id": 21,
+    "name": "الحجم",
+    "display": "dropdown",
+    "values": [
+     {
+      "id": 211,
+      "label": "125 مل",
+      "color": null,
+      "image": null,
+      "state": "available",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     {
+      "id": 212,
+      "label": "500 مل",
+      "color": null,
+      "image": null,
+      "state": "selected",
+      "target": null
+     }
+    ]
+   }
+  ],
+  "availability": {
+   "status": "available",
+   "message": null,
+   "notifyMe": false
+  },
+  "quantityStep": 1,
+  "breadcrumbs": [
+   {
+    "label": "الرئيسية",
+    "target": {
+     "type": "home"
+    }
+   },
+   {
+    "label": "العناية بالام والطفل",
+    "target": {
+     "type": "category",
+     "path": [
+      "mom-baby"
+     ]
+    }
+   },
+   {
+    "label": "JOHNSON & JOHNSON",
+    "target": {
+     "type": "brand",
+     "slug": "johnson-johnson"
+    }
+   },
+   {
+    "label": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل",
+    "target": null
+   }
+  ],
+  "summary": {
+   "html": "<p>جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل: عناية لطيفة مصممة لبشرة طفلك الحساسة.</p>"
+  },
+  "description": {
+   "html": "<h3>لماذا يحبه الآباء</h3><p>لطيف ومثبت إكلينيكياً، ومختبر من أطباء الجلدية والأطفال. خالٍ من البارابين والفثالات والكبريتات والأصباغ.</p><ul><li>لطيف بما يكفي للاستخدام اليومي</li><li>تركيبة مضادة للحساسية</li><li>رائحة منعشة تدوم</li></ul><p><strong>جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل</strong></p>"
+  },
+  "specifications": [
+   {
+    "name": "الماركة",
+    "value": "JOHNSON & JOHNSON"
+   },
+   {
+    "name": "بلد المنشأ",
+    "value": "مصر"
+   },
+   {
+    "name": "العبوة",
+    "value": "زجاجة"
+   }
+  ],
+  "notices": [
+   {
+    "kind": "info",
+    "text": "عينات مجانية مع كل طلب هذا الأسبوع"
+   }
+  ],
+  "seo": {
+   "title": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل",
+   "description": "اشترِ جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 500 مل أونلاين مع توصيل سريع.",
+   "canonical": {
+    "type": "product",
+    "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "product",
+      "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+     }
+    }
+   ],
+   "index": true
+  }
+ }
+}

@@ -1,0 +1,217 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-block: var(--space-5) var(--space-8);
+}
+
+.top {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 900px) {
+  .top {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-7);
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.brand {
+  align-self: flex-start;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.brand:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.rating {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.ratingCount {
+  color: var(--color-muted);
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.badge {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.priceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.sale {
+  color: var(--color-sale);
+}
+.compareAt {
+  color: var(--color-muted);
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+.discount {
+  padding: 2px var(--space-2);
+  background: var(--color-sale);
+  color: var(--color-inverse-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.notices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notice {
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 3px solid var(--color-text);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+}
+.notice[data-kind='promotion'] {
+  border-inline-start-color: var(--color-sale);
+}
+.notice[data-kind='payment_offer'] {
+  border-inline-start-color: var(--color-focus);
+}
+
+.summary {
+  color: var(--color-muted);
+}
+
+/* The backend's stock message; the status only picks a colour. */
+.availability {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+.availability[data-status='out_of_stock'],
+.availability[data-status='unavailable'] {
+  color: var(--color-sale);
+}
+.availability[data-status='coming_soon'],
+.availability[data-status='preorder'] {
+  color: var(--color-focus);
+}
+
+.sku {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+.skuLabel {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.more {
+  display: grid;
+  gap: var(--space-6);
+  margin-block-start: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .more {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.block {
+  min-width: 0;
+}
+
+.blockTitle {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.specs {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.specs th,
+.specs td {
+  padding: var(--space-3) var(--space-2);
+  border-block-end: 1px solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+.specs th {
+  width: 40%;
+  color: var(--color-muted);
+  font-weight: 400;
+}

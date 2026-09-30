@@ -1,0 +1,79 @@
+{
+ "data": {
+  "enabled": true,
+  "summary": {
+   "average": 4.1,
+   "count": 23,
+   "distribution": [
+    {
+     "stars": 5,
+     "count": 12,
+     "percent": 52
+    },
+    {
+     "stars": 4,
+     "count": 6,
+     "percent": 26
+    },
+    {
+     "stars": 3,
+     "count": 2,
+     "percent": 9
+    },
+    {
+     "stars": 2,
+     "count": 2,
+     "percent": 9
+    },
+    {
+     "stars": 1,
+     "count": 1,
+     "percent": 4
+    }
+   ]
+  },
+  "items": [
+   {
+    "id": 982223,
+    "author": "سارة م.",
+    "rating": 5,
+    "comment": "رائحة جميلة تدوم طوال اليوم.",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+   },
+   {
+    "id": 982222,
+    "author": "أحمد ك.",
+    "rating": 5,
+    "comment": "لطيف على بشرة طفلي.",
+    "createdAt": "2026-09-25T10:00:00.000Z"
+   },
+   {
+    "id": 982221,
+    "author": "منى ع.",
+    "rating": 4,
+    "comment": "جيد لكن العبوة صغيرة.",
+    "createdAt": "2026-09-22T10:00:00.000Z"
+   },
+   {
+    "id": 982220,
+    "author": null,
+    "rating": 5,
+    "comment": "وصل بسرعة ومغلف جيداً.",
+    "createdAt": "2026-09-19T10:00:00.000Z"
+   },
+   {
+    "id": 982219,
+    "author": "نور س.",
+    "rating": 3,
+    "comment": "نشتريه كل شهر.",
+    "createdAt": "2026-09-16T10:00:00.000Z"
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 5,
+   "total": 23,
+   "totalPages": 5
+  }
+ }
+}

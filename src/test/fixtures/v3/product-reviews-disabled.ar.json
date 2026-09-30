@@ -1,0 +1,13 @@
+{
+ "data": {
+  "enabled": false,
+  "summary": null,
+  "items": [],
+  "pagination": {
+   "page": 1,
+   "perPage": 5,
+   "total": 0,
+   "totalPages": 0
+  }
+ }
+}

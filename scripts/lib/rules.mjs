@@ -62,8 +62,9 @@ export const RULES = [
     id: 'money-via-components',
     applies: (f) => f.startsWith('src/') && !inMoney(f) && !isTest(f),
     patterns: [
-      // price.display, total?.display — but not CSS: style.display, styles.display, getComputedStyle(el).display
-      /(?<!\b(?:style|styles|css)\??|getComputedStyle\([^)]*\))\.display\b/,
+      // price.display, total?.display — but not CSS: style.display, styles.display, getComputedStyle(el).display,
+      // and not a product option's drawing hint: option.display ('buttons' | 'dropdown' | 'color' | 'image')
+      /(?<!\b(?:style|styles|css|option)\??|getComputedStyle\([^)]*\))\.display\b/,
       /\b(compareAtDisplay|discountLabel)\b/,
       /\[\s*['"`](display|compareAtDisplay|discountLabel)['"`]\s*\]/,
       // destructuring: const { display } = total;  ({ amount, display }) => …;  ({ display }: Money)

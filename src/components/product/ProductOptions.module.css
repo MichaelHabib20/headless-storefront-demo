@@ -1,0 +1,169 @@
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heading,
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.name {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.name::after {
+  content: ':';
+}
+
+.current {
+  color: var(--color-muted);
+}
+
+.values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One value, whatever it looks like. */
+.value {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 48px;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+a.value:hover {
+  border-color: var(--color-text);
+}
+
+.selected {
+  border-color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-text);
+  font-weight: 700;
+}
+
+/* Can be opened, not bought: dashed and faded, still a link. */
+.out_of_stock {
+  border-style: dashed;
+  color: var(--color-muted);
+}
+
+/* No such product: struck through, not clickable. */
+.unavailable {
+  color: var(--color-border);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+.unavailable .swatch,
+.unavailable .picture {
+  opacity: 0.35;
+}
+
+/* Swatches */
+.color .value {
+  min-width: 44px;
+  padding: 4px;
+  border-radius: 50%;
+}
+.swatch {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgb(0 0 0 / 12%);
+}
+.color .out_of_stock .swatch,
+.color .unavailable .swatch {
+  background-image: linear-gradient(to bottom right, transparent calc(50% - 1px), var(--color-muted) 50%, transparent calc(50% + 1px)) !important;
+}
+
+/* Pictures */
+.image .value {
+  flex-direction: column;
+  width: 88px;
+  padding: var(--space-1);
+}
+.picture {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.pictureLabel {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* Dropdown: a disclosure listing the values as links (works without JavaScript). */
+.dropdown {
+  position: relative;
+  max-width: 320px;
+}
+.summary {
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-text);
+  cursor: pointer;
+  list-style: none;
+}
+.summary::-webkit-details-marker {
+  display: none;
+}
+.summary::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  margin-inline-start: auto;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.dropdown[open] .summary::after {
+  transform: rotate(-135deg);
+}
+.menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-text);
+  border-block-start: 0;
+}
+.menu .value {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  border: 0;
+  box-shadow: none;
+}
+.menu a.value:hover {
+  background: var(--color-surface);
+}
+.menu .selected {
+  background: var(--color-surface);
+}

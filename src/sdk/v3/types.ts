@@ -49,6 +49,21 @@ export type CheckoutSettings = Schemas['CheckoutSettings'];
 export type AddressFormField = CheckoutSettings['addressForm']['fields'][number];
 export type Locations = Schemas['LocationsResponse']['data'];
 
+// product page
+export type ProductDetails = Schemas['ProductDetails'];
+export type ProductOption = Schemas['ProductOption'];
+export type ProductOptionValue = ProductOption['values'][number];
+export type ProductAvailability = Schemas['ProductAvailability'];
+export type ProductNotice = ProductDetails['notices'][number];
+export type ProductSpecification = ProductDetails['specifications'][number];
+export type ProductVideo = NonNullable<ProductDetails['video']>;
+export type ProductRecommendations = Schemas['ProductRecommendationsResponse']['data'];
+export type RecommendationSection = ProductRecommendations['sections'][number];
+export type ProductReviewsPage = Schemas['ProductReviewsResponse']['data'];
+export type ProductReview = ProductReviewsPage['items'][number];
+export type ReviewSummary = NonNullable<ProductReviewsPage['summary']>;
+export type NotifyMeResult = import('../generated/api').operations['notifyWhenAvailable']['responses'][200]['content']['application/json']['data'];
+
 export const LOCALES = ['en', 'ar'] as const satisfies readonly Locale[];
 
 export function isLocale(value: unknown): value is Locale {

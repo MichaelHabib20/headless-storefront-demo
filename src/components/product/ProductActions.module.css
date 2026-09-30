@@ -91,3 +91,63 @@
 .error {
   color: var(--color-sale);
 }
+
+/* Product page: quantity stepper + bigger buttons, no card padding. */
+.withQuantity {
+  gap: var(--space-3);
+  padding: 0;
+}
+.withQuantity .add {
+  flex: 1 1 180px;
+  height: 48px;
+  font-size: 0.8125rem;
+}
+.withQuantity .toggle {
+  width: 48px;
+  height: 48px;
+}
+.withQuantity .status {
+  order: 2;
+}
+
+.stepper {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 48px;
+  border: 1px solid var(--color-text);
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 100%;
+  border: 0;
+  background: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.step:hover:not(:disabled) {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+.step:disabled {
+  color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.quantity {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.cartLink {
+  order: 1;
+  flex-basis: 100%;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
