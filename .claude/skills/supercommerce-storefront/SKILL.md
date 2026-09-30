@@ -62,6 +62,7 @@ them and **blocks the deploy** when one is broken.
 | `src/components/home/` | Home blocks: `PromoStrip`, `CategoryTiles`, `BrandRail`, `PopupHost`, `sections/HomeSection` + `sections/BannerLayouts` |
 | `src/components/product/ProductCard.tsx` | Product card |
 | `src/components/notifications/` | Notifications page blocks, helpers, local pagination |
+| `src/components/account/` | Address book, address form (drawn from the API), orders list/details, cancel dialog, reorder notice |
 | `src/app/[locale]/layout.tsx` | Loads `layout`, renders chrome for every page |
 | `src/app/[locale]/page.tsx` | The home page: composition of home blocks |
 | `src/app/[locale]/<area>/page.tsx` + `actions.ts` | Shopper pages (reads) and their server actions (writes) |
@@ -83,6 +84,7 @@ them and **blocks the deploy** when one is broken.
 | Cart page, quantities, totals, checkout button, minimum order | [reference/cart.md](reference/cart.md) |
 | Wishlist, compare, hearts, move to cart | [reference/wishlist-compare.md](reference/wishlist-compare.md) |
 | Notifications page, bell badge, mark as read | [reference/notifications.md](reference/notifications.md) |
+| Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 
 ## Common requests → how
@@ -106,6 +108,8 @@ them and **blocks the deploy** when one is broken.
 | "Add to cart / heart for guests" | Server action with `withShopper` | Create a guest while rendering; token in the browser |
 | "Add a new text/button" | Add the key to `en` **and** `ar` in `src/lib/i18n.ts` or `src/lib/messages/<area>.ts` | Hardcode English |
 | "Link the logo somewhere else" | `routes.*` in `src/lib/routing.ts` | Write `'/en/...'` strings |
+| "Add a field to the address form" | It comes from `CheckoutSettings.addressForm` → "needs backend support" | `<input name="landmark">` of your own |
+| "Only let pending orders be cancelled" | Nothing: show cancel only when `order.actions.canCancel` | `status.code === 'pending'`, date math on `placedAt` |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
 
 ## Before you say "done"
