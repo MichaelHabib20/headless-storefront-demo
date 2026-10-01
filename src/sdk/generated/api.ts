@@ -2378,6 +2378,8 @@ export interface components {
                 image: components["schemas"]["Image"] | null;
                 /** @description Null when the product no longer exists */
                 target: components["schemas"]["ProductTarget"] | null;
+                /** @description ProductCard.id of the variant; null when the product no longer exists */
+                productId?: number | null;
                 quantity: number;
                 lineTotal: components["schemas"]["Money"];
                 /** @description The line's price before discount; null when not discounted */
