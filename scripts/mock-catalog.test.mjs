@@ -63,7 +63,7 @@ describe('mock catalog module follows the contract', () => {
     expectValid('SearchSuggestionsResponse', get('/search/suggestions', 'q=johnson').payload);
     expectValid('CategoriesResponse', get('/categories').payload);
     expectValid('BrandsResponse', get('/brands', 'perPage=24&page=2').payload);
-    for (const path of ['/en/product/36480/x', '/en/summer-sale', '/en/blog', '/en/discontinued-offer', '/en/self-redirect', '/en/unsafe-redirect', '/en/nothing-here']) {
+    for (const path of ['/en/product/36480/x', '/en/summer-sale', '/en/our-blog', '/en/brand/758', '/ar/blog/x', '/en/under-construction', '/en/discontinued-offer', '/en/self-redirect', '/en/unsafe-redirect', '/en/nothing-here']) {
       expectValid('ResolutionResponse', get('/resolve', `path=${encodeURIComponent(path)}`).payload);
     }
     for (const [pathname, query, status] of [
@@ -120,7 +120,11 @@ describe('mock catalog module follows the contract', () => {
     const resolve = (path) => get('/resolve', `path=${encodeURIComponent(path)}`).data;
     expect(resolve('/ar/product/36480/old-name')).toMatchObject({ result: 'target', target: { type: 'product' }, permanent: true });
     expect(resolve('/en/summer-sale')).toMatchObject({ result: 'redirect', target: { type: 'deals' }, permanent: false });
-    expect(resolve('/en/blog')).toMatchObject({ result: 'redirect', url: 'https://blog.example.com/', permanent: true });
+    expect(resolve('/en/our-blog')).toMatchObject({ result: 'redirect', url: 'https://blog.example.com/', permanent: true });
+    expect(resolve('/ar/brand/758')).toMatchObject({ result: 'target', target: { type: 'brand', slug: 'bioderma' }, permanent: true });
+    expect(resolve('/en/brand/999999')).toMatchObject({ result: 'not_found' });
+    expect(resolve('/en/blog')).toMatchObject({ result: 'target', target: { type: 'home' }, permanent: true });
+    expect(resolve('/en/under-construction')).toMatchObject({ result: 'target', target: { type: 'home' } });
     expect(resolve('/en/discontinued-offer').result).toBe('gone');
     expect(resolve('/en/product/999999').result).toBe('not_found');
     expect(resolve('/en/definitely-not-a-page/x').result).toBe('not_found');

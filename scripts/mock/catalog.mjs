@@ -118,7 +118,7 @@ const CATEGORY_TEXT = {
 /** The unknown paths the mock knows (old storefront URLs and the merchant's redirect table). */
 const REDIRECTS = {
   '/summer-sale': { result: 'redirect', target: { type: 'deals' }, url: null, permanent: false },
-  '/blog': { result: 'redirect', target: null, url: 'https://blog.example.com/', permanent: true },
+  '/our-blog': { result: 'redirect', target: null, url: 'https://blog.example.com/', permanent: true },
   '/discontinued-offer': { result: 'gone', target: null, url: null, permanent: true },
   // Broken rows a merchant can type: the storefront must not loop or follow them.
   '/self-redirect': { result: 'redirect', target: null, url: '/{locale}/self-redirect', permanent: false },
@@ -557,7 +557,17 @@ export function createCatalogModule(shopper) {
       return answer(target ? { result: 'target', target, url: null, permanent: true } : notFound);
     }
     const row = REDIRECTS[rest];
-    if (!row) return answer(notFound);
+    if (!row) {
+      // the old storefront's brand-images page by brand id → the brand page; unknown id → not found
+      const brandId = rest.match(/^\/brand\/(\d+)$/);
+      if (brandId) {
+        const brand = readJson(`brands.${pathLocale}.json`).items.find((item) => String(item.id) === brandId[1]);
+        return answer(brand ? { result: 'target', target: brand.target, url: null, permanent: true } : notFound);
+      }
+      // dropped old pages (the blog, "under construction") → home
+      if (/^\/(blog(\/.*)?|under-construction)$/.test(rest)) return answer({ result: 'target', target: { type: 'home' }, url: null, permanent: true });
+      return answer(notFound);
+    }
     return answer({ ...row, url: row.url ? row.url.replace('{locale}', pathLocale) : null });
   }
 

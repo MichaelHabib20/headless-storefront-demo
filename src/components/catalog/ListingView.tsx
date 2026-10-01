@@ -107,7 +107,7 @@ function EmptyListing({ listing, locale, links, current }: { listing: ProductLis
       ? { href: listingHref(links.path, listing.clearFiltersQuery, links.keep), label: t('catalogClearFilters') }
       : listing.pagination.page > 1
         ? { href: listingPageHref(links.path, current, 1), label: t('catalogFirstPage') }
-        : { href: routes.search(locale), label: t('catalogBrowseAll') };
+        : { href: routes.allProducts(locale), label: t('catalogBrowseAll') };
   return (
     <div className={styles.empty} data-testid="listing-empty">
       <h2 className={styles.emptyTitle}>{t('catalogEmptyTitle')}</h2>

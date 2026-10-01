@@ -333,6 +333,31 @@ export const RULES = [
     patterns: [/\bkind\s*[!=]==?\s*['"](contact|branches)['"]/, /['"](contact|branches)['"]\s*[!=]==?\s*[\w.?]*\bkind\b/],
     message: 'page.kind (contact / branches) is read only by src/app/[locale]/pages/[slug]/page.tsx, which passes the extra block in. Components draw what they are given.',
   },
+  // --- account extras: the old storefront's pages on their old paths --------------------------
+  {
+    // "All products" is its own page (/all-products, the Target {type: search, query: ""}); an empty search is not it.
+    id: 'all-products-route',
+    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/lib/routing.ts',
+    // a link to the bare search page (the search form's `action` and the search page's own base path are fine)
+    patterns: [/\bhref\s*[=:]\s*\{?\s*routes\.search\(\s*\w+\s*\)/, /\broutes\.search\(\s*\w+\s*,\s*['"`]{2}\s*\)/],
+    message: 'Every product lives on routes.allProducts(locale) (the old /all-products page). routes.search(locale, q) is for a search text; a link to "all products" from the API is the Target {type: "search", query: ""}, so render it with <TargetLink>.',
+  },
+  {
+    // Whether a prescription can be sent or cancelled, and which inputs the form has, are the backend's
+    // answers (PrescriptionForm.canSend / blockers / fields, Prescription.actions.canCancel).
+    id: 'prescription-rules-from-api',
+    applies: (f) => !isTest(f) && /^src\/(components\/prescriptions|app\/\[locale\]\/(prescriptions|add-address))\//.test(f),
+    patterns: [
+      // own cancel / send rules from the status or the customer's data
+      /\bstatus\??\.code\s*[!=]==?\s*['"](received|in_progress)['"]/,
+      /\b(canSend|canCancel)\s*=(?!=)(?!\s*\{?\s*[\w.?]*(form|actions|item|prescription)\??\.)/,
+      /\b(phoneVerified|phone_verified)\b[^;\n]*\b(canSend|blocked|disabled)\b|\b(canSend|blocked|disabled)\b[^;\n]*\b(phoneVerified|phone_verified)\b/,
+      // inputs of its own instead of the API's fields
+      /\bname=["'{`]+(v\.)?(prescriptionNumber|prescription_number|prescription_images)["'`}]/,
+    ],
+    message:
+      'Prescription rules come from the API: send only when form.canSend (show form.blockers[].message and the page prescriptionStepHref() gives), draw form.fields with <FormFields>, cancel only when item.actions.canCancel. Never derive them from the status, the addresses or the phone.',
+  },
 ];
 
 /**

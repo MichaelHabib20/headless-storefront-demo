@@ -341,4 +341,26 @@ describe('seo + marketing rules', () => {
     expect(rulesHit('src/lib/marketing.ts', 'value: items.reduce((sum, item) => sum + item.price.amount, 0),')).toEqual([]);
     expect(rulesHit('src/lib/other.ts', 'value: items.reduce((sum, item) => sum + item.price.amount, 0),')).toContain('no-price-math');
   });
+
+  it('links every product to /all-products, never to an empty search', () => {
+    expect(rulesHit('src/components/catalog/X.tsx', '<Link href={routes.search(locale)}>{t("all")}</Link>')).toContain('all-products-route');
+    expect(rulesHit('src/components/catalog/X.tsx', "const href = routes.search(locale, '');")).toContain('all-products-route');
+    expect(rulesHit('src/components/catalog/X.tsx', 'const href = routes.search(locale, query);')).not.toContain('all-products-route');
+    expect(rulesHit('src/components/catalog/X.tsx', "{ href: routes.search(locale), label: t('catalogBrowseAll') }")).toContain('all-products-route');
+    expect(rulesHit('src/components/catalog/X.tsx', 'const href = routes.allProducts(locale);')).toEqual([]);
+    // the search form posts to the search page; the search page links to itself
+    expect(rulesHit('src/components/layout/SearchBox.tsx', '<form action={routes.search(locale)} method="get" role="search">')).not.toContain('all-products-route');
+  });
+
+  it('keeps the prescription rules on the API side', () => {
+    expect(rulesHit('src/components/prescriptions/X.tsx', "{item.status.code === 'received' && <CancelPrescription />}")).toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', 'const canSend = form.addresses.length > 0 && me.customer.phoneVerified;')).toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '<button disabled={!customer.phoneVerified}>')).toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '<input name="prescriptionNumber" required />')).toContain('prescription-rules-from-api');
+    // reading the API's answers is fine
+    expect(rulesHit('src/components/prescriptions/X.tsx', 'const canSend = form.canSend;')).not.toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '{item.actions.canCancel && <CancelPrescription />}')).not.toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '<CancelButton canCancel={item.actions.canCancel} />')).not.toContain('prescription-rules-from-api');
+    expect(rulesHit('src/app/[locale]/prescriptions/page.tsx', "{item.status.code === 'in_progress' && <Hint />}")).toContain('prescription-rules-from-api');
+  });
 });

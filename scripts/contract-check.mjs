@@ -96,6 +96,10 @@ const RESPONSE_SCHEMA = {
   'content-landing': 'LandingPageResponse',
   'content-form': 'FormResponse',
   'content-form-file': 'FormResponse',
+  // account extras: prescriptions (scripts/build-prescription-fixtures.mjs)
+  'prescription-form': 'PrescriptionFormResponse',
+  'prescription-form-blocked': 'PrescriptionFormResponse',
+  prescriptions: 'PrescriptionsResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

@@ -80,6 +80,8 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   wrong_password: 'wrong_password',
   // shell: the store is switched off (maintenance); the message is the merchant's
   store_unavailable: 'store_unavailable',
+  // account extras: a prescription cannot be sent yet (the form's blockers)
+  prescription_blocked: 'prescription_blocked',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {

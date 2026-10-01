@@ -12,7 +12,8 @@ the products, their order, the filters, the counts and every link. The storefron
 | `/{locale}/lists/{slug or id}` | `lists/[key]/page.tsx` | `list=key` |
 | `/{locale}/tags/{slug}` | `tags/[slug]/page.tsx` | `tag=slug` |
 | `/{locale}/deals` | `deals/page.tsx` | `deals=true` |
-| `/{locale}/search?q=` | `search/page.tsx` | `q=…` (none = all products) |
+| `/{locale}/search?q=` | `search/page.tsx` | `q=…` (search text) |
+| `/{locale}/all-products` | `all-products/page.tsx` | no scope: every product (the old storefront's page; the Target `{type: search, query: ""}` and the bottom nav's "All products" open it). Link with `routes.allProducts(locale)`, never an empty search (rule `all-products-route`) |
 | `/{locale}/categories` | `categories/page.tsx` | `GET /categories` (the tree) |
 | `/{locale}/brands` | `brands/page.tsx` | `GET /brands?page=` (24 tiles a page) |
 | anything else | `src/middleware.ts` + `[...slug]/page.tsx` | `GET /resolve?path=` |

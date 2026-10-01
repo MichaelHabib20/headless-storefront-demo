@@ -115,7 +115,24 @@ test.describe('catalog', () => {
     await page.goto('/en/search?q=zzzz');
     await expect(page.getByTestId('listing-empty')).toContainText('No products found');
     await page.getByTestId('listing-empty').getByRole('link', { name: 'Browse all products' }).click();
-    await expect(page).toHaveURL(/\/en\/search$/);
+    await expect(page).toHaveURL(/\/en\/all-products$/);
+  });
+
+  test('all products (the old /all-products): the listing with no scope, its canonical, both languages', async ({ page, request }) => {
+    for (const locale of ['en', 'ar'] as const) {
+      const data = await listing(request, '', locale);
+      const response = await page.goto(`/${locale}/all-products`);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole('heading', { level: 1, name: data.context.title })).toBeVisible();
+      await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(data.items.length);
+      // the backend's canonical Target {type: search, query: ""} is this page
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/${locale}/all-products$`));
+      expect(await fitsScreen(page)).toBe(true);
+    }
+    // filters and pages stay on /all-products
+    await page.goto('/en/all-products');
+    await page.getByTestId('facet-value').first().click();
+    await expect(page).toHaveURL(/\/en\/all-products\?/);
   });
 
   test('every listing route: brand, list, tag, deals (with old prices from the API)', async ({ page, request }) => {
@@ -213,12 +230,27 @@ test.describe('unknown paths', () => {
     expect(new URL(response.headers().location, APP_URL).pathname).toBe('/en/p/jj-baby-bedtime-bath-125ml-lavendercamomile');
   });
 
+  test('dropped old pages: brand images by id → the brand page; the blog and "under construction" → home', async ({ request }) => {
+    for (const [path, to] of [
+      ['/en/brand/758', '/en/brands/bioderma'],
+      ['/ar/brand/758', '/ar/brands/bioderma'],
+      ['/en/blog', '/en'],
+      ['/ar/blog/some-article', '/ar'],
+      ['/en/under-construction', '/en'],
+    ]) {
+      const response = await request.get(path, { maxRedirects: 0 });
+      expect(response.status(), path).toBe(301);
+      expect(new URL(response.headers().location, APP_URL).pathname, path).toBe(to);
+    }
+    expect((await request.get('/en/brand/999999', { maxRedirects: 0 })).status()).toBe(404);
+  });
+
   test('redirect-table rows: temporary to a Target, permanent to an external url', async ({ request }) => {
     const toDeals = await request.get('/en/summer-sale', { maxRedirects: 0 });
     expect(toDeals.status()).toBe(302);
     expect(new URL(toDeals.headers().location, APP_URL).pathname).toBe('/en/deals');
 
-    const external = await request.get('/en/blog', { maxRedirects: 0 });
+    const external = await request.get('/en/our-blog', { maxRedirects: 0 });
     expect(external.status()).toBe(301);
     expect(external.headers().location).toBe('https://blog.example.com/');
   });

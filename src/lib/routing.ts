@@ -17,6 +17,12 @@ export const routes = {
   deals: (locale: Locale) => `/${locale}/deals`,
   /** Search results; without a query it lists all products. */
   search: (locale: Locale, query = '') => (query ? `/${locale}/search?q=${encode(query)}` : `/${locale}/search`),
+  /** Every product (the old storefront's /all-products); the Target `{type: search, query: ""}` opens it. */
+  allProducts: (locale: Locale) => `/${locale}/all-products`,
+  /** The customer's prescriptions: send one, see and cancel them (the old storefront's /prescriptions). */
+  prescriptions: (locale: Locale, page?: number) => withQuery(`/${locale}/prescriptions`, { page: page && page > 1 ? page : null }),
+  /** The required address step before a prescription (the old /add-address); saves, then back to prescriptions. */
+  addAddress: (locale: Locale) => `/${locale}/add-address`,
   categories: (locale: Locale) => `/${locale}/categories`,
   brands: (locale: Locale) => `/${locale}/brands`,
   cart: (locale: Locale) => `/${locale}/cart`,
@@ -55,6 +61,20 @@ export const routes = {
 } as const;
 
 /** The page a `Session.next` / `Me.next` value sends the shopper to, or null when nothing is pending. */
+/** The page that clears a prescription blocker (`PrescriptionForm.blockers[].code`); null for a code this storefront does not know. */
+export function prescriptionStepHref(locale: Locale, code: string): string | null {
+  switch (code) {
+    case 'add_address':
+      return routes.addAddress(locale);
+    case 'verify_phone':
+      return routes.verifyPhone(locale);
+    case 'add_phone':
+      return routes.profile(locale);
+    default:
+      return null;
+  }
+}
+
 export function nextStepHref(locale: Locale, next: 'verify_phone' | 'waiting_approval' | 'complete_profile' | null | undefined): string | null {
   switch (next) {
     case 'verify_phone':
@@ -99,7 +119,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
     case 'tag':
       return internal(routes.tag(locale, target.slug));
     case 'search':
-      return internal(routes.search(locale, target.query));
+      return internal(target.query ? routes.search(locale, target.query) : routes.allProducts(locale));
     case 'deals':
       return internal(routes.deals(locale));
     case 'home':
@@ -117,7 +137,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
  * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
  * route above is missing here.
  */
-const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval']);
+const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval', 'prescriptions', 'add-address']);
 
 /** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
 export function isStorefrontPath(pathname: string): boolean {
@@ -129,16 +149,17 @@ export function isStorefrontPath(pathname: string): boolean {
  * Where the address pages send the shopper after a save (`?next=` on the address list, new and edit
  * pages). Only these names are accepted — never a URL — so the parameter can't be an open redirect.
  */
-export type AddressReturn = 'checkout';
+export type AddressReturn = 'checkout' | 'prescriptions';
 
 export function addressReturn(value: string | string[] | null | undefined): AddressReturn | null {
   const raw = Array.isArray(value) ? value[0] : value;
-  return raw === 'checkout' ? 'checkout' : null;
+  return raw === 'checkout' || raw === 'prescriptions' ? raw : null;
 }
 
 /** The page an address save goes back to, or null to stay in the address book. */
 export function addressReturnHref(locale: Locale, next: AddressReturn | null): string | null {
-  return next === 'checkout' ? routes.checkout(locale) : null;
+  if (next === 'checkout') return routes.checkout(locale);
+  return next === 'prescriptions' ? routes.prescriptions(locale) : null;
 }
 
 /**
@@ -219,4 +240,6 @@ export const PRIVATE_SECTIONS = [
   'verify-email',
   'waiting-approval',
   'track-order',
+  'prescriptions',
+  'add-address',
 ] as const;

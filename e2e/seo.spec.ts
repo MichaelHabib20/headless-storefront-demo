@@ -106,13 +106,14 @@ test.describe('JSON-LD', () => {
 
 test.describe('head tags', () => {
   test('rel=prev/next from Seo.pagination, noindex where the backend says so', async ({ page }) => {
-    await page.goto('/en/search?perPage=2');
-    await expect(page.locator('head link[rel="next"]')).toHaveAttribute('href', '/en/search?page=2');
+    // the unscoped listing's canonical is the all-products page (Target {type: search, query: ""})
+    await page.goto('/en/all-products?perPage=2');
+    await expect(page.locator('head link[rel="next"]')).toHaveAttribute('href', '/en/all-products?page=2');
     await expect(page.locator('head link[rel="prev"]')).toHaveCount(0);
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 
-    await page.goto('/en/search?perPage=2&page=2');
-    await expect(page.locator('head link[rel="prev"]')).toHaveAttribute('href', '/en/search');
+    await page.goto('/en/all-products?perPage=2&page=2');
+    await expect(page.locator('head link[rel="prev"]')).toHaveAttribute('href', '/en/all-products');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
 
     await page.goto('/ar/search?q=baby');

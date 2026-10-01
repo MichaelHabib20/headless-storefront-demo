@@ -1217,6 +1217,80 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/prescriptions/form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** How to draw the prescription form for this customer: texts, fields, address choices and what blocks sending. 404 while the store has prescriptions off. */
+        get: operations["getPrescriptionForm"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/prescriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's prescriptions, newest first. 404 while the store has prescriptions off. */
+        get: operations["getPrescriptions"];
+        put?: never;
+        /** Send a prescription (files from POST /uploads, an address of the customer). 409 prescription_blocked while `PrescriptionForm.blockers` is not empty; 422 validation_failed with `fields` by these names. */
+        post: operations["sendPrescription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/prescriptions/cancellation-reasons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reasons the customer can pick when cancelling a prescription */
+        get: operations["getPrescriptionCancellationReasons"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/prescriptions/{prescriptionId}/cancel": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Prescription.id */
+                prescriptionId: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a prescription (only while `actions.canCancel`). 409 cannot_cancel otherwise; 404 for someone else's. */
+        post: operations["cancelPrescription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2944,6 +3018,93 @@ export interface components {
              * @enum {string|null}
              */
             badge: "cart" | "wishlist" | "compare" | "notifications" | null;
+        };
+        PrescriptionForm: {
+            /** @description The store's word for a prescription, as the page heading */
+            title: string;
+            /** @description Merchant text above the form */
+            description: components["schemas"]["RichText"] | null;
+            /** @description A how-to video the merchant set (play it or link it; null = none) */
+            video: {
+                url: string;
+            } | null;
+            /** @description The inputs in order (`type`, `prescriptionNumber`, `files`, `note`). `files` has kind `file`: send the ids POST /uploads returned. */
+            fields: components["schemas"]["FormField"][];
+            /** @description The customer's addresses to send it to (the default first and preselected). Empty = add one first (`blockers`). */
+            addresses: components["schemas"]["PrescriptionAddressChoice"][];
+            /** @description What must happen before sending. The storefront shows `message` and offers the step: `add_address` (its add-address page), `add_phone` (the profile page), `verify_phone` (the phone verification page). */
+            blockers: {
+                /** @enum {string} */
+                code: "add_address" | "add_phone" | "verify_phone";
+                message: string;
+            }[];
+            /** @description True when `blockers` is empty */
+            canSend: boolean;
+        };
+        PrescriptionAddressChoice: {
+            id: number;
+            /** @description The address as one line, in the request language */
+            label: string;
+            selected: boolean;
+        };
+        PrescriptionFormResponse: {
+            data: components["schemas"]["PrescriptionForm"];
+        };
+        PrescriptionRequest: {
+            /** @description One of `PrescriptionForm.addresses` */
+            addressId: number;
+            /** @description One of the `type` field options (absent when the form has no `type` field) */
+            type?: string | null;
+            prescriptionNumber?: string | null;
+            /** @description Ids from POST /uploads (at most 10) */
+            files: string[];
+            note?: string | null;
+        };
+        Prescription: {
+            id: string;
+            /** @description What the customer and the store call it, e.g. #1042 */
+            reference: string;
+            status: {
+                /**
+                 * @description unknown = a status this API does not know yet (show `label`)
+                 * @enum {string}
+                 */
+                code: "received" | "in_progress" | "delivered" | "cancelled" | "unknown";
+                label: string;
+            };
+            /** Format: date-time */
+            placedAt: string;
+            /** @description Label of the kind (e.g. Cash / Wasfaty); null when the store offers one kind only */
+            type: string | null;
+            prescriptionNumber: string | null;
+            note: string | null;
+            fileCount: number;
+            /** @description The delivery address as one line */
+            address: string | null;
+            /** @description Why it was cancelled, when the customer cancelled it (null otherwise: a store cancellation is not explained) */
+            cancellation: {
+                reason: string | null;
+                note: string | null;
+            } | null;
+            actions: {
+                canCancel: boolean;
+            };
+        };
+        PrescriptionResponse: {
+            data: components["schemas"]["Prescription"];
+        };
+        PrescriptionSentResponse: {
+            data: {
+                prescription: components["schemas"]["Prescription"];
+                /** @description Thank-you text to show */
+                message: string;
+            };
+        };
+        PrescriptionsResponse: {
+            data: {
+                items: components["schemas"]["Prescription"][];
+                pagination: components["schemas"]["Pagination"];
+            };
         };
     };
     responses: {
@@ -4943,6 +5104,137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getPrescriptionForm: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The form */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrescriptionFormResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getPrescriptions: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: number;
+                perPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One page of prescriptions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrescriptionsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    sendPrescription: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PrescriptionRequest"];
+            };
+        };
+        responses: {
+            /** @description The prescription and a thank-you text */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrescriptionSentResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getPrescriptionCancellationReasons: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reasons */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CancellationReasonsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    cancelPrescription: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Prescription.id */
+                prescriptionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reasonId: number;
+                    note?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description The prescription after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrescriptionResponse"];
                 };
             };
             default: components["responses"]["Error"];

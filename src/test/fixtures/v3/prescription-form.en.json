@@ -1,0 +1,53 @@
+{
+ "data": {
+  "title": "Prescription",
+  "description": {
+   "html": "<p>Upload a clear photo of your prescription and our pharmacist will call you.</p>"
+  },
+  "video": null,
+  "fields": [
+   {
+    "name": "prescriptionNumber",
+    "label": "Prescription number",
+    "kind": "text",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 100
+   },
+   {
+    "name": "files",
+    "label": "Prescription photos",
+    "kind": "file",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": true,
+    "hint": "Photos or PDF of the prescription, up to 10 files.",
+    "maxLength": null
+   },
+   {
+    "name": "note",
+    "label": "Notes for the pharmacist",
+    "kind": "textarea",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 1000
+   }
+  ],
+  "addresses": [
+   {
+    "id": 501,
+    "label": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+    "selected": true
+   }
+  ],
+  "blockers": [],
+  "canSend": true
+ }
+}

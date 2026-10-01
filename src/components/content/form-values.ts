@@ -14,7 +14,7 @@ export function formValues(fields: readonly FormField[], data: FormData): Record
   const values: Record<string, string | string[]> = {};
   for (const field of fields) {
     const name = inputName(field);
-    if (field.kind === 'select' && field.multiple) {
+    if ((field.kind === 'select' || field.kind === 'file') && field.multiple) {
       const chosen = data.getAll(name).filter((value): value is string => typeof value === 'string' && value !== '');
       if (chosen.length) values[field.name] = chosen;
       continue;

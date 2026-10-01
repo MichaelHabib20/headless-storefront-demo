@@ -1431,6 +1431,101 @@ paths:
               schema: { $ref: '#/components/schemas/MessageResponse' }
         default: { $ref: '#/components/responses/Error' }
 
+
+  # ---------------------------------------------------------------- account extras: prescriptions (customer only)
+
+  /prescriptions/form:
+    get:
+      operationId: getPrescriptionForm
+      summary: 'How to draw the prescription form for this customer: texts, fields, address choices and what blocks sending. 404 while the store has prescriptions off.'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The form
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrescriptionFormResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /prescriptions:
+    get:
+      operationId: getPrescriptions
+      summary: "The customer's prescriptions, newest first. 404 while the store has prescriptions off."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: page, in: query, required: false, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: perPage, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 50, default: 10 } }
+      responses:
+        '200':
+          description: One page of prescriptions
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrescriptionsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    post:
+      operationId: sendPrescription
+      summary: 'Send a prescription (files from POST /uploads, an address of the customer). 409 prescription_blocked while `PrescriptionForm.blockers` is not empty; 422 validation_failed with `fields` by these names.'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PrescriptionRequest' }
+      responses:
+        '201':
+          description: The prescription and a thank-you text
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrescriptionSentResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /prescriptions/cancellation-reasons:
+    get:
+      operationId: getPrescriptionCancellationReasons
+      summary: Reasons the customer can pick when cancelling a prescription
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Reasons
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CancellationReasonsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /prescriptions/{prescriptionId}/cancel:
+    parameters:
+      - { name: prescriptionId, in: path, required: true, description: Prescription.id, schema: { type: string, minLength: 1, maxLength: 64 } }
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: cancelPrescription
+      summary: Cancel a prescription (only while `actions.canCancel`). 409 cannot_cancel otherwise; 404 for someone else's.
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reasonId]
+              additionalProperties: false
+              properties:
+                reasonId: { type: integer, minimum: 1 }
+                note: { type: string, maxLength: 500, nullable: true }
+      responses:
+        '200':
+          description: The prescription after the change
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrescriptionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
 components:
   securitySchemes:
     bearer:
@@ -4189,3 +4284,138 @@ components:
         icon: { type: string, nullable: true, description: An icon name (hint) or an image URL }
         target: { $ref: '#/components/schemas/NullableTarget' }
         badge: { type: string, nullable: true, enum: [cart, wishlist, compare, notifications, null], description: Which `Me.counts` value to show on it }
+
+    # ---------------------------------------------------------------- account extras: prescriptions
+
+    PrescriptionForm:
+      type: object
+      required: [title, description, video, fields, addresses, blockers, canSend]
+      additionalProperties: false
+      properties:
+        title: { type: string, description: "The store's word for a prescription, as the page heading" }
+        description:
+          description: Merchant text above the form
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/RichText' }]
+        video:
+          description: A how-to video the merchant set (play it or link it; null = none)
+          type: object
+          nullable: true
+          required: [url]
+          additionalProperties: false
+          properties:
+            url: { type: string }
+        fields:
+          description: 'The inputs in order (`type`, `prescriptionNumber`, `files`, `note`). `files` has kind `file`: send the ids POST /uploads returned.'
+          type: array
+          items: { $ref: '#/components/schemas/FormField' }
+        addresses:
+          description: "The customer's addresses to send it to (the default first and preselected). Empty = add one first (`blockers`)."
+          type: array
+          items: { $ref: '#/components/schemas/PrescriptionAddressChoice' }
+        blockers:
+          description: 'What must happen before sending. The storefront shows `message` and offers the step: `add_address` (its add-address page), `add_phone` (the profile page), `verify_phone` (the phone verification page).'
+          type: array
+          items:
+            type: object
+            required: [code, message]
+            additionalProperties: false
+            properties:
+              code: { type: string, enum: [add_address, add_phone, verify_phone] }
+              message: { type: string }
+        canSend: { type: boolean, description: True when `blockers` is empty }
+    PrescriptionAddressChoice:
+      type: object
+      required: [id, label, selected]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        label: { type: string, description: 'The address as one line, in the request language' }
+        selected: { type: boolean }
+    PrescriptionFormResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/PrescriptionForm' }
+    PrescriptionRequest:
+      type: object
+      required: [addressId, files]
+      additionalProperties: false
+      properties:
+        addressId: { type: integer, description: 'One of `PrescriptionForm.addresses`' }
+        type: { type: string, nullable: true, description: 'One of the `type` field options (absent when the form has no `type` field)' }
+        prescriptionNumber: { type: string, nullable: true, maxLength: 100 }
+        files:
+          description: Ids from POST /uploads (at most 10)
+          type: array
+          maxItems: 10
+          items: { type: string }
+        note: { type: string, nullable: true, maxLength: 1000 }
+    Prescription:
+      type: object
+      required: [id, reference, status, placedAt, type, prescriptionNumber, note, fileCount, address, cancellation, actions]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        reference: { type: string, description: 'What the customer and the store call it, e.g. #1042' }
+        status:
+          type: object
+          required: [code, label]
+          additionalProperties: false
+          properties:
+            code: { type: string, enum: [received, in_progress, delivered, cancelled, unknown], description: 'unknown = a status this API does not know yet (show `label`)' }
+            label: { type: string }
+        placedAt: { type: string, format: date-time }
+        type: { type: string, nullable: true, description: 'Label of the kind (e.g. Cash / Wasfaty); null when the store offers one kind only' }
+        prescriptionNumber: { type: string, nullable: true }
+        note: { type: string, nullable: true }
+        fileCount: { type: integer, minimum: 0 }
+        address: { type: string, nullable: true, description: The delivery address as one line }
+        cancellation:
+          description: 'Why it was cancelled, when the customer cancelled it (null otherwise: a store cancellation is not explained)'
+          type: object
+          nullable: true
+          required: [reason, note]
+          additionalProperties: false
+          properties:
+            reason: { type: string, nullable: true }
+            note: { type: string, nullable: true }
+        actions:
+          type: object
+          required: [canCancel]
+          additionalProperties: false
+          properties:
+            canCancel: { type: boolean }
+    PrescriptionResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Prescription' }
+    PrescriptionSentResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [prescription, message]
+          additionalProperties: false
+          properties:
+            prescription: { $ref: '#/components/schemas/Prescription' }
+            message: { type: string, description: Thank-you text to show }
+    PrescriptionsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Prescription' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
