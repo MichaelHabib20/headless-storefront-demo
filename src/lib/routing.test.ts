@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Locale, Target } from '@/sdk';
-import { addressReturn, addressReturnHref, externalHref, isStorefrontPath, resolveTarget, routes, safeReturnPath, signInReturn, switchLocalePath } from './routing';
+import { addressReturn, addressReturnHref, externalHref, isStorefrontPath, loyaltyStepHref, resolveTarget, routes, safeReturnPath, signInReturn, switchLocalePath } from './routing';
 
 describe('resolveTarget', () => {
   const cases: Array<[Target, string]> = [
@@ -88,6 +88,23 @@ describe('account routes', () => {
     expect(routes.prescriptions('ar', 2)).toBe('/ar/prescriptions?page=2');
     expect(routes.addAddress('ar')).toBe('/ar/add-address');
     expect(routes.allProducts('en')).toBe('/en/all-products');
+  });
+
+  it('keeps the old storefront paths of loyalty', () => {
+    expect(routes.points('en')).toBe('/en/account/your-points');
+    expect(routes.rewards('ar')).toBe('/ar/account/vouchers');
+    expect(routes.reward('en', '4')).toBe('/en/account/vouchers/4');
+    expect(routes.pointsHistory('en')).toBe('/en/account/history');
+    expect(routes.pointsHistory('ar', 3)).toBe('/ar/account/history?page=3');
+    expect(routes.freePoints('ar')).toBe('/ar/account/get-free-points');
+    expect(isStorefrontPath('/en/account/vouchers/4/free-delivery')).toBe(true);
+  });
+
+  it('a loyalty blocker links the page that clears it', () => {
+    expect(loyaltyStepHref('en', 'verify_phone')).toBe('/en/verify-phone');
+    expect(loyaltyStepHref('ar', 'add_phone')).toBe('/ar/account/profile');
+    expect(loyaltyStepHref('en', 'add_address')).toBeNull();
+    expect(loyaltyStepHref('en', 'something_new')).toBeNull();
   });
 
   it('signs in and comes back to a local page only', () => {

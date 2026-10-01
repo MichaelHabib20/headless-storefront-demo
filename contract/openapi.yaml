@@ -32,6 +32,7 @@ info:
     `signup_disabled` (403), `feature_disabled` (403), `wrong_password` (403), `pending_approval` (403),
     `email_in_use` (409), `phone_already_verified` (409), `already_rated` (409), `cannot_rate` (409), `invalid_code` (422),
     `code_expired` (422), `too_many_attempts` (429), `provider_error` (502), `sms_unavailable` (503).
+    Account extras: `prescription_blocked` (409), `cannot_redeem` (409, loyalty: `error.message` says why).
     Store: `store_unavailable` (503) on every endpoint while the merchant has switched the store off
     (`error.message` is the merchant's maintenance text).
 
@@ -1526,6 +1527,100 @@ paths:
               schema: { $ref: '#/components/schemas/PrescriptionResponse' }
         default: { $ref: '#/components/responses/Error' }
 
+  /loyalty:
+    get:
+      operationId: getLoyalty
+      summary: "The customer's points and which loyalty pages exist (`sections`). 404 while the store has no loyalty provider v3 supports (El Dokan, iVend)."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoyaltySummaryResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /loyalty/history:
+    get:
+      operationId: getLoyaltyHistory
+      summary: 'Points earned, pending, used and expired, newest first. 404 unless `LoyaltySummary.sections.history`.'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: page, in: query, required: false, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: perPage, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        '200':
+          description: One page of the history
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoyaltyHistoryResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /loyalty/rewards:
+    get:
+      operationId: getLoyaltyRewards
+      summary: 'The rewards the customer can spend points on, with `canRedeem` and the reason when not. 404 unless `LoyaltySummary.sections.rewards`.'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The rewards
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoyaltyRewardsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /loyalty/rewards/{rewardId}:
+    parameters:
+      - { name: rewardId, in: path, required: true, description: LoyaltyReward.id, schema: { type: string, minLength: 1, maxLength: 20 } }
+      - $ref: '#/components/parameters/Locale'
+    get:
+      operationId: getLoyaltyReward
+      summary: One reward (its details page). 404 when it does not exist or is not active.
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: The reward
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoyaltyRewardResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /loyalty/rewards/{rewardId}/redeem:
+    parameters:
+      - { name: rewardId, in: path, required: true, description: LoyaltyReward.id, schema: { type: string, minLength: 1, maxLength: 20 } }
+      - $ref: '#/components/parameters/Locale'
+    post:
+      operationId: redeemLoyaltyReward
+      summary: 'Spend points on a reward (only while `canRedeem`). 409 cannot_redeem otherwise, with the reason in `error.message`. A voucher reward answers its code.'
+      security: [{ bearer: [] }]
+      responses:
+        '201':
+          description: Redeemed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoyaltyRedeemResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /loyalty/referral:
+    get:
+      operationId: getLoyaltyReferral
+      summary: "The customer's referral code and how it works. 404 unless `LoyaltySummary.sections.referral`."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The referral
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoyaltyReferralResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
 components:
   securitySchemes:
     bearer:
@@ -1902,6 +1997,7 @@ components:
             productReviews: { type: boolean, description: Shoppers may write product reviews }
             orderRating: { type: boolean, description: Shoppers may rate delivered orders }
             share: { type: boolean, description: Show the share button on product pages }
+            loyalty: { type: boolean, description: 'The store has a loyalty provider v3 supports (El Dokan, iVend): show the points entry points (absent = off)' }
         # ---- added for the shell phase (optional: older recordings may lack them; absent = feature off)
         marketing: { $ref: '#/components/schemas/Marketing' }
         legal:
@@ -4279,7 +4375,7 @@ components:
       required: [id, label, icon, target, badge]
       additionalProperties: false
       properties:
-        id: { type: string, description: 'home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, area, account, language, more, or a merchant button' }
+        id: { type: string, description: 'home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, points, area, account, language, more, or a merchant button' }
         label: { type: string }
         icon: { type: string, nullable: true, description: An icon name (hint) or an image URL }
         target: { $ref: '#/components/schemas/NullableTarget' }
@@ -4419,3 +4515,181 @@ components:
               type: array
               items: { $ref: '#/components/schemas/Prescription' }
             pagination: { $ref: '#/components/schemas/Pagination' }
+
+    # ---------------------------------------------------------------- account extras: loyalty
+
+    LoyaltyPoints:
+      description: 'A number of points with ready-to-show text (points are not money: no `display`, never drawn as Money). Show `text`; `amount` is for analytics only.'
+      type: object
+      required: [amount, text]
+      additionalProperties: false
+      properties:
+        amount: { type: number }
+        text: { type: string, description: 'e.g. "1,250 points", "+120 points", "-500 points"' }
+    LoyaltyBlocker:
+      description: 'What the customer must do before redeeming: `add_phone` (the profile page) or `verify_phone` (the phone verification page).'
+      type: object
+      required: [code, message]
+      additionalProperties: false
+      properties:
+        code: { type: string, enum: [add_phone, verify_phone] }
+        message: { type: string }
+    LoyaltySummary:
+      type: object
+      required: [provider, title, description, points, value, storeCredit, tier, pending, expiring, sections]
+      additionalProperties: false
+      properties:
+        provider: { type: string, enum: [elDokan, ivend] }
+        title: { type: string }
+        description:
+          description: Merchant text about the programme
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/RichText' }]
+        points: { $ref: '#/components/schemas/LoyaltyPoints' }
+        value:
+          description: 'What the points are worth at checkout (iVend); null when points are spent on rewards instead'
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Money' }]
+        storeCredit:
+          description: Store credit (iVend); null when none
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Money' }]
+        tier:
+          description: 'Gold membership (El Dokan, when the store has a Gold level); null otherwise'
+          type: object
+          nullable: true
+          required: [gold, label, message]
+          additionalProperties: false
+          properties:
+            gold: { type: boolean }
+            label: { type: string }
+            message: { type: string, nullable: true, description: How to reach Gold (null when Gold) }
+        pending: { type: string, nullable: true, description: 'Points earned but not usable yet, as a sentence' }
+        expiring: { type: string, nullable: true, description: 'Points that expire at the next expiry date, as a sentence' }
+        sections:
+          description: Which loyalty pages exist for this store
+          type: object
+          required: [rewards, history, referral]
+          additionalProperties: false
+          properties:
+            rewards: { type: boolean }
+            history: { type: boolean }
+            referral: { type: boolean }
+    LoyaltySummaryResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/LoyaltySummary' }
+    LoyaltyReward:
+      type: object
+      required: [id, name, description, image, kind, benefit, cost, badge, canRedeem, reason]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        image: { type: string, nullable: true }
+        kind: { type: string, enum: [voucher, gift], description: 'voucher = a discount code is given; gift = the store hands over a gift' }
+        benefit: { type: string, nullable: true, description: 'What a voucher gives, e.g. "10% off, up to 50 EGP"' }
+        cost: { $ref: '#/components/schemas/LoyaltyPoints' }
+        badge: { type: string, nullable: true, description: 'e.g. "Gold members"' }
+        canRedeem: { type: boolean }
+        reason: { type: string, nullable: true, description: Why it cannot be redeemed now (null when it can) }
+    LoyaltyRewardsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [points, blocker, items]
+          additionalProperties: false
+          properties:
+            points: { $ref: '#/components/schemas/LoyaltyPoints' }
+            blocker:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/LoyaltyBlocker' }]
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/LoyaltyReward' }
+    LoyaltyRewardResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [points, blocker, reward]
+          additionalProperties: false
+          properties:
+            points: { $ref: '#/components/schemas/LoyaltyPoints' }
+            blocker:
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/LoyaltyBlocker' }]
+            reward: { $ref: '#/components/schemas/LoyaltyReward' }
+    LoyaltyRedeemResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [redemption, points]
+          additionalProperties: false
+          properties:
+            redemption:
+              type: object
+              required: [kind, code, expiresAt, message]
+              additionalProperties: false
+              properties:
+                kind: { type: string, enum: [voucher, gift] }
+                code: { type: string, nullable: true, description: The voucher code to use at checkout (null for a gift) }
+                expiresAt: { type: string, format: date-time, nullable: true }
+                message: { type: string }
+            points: { $ref: '#/components/schemas/LoyaltyPoints' }
+    LoyaltyEntry:
+      type: object
+      required: [id, kind, title, detail, points, date, orderId]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [earned, referral, pending, used, expired] }
+        title: { type: string }
+        detail: { type: string, nullable: true }
+        points: { $ref: '#/components/schemas/LoyaltyPoints' }
+        date: { type: string, format: date-time }
+        orderId: { type: string, nullable: true, description: 'The `Order.id` the points came from (link it)' }
+    LoyaltyHistoryResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/LoyaltyEntry' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+    LoyaltyReferral:
+      type: object
+      required: [code, title, message, shareText, points]
+      additionalProperties: false
+      properties:
+        code: { type: string, nullable: true, description: "The customer's code (null = none yet)" }
+        title: { type: string }
+        message: { type: string, description: How it works }
+        shareText: { type: string, nullable: true, description: Ready text to share (null without a code) }
+        points:
+          description: Points each side gets; null when the store gives none
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/LoyaltyPoints' }]
+    LoyaltyReferralResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/LoyaltyReferral' }

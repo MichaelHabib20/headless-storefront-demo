@@ -82,6 +82,8 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   store_unavailable: 'store_unavailable',
   // account extras: a prescription cannot be sent yet (the form's blockers)
   prescription_blocked: 'prescription_blocked',
+  // account extras: a reward cannot be redeemed now (the message says why)
+  cannot_redeem: 'cannot_redeem',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {

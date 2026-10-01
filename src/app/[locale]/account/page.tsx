@@ -6,6 +6,7 @@ import { AuthPage } from '@/components/auth/AuthPage';
 import { signOutAction } from '@/lib/auth.actions';
 import { loadProfile } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
+import { loyaltyOn } from '@/lib/loyalty.server';
 import { routes } from '@/lib/routing';
 
 export const dynamic = 'force-dynamic';
@@ -15,7 +16,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = translator(locale);
-  const result = await loadProfile(locale);
+  const [result, loyalty] = await Promise.all([loadProfile(locale), loyaltyOn(locale)]);
   if (result.status === 'signed-out') redirect(routes.signIn(locale));
 
   if (result.status !== 'ok') {
@@ -43,6 +44,11 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           <li>
             <Link href={routes.notifications(locale)}>{t('accountNotificationsLink')}</Link>
           </li>
+          {loyalty && (
+            <li>
+              <Link href={routes.points(locale)}>{t('accountPointsLink')}</Link>
+            </li>
+          )}
           <li>
             <Link href={routes.changePassword(locale)}>{t('accountPasswordLink')}</Link>
           </li>
