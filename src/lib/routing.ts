@@ -58,9 +58,15 @@ export const routes = {
   completeProfile: (locale: Locale) => `/${locale}/account/complete-profile`,
   profile: (locale: Locale) => `/${locale}/account/profile`,
   changePassword: (locale: Locale) => `/${locale}/account/password`,
+  // loyalty (the old storefront's paths): points, rewards ("vouchers"), one reward, history, referral
+  points: (locale: Locale) => `/${locale}/account/your-points`,
+  rewards: (locale: Locale) => `/${locale}/account/vouchers`,
+  /** One reward; old links with a name segment (`/account/vouchers/:id/:name`) open the same page. */
+  reward: (locale: Locale, id: string) => `/${locale}/account/vouchers/${encode(id)}`,
+  pointsHistory: (locale: Locale, page?: number) => withQuery(`/${locale}/account/history`, { page: page && page > 1 ? page : null }),
+  freePoints: (locale: Locale) => `/${locale}/account/get-free-points`,
 } as const;
 
-/** The page a `Session.next` / `Me.next` value sends the shopper to, or null when nothing is pending. */
 /** The page that clears a prescription blocker (`PrescriptionForm.blockers[].code`); null for a code this storefront does not know. */
 export function prescriptionStepHref(locale: Locale, code: string): string | null {
   switch (code) {
@@ -75,6 +81,12 @@ export function prescriptionStepHref(locale: Locale, code: string): string | nul
   }
 }
 
+/** The page that clears a loyalty blocker (`LoyaltyBlocker.code`); null for a code this storefront does not know. */
+export function loyaltyStepHref(locale: Locale, code: string): string | null {
+  return code === 'add_phone' || code === 'verify_phone' ? prescriptionStepHref(locale, code) : null;
+}
+
+/** The page a `Session.next` / `Me.next` value sends the shopper to, or null when nothing is pending. */
 export function nextStepHref(locale: Locale, next: 'verify_phone' | 'waiting_approval' | 'complete_profile' | null | undefined): string | null {
   switch (next) {
     case 'verify_phone':

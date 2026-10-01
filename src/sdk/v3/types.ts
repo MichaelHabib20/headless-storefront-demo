@@ -184,3 +184,15 @@ export type PrescriptionInput = Schemas['PrescriptionRequest'];
 export type Prescription = Schemas['Prescription'];
 export type PrescriptionsPage = Schemas['PrescriptionsResponse']['data'];
 export type PrescriptionSent = Schemas['PrescriptionSentResponse']['data'];
+// ---- account extras: loyalty (El Dokan, iVend)
+export type LoyaltyPoints = Schemas['LoyaltyPoints'];
+export type LoyaltyBlocker = Schemas['LoyaltyBlocker'];
+export type LoyaltySummary = Schemas['LoyaltySummary'];
+export type LoyaltyReward = Schemas['LoyaltyReward'];
+export type LoyaltyRewards = Schemas['LoyaltyRewardsResponse']['data'];
+export type LoyaltyRewardPage = Schemas['LoyaltyRewardResponse']['data'];
+export type LoyaltyRedeemed = Schemas['LoyaltyRedeemResponse']['data'];
+export type LoyaltyRedemption = LoyaltyRedeemed['redemption'];
+export type LoyaltyEntry = Schemas['LoyaltyEntry'];
+export type LoyaltyHistoryPage = Schemas['LoyaltyHistoryResponse']['data'];
+export type LoyaltyReferral = Schemas['LoyaltyReferral'];

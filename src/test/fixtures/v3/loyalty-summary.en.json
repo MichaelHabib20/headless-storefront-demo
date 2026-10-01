@@ -1,0 +1,27 @@
+{
+ "data": {
+  "provider": "elDokan",
+  "title": "Your points",
+  "description": {
+   "html": "<p>Earn points with every delivered order and spend them on rewards.</p>"
+  },
+  "value": null,
+  "storeCredit": null,
+  "tier": {
+   "gold": false,
+   "label": "Member",
+   "message": "Spend 300 EGP more to become a Gold member."
+  },
+  "pending": "80 points will be ready to use soon.",
+  "expiring": "300 points expire on 31 Dec 2026.",
+  "points": {
+   "amount": 1000,
+   "text": "1,000 points"
+  },
+  "sections": {
+   "rewards": true,
+   "history": true,
+   "referral": true
+  }
+ }
+}

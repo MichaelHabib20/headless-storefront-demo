@@ -1,0 +1,12 @@
+{
+ "data": {
+  "code": "MONA50",
+  "title": "Get free points",
+  "message": "Share your code with friends. They enter it when they sign up. When their order is delivered, you both get 50 points.",
+  "shareText": "Use my code MONA50 at Seif Pharmacies.",
+  "points": {
+   "amount": 50,
+   "text": "50 points"
+  }
+ }
+}

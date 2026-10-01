@@ -18,3 +18,5 @@ export { getSiteSeo, getSitemap, trackEvent } from './v3/seo';
 export { getBranches, getForm, getLandingPage, getPage, sendContactMessage, setArea, submitForm } from './v3/content';
 // account extras: prescriptions
 export { cancelPrescription, getPrescriptionCancellationReasons, getPrescriptionForm, getPrescriptions, sendPrescription } from './v3/prescriptions';
+// account extras: loyalty (El Dokan, iVend)
+export { getLoyalty, getLoyaltyHistory, getLoyaltyReferral, getLoyaltyReward, getLoyaltyRewards, redeemLoyaltyReward } from './v3/loyalty';

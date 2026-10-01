@@ -24,6 +24,7 @@ const OWN_PAGES: Partial<Record<string, (locale: Locale) => string>> = {
   notifications: routes.notifications,
   account: routes.account,
   prescriptions: (locale: Locale) => routes.prescriptions(locale),
+  points: routes.points,
 };
 
 export function navAction(item: MobileNavItem, locale: Locale): NavAction {

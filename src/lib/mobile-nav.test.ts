@@ -16,6 +16,7 @@ describe('bottom nav actions', () => {
     expect(navAction(item('cart'), 'en')).toEqual({ kind: 'link', link: { href: '/en/cart', external: false } });
     expect(navAction(item('categories'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/categories', external: false } });
     expect(navAction(item('orders'), 'en')).toMatchObject({ link: { href: '/en/account/orders' } });
+    expect(navAction(item('points'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/account/your-points', external: false } });
     expect(navAction(item('more'), 'en')).toEqual({ kind: 'more' });
     expect(navAction(item('area'), 'en')).toEqual({ kind: 'area' });
     expect(navAction(item('language'), 'en')).toEqual({ kind: 'language' });

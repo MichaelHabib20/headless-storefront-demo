@@ -44,6 +44,7 @@ export type ApiErrorKind =
   | 'wrong_password'
   // account extras (v3 error codes, same names)
   | 'prescription_blocked'
+  | 'cannot_redeem'
   | 'unknown';
 
 export class ApiError extends Error {

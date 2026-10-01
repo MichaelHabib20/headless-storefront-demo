@@ -1,0 +1,27 @@
+{
+ "data": {
+  "provider": "elDokan",
+  "title": "نقاطي",
+  "description": {
+   "html": "<p>اكسب نقاطاً مع كل طلب يتم توصيله واستبدلها بمكافآت.</p>"
+  },
+  "value": null,
+  "storeCredit": null,
+  "tier": {
+   "gold": false,
+   "label": "عضو",
+   "message": "أنفق 300 جنية إضافية لتصبح عضواً ذهبياً."
+  },
+  "pending": "ستكون 80 نقطة جاهزة للاستخدام قريباً.",
+  "expiring": "تنتهي صلاحية 300 نقطة في 31 ديسمبر 2026.",
+  "points": {
+   "amount": 1000,
+   "text": "1,000 نقطة"
+  },
+  "sections": {
+   "rewards": true,
+   "history": true,
+   "referral": true
+  }
+ }
+}

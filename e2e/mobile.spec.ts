@@ -51,6 +51,26 @@ test.describe('mobile', () => {
     }
   });
 
+  test('loyalty on a phone: the bottom nav opens the points page, both languages fit', async ({ page, context }) => {
+    test.skip(live, 'needs the mock API');
+    await page.request.post(`${MOCK_API}/__reset`);
+    await page.request.post(`${MOCK_API}/__mode`, { data: { loyalty: { provider: 'elDokan' } } });
+    await signInAsCustomer(context);
+    await page.goto('/en');
+    await page.getByTestId('mobile-bottom-nav').getByRole('button', { name: /More/ }).click();
+    const item = page.getByTestId('more-sheet').getByRole('link', { name: /Points/ });
+    await expect(item).toHaveAttribute('href', '/en/account/your-points');
+    await item.click();
+    await expect(page).toHaveURL(/\/en\/account\/your-points$/);
+    for (const locale of ['en', 'ar']) {
+      for (const path of ['your-points', 'vouchers', 'vouchers/3', 'history', 'get-free-points']) {
+        await page.goto(`/${locale}/account/${path}`);
+        await expect(page.locator('h1')).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${locale} ${path}`).toBe(true);
+      }
+    }
+  });
+
   test('Arabic fits the screen too', async ({ page }) => {
     await page.goto('/ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

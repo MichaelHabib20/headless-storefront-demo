@@ -1291,6 +1291,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/loyalty": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's points and which loyalty pages exist (`sections`). 404 while the store has no loyalty provider v3 supports (El Dokan, iVend). */
+        get: operations["getLoyalty"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Points earned, pending, used and expired, newest first. 404 unless `LoyaltySummary.sections.history`. */
+        get: operations["getLoyaltyHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/rewards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The rewards the customer can spend points on, with `canRedeem` and the reason when not. 404 unless `LoyaltySummary.sections.rewards`. */
+        get: operations["getLoyaltyRewards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/rewards/{rewardId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description LoyaltyReward.id */
+                rewardId: string;
+            };
+            cookie?: never;
+        };
+        /** One reward (its details page). 404 when it does not exist or is not active. */
+        get: operations["getLoyaltyReward"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/rewards/{rewardId}/redeem": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description LoyaltyReward.id */
+                rewardId: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Spend points on a reward (only while `canRedeem`). 409 cannot_redeem otherwise, with the reason in `error.message`. A voucher reward answers its code. */
+        post: operations["redeemLoyaltyReward"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/loyalty/referral": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's referral code and how it works. 404 unless `LoyaltySummary.sections.referral`. */
+        get: operations["getLoyaltyReferral"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1509,6 +1621,8 @@ export interface components {
                 orderRating?: boolean;
                 /** @description Show the share button on product pages */
                 share?: boolean;
+                /** @description The store has a loyalty provider v3 supports (El Dokan, iVend): show the points entry points (absent = off) */
+                loyalty?: boolean;
             } & {
                 [key: string]: boolean;
             };
@@ -3007,7 +3121,7 @@ export interface components {
             orderId?: string | null;
         };
         MobileNavItem: {
-            /** @description home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, area, account, language, more, or a merchant button */
+            /** @description home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, points, area, account, language, more, or a merchant button */
             id: string;
             label: string;
             /** @description An icon name (hint) or an image URL */
@@ -3105,6 +3219,129 @@ export interface components {
                 items: components["schemas"]["Prescription"][];
                 pagination: components["schemas"]["Pagination"];
             };
+        };
+        /** @description A number of points with ready-to-show text (points are not money: no `display`, never drawn as Money). Show `text`; `amount` is for analytics only. */
+        LoyaltyPoints: {
+            amount: number;
+            /** @description e.g. "1,250 points", "+120 points", "-500 points" */
+            text: string;
+        };
+        /** @description What the customer must do before redeeming: `add_phone` (the profile page) or `verify_phone` (the phone verification page). */
+        LoyaltyBlocker: {
+            /** @enum {string} */
+            code: "add_phone" | "verify_phone";
+            message: string;
+        };
+        LoyaltySummary: {
+            /** @enum {string} */
+            provider: "elDokan" | "ivend";
+            title: string;
+            /** @description Merchant text about the programme */
+            description: components["schemas"]["RichText"] | null;
+            points: components["schemas"]["LoyaltyPoints"];
+            /** @description What the points are worth at checkout (iVend); null when points are spent on rewards instead */
+            value: components["schemas"]["Money"] | null;
+            /** @description Store credit (iVend); null when none */
+            storeCredit: components["schemas"]["Money"] | null;
+            /** @description Gold membership (El Dokan, when the store has a Gold level); null otherwise */
+            tier: {
+                gold: boolean;
+                label: string;
+                /** @description How to reach Gold (null when Gold) */
+                message: string | null;
+            } | null;
+            /** @description Points earned but not usable yet, as a sentence */
+            pending: string | null;
+            /** @description Points that expire at the next expiry date, as a sentence */
+            expiring: string | null;
+            /** @description Which loyalty pages exist for this store */
+            sections: {
+                rewards: boolean;
+                history: boolean;
+                referral: boolean;
+            };
+        };
+        LoyaltySummaryResponse: {
+            data: components["schemas"]["LoyaltySummary"];
+        };
+        LoyaltyReward: {
+            id: string;
+            name: string;
+            description: string | null;
+            image: string | null;
+            /**
+             * @description voucher = a discount code is given; gift = the store hands over a gift
+             * @enum {string}
+             */
+            kind: "voucher" | "gift";
+            /** @description What a voucher gives, e.g. "10% off, up to 50 EGP" */
+            benefit: string | null;
+            cost: components["schemas"]["LoyaltyPoints"];
+            /** @description e.g. "Gold members" */
+            badge: string | null;
+            canRedeem: boolean;
+            /** @description Why it cannot be redeemed now (null when it can) */
+            reason: string | null;
+        };
+        LoyaltyRewardsResponse: {
+            data: {
+                points: components["schemas"]["LoyaltyPoints"];
+                blocker: components["schemas"]["LoyaltyBlocker"] | null;
+                items: components["schemas"]["LoyaltyReward"][];
+            };
+        };
+        LoyaltyRewardResponse: {
+            data: {
+                points: components["schemas"]["LoyaltyPoints"];
+                blocker: components["schemas"]["LoyaltyBlocker"] | null;
+                reward: components["schemas"]["LoyaltyReward"];
+            };
+        };
+        LoyaltyRedeemResponse: {
+            data: {
+                redemption: {
+                    /** @enum {string} */
+                    kind: "voucher" | "gift";
+                    /** @description The voucher code to use at checkout (null for a gift) */
+                    code: string | null;
+                    /** Format: date-time */
+                    expiresAt: string | null;
+                    message: string;
+                };
+                points: components["schemas"]["LoyaltyPoints"];
+            };
+        };
+        LoyaltyEntry: {
+            id: string;
+            /** @enum {string} */
+            kind: "earned" | "referral" | "pending" | "used" | "expired";
+            title: string;
+            detail: string | null;
+            points: components["schemas"]["LoyaltyPoints"];
+            /** Format: date-time */
+            date: string;
+            /** @description The `Order.id` the points came from (link it) */
+            orderId: string | null;
+        };
+        LoyaltyHistoryResponse: {
+            data: {
+                items: components["schemas"]["LoyaltyEntry"][];
+                pagination: components["schemas"]["Pagination"];
+            };
+        };
+        LoyaltyReferral: {
+            /** @description The customer's code (null = none yet) */
+            code: string | null;
+            title: string;
+            /** @description How it works */
+            message: string;
+            /** @description Ready text to share (null without a code) */
+            shareText: string | null;
+            /** @description Points each side gets; null when the store gives none */
+            points: components["schemas"]["LoyaltyPoints"] | null;
+        };
+        LoyaltyReferralResponse: {
+            data: components["schemas"]["LoyaltyReferral"];
         };
     };
     responses: {
@@ -5235,6 +5472,152 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PrescriptionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLoyalty: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltySummaryResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLoyaltyHistory: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: number;
+                perPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One page of the history */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyHistoryResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLoyaltyRewards: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The rewards */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyRewardsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLoyaltyReward: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description LoyaltyReward.id */
+                rewardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The reward */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyRewardResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    redeemLoyaltyReward: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description LoyaltyReward.id */
+                rewardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redeemed */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyRedeemResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLoyaltyReferral: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The referral */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoyaltyReferralResponse"];
                 };
             };
             default: components["responses"]["Error"];

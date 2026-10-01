@@ -1,0 +1,24 @@
+{
+ "data": {
+  "points": {
+   "amount": 1000,
+   "text": "1,000 points"
+  },
+  "blocker": null,
+  "reward": {
+   "id": "3",
+   "name": "50 EGP off",
+   "description": "On any order.",
+   "image": "https://cdn.supercommerce.io/supercommerce-demo/uploads/reward-voucher.png",
+   "kind": "voucher",
+   "benefit": "50 EGP off",
+   "cost": {
+    "amount": 500,
+    "text": "500 points"
+   },
+   "badge": null,
+   "canRedeem": true,
+   "reason": null
+  }
+ }
+}

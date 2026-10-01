@@ -363,4 +363,22 @@ describe('seo + marketing rules', () => {
     expect(rulesHit('src/components/prescriptions/X.tsx', '<CancelButton canCancel={item.actions.canCancel} />')).not.toContain('prescription-rules-from-api');
     expect(rulesHit('src/app/[locale]/prescriptions/page.tsx', "{item.status.code === 'in_progress' && <Hint />}")).toContain('prescription-rules-from-api');
   });
+
+  it('loyalty: the backend decides points, rewards and pages', () => {
+    const file = 'src/components/loyalty/X.tsx';
+    expect(rulesHit(file, '{summary.points.amount >= reward.cost.amount && <Redeem />}')).toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, 'const canRedeem = balance > cost && me.customer.phoneVerified;')).toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, "{summary.provider === 'elDokan' && <RewardsLink />}")).toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, "{'ivend' !== summary.provider && <History />}")).toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, '{reward.is_gold && !customer.isGold && <GoldOnly />}')).toContain('loyalty-rules-from-api');
+    expect(rulesHit('src/app/[locale]/account/vouchers/page.tsx', 'const points = rewards.points.amount;')).toContain('loyalty-rules-from-api');
+    expect(rulesHit('src/lib/loyalty.server.ts', "if (layout.LOYALTY_PROVIDER) return true;")).toContain('loyalty-rules-from-api');
+    // reading the API's answers is fine
+    expect(rulesHit(file, '<RedeemReward canRedeem={reward.canRedeem} />')).not.toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, '{reward.reason && <p>{reward.reason}</p>}')).not.toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, '{sections?.rewards && <Link />}')).not.toContain('loyalty-rules-from-api');
+    expect(rulesHit(file, '<section data-provider={summary.provider}>')).not.toContain('loyalty-rules-from-api');
+    // other areas are not concerned
+    expect(rulesHit('src/components/cart/X.tsx', 'const total = line.total.amount;')).not.toContain('loyalty-rules-from-api');
+  });
 });
