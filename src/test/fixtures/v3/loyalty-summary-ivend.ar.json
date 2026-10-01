@@ -1,0 +1,31 @@
+{
+ "data": {
+  "provider": "ivend",
+  "title": "نقاطي",
+  "description": {
+   "html": "<p>اكسب نقاطاً مع كل طلب يتم توصيله واستبدلها بمكافآت.</p>"
+  },
+  "value": {
+   "amount": 100,
+   "currency": "EGP",
+   "display": "100 جنية"
+  },
+  "storeCredit": {
+   "amount": 25.5,
+   "currency": "EGP",
+   "display": "25.5 جنية"
+  },
+  "tier": null,
+  "pending": null,
+  "expiring": null,
+  "points": {
+   "amount": 1500,
+   "text": "1,500 نقطة"
+  },
+  "sections": {
+   "rewards": false,
+   "history": false,
+   "referral": false
+  }
+ }
+}

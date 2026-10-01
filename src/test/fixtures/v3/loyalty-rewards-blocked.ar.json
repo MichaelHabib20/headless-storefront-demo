@@ -1,0 +1,74 @@
+{
+ "data": {
+  "points": {
+   "amount": 500,
+   "text": "500 نقطة"
+  },
+  "blocker": {
+   "code": "verify_phone",
+   "message": "وثّق رقم هاتفك لاستبدال المكافآت."
+  },
+  "items": [
+   {
+    "id": "3",
+    "name": "خصم 50 جنية",
+    "description": "على أي طلب.",
+    "image": "https://cdn.supercommerce.io/supercommerce-demo/uploads/reward-voucher.png",
+    "kind": "voucher",
+    "benefit": "خصم 50 جنية",
+    "cost": {
+     "amount": 500,
+     "text": "500 نقطة"
+    },
+    "badge": null,
+    "canRedeem": false,
+    "reason": "وثّق رقم هاتفك لاستبدال المكافآت."
+   },
+   {
+    "id": "4",
+    "name": "خصم 10%",
+    "description": null,
+    "image": null,
+    "kind": "voucher",
+    "benefit": "خصم 10%، بحد أقصى 50 جنية",
+    "cost": {
+     "amount": 800,
+     "text": "800 نقطة"
+    },
+    "badge": null,
+    "canRedeem": false,
+    "reason": "تحتاج إلى 300 نقطة إضافية."
+   },
+   {
+    "id": "5",
+    "name": "توصيل مجاني",
+    "description": "التوصيل القادم علينا.",
+    "image": null,
+    "kind": "voucher",
+    "benefit": "توصيل مجاني",
+    "cost": {
+     "amount": 300,
+     "text": "300 نقطة"
+    },
+    "badge": "للأعضاء الذهبيين",
+    "canRedeem": false,
+    "reason": "للأعضاء الذهبيين فقط."
+   },
+   {
+    "id": "6",
+    "name": "حقيبة قماش",
+    "description": "حقيبة صيدليات سيف تُسلّم مع طلبك القادم.",
+    "image": null,
+    "kind": "gift",
+    "benefit": null,
+    "cost": {
+     "amount": 2000,
+     "text": "2,000 نقطة"
+    },
+    "badge": null,
+    "canRedeem": false,
+    "reason": "تحتاج إلى 1,500 نقطة إضافية."
+   }
+  ]
+ }
+}

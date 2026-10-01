@@ -1,0 +1,24 @@
+{
+ "data": {
+  "points": {
+   "amount": 1000,
+   "text": "1,000 نقطة"
+  },
+  "blocker": null,
+  "reward": {
+   "id": "3",
+   "name": "خصم 50 جنية",
+   "description": "على أي طلب.",
+   "image": "https://cdn.supercommerce.io/supercommerce-demo/uploads/reward-voucher.png",
+   "kind": "voucher",
+   "benefit": "خصم 50 جنية",
+   "cost": {
+    "amount": 500,
+    "text": "500 نقطة"
+   },
+   "badge": null,
+   "canRedeem": true,
+   "reason": null
+  }
+ }
+}

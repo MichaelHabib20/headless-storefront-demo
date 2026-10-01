@@ -100,6 +100,15 @@ const RESPONSE_SCHEMA = {
   'prescription-form': 'PrescriptionFormResponse',
   'prescription-form-blocked': 'PrescriptionFormResponse',
   prescriptions: 'PrescriptionsResponse',
+  // account extras: loyalty (scripts/build-loyalty-fixtures.mjs)
+  'loyalty-summary': 'LoyaltySummaryResponse',
+  'loyalty-summary-ivend': 'LoyaltySummaryResponse',
+  'loyalty-rewards': 'LoyaltyRewardsResponse',
+  'loyalty-rewards-blocked': 'LoyaltyRewardsResponse',
+  'loyalty-reward': 'LoyaltyRewardResponse',
+  'loyalty-redeemed': 'LoyaltyRedeemResponse',
+  'loyalty-history': 'LoyaltyHistoryResponse',
+  'loyalty-referral': 'LoyaltyReferralResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

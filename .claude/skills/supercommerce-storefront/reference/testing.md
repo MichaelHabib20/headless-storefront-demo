@@ -60,6 +60,7 @@ components. Never run it to make a check pass. The lock itself is tested in
 | `content.spec.ts` | CMS pages EN/AR (RichText), contact form (API validation, sent), branches + map links, landing page, merchant form (sign-in prompt, validation, upload, thank you), 404 |
 | `shell.spec.ts` | Mini cart after add, bottom nav + more sheet + badges at 360 px (no overlap), app banner dismiss, top/floating banners, store closed, maintenance 503, area chooser, legal links, cookie policy link |
 | `prescriptions.spec.ts` | Prescriptions: sign-in prompt (no guest), send with photos (422 first), cancel with a reason, blockers + the add-address step, Arabic, 404 when off |
+| `loyalty.spec.ts` | Loyalty: 404 when off (staging), sign-in prompt (no guest), El Dokan points / rewards / reasons / redeem, phone blocker, old reward links, history (Arabic), referral on/off, iVend summary only |
 | `shopper-live.spec.ts` | The same flows against real staging as a guest and as the test customer (`E2E_LIVE=1`) |
 | `auth.spec.ts` | Sign in (phone, wrong password, Arabic, return page, guest cart merge, OTP tab + social buttons when configured), sign up (form from the API, 422 fields, verify phone after sign-up, closed), sign out revokes, password reset (SMS, e-mail link, none), waiting for approval gate, profile edit (e-mail confirmation, phone re-verification), change password, guest → sign-in prompt |
 

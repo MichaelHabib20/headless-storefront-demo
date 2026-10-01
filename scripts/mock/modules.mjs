@@ -25,9 +25,10 @@ import { createSeoModule } from './seo.mjs';
 import { createContentModule } from './content.mjs';
 import { createShellModule } from './shell.mjs';
 import { createPrescriptionsModule } from './prescriptions.mjs';
+import { createLoyaltyModule } from './loyalty.mjs';
 
 // auth first: a revoked token must answer 401 on every path
-const FACTORIES = [createAuthModule, createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule, createSeoModule, createContentModule, createShellModule, createPrescriptionsModule];
+const FACTORIES = [createAuthModule, createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule, createSeoModule, createContentModule, createShellModule, createPrescriptionsModule, createLoyaltyModule];
 
 export function createModules(shopper) {
   return FACTORIES.map((create) => create(shopper));

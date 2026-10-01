@@ -1,0 +1,31 @@
+{
+ "data": {
+  "provider": "ivend",
+  "title": "Your points",
+  "description": {
+   "html": "<p>Earn points with every delivered order and spend them on rewards.</p>"
+  },
+  "value": {
+   "amount": 100,
+   "currency": "EGP",
+   "display": "100 EGP"
+  },
+  "storeCredit": {
+   "amount": 25.5,
+   "currency": "EGP",
+   "display": "25.5 EGP"
+  },
+  "tier": null,
+  "pending": null,
+  "expiring": null,
+  "points": {
+   "amount": 1500,
+   "text": "1,500 points"
+  },
+  "sections": {
+   "rewards": false,
+   "history": false,
+   "referral": false
+  }
+ }
+}

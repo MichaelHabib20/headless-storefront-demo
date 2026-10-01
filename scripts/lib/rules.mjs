@@ -358,6 +358,24 @@ export const RULES = [
     message:
       'Prescription rules come from the API: send only when form.canSend (show form.blockers[].message and the page prescriptionStepHref() gives), draw form.fields with <FormFields>, cancel only when item.actions.canCancel. Never derive them from the status, the addresses or the phone.',
   },
+  {
+    // Points, what a reward costs, whether it can be redeemed and why not, and which loyalty pages exist
+    // are the backend's answers (LoyaltyPoints.text, LoyaltyReward.canRedeem / reason, LoyaltyBlocker,
+    // LoyaltySummary.sections): the storefront never counts points or branches on the provider.
+    id: 'loyalty-rules-from-api',
+    applies: (f) => !isTest(f) && /^src\/(components\/loyalty\/|app\/\[locale\]\/account\/(your-points|vouchers|history|get-free-points)\/|lib\/loyalty\.server\.ts$)/.test(f),
+    patterns: [
+      // `amount` is for analytics only: no comparing or adding points
+      /\.amount\b/,
+      /\bcanRedeem\s*=(?!=)(?!\s*\{?\s*[\w.?]*reward\??\.)/,
+      // which pages exist: `sections`, never the provider's name
+      /\bprovider\s*[!=]==?\s*['"]|['"](elDokan|ivend)['"]\s*[!=]==?/,
+      // the legacy switches and rules, and the customer's phone (the API sends `blocker`)
+      /\b(LOYALTY_PROVIDER|DISABLE_REFERRAL_CODE|LOYALTY_EX_RATE|egp_gold|refer_points|point_cost|is_gold|isGold|phoneVerified|phone_verified)\b/,
+    ],
+    message:
+      'Loyalty rules come from the API: show points.text and reward.cost.text as they are, redeem only when reward.canRedeem (else show reward.reason), show blocker.message with the page loyaltyStepHref() gives, and link the pages LoyaltySummary.sections lists. Never count points, compare amounts, check the phone or branch on the provider.',
+  },
 ];
 
 /**

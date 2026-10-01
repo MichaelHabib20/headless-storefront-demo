@@ -96,6 +96,7 @@ them and **blocks the deploy** when one is broken.
 | Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
 | Prescriptions (send, list, cancel), the add-address step | [reference/prescriptions.md](reference/prescriptions.md) |
+| Loyalty points, rewards and redeeming, points history, referral (El Dokan, iVend) | [reference/loyalty.md](reference/loyalty.md) |
 | Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 | Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |

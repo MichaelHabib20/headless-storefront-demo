@@ -1,0 +1,74 @@
+{
+ "data": {
+  "points": {
+   "amount": 500,
+   "text": "500 points"
+  },
+  "blocker": {
+   "code": "verify_phone",
+   "message": "Verify your phone number to redeem rewards."
+  },
+  "items": [
+   {
+    "id": "3",
+    "name": "50 EGP off",
+    "description": "On any order.",
+    "image": "https://cdn.supercommerce.io/supercommerce-demo/uploads/reward-voucher.png",
+    "kind": "voucher",
+    "benefit": "50 EGP off",
+    "cost": {
+     "amount": 500,
+     "text": "500 points"
+    },
+    "badge": null,
+    "canRedeem": false,
+    "reason": "Verify your phone number to redeem rewards."
+   },
+   {
+    "id": "4",
+    "name": "10% off",
+    "description": null,
+    "image": null,
+    "kind": "voucher",
+    "benefit": "10% off, up to 50 EGP",
+    "cost": {
+     "amount": 800,
+     "text": "800 points"
+    },
+    "badge": null,
+    "canRedeem": false,
+    "reason": "You need 300 points more."
+   },
+   {
+    "id": "5",
+    "name": "Free delivery",
+    "description": "Your next delivery is on us.",
+    "image": null,
+    "kind": "voucher",
+    "benefit": "Free delivery",
+    "cost": {
+     "amount": 300,
+     "text": "300 points"
+    },
+    "badge": "Gold members",
+    "canRedeem": false,
+    "reason": "For Gold members only."
+   },
+   {
+    "id": "6",
+    "name": "Tote bag",
+    "description": "A Seif Pharmacies tote bag, handed over with your next order.",
+    "image": null,
+    "kind": "gift",
+    "benefit": null,
+    "cost": {
+     "amount": 2000,
+     "text": "2,000 points"
+    },
+    "badge": null,
+    "canRedeem": false,
+    "reason": "You need 1,500 points more."
+   }
+  ]
+ }
+}
