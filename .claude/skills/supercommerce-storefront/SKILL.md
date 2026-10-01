@@ -63,6 +63,7 @@ them and **blocks the deploy** when one is broken.
 | `src/components/product/ProductCard.tsx` | Product card |
 | `src/components/notifications/` | Notifications page blocks, helpers, local pagination |
 | `src/components/account/` | Address book, address form (drawn from the API), orders list/details, cancel dialog, reorder notice |
+| `src/components/auth/` + `src/app/[locale]/{sign-in,sign-up,forgot-password,reset-password,verify-phone,verify-email,waiting-approval}/`, `account/{profile,password,complete-profile}/` | Auth pages drawn from `AuthSettings`, `AuthFields` (forms from the API), `SocialButtons`, `NextStepGate` (`Me.next` banners / approval gate), `layout/AccountMenu` |
 | `src/app/[locale]/layout.tsx` | Loads `layout`, renders chrome for every page |
 | `src/app/[locale]/page.tsx` | The home page: composition of home blocks |
 | `src/app/[locale]/<area>/page.tsx` + `actions.ts` | Shopper pages (reads) and their server actions (writes) |
@@ -83,7 +84,8 @@ them and **blocks the deploy** when one is broken.
 | Header, top bar, menu, footer, softbar, WhatsApp, cookie notice | [reference/layout.md](reference/layout.md) |
 | Links, URLs, new routes | [reference/targets.md](reference/targets.md) |
 | What store settings exist and what the UI must do with them | [reference/layout.md#features](reference/layout.md) |
-| Sign in / sign up | [reference/auth.md](reference/auth.md) |
+| Sign in / up / out, social and OTP sign-in, password reset, phone / e-mail verification, waiting for approval, the account dropdown | [reference/auth.md](reference/auth.md) |
+| Profile (form from the API), change password, the account front page | [reference/account.md#profile-and-password-auth-agent](reference/account.md) |
 | Guest sessions, tokens, header counts, "add" buttons, sign-in merge | [reference/session.md](reference/session.md) |
 | Cart page, quantities, totals, checkout button, minimum order | [reference/cart.md](reference/cart.md) |
 | Wishlist, compare, hearts, move to cart | [reference/wishlist-compare.md](reference/wishlist-compare.md) |
@@ -128,6 +130,10 @@ them and **blocks the deploy** when one is broken.
 | "Let shoppers rate / review" | Already: `order.actions.canRate` + `ratingForm`, `reviews.write`, `order.actions.canReviewProducts` | `canRate = status.code === 'delivered'`, a form of your own |
 | "Add a share button on category pages" | `<ShareButton>` (gated by `layout.features.share`) | Share links in other components |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
+| "Sign in by e-mail instead of phone" / "add a birthdate or referral field to sign-up" | Store settings (`AuthSettings.loginMethod`, `signup.fields`) → "needs backend support" | Change the input type, add `<input name="referralCode">` |
+| "Add Google / Facebook sign-in" | Store setting (`AuthSettings.social`) → "needs backend support"; `SocialButtons` draws what is configured | Hardcode a client id or load an SDK unconditionally |
+| "Keep the user signed in in the browser" | Cookie `maxAge` in `src/lib/session.ts` (httpOnly) | A token in `localStorage` / `sessionStorage` |
+| "Let the profile edit the phone" | It's the sign-in identifier when `editable: false` → store setting | Enable the input yourself |
 
 ## Before you say "done"
 

@@ -1,0 +1,84 @@
+{
+ "data": {
+  "customer": {
+   "id": 4550965,
+   "firstName": "Test",
+   "lastName": "Customer",
+   "email": "test@example.com",
+   "phone": "01222353123",
+   "phoneVerified": true,
+   "birthdate": "1990-05-04",
+   "image": null,
+   "approval": null,
+   "referralCode": null
+  },
+  "fields": [
+   {
+    "name": "firstName",
+    "label": "First name",
+    "kind": "text",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null,
+    "value": "Test",
+    "editable": true
+   },
+   {
+    "name": "lastName",
+    "label": "Last name",
+    "kind": "text",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null,
+    "value": "Customer",
+    "editable": true
+   },
+   {
+    "name": "phone",
+    "label": "Phone number",
+    "kind": "phone",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": "11 digits",
+    "maxLength": 11,
+    "value": "01222353123",
+    "editable": false
+   },
+   {
+    "name": "email",
+    "label": "Email",
+    "kind": "email",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null,
+    "value": "test@example.com",
+    "editable": true
+   },
+   {
+    "name": "birthdate",
+    "label": "Date of birth",
+    "kind": "date",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null,
+    "value": "1990-05-04",
+    "editable": true
+   }
+  ],
+  "next": null
+ }
+}

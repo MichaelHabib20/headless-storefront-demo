@@ -98,3 +98,118 @@
 .auth-page dd {
   margin: 0;
 }
+.auth-page .field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.auth-page select,
+.auth-page textarea {
+  width: 100%;
+  min-width: 0;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-muted);
+  font: inherit;
+  font-size: 1rem;
+  background: var(--color-bg);
+}
+.auth-page select {
+  height: 48px;
+}
+.auth-page textarea {
+  min-height: 96px;
+  padding-block: var(--space-2);
+}
+.auth-page input:disabled,
+.auth-page select:disabled {
+  background: var(--color-surface);
+  color: var(--color-muted);
+}
+.auth-page .success {
+  padding: var(--space-3);
+  border-inline-start: 4px solid var(--color-text);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+}
+.auth-page .muted {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+.auth-page .tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.auth-page .tab {
+  height: 40px;
+  padding-inline: var(--space-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--color-muted);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.auth-page .tab[aria-selected='true'] {
+  color: var(--color-text);
+  border-bottom-color: var(--color-text);
+}
+.auth-page .link-button {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+.auth-page .links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+}
+.auth-page .social {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.auth-page .social-or {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+.auth-page .social-button {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-text);
+}
+.auth-page .status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.auth-page .badge {
+  padding: 2px var(--space-2);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+.auth-page .badge-warn {
+  color: var(--color-sale);
+}

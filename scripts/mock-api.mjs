@@ -5,7 +5,8 @@
  * - shopper endpoints (session, me, cart, wishlist, compare, notifications): stateful
  *   in-memory store (scripts/mock/shopper.mjs). "Bearer test-customer" is a seeded customer.
  * - everything else: the modules in scripts/mock/modules.mjs, asked in order
- * Control: POST /__mode {"fail": true} → every API call returns 500. POST /__reset → fresh state.
+ * Control: POST /__mode {"fail": true} → every API call returns 500; {"auth": {...}} toggles the auth
+ * module's store flags (OTP, social, reset method, approval...). POST /__reset → fresh state.
  */
 import fs from 'node:fs';
 import http from 'node:http';
@@ -49,6 +50,8 @@ http
       const mode = (await readBody(req)) ?? {};
       fail = Boolean(mode.fail);
       delayMs = Math.max(0, Number(mode.delayMs ?? 0));
+      // module modes, e.g. {"auth": {"otpLogin": true}} (scripts/mock/auth.mjs)
+      for (const part of modules) part.mode?.(mode);
       return send(200, { fail, delayMs });
     }
     if (url.pathname === '/__reset' && req.method === 'POST') {

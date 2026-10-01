@@ -95,6 +95,28 @@ interface Order {
 | "Put the default address first" | Already a display order in `AddressBook` | Filter addresses |
 | New text | `src/lib/messages/account.ts` (`en` + `ar`) | Hardcoded strings |
 
+## Profile and password (auth agent)
+
+Pages `/[locale]/account/profile` (view + edit) and `/account/password`; the account front page `/account`
+(from the API, with sign-out) and the header dropdown `src/components/layout/AccountMenu.tsx`.
+
+| Endpoint | SDK (`@/sdk`) | Notes |
+|---|---|---|
+| `GET /account/profile` | `getProfile(client, ctx)` | `{ customer, fields, next }` — customer token only (a guest gets 401 → sign-in prompt) |
+| `PUT /account/profile` | `updateProfile(client, ctx, values)` | values keyed by `fields[].name`; `next`: `verify_phone` (a changed phone) or `verify_email` (a changed e-mail waits for the mail) |
+| `PUT /account/password` | `changePassword(client, ctx, { currentPassword, newPassword })` | 403 `wrong_password`; min 8 |
+
+- `fields` are `FormField` + `value` + `editable`: draw them with `<AuthFields>`; a field with `editable: false`
+  (the sign-in identifier) is shown disabled and never sent. The action re-reads `getProfile` and sends only the
+  editable names it lists — never a list of your own.
+- After a save: `saveSession({ token, customer })` refreshes `sc_customer`; `next === 'verify_phone'` →
+  `/verify-phone?next=/account/profile`; `verify_email` → the "confirmation link sent" text (the e-mail changes
+  once `/verify-email` confirms it).
+- Header dropdown: name from `Me.customer`, links to profile / orders / addresses / notifications (gated by
+  `features.notifications`) / change password, sign-out (`signOutAction`); anonymous: sign in + create account
+  (`features.signup`). Reads: `loadProfile()` in `src/lib/auth.server.ts`. Tests: `e2e/auth.spec.ts` "profile and
+  password", `AccountMenu.test.tsx`.
+
 ## Tests
 
 - Fixtures: `node scripts/build-account-fixtures.mjs` → `src/test/fixtures/v3/{addresses,orders,order,

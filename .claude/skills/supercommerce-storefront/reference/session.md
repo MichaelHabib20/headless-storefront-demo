@@ -26,7 +26,7 @@ interface Me {
 
 | Cookie (all httpOnly, `sameSite: lax`, `secure` in production) | Set by | Holds |
 |---|---|---|
-| `sc_token` (+ `sc_customer` profile) | sign-in / sign-up (`saveSession`, `src/lib/session.ts`) | customer token — wins over the guest one |
+| `sc_token` (+ `sc_customer` = the v3 `Customer`) | sign-in / sign-up / reset / OTP / social (`startSession`, `src/lib/session.ts`) | customer token — wins over the guest one; revoked at the backend by `signOutAction` |
 | `sc_guest` | `withShopper` on the first write | guest token (90 days) |
 
 | Helper | Where | Does |

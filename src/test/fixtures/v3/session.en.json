@@ -1,0 +1,18 @@
+{
+ "data": {
+  "token": "customer-4550965-1",
+  "customer": {
+   "id": 4550965,
+   "firstName": "Test",
+   "lastName": "Customer",
+   "email": "test@example.com",
+   "phone": "01222353123",
+   "phoneVerified": true,
+   "birthdate": "1990-05-04",
+   "image": null,
+   "approval": null,
+   "referralCode": null
+  },
+  "next": null
+ }
+}
