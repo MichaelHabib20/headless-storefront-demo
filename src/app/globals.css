@@ -123,4 +123,8 @@ button {
     --bottom-nav-space: calc(61px + env(safe-area-inset-bottom));
     padding-block-end: var(--bottom-nav-space);
   }
+  /* focused / scrolled-to elements never end up under the bar */
+  html:has(body.has-bottom-nav) {
+    scroll-padding-block-end: calc(61px + env(safe-area-inset-bottom));
+  }
 }

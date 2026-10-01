@@ -15,6 +15,11 @@ Loaded once per request in `src/app/[locale]/layout.tsx` with `loadLayout(locale
 | `footer.about / contact / links / social / appLinks / newsletter.text` | `SiteFooter` | `links` = CMS pages + forms; `social[].platform` is detected from the URL by the backend |
 | `whatsapp` (`{number, url}` or `null`) | `WhatsAppButton` | |
 | `currency` | — | Prices already carry their currency |
+| `legal` (`{privacy, terms, cookies}` Targets) | `LegalLinks` (footer), `CookieConsent` | The merchant's legal CMS pages; null → no link ([content.md](content.md)) |
+| `appBanner`, `topBanner`, `floatingBanner` | `AppBanner`, `TopBanner`, `FloatingBanner` | Null → nothing; dismissals are cookies ([shell.md](shell.md)) |
+| `mobileNav` | `MobileBottomNav` + more sheet | Phones only; items, labels, icons, badges from the API ([shell.md](shell.md)) |
+| `areaSelection` + `Me.area` | `AreaChooser` | Multi-inventory stores only ([shell.md](shell.md)) |
+| `storeStatus` | `StoreClosedNotice` | Only when `acceptingOrders` is false |
 | `features` | see below | |
 
 ## Features
@@ -35,6 +40,7 @@ icons, pages). Never re-implement the rule behind them.
 | `cookieConsent` | Show `CookieConsent` |
 | `newsletter` | Newsletter band in the footer (no subscribe API yet: the form says "coming soon") |
 | `guestCanViewPrices` | Informational — prices already come back as `null` when hidden |
+| `share` | Share button on product pages |
 
 ## Menu
 

@@ -30,19 +30,20 @@ describe('unmatched paths', () => {
 
   it('never trusts the header on the storefront own routes (the middleware does not set it there)', async () => {
     withHeader('gone');
-    render(await page('en', 'pages', 'x'));
+    render(await page('en', 'track-order', 'x'));
     expect(screen.getByRole('heading', { name: 'Coming soon' })).toBeInTheDocument();
     await expect(page('en', 'c', 'x', 'y', 'z', 'w')).rejects.toThrow('NEXT_NOT_FOUND');
   });
 
   it('keeps "coming soon" only for routes other pages still build; the rest is 404', async () => {
     withHeader(null);
-    for (const section of ['pages', 'l', 'forms', 'track-order']) {
+    for (const section of ['track-order']) {
       const { unmount } = render(await page('en', section, 'x'));
       expect(screen.getByRole('heading', { name: 'Coming soon' })).toBeInTheDocument();
       unmount();
     }
-    for (const section of ['p', 'checkout', 'c', 'brands', 'lists', 'deals', 'search', 'something-else']) {
+    // pages, landing pages and forms are built (shell): their deeper paths are 404 like the others
+    for (const section of ['p', 'checkout', 'c', 'brands', 'lists', 'deals', 'search', 'pages', 'l', 'forms', 'something-else']) {
       await expect(page('en', section, 'x', 'y')).rejects.toThrow('NEXT_NOT_FOUND');
     }
   });
