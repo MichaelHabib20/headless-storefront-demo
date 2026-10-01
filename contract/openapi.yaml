@@ -2037,6 +2037,10 @@ components:
         popups:
           type: array
           items: { $ref: '#/components/schemas/Popup' }
+        # ---- added for the SEO phase (optional: older recordings may lack it)
+        seo:
+          description: 'The home page meta and structured data: title and description, WebPage facts, preview image'
+          allOf: [{ $ref: '#/components/schemas/Seo' }]
 
     # ---------------------------------------------------------------- shopper
 

@@ -60,6 +60,14 @@ http
     }
     if (delayMs && url.pathname.startsWith('/api/')) await new Promise((resolve) => setTimeout(resolve, delayMs));
     if (url.pathname === '/health') return send(200, { ok: true });
+    // Test controls of the modules (e.g. GET /__events, POST /__seo of scripts/mock/seo.mjs).
+    if (url.pathname.startsWith('/__')) {
+      const controlBody = req.method === 'POST' ? await readBody(req) : null;
+      for (const part of modules) {
+        const answer = part.control?.(req.method, url.pathname, controlBody);
+        if (answer) return send(answer[0], answer[1]);
+      }
+    }
 
     const prefix = '/api/customer/v3';
     if (!url.pathname.startsWith(prefix)) return send(404, { error: { code: 'not_found', message: 'Not found' } });
@@ -70,7 +78,10 @@ http
 
     const recorded = pathname.match(/^\/(layout|home)$/);
     if (recorded && req.method === 'GET') {
-      return send(200, fs.readFileSync(path.join(dir, `${recorded[1]}.${locale}.json`), 'utf8'));
+      const answer = JSON.parse(fs.readFileSync(path.join(dir, `${recorded[1]}.${locale}.json`), 'utf8'));
+      // Modules may add the members of later phases (e.g. Layout.marketing, Home.seo).
+      for (const part of modules) if (part.decorate) answer.data = part.decorate(recorded[1], answer.data, locale);
+      return send(200, answer);
     }
 
     const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '') || null;

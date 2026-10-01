@@ -45,8 +45,9 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/cart/M.tsx', 'if (summary.subtotal.amount >= minimumOrder.amount.amount) {')).toContain('no-price-math');
     expect(rulesHit('src/components/cart/M.tsx', 'const almost = minimumOrder.progressPercent > 80;')).toContain('no-price-math');
     expect(rulesHit('src/components/cart/M.tsx', '{summary.discount && (')).toEqual([]);
-    // reading the numbers for analytics is allowed by the contract; `=>` is not a comparison
-    expect(rulesHit('src/components/cart/M.tsx', 'track(cart.items.map((item) => item.lineTotal.amount));')).toEqual([]);
+    // reading the numbers for analytics is allowed by the contract; `=>` is not a comparison (reading
+    // them is the job of src/lib/marketing.ts: rule money-number-for-analytics-only)
+    expect(rulesHit('src/components/cart/M.tsx', 'track(cart.items.map((item) => item.lineTotal.amount));')).not.toContain('no-price-math');
     expect(rulesHit('src/components/cart/M.tsx', '<Money value={minimumOrder.amount} />')).toEqual([]);
   });
 
@@ -254,5 +255,37 @@ describe('architecture rules', () => {
   it('ignores tests and comments', () => {
     expect(rulesHit('src/components/X.test.tsx', "fetch('/api/customer/x')")).toEqual([]);
     expect(rulesHit('src/components/X.tsx', '// never call fetch( here')).toEqual([]);
+  });
+});
+
+// ---- seo + marketing
+describe('seo + marketing rules', () => {
+  it('writes JSON-LD only in src/lib/jsonld.ts', () => {
+    expect(rulesHit('src/app/[locale]/p/[slug]/page.tsx', '<script type="application/ld+json">{json}</script>')).toContain('jsonld-one-place');
+    expect(rulesHit('src/components/product/X.tsx', "const schema = { '@context': 'https://schema.org', '@type': 'Product', name };")).toContain('jsonld-one-place');
+    expect(rulesHit('src/lib/jsonld.ts', "createElement('script', { type: 'application/ld+json', dangerouslySetInnerHTML: { __html: json } })")).toEqual([]);
+    expect(rulesHit('src/app/[locale]/p/[slug]/page.tsx', '<JsonLd seo={details.seo} locale={locale} />')).toEqual([]);
+  });
+
+  it('installs tags and pixels only in MarketingTags', () => {
+    expect(rulesHit('src/app/[locale]/layout.tsx', '<Script src="https://www.googletagmanager.com/gtm.js?id=GTM-ABC1234" />')).toContain('marketing-tags-one-place');
+    expect(rulesHit('src/components/product/X.tsx', "fbq('init', '882598886877502'); s.src = 'https://connect.facebook.net/en_US/fbevents.js';")).toContain('marketing-tags-one-place');
+    expect(rulesHit('src/lib/x.ts', "const id = 'G-BVSC667874';")).toContain('marketing-tags-one-place');
+    expect(rulesHit('src/components/layout/MarketingTags.tsx', "j.src='https://www.googletagmanager.com/gtm.js?id='+i;")).toEqual([]);
+  });
+
+  it('reads the number of a price only for analytics, in src/lib/marketing.ts', () => {
+    expect(rulesHit('src/components/product/X.tsx', "window.dataLayer.push({ event: 'add_to_cart', value: product.price.amount });")).toContain('money-number-for-analytics-only');
+    expect(rulesHit('src/components/cart/X.tsx', 'const { amount, currency } = cart.summary.total;')).toContain('money-number-for-analytics-only');
+    expect(rulesHit('src/components/checkout/X.tsx', 'track(locale, { name: "purchase", value: order.totals.total?.amount });')).toContain('money-number-for-analytics-only');
+    expect(rulesHit('src/lib/marketing.ts', 'return price ? price.amount : null;')).toEqual([]);
+    expect(rulesHit('src/sdk/v3/x.ts', 'const n = price.amount;')).toEqual([]);
+    // a Money object handed to <Money> is not reading its number
+    expect(rulesHit('src/components/checkout/TotalLines.tsx', '{line.amount ? <Money value={line.amount} as="dd" /> : <dd>{line.text}</dd>}')).toEqual([]);
+  });
+
+  it('keeps the other money rules on everything but the analytics module', () => {
+    expect(rulesHit('src/lib/marketing.ts', 'value: items.reduce((sum, item) => sum + item.price.amount, 0),')).toEqual([]);
+    expect(rulesHit('src/lib/other.ts', 'value: items.reduce((sum, item) => sum + item.price.amount, 0),')).toContain('no-price-math');
   });
 });

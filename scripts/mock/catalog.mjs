@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { priceText, priceWithText } from './shopper.mjs';
+import { listingSeoExtras } from './seo-extras.mjs';
 
 const FIXTURES = path.resolve('src/test/fixtures/v3');
 /** Store settings of this mock store: products per page, and the most a page may ask for. */
@@ -494,6 +495,8 @@ export function createCatalogModule(shopper) {
             canonical: scope.target,
             alternates,
             index: scope.index && !filteredOrSorted,
+            // seo + marketing: breadcrumbs, structured data, rel=prev/next, preview (scripts/mock/seo-extras.mjs)
+            ...listingSeoExtras(scope, matching.slice((page - 1) * perPage, page * perPage), page, Math.ceil(total / perPage)),
           },
         },
       },

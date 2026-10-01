@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/sdk';
 import { ListingPage } from '@/components/catalog/ListingPage';
+import { TrackEvent } from '@/components/marketing/TrackEvent';
 import { listingMetadata } from '@/lib/catalog.server';
 import type { PageParams } from '@/lib/listing';
 import { routes } from '@/lib/routing';
@@ -29,5 +30,10 @@ export default async function SearchPage({ params, searchParams }: { params: Par
   if (!isLocale(locale)) notFound();
   const query = await searchParams;
   const q = searchText(query);
-  return <ListingPage locale={locale} scope={{ q }} params={query} links={{ path: routes.search(locale), keep: q ? { q } : {} }} />;
+  return (
+    <>
+      {q && <TrackEvent locale={locale} event={{ name: 'search', searchTerm: q }} />}
+      <ListingPage locale={locale} scope={{ q }} params={query} links={{ path: routes.search(locale), keep: q ? { q } : {} }} />
+    </>
+  );
 }

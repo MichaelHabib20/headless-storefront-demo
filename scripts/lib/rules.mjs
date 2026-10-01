@@ -14,7 +14,12 @@ const CHECKOUT_ACTIONS = 'src/app/[locale]/checkout/actions.ts';
 const inCheckoutRoute = (file) => file.startsWith('src/app/[locale]/checkout/');
 const inCheckout = (file) => inCheckoutRoute(file) || file.startsWith('src/components/checkout/');
 
-const SHOW_MONEY = 'Render <Money value={...} /> or <Price price={...} locale={locale} /> from @/money (style them with className / classNames).';
+/** SEO + marketing: the one JSON-LD writer, the one tag installer, the one reader of money numbers for analytics. */
+const JSONLD = 'src/lib/jsonld.ts';
+const MARKETING_TAGS = 'src/components/layout/MarketingTags.tsx';
+const MARKETING = 'src/lib/marketing.ts';
+
+const SHOW_MONEY ='Render <Money value={...} /> or <Price price={...} locale={locale} /> from @/money (style them with className / classNames).';
 
 const TARGET_TYPES = 'product|category|brand|list|page|landing_page|form|deals|home|url|tag|search';
 
@@ -27,7 +32,8 @@ export const RULES = [
   },
   {
     id: 'no-legacy-fields',
-    applies: (f) => inUi(f) && !isTest(f),
+    // src/lib/marketing.ts writes GA4 payloads, whose parameter names (item_id) are not API fields.
+    applies: (f) => inUi(f) && !isTest(f) && f !== MARKETING,
     patterns: [/\b(image_type|item_id|discount_price|name_ar|name_en|slug_ar|show_title|dev_key|image_web)\b/],
     message: 'Legacy API fields are not part of the v3 contract. Use the v3 types from @/sdk.',
   },
@@ -47,7 +53,8 @@ export const RULES = [
   },
   {
     id: 'no-price-math',
-    applies: (f) => inUi(f) && !isTest(f),
+    // src/lib/marketing.ts hands the backend's numbers to analytics untouched (rule money-number-for-analytics-only).
+    applies: (f) => inUi(f) && !isTest(f) && f !== MARKETING,
     patterns: [
       /(amount|compareAt|discountPercent|progressPercent)\s*[-+*/%]\s*[\w(]/,
       /[-+*/%]\s*[\w.?]*\.(amount|compareAt|discountPercent|progressPercent)\b/,
@@ -81,7 +88,7 @@ export const RULES = [
     // Money formatted here would disagree with the backend (rounding, digits, currency).
     // Numbers that are not money are formatted in one place: src/lib/numbers.ts.
     id: 'no-money-formatting',
-    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/lib/numbers.ts',
+    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/lib/numbers.ts' && f !== MARKETING,
     patterns: [
       /\bformat(?:Money|Prices?|Currency|Amount)\w*/,
       /\bIntl\s*\.\s*NumberFormat\b/,
@@ -145,8 +152,9 @@ export const RULES = [
   },
   {
     id: 'no-raw-html',
-    // RichText is the one component that shows the backend's cleaned HTML (the API's `RichText`).
-    applies: (f) => !isTest(f) && f !== 'src/components/ui/RichText.tsx',
+    // RichText is the one component that shows the backend's cleaned HTML (the API's `RichText`);
+    // src/lib/jsonld.ts writes escaped JSON into <script type="application/ld+json">.
+    applies: (f) => !isTest(f) && f !== 'src/components/ui/RichText.tsx' && f !== JSONLD,
     patterns: [/dangerouslySetInnerHTML/, /\.innerHTML\b/, /insertAdjacentHTML/],
     message: 'Do not inject HTML. Render backend text as text; formatted text from the API (a RichText value) goes through <RichText value={...} /> from @/components/ui/RichText.',
   },
@@ -204,6 +212,33 @@ export const RULES = [
       /\.(find|filter)\(\s*\(?\s*\w+\s*\)?\s*=>\s*\w+\.isDefault\b/,
     ],
     message: 'Checkout never picks for the shopper: no default address, payment method, branch or plan in the storefront. Send only what the shopper chose; the backend preselects and echoes the choices it used (checkoutSelections(checkout) from @/sdk).',
+  },
+  // --- seo + marketing ----------------------------------------------------------------------
+  {
+    // Structured data is written in one place from the backend's facts (Seo.structuredData, GET /seo/site).
+    id: 'jsonld-one-place',
+    applies: (f) => f.startsWith('src/') && !isTest(f) && f !== JSONLD,
+    patterns: [/application\/ld\+json/, /['"]@context['"]\s*:|['"]@type['"]\s*:\s*['"](Product|Offer|BreadcrumbList|Organization|WebSite|LocalBusiness|CollectionPage|ItemList)['"]/],
+    message: `JSON-LD is written only by ${JSONLD} from the backend's Seo (structuredData, breadcrumbs) and GET /seo/site: render <JsonLd seo={page.seo} locale={locale} />. A schema.org fact the backend does not send → "needs backend support" (never hardcode one).`,
+  },
+  {
+    // Tags and pixels come from Layout.marketing (merchant settings), after cookie consent.
+    id: 'marketing-tags-one-place',
+    applies: (f) => f.startsWith('src/') && !isTest(f) && f !== MARKETING_TAGS,
+    patterns: [/googletagmanager\.com|google-analytics\.com|connect\.facebook\.net|analytics\.tiktok\.com|sc-static\.net|clarity\.ms|static\.hotjar\.com/, /\b(GTM|G|AW)-[A-Z0-9]{6,}\b/],
+    message: `Tag and pixel snippets live only in ${MARKETING_TAGS}, which installs them from Layout.marketing after cookie consent. A new pixel or id is a store setting → "needs backend support" (Layout.marketing); fire events with track() from ${MARKETING}.`,
+  },
+  {
+    // The number of a Price / Money is for analytics only (contract `Money`): read in one place.
+    id: 'money-number-for-analytics-only',
+    applies: (f) => inUi(f) && !isTest(f) && f !== MARKETING,
+    patterns: [
+      // price.amount, total?.amount, unitPrice.amount, lineTotal.amount, subtotal.amount ...
+      /\b\w*(?:[Pp]rice|[Tt]otal|[Mm]oney|[Cc]ost|[Ff]ee|[Dd]iscount|[Rr]emaining|[Ss]avings?)\??\.amount\b/,
+      // destructuring the number: const { amount } = price;  ({ amount, currency }) =>
+      /\{\s*(?:[\w$]+\s*,\s*)*amount\s*(?:,[^}]*)?\}\s*(?:=[^=>]|:|\)\s*=>)/,
+    ],
+    message: `The number of a Price or Money (amount) is for analytics payloads only and is read only in ${MARKETING} (itemFromCard, viewItemEvent, beginCheckoutEvent, purchaseEvent). On screen use <Money> / <Price> from @/money; for an event call track() from ${MARKETING}.`,
   },
 ];
 

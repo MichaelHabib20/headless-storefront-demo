@@ -112,3 +112,21 @@ export type CategoryNode = Schemas['CategoryNode'];
 export type CategoryTree = Schemas['CategoriesResponse']['data'];
 export type BrandsPage = Schemas['BrandsResponse']['data'];
 export type Resolution = Schemas['Resolution'];
+
+// seo + marketing: structured data, site facts, sitemap, pixel ids, server-side events
+export type Breadcrumb = Schemas['Breadcrumb'];
+export type StructuredData = Schemas['StructuredData'];
+export type ProductStructuredData = NonNullable<StructuredData['product']>;
+export type CollectionStructuredData = NonNullable<StructuredData['collection']>;
+export type WebPageStructuredData = NonNullable<StructuredData['webPage']>;
+export type SeoPagination = NonNullable<Seo['pagination']>;
+export type OpenGraph = NonNullable<Seo['openGraph']>;
+export type SiteSeo = Schemas['SiteSeo'];
+export type PostalAddress = Schemas['PostalAddress'];
+export type SitemapPage = Schemas['SitemapResponse']['data'];
+export type SitemapEntry = SitemapPage['items'][number];
+export type SitemapType = import('../generated/api').operations['getSitemap']['parameters']['query']['type'];
+export type Marketing = Schemas['Marketing'];
+export type EventRequest = Schemas['EventRequest'];
+export type EventName = EventRequest['name'];
+export type EventAccepted = Schemas['EventAcceptedResponse']['data'];

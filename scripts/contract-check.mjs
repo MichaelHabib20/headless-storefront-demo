@@ -80,6 +80,9 @@ const RESPONSE_SCHEMA = {
   'order-pickup': 'OrderResponse',
   'cancellation-reasons': 'CancellationReasonsResponse',
   reorder: 'ReorderResponse',
+  // seo + marketing (scripts/build-seo-fixtures.mjs)
+  'seo-site': 'SiteSeoResponse',
+  'sitemap-products': 'SitemapResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');
@@ -142,8 +145,10 @@ if (normalize(fs.readFileSync(tmp, 'utf8')) !== normalize(fs.readFileSync(path.j
 }
 fs.rmSync(tmp, { force: true });
 
-// 4. same contract as the backend (when both repos are checked out side by side)
-const backendContract = path.join(root, '../saas-ecommerce-backend/docs/headless/openapi.yaml');
+// 4. same contract as the backend (when both repos are checked out side by side). SC_BACKEND_DIR
+//    points at another backend checkout (e.g. the worktree a contract change is being made in).
+const backendDir = process.env.SC_BACKEND_DIR ? path.resolve(process.env.SC_BACKEND_DIR) : path.join(root, '../saas-ecommerce-backend');
+const backendContract = path.join(backendDir, 'docs/headless/openapi.yaml');
 if (fs.existsSync(backendContract)) {
   if (normalize(fs.readFileSync(backendContract, 'utf8')) !== normalize(fs.readFileSync(contractPath, 'utf8'))) {
     failures.push('contract/openapi.yaml differs from the backend contract: run `npm run contract:sync`');

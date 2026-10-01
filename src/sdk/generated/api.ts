@@ -1595,6 +1595,8 @@ export interface components {
             sections: components["schemas"]["Section"][];
             featuredBrands: components["schemas"]["Tile"][];
             popups: components["schemas"]["Popup"][];
+            /** @description The home page meta and structured data: title and description, WebPage facts, preview image */
+            seo?: components["schemas"]["Seo"];
         };
         ErrorResponse: {
             /** @description The fresh checkout, sent with total_changed, checkout_incomplete and payment_change_needs_consent */

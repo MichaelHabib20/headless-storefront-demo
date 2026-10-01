@@ -2,6 +2,7 @@ import { revalidatePath } from 'next/cache';
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { addToCartAction, toggleCompareAction, toggleWishlistAction } from './shopper.actions';
 import { ensureShopperContext, forgetGuest } from './shopper.server';
+import { trackServerEvent } from './marketing.server';
 
 /** Cookie jar + backend stand-ins: the session helpers and the SDK's fetch. */
 const env = vi.hoisted(() => ({
@@ -12,6 +13,8 @@ const env = vi.hoisted(() => ({
 }));
 
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
+vi.mock('next/server', () => ({ after: vi.fn((task: () => unknown) => task()) }));
+vi.mock('./marketing.server', () => ({ trackServerEvent: vi.fn() }));
 
 vi.mock('./shopper.server', () => ({
   ensureShopperContext: vi.fn(async (locale: 'en' | 'ar') => {
@@ -113,6 +116,22 @@ describe('shopper server actions', () => {
       throw new TypeError('fetch failed');
     });
     await expect(addToCartAction('ar', 7346, 1)).resolves.toEqual({ ok: false, message: 'حدث خطأ ما. حاول مرة أخرى.' });
+  });
+
+  it('sends the server-side marketing event after a successful add to cart / wishlist only', async () => {
+    env.fetch = vi.fn<typeof fetch>(async () => reply(200, { data: {} }));
+    await addToCartAction('ar', 7346, 2);
+    await toggleWishlistAction('en', 8412, true);
+    await toggleWishlistAction('en', 8412, false);
+    expect(vi.mocked(trackServerEvent).mock.calls).toEqual([
+      ['ar', { name: 'add_to_cart', productIds: [7346] }],
+      ['en', { name: 'add_to_wishlist', productIds: [8412] }],
+    ]);
+
+    vi.mocked(trackServerEvent).mockClear();
+    env.fetch = vi.fn<typeof fetch>(async () => reply(422, { error: { code: 'quantity_not_allowed', message: 'This quantity is not allowed.' } }));
+    await addToCartAction('en', 7346, 99);
+    expect(trackServerEvent).not.toHaveBeenCalled();
   });
 
   it('rejects malformed input without calling the backend', async () => {

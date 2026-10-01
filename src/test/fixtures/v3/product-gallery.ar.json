@@ -169,7 +169,62 @@
      }
     }
    ],
-   "index": true
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "العناية بالام والطفل",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    },
+    {
+     "label": "JOHNSON & JOHNSON",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    {
+     "label": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "product": {
+     "schemaType": "Product",
+     "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+     "description": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل: عناية لطيفة مصممة لبشرة طفلك الحساسة.",
+     "sku": "JJ-36480",
+     "brand": "JOHNSON & JOHNSON",
+     "images": [
+      "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+      "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+      "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp",
+      "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp"
+     ],
+     "price": 18,
+     "currency": "EGP",
+     "availability": "in_stock",
+     "rating": null,
+     "category": "العناية بالام والطفل"
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+    "description": null,
+    "image": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+    "type": "product"
+   }
   }
  }
 }

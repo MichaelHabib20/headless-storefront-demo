@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { ListingScope, Locale } from '@/sdk';
 import { loadListing } from '@/lib/catalog.server';
 import { translator } from '@/lib/i18n';
+import { JsonLd } from '@/lib/jsonld';
 import { listingHref, toSearchParams, type PageParams } from '@/lib/listing';
 import { ListingView } from './ListingView';
 import type { ListingLinks } from './ListingFilters';
@@ -24,7 +25,14 @@ export async function ListingPage({ locale, scope, params, links }: ListingPageP
   const result = await loadListing(locale, scope, params);
   const current = toSearchParams(params).toString();
   if (result.status === 'not_found') notFound();
-  if (result.status === 'ok') return <ListingView listing={result.listing} locale={locale} links={links} current={current} />;
+  if (result.status === 'ok') {
+    return (
+      <>
+        <JsonLd seo={result.listing.seo} locale={locale} />
+        <ListingView listing={result.listing} locale={locale} links={links} current={current} />
+      </>
+    );
+  }
 
   const t = translator(locale);
   const invalid = result.status === 'invalid';

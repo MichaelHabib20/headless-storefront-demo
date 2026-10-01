@@ -916,6 +916,43 @@
     }
    }
   ],
-  "popups": []
+  "popups": [],
+  "seo": {
+   "title": "Any time Any where",
+   "description": "Your pharmacy and beauty store, delivered any time, anywhere.",
+   "canonical": {
+    "type": "home"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "home"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "Any time Any where",
+     "description": "Your pharmacy and beauty store, delivered any time, anywhere."
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": "Seif Pharmacies",
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/logo 700 X 350 E-1746024674.png",
+    "type": "website"
+   }
+  }
  }
 }

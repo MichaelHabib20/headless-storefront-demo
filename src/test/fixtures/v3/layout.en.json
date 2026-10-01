@@ -4221,6 +4221,18 @@
    "cookieConsent": true,
    "newsletter": true,
    "guestCanViewPrices": true
+  },
+  "marketing": {
+   "gtmId": "GTM-TZC4S7KD",
+   "googleAnalyticsIds": [
+    "G-BVSC667874"
+   ],
+   "googleAds": null,
+   "facebookPixelId": "882598886877502",
+   "tiktokPixelId": "D072PMBC77UCMMV6DJM0",
+   "snapchatPixelId": null,
+   "clarityId": null,
+   "hotjarId": null
   }
  }
 }

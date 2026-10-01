@@ -16,3 +16,5 @@ export { getBrands, getCategories, getProducts, getSearchSuggestions, listingQue
 export * from './v3/checkout';
 export * from './v3/account';
 export * from './v3/types';
+// seo + marketing
+export { getSiteSeo, getSitemap, trackEvent } from './v3/seo';

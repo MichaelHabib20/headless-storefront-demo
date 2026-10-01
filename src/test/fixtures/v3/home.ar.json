@@ -916,6 +916,43 @@
     }
    }
   ],
-  "popups": []
+  "popups": [],
+  "seo": {
+   "title": "اى وقت واى مكان",
+   "description": "صيدليتك ومتجر جمالك، يصلك في أي وقت وأي مكان.",
+   "canonical": {
+    "type": "home"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "home"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "اى وقت واى مكان",
+     "description": "صيدليتك ومتجر جمالك، يصلك في أي وقت وأي مكان."
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": "صيدليات سيف",
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/logo 700 X 350 E-1746024674.png",
+    "type": "website"
+   }
+  }
  }
 }

@@ -4,6 +4,8 @@ import { getCheckoutResult, isApiError, isLocale, type CheckoutResult } from '@/
 import { CheckoutResultView, ResultUnknown } from '@/components/checkout/CheckoutResultView';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { translator } from '@/lib/i18n';
+import { purchaseEvent } from '@/lib/marketing';
+import { TrackEvent } from '@/components/marketing/TrackEvent';
 import { shopperContext } from '@/lib/shopper.server';
 import { storefrontClient } from '@/lib/storefront.server';
 
@@ -46,5 +48,10 @@ export default async function CheckoutResultPage({ params, searchParams }: { par
     return <StoreUnavailable locale={locale} />;
   }
 
-  return <CheckoutResultView result={result} locale={locale} />;
+  return (
+    <>
+      <TrackEvent locale={locale} event={purchaseEvent(result)} onceKey={reference} />
+      <CheckoutResultView result={result} locale={locale} />
+    </>
+  );
 }

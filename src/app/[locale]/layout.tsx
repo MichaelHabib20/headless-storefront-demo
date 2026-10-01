@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { getMe, isLocale, type Layout, type Locale, type Me } from '@/sdk';
 import { CookieConsent } from '@/components/layout/CookieConsent';
+import { MarketingTags } from '@/components/layout/MarketingTags';
+import { requestMetadataBase, SiteJsonLd } from '@/lib/jsonld';
 import { WhatsAppButton } from '@/components/layout/FloatingActions';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { SiteFooter } from '@/components/layout/SiteFooter';
@@ -50,6 +52,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!isLocale(locale)) return {};
   const layout = await safeLayout(locale);
   return {
+    metadataBase: await requestMetadataBase(),
     title: { default: layout?.store.name ?? 'Store', template: `%s | ${layout?.store.name ?? 'Store'}` },
     description: layout?.store.slogan ?? undefined,
     icons: layout?.store.favicon ? [{ url: layout.store.favicon }] : undefined,
@@ -82,6 +85,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <SiteFooter layout={layout} locale={locale} />
             <WhatsAppButton whatsapp={layout.whatsapp} label={t('chatOnWhatsapp')} />
             {layout.features.cookieConsent && <CookieConsent labels={{ text: t('cookieText'), accept: t('cookieAccept') }} />}
+            <MarketingTags marketing={layout.marketing} consentRequired={layout.features.cookieConsent} />
+            <SiteJsonLd locale={locale} />
           </>
         ) : (
           <main id="main">

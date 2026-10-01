@@ -14,8 +14,9 @@ import { createCatalogModule } from './catalog.mjs';
 import { createCheckoutModule } from './checkout.mjs';
 import { createProductModule } from './product.mjs';
 import { createSettingsModule } from './settings.mjs';
+import { createSeoModule } from './seo.mjs';
 
-const FACTORIES = [createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule];
+const FACTORIES = [createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule, createSeoModule];
 
 export function createModules(shopper) {
   return FACTORIES.map((create) => create(shopper));
