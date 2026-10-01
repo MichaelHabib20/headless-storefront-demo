@@ -1929,7 +1929,7 @@ export interface components {
                 write?: {
                     enabled: boolean;
                     requiresSignIn: boolean;
-                    /** @description Only shoppers who bought it */
+                    /** @description Only shoppers who bought it, from the order page */
                     requiresOrder: boolean;
                     /** @description Why it is not possible now, e.g. "Sign in to write a review" */
                     message: string | null;
@@ -2392,7 +2392,7 @@ export interface components {
             actions: {
                 canCancel: boolean;
                 canReorder: boolean;
-                /** @description Delivered */
+                /** @description Delivered, not rated yet, store has order rating on */
                 canRate?: boolean;
                 /** @description Delivered and the store takes product reviews */
                 canReviewProducts?: boolean;
@@ -2410,7 +2410,7 @@ export interface components {
                 /** @description Also rate each product */
                 items: boolean;
             } | null;
-            /** @description The phone the order was placed with */
+            /** @description The phone the order was placed with, masked (for the tracking page) */
             phone?: string | null;
         };
         OrderResponse: {
@@ -2565,7 +2565,7 @@ export interface components {
             data: components["schemas"]["AuthSettings"];
         };
         SignInRequest: {
-            /** @description E-mail or phone */
+            /** @description E-mail or phone, as `AuthSettings.loginMethod` says */
             identifier: string;
             password: string;
         };
@@ -2578,7 +2578,7 @@ export interface components {
         SocialSignInRequest: {
             /** @enum {string} */
             provider: "google" | "facebook" | "apple";
-            /** @description Google id/access token */
+            /** @description Google id/access token, Facebook access token or Apple identity token */
             token: string;
             /** @description Apple only gives the name once; pass it on the first sign-in */
             name?: string | null;
@@ -2591,7 +2591,7 @@ export interface components {
             birthdate?: string | null;
         };
         ForgotPasswordRequest: {
-            /** @description E-mail or phone */
+            /** @description E-mail or phone, as `AuthSettings.loginMethod` says */
             identifier: string;
             /**
              * @description E-mail method only: the storefront's reset page; the backend appends `?token=<token>&email=<email>`.
@@ -2726,7 +2726,7 @@ export interface components {
                 google: string | null;
             };
             robots: {
-                /** @description False → the whole site is noindex (staging */
+                /** @description False → the whole site is noindex (staging, hidden stores) */
                 index: boolean;
             };
         };
@@ -2775,7 +2775,7 @@ export interface components {
         EventRequest: {
             /** @enum {string} */
             name: "page_view" | "view_item" | "view_item_list" | "search" | "add_to_cart" | "remove_from_cart" | "view_cart" | "begin_checkout" | "add_shipping_info" | "add_payment_info" | "purchase" | "sign_up" | "login" | "add_to_wishlist" | "select_promotion";
-            /** @description Same id given to the browser pixel */
+            /** @description Same id given to the browser pixel, for de-duplication */
             eventId?: string | null;
             page?: {
                 path: string;

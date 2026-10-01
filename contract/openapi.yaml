@@ -30,7 +30,7 @@ info:
     `guest_checkout_disabled` (403), `phone_in_use` (409), `payment_provider_error` (502).
     Auth and account: `invalid_credentials` (401), `account_deactivated` (403), `social_account_only` (403),
     `signup_disabled` (403), `feature_disabled` (403), `wrong_password` (403), `pending_approval` (403),
-    `email_in_use` (409), `phone_already_verified` (409), `already_rated` (409), `invalid_code` (422),
+    `email_in_use` (409), `phone_already_verified` (409), `already_rated` (409), `cannot_rate` (409), `invalid_code` (422),
     `code_expired` (422), `too_many_attempts` (429), `provider_error` (502), `sms_unavailable` (503).
     Store: `store_unavailable` (503) on every endpoint while the merchant has switched the store off
     (`error.message` is the merchant's maintenance text).
@@ -2594,7 +2594,7 @@ components:
               properties:
                 enabled: { type: boolean }
                 requiresSignIn: { type: boolean }
-                requiresOrder: { type: boolean, description: Only shoppers who bought it, from the order page }
+                requiresOrder: { type: boolean, description: 'Only shoppers who bought it, from the order page' }
                 message: { type: string, nullable: true, description: 'Why it is not possible now, e.g. "Sign in to write a review"' }
 
     ListingFacet:
@@ -3329,7 +3329,7 @@ components:
             canCancel: { type: boolean }
             canReorder: { type: boolean }
             # added for the orders-extras phase (optional for older recordings; absent = false)
-            canRate: { type: boolean, description: Delivered, not rated yet, store has order rating on }
+            canRate: { type: boolean, description: 'Delivered, not rated yet, store has order rating on' }
             canReviewProducts: { type: boolean, description: Delivered and the store takes product reviews }
         # added for the orders-extras phase (optional for older recordings)
         rating:
@@ -3351,7 +3351,7 @@ components:
           properties:
             driverRating: { type: string, enum: [hidden, optional, required] }
             items: { type: boolean, description: Also rate each product }
-        phone: { type: string, nullable: true, description: The phone the order was placed with, masked (for the tracking page) }
+        phone: { type: string, nullable: true, description: 'The phone the order was placed with, masked (for the tracking page)' }
     OrderResponse:
       type: object
       required: [data]
@@ -3598,7 +3598,7 @@ components:
       required: [identifier, password]
       additionalProperties: false
       properties:
-        identifier: { type: string, description: E-mail or phone, as `AuthSettings.loginMethod` says }
+        identifier: { type: string, description: 'E-mail or phone, as `AuthSettings.loginMethod` says' }
         password: { type: string }
     SignUpRequest:
       description: Values keyed by `AuthSettings.signup.fields[].name` (firstName, lastName, phone, email, password, birthdate, referralCode...)
@@ -3615,7 +3615,7 @@ components:
       additionalProperties: false
       properties:
         provider: { type: string, enum: [google, facebook, apple] }
-        token: { type: string, description: Google id/access token, Facebook access token or Apple identity token }
+        token: { type: string, description: 'Google id/access token, Facebook access token or Apple identity token' }
         name: { type: string, nullable: true, description: Apple only gives the name once; pass it on the first sign-in }
     CompleteProfileRequest:
       type: object
@@ -3632,7 +3632,7 @@ components:
       required: [identifier]
       additionalProperties: false
       properties:
-        identifier: { type: string, description: E-mail or phone, as `AuthSettings.loginMethod` says }
+        identifier: { type: string, description: 'E-mail or phone, as `AuthSettings.loginMethod` says' }
         resetUrl:
           type: string
           nullable: true
@@ -3846,7 +3846,7 @@ components:
           required: [index]
           additionalProperties: false
           properties:
-            index: { type: boolean, description: False → the whole site is noindex (staging, hidden stores) }
+            index: { type: boolean, description: 'False → the whole site is noindex (staging, hidden stores)' }
     PostalAddress:
       type: object
       nullable: true
@@ -3930,7 +3930,7 @@ components:
         name:
           type: string
           enum: [page_view, view_item, view_item_list, search, add_to_cart, remove_from_cart, view_cart, begin_checkout, add_shipping_info, add_payment_info, purchase, sign_up, login, add_to_wishlist, select_promotion]
-        eventId: { type: string, nullable: true, description: Same id given to the browser pixel, for de-duplication }
+        eventId: { type: string, nullable: true, description: 'Same id given to the browser pixel, for de-duplication' }
         page:
           type: object
           nullable: true
