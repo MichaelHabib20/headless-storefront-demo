@@ -170,7 +170,7 @@ describe('mock orders', () => {
     expect(call('GET', '/orders').payload.data.pagination.total).toBe(12);
 
     const inProgress = call('GET', '/orders/mock-order-48201').payload.data;
-    expect(inProgress.actions).toEqual({ canCancel: true, canReorder: false });
+    expect(inProgress.actions).toEqual({ canCancel: true, canReorder: false, canRate: false, canReviewProducts: false });
     expect(inProgress.timeline.filter((step) => step.current)).toHaveLength(1);
     expect(inProgress.totals.lines.map((line) => line.kind)).toEqual(['subtotal', 'promo_code', 'delivery']);
     expect(inProgress.totals.lines[1].amount.display).toBe('-20.00 EGP');
@@ -199,7 +199,7 @@ describe('mock orders', () => {
     expect(call('POST', '/orders/mock-order-48201/cancel', {}).status).toBe(422);
     const cancelled = call('POST', '/orders/mock-order-48201/cancel', { reasonId: 1, note: 'Ordered twice' }).payload.data;
     expect(cancelled.status).toEqual({ code: 'cancelled', label: 'Cancelled', active: false });
-    expect(cancelled.actions).toEqual({ canCancel: false, canReorder: false });
+    expect(cancelled.actions).toEqual({ canCancel: false, canReorder: false, canRate: false, canReviewProducts: false });
 
     const again = call('POST', '/orders/mock-order-48201/cancel', { reasonId: 1 });
     expect(again.status).toBe(409);
@@ -213,5 +213,67 @@ describe('mock orders', () => {
     const result = call('POST', '/orders/mock-order-48200/reorder').payload.data;
     expect(result.skipped).toEqual([{ name: 'مناديل أطفال مبللة للسفر', reason: 'هذا المنتج لم يعد متاحاً للبيع.' }]);
     expect(result.cart.items.length).toBe(before + 1);
+  });
+});
+
+describe('mock orders extras (tracking, rating, reviews)', () => {
+  it.each(['en', 'ar'])('answers follow the contract (%s)', (locale) => {
+    const { call } = api(locale);
+    expectValid('OrderResponse', call('GET', '/orders/track', null, 'number=48200&phone=01000000001').payload);
+    expectValid('OrderResponse', call('POST', '/orders/mock-order-48200/rate', { rating: 4, driverRating: 5, feedback: 'Fast', skip: false, items: [] }).payload);
+    const written = call('POST', '/reviews', { productId: call('GET', '/orders/mock-order-48200').payload.data.items[0].productId, rating: 5, comment: 'Great', orderId: 'mock-order-48200' });
+    expect(written.status).toBe(201);
+    expectValid('MessageResponse', written.payload);
+  });
+
+  it('tracks an order by number + phone without a session, and never says which half was wrong', () => {
+    const { call } = api('en', null);
+    const found = call('GET', '/orders/track', null, 'number=48200&phone=01000000001').payload.data;
+    expect(found.number).toBe('48200');
+    expect(found.phone).toBe('01••••••001');
+    expect(call('GET', '/orders/track', null, 'number=48200&phone=%2B20%201000000001').status).toBe(200);
+    expect(call('GET', '/orders/track', null, 'number=48200&phone=01099999999').status).toBe(404);
+    expect(call('GET', '/orders/track', null, 'number=99999&phone=01000000001').status).toBe(404);
+    expect(call('GET', '/orders/track', null, 'number=48200').status).toBe(422);
+  });
+
+  it('rates a delivered order once; the rating then shows and canRate turns false', () => {
+    const { call } = api();
+    const before = call('GET', '/orders/mock-order-48200').payload.data;
+    expect(before.actions).toMatchObject({ canRate: true, canReviewProducts: true });
+    expect(before.ratingForm).toEqual({ driverRating: 'optional', items: true });
+    expect(before.rating).toBeNull();
+
+    expect(call('POST', '/orders/mock-order-48200/rate', { rating: 9 }).status).toBe(422);
+    const rated = call('POST', '/orders/mock-order-48200/rate', { rating: 4, driverRating: 5, feedback: ' Fast ', skip: false }).payload.data;
+    expect(rated.rating).toEqual({ rating: 4, driverRating: 5, feedback: 'Fast' });
+    expect(rated.actions.canRate).toBe(false);
+    expect(rated.ratingForm).toBeNull();
+
+    const again = call('POST', '/orders/mock-order-48200/rate', { rating: 3 });
+    expect(again.status).toBe(409);
+    expect(again.payload.error.code).toBe('already_rated');
+    expect(call('POST', '/orders/mock-order-48201/rate', { rating: 3 }).payload.error.code).toBe('cannot_rate');
+    // the picked-up order is rated already (seeded), with no delivery stars
+    expect(call('GET', '/orders/mock-order-48199').payload.data.rating).toEqual({ rating: 5, driverRating: null, feedback: 'Quick and friendly' });
+  });
+
+  it('"not now" keeps the order rateable', () => {
+    const { call } = api();
+    const skipped = call('POST', '/orders/mock-order-48200/rate', { rating: null, skip: true }).payload.data;
+    expect(skipped.rating).toBeNull();
+    expect(skipped.actions.canRate).toBe(true);
+  });
+
+  it('writes a review from a delivered order or from the product page, and refuses what the backend refuses', () => {
+    const { call, store } = api();
+    const account = createAccountModule(store);
+    const productId = call('GET', '/orders/mock-order-48200').payload.data.items[0].productId;
+    expect(call('POST', '/reviews', { productId, rating: 0, comment: '' }).payload.error.fields).toEqual({ rating: ['Choose a rating from 1 to 5.'], comment: ['Write a few words about the product.'] });
+    expect(call('POST', '/reviews', { productId: 424242, rating: 5, comment: 'x' }).status).toBe(404);
+    expect(call('POST', '/reviews', { productId, rating: 5, comment: 'x', orderId: 'mock-order-48201' }).payload.error.fields).toEqual({ orderId: ['Choose one of your delivered orders to review this product.'] });
+    expect(call('POST', '/reviews', { productId, rating: 5, comment: 'Great' }).status).toBe(201);
+    expect(createAccountModule(store).reviewsWritten()).toEqual([]);
+    void account;
   });
 });

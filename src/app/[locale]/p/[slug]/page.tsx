@@ -3,13 +3,17 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import { cache, Suspense } from 'react';
 import { getProduct, isApiError, isLocale, type Locale, type ProductDetails } from '@/sdk';
 import { ProductView } from '@/components/product/ProductView';
+import { ShareButton } from '@/components/product/ShareButton';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { positiveIntParam } from '@/components/ui/Pagination';
 import { translator } from '@/lib/i18n';
 import { resolveTarget } from '@/lib/routing';
 import { seoMetadata } from '@/lib/seo';
+import { JsonLd } from '@/lib/jsonld';
+import { viewItemEvent } from '@/lib/marketing';
+import { TrackEvent } from '@/components/marketing/TrackEvent';
 import { shopperContext } from '@/lib/shopper.server';
-import { storefrontClient } from '@/lib/storefront.server';
+import { loadLayout, storefrontClient } from '@/lib/storefront.server';
 import { notifyMeAction } from './actions';
 import { RecommendationsBlock, ReviewsBlock } from './blocks';
 
@@ -71,12 +75,17 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
   const page = positiveIntParam((await searchParams).page, 1);
   const productSlug = details.product.slug;
   const baseHref = resolveTarget(details.product.target, locale)?.href ?? '';
+  const share = await shareEnabled(locale);
 
   return (
+    <>
+    <JsonLd seo={details.seo} locale={locale} />
+    <TrackEvent locale={locale} event={viewItemEvent(details)} />
     <ProductView
       details={details}
       locale={locale}
       notifyMeAction={notifyMeAction}
+      share={share ? <ShareButton locale={locale} title={details.product.name} /> : null}
       recommendations={
         <Suspense fallback={null}>
           <RecommendationsBlock locale={locale} slug={productSlug} />
@@ -84,9 +93,19 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
       }
       reviews={
         <Suspense fallback={null}>
-          <ReviewsBlock locale={locale} slug={productSlug} page={page} baseHref={baseHref} />
+          <ReviewsBlock locale={locale} slug={productSlug} page={page} baseHref={baseHref} productId={details.product.id} productName={details.product.name} />
         </Suspense>
       }
     />
+    </>
   );
+}
+
+/** `Layout.features.share` (the layout is read once per request); a failing layout hides the button. */
+async function shareEnabled(locale: Locale): Promise<boolean> {
+  try {
+    return Boolean((await loadLayout(locale)).features.share);
+  } catch {
+    return false;
+  }
 }

@@ -112,3 +112,67 @@ export type CategoryNode = Schemas['CategoryNode'];
 export type CategoryTree = Schemas['CategoriesResponse']['data'];
 export type BrandsPage = Schemas['BrandsResponse']['data'];
 export type Resolution = Schemas['Resolution'];
+
+// orders extras: tracking without sign-in, order rating, product reviews
+export type RateOrderInput = Schemas['RateOrderRequest'];
+export type WriteReviewInput = Schemas['WriteReviewRequest'];
+/** `Order.rating`: the rating the shopper gave (null = not rated). */
+export type OrderRating = NonNullable<Order['rating']>;
+/** `Order.ratingForm`: how to draw the rating dialog (null = cannot rate now). */
+export type OrderRatingForm = NonNullable<Order['ratingForm']>;
+/** `ProductReviewsPage.write`: whether and how the shopper may write a review. */
+export type ReviewAccess = NonNullable<ProductReviewsPage['write']>;
+export type MessageResult = Schemas['MessageResponse']['data'];
+// auth and account: sign in / up / out, social, OTP, password reset, verification, profile, password
+export type AuthSettings = Schemas['AuthSettings'];
+export type FormField = Schemas['FormField'];
+export type SocialProvider = Schemas['SocialSignInRequest']['provider'];
+export type Customer = Schemas['Customer'];
+export type Session = Schemas['Session'];
+/** What the storefront must do next after a sign-in (`Session.next`) or on any page (`Me.next`). */
+export type NextStep = NonNullable<Session['next']>;
+export type SignInInput = Schemas['SignInRequest'];
+export type SignUpValues = Schemas['SignUpRequest']['values'];
+export type SocialSignInInput = Schemas['SocialSignInRequest'];
+export type CompleteProfileInput = Schemas['CompleteProfileRequest'];
+export type ForgotPasswordInput = Schemas['ForgotPasswordRequest'];
+export type ForgotPasswordResult = Schemas['ForgotPasswordResponse']['data'];
+export type ResetPasswordInput = Schemas['ResetPasswordRequest'];
+export type CodeSent = Schemas['CodeSentResponse']['data'];
+export type SignedOut = Schemas['SignedOutResponse']['data'];
+export type Profile = Schemas['ProfileResponse']['data'];
+export type ProfileField = Schemas['ProfileField'];
+export type ProfileValues = Schemas['ProfileInput']['values'];
+// seo + marketing: structured data, site facts, sitemap, pixel ids, server-side events
+export type Breadcrumb = Schemas['Breadcrumb'];
+export type StructuredData = Schemas['StructuredData'];
+export type ProductStructuredData = NonNullable<StructuredData['product']>;
+export type CollectionStructuredData = NonNullable<StructuredData['collection']>;
+export type WebPageStructuredData = NonNullable<StructuredData['webPage']>;
+export type SeoPagination = NonNullable<Seo['pagination']>;
+export type OpenGraph = NonNullable<Seo['openGraph']>;
+export type SiteSeo = Schemas['SiteSeo'];
+export type PostalAddress = Schemas['PostalAddress'];
+export type SitemapPage = Schemas['SitemapResponse']['data'];
+export type SitemapEntry = SitemapPage['items'][number];
+export type SitemapType = import('../generated/api').operations['getSitemap']['parameters']['query']['type'];
+export type Marketing = Schemas['Marketing'];
+export type EventRequest = Schemas['EventRequest'];
+export type EventName = EventRequest['name'];
+export type EventAccepted = Schemas['EventAcceptedResponse']['data'];
+// ---- shell: content pages, forms, mobile nav, area (shell agent); FormField and MessageResult are above
+export type ContentPage = Schemas['Page'];
+export type PageContact = NonNullable<ContentPage['contact']>;
+export type Branch = Schemas['Branch'];
+export type BranchesPage = Schemas['BranchesResponse']['data'];
+export type BranchGroup = BranchesPage['groups'][number];
+export type LandingPage = Schemas['LandingPage'];
+export type MerchantForm = Schemas['Form'];
+export type FormValues = Schemas['FormSubmission']['values'];
+export type MobileNavItem = Schemas['MobileNavItem'];
+export type MobileNav = NonNullable<Layout['mobileNav']>;
+export type LegalLinks = NonNullable<Layout['legal']>;
+export type AppBanner = NonNullable<Layout['appBanner']>;
+export type AreaSelection = NonNullable<Layout['areaSelection']>;
+export type StoreStatus = NonNullable<Layout['storeStatus']>;
+export type ShopperArea = NonNullable<Me['area']>;

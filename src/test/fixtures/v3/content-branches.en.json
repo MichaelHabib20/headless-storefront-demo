@@ -1,0 +1,55 @@
+{
+ "data": {
+  "groups": [
+   {
+    "name": "Stores",
+    "branches": [
+     {
+      "id": 2,
+      "name": "Shubra Pharmacy",
+      "address": "41 Shubra Street",
+      "area": "Down Town",
+      "phone": "0225778800 / 01227744387",
+      "email": "shoubra@seifgroup.com",
+      "image": null,
+      "mapUrl": "https://g.co/kgs/q3V9Wsw",
+      "location": {
+       "latitude": 30.0658722,
+       "longitude": 31.2451537
+      }
+     },
+     {
+      "id": 4,
+      "name": "Master Pharmacy",
+      "address": "Cairo-Alexandria Desert Road",
+      "area": "Alexandria",
+      "phone": "01117708839",
+      "email": null,
+      "image": null,
+      "mapUrl": "https://www.google.com/maps?q=30.3954787,30.3752689",
+      "location": {
+       "latitude": 30.3954787,
+       "longitude": 30.3752689
+      }
+     }
+    ]
+   },
+   {
+    "name": "Branches",
+    "branches": [
+     {
+      "id": 9,
+      "name": "Maadi Pharmacy",
+      "address": null,
+      "area": "Maadi",
+      "phone": null,
+      "email": null,
+      "image": null,
+      "mapUrl": null,
+      "location": null
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -4221,6 +4221,135 @@
    "cookieConsent": true,
    "newsletter": true,
    "guestCanViewPrices": true
+  },
+  "marketing": {
+   "gtmId": "GTM-TZC4S7KD",
+   "googleAnalyticsIds": [
+    "G-BVSC667874"
+   ],
+   "googleAds": null,
+   "facebookPixelId": "882598886877502",
+   "tiktokPixelId": "D072PMBC77UCMMV6DJM0",
+   "snapchatPixelId": null,
+   "clarityId": null,
+   "hotjarId": null
+  },
+  "legal": {
+   "privacy": {
+    "type": "page",
+    "slug": "privacy-policy"
+   },
+   "terms": {
+    "type": "page",
+    "slug": "terms-and-conditions"
+   },
+   "cookies": {
+    "type": "page",
+    "slug": "cookie-policy"
+   }
+  },
+  "appBanner": {
+   "title": null,
+   "text": "Download App Now",
+   "links": {
+    "android": "https://play.google.com/store/apps/details?id=com.awfar.seif&hl=en&pli=1",
+    "ios": "https://apps.apple.com/eg/app/seif-pharmacies-%D8%B5%D9%8A%D8%AF%D9%84%D9%8A%D8%A9-%D8%B3%D9%8A%D9%81/id6463644571"
+   }
+  },
+  "topBanner": null,
+  "floatingBanner": null,
+  "mobileNav": {
+   "items": [
+    {
+     "id": "home",
+     "label": "Home",
+     "icon": "home",
+     "target": {
+      "type": "home"
+     },
+     "badge": null
+    },
+    {
+     "id": "categories",
+     "label": "Categories",
+     "icon": "apps",
+     "target": null,
+     "badge": null
+    },
+    {
+     "id": "deals",
+     "label": "Deals",
+     "icon": "local_offer",
+     "target": {
+      "type": "deals"
+     },
+     "badge": null
+    },
+    {
+     "id": "cart",
+     "label": "Cart",
+     "icon": "shopping_cart",
+     "target": null,
+     "badge": "cart"
+    },
+    {
+     "id": "more",
+     "label": "More",
+     "icon": "more_horiz",
+     "target": null,
+     "badge": null
+    }
+   ],
+   "more": {
+    "title": "More",
+    "welcomeTitle": "Welcome to Seif Pharmacies!",
+    "welcomeText": "Login for a seamless experience.",
+    "items": [
+     {
+      "id": "orders",
+      "label": "Orders",
+      "icon": "shopping_bag",
+      "target": null,
+      "badge": null
+     },
+     {
+      "id": "wishlist",
+      "label": "Wishlist",
+      "icon": "favorite",
+      "target": null,
+      "badge": "wishlist"
+     },
+     {
+      "id": "menu_button_1",
+      "label": "Our Branches",
+      "icon": "https://cdn.supercommerce.io/supercommerce-demo/uploads/store-1729685182.png",
+      "target": {
+       "type": "page",
+       "slug": "branches"
+      },
+      "badge": null
+     },
+     {
+      "id": "compare",
+      "label": "Compare",
+      "icon": "compare_arrows",
+      "target": null,
+      "badge": "compare"
+     },
+     {
+      "id": "language",
+      "label": "عربي",
+      "icon": "language",
+      "target": null,
+      "badge": null
+     }
+    ]
+   }
+  },
+  "areaSelection": null,
+  "storeStatus": {
+   "acceptingOrders": true,
+   "message": null
   }
  }
 }

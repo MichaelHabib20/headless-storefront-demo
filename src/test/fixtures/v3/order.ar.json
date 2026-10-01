@@ -55,6 +55,7 @@
      "type": "product",
      "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب"
     },
+    "productId": 7346,
     "quantity": 1,
     "lineTotal": {
      "amount": 160,
@@ -73,6 +74,7 @@
      "type": "product",
      "slug": "jj-baby-cologne-100ml-dream-احلام"
     },
+    "productId": 9822,
     "quantity": 2,
     "lineTotal": {
      "amount": 243,
@@ -128,7 +130,12 @@
   "note": "من فضلك اتصل بي قبل الوصول.",
   "actions": {
    "canCancel": true,
-   "canReorder": false
-  }
+   "canReorder": false,
+   "canRate": false,
+   "canReviewProducts": false
+  },
+  "rating": null,
+  "ratingForm": null,
+  "phone": "01••••••001"
  }
 }

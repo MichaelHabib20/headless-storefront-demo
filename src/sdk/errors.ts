@@ -1,16 +1,10 @@
 /**
- * Every failure the SDK can report, by name.
- * The legacy API signals errors with numeric `code`s inside HTTP 200 responses;
- * the SDK translates them here so storefront code never sees those numbers.
+ * Every failure the SDK can report, by name. The v3 API answers real HTTP statuses with
+ * `{error: {code, message, fields?}}`; the SDK maps `code` to a kind so storefront code
+ * never branches on numbers or raw strings. `message` is the backend's, localized.
  */
 export type ApiErrorKind =
   | 'validation'
-  | 'invalid_credentials'
-  | 'account_deactivated'
-  | 'social_account_only'
-  | 'not_allowed'
-  | 'phone_taken'
-  | 'signup_disabled'
   | 'rate_limited'
   | 'store_unavailable'
   | 'server'
@@ -31,13 +25,30 @@ export type ApiErrorKind =
   | 'guest_checkout_disabled'
   | 'phone_in_use'
   | 'payment_provider_error'
+  // orders extras (v3 error codes, same names)
+  | 'already_rated'
+  | 'cannot_rate'
+  | 'feature_disabled'
+  // auth and account (v3 error codes, same names)
+  | 'invalid_credentials'
+  | 'account_deactivated'
+  | 'social_account_only'
+  | 'signup_disabled'
+  | 'provider_error'
+  | 'code_expired'
+  | 'too_many_attempts'
+  | 'invalid_code'
+  | 'sms_unavailable'
+  | 'phone_already_verified'
+  | 'email_in_use'
+  | 'wrong_password'
   | 'unknown';
 
 export class ApiError extends Error {
   readonly kind: ApiErrorKind;
-  /** Raw legacy code, for logging only. Never branch on it. */
+  /** HTTP status, for logging only. Never branch on it. */
   readonly code: number;
-  /** Per-field messages, keyed by the SDK's field names (not the backend's). */
+  /** Per-field messages, keyed by the names the API used (the v3 field names). */
   readonly fieldErrors: Record<string, string[]>;
   /** What the backend sent next to `error` (e.g. the fresh `checkout` with total_changed). */
   readonly details: Record<string, unknown>;
@@ -61,13 +72,4 @@ export class ApiError extends Error {
 
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
-}
-
-/** Returns a copy of the error with backend field names replaced by SDK field names. */
-export function renameFields(error: ApiError, names: Record<string, string>): ApiError {
-  const fieldErrors: Record<string, string[]> = {};
-  for (const [field, messages] of Object.entries(error.fieldErrors)) {
-    fieldErrors[names[field] ?? field] = messages;
-  }
-  return new ApiError(error.kind, error.code, error.message, fieldErrors, error.cause, error.details);
 }

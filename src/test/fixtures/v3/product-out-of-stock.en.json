@@ -188,7 +188,59 @@
      }
     }
    ],
-   "index": true
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Mom & Baby",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    },
+    {
+     "label": "JOHNSON & JOHNSON",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    {
+     "label": "J&J Baby Cologne 100Ml Morning Dew",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "product": {
+     "schemaType": "Product",
+     "name": "J&J Baby Cologne 100Ml Morning Dew",
+     "description": "J&amp;J Baby Cologne 100Ml Morning Dew: gentle care made for your baby's delicate skin.",
+     "sku": "JJ-14400",
+     "brand": "JOHNSON & JOHNSON",
+     "images": [
+      "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp"
+     ],
+     "price": 135,
+     "currency": "EGP",
+     "availability": "out_of_stock",
+     "rating": null,
+     "category": "Mom & Baby"
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": "J&J Baby Cologne 100Ml Morning Dew",
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+    "type": "product"
+   }
   }
  }
 }

@@ -22,6 +22,8 @@ interface ProductViewProps {
   recommendations?: ReactNode;
   /** Reviews, loaded on their own. */
   reviews?: ReactNode;
+  /** The share button (only when `Layout.features.share`). */
+  share?: ReactNode;
 }
 
 /**
@@ -29,7 +31,7 @@ interface ProductViewProps {
  * price and discount, badges, what every option value opens, the stock message, whether it can be
  * bought and in what quantities, notify-me, texts, specifications and the breadcrumb trail.
  */
-export function ProductView({ details, locale, notifyMeAction, recommendations, reviews }: ProductViewProps) {
+export function ProductView({ details, locale, notifyMeAction, recommendations, reviews, share }: ProductViewProps) {
   const t = translator(locale);
   const { product, availability } = details;
   const badges = [...(product.requiresPrescription ? [t('prescription')] : []), ...product.badges.map((badge) => badgeText(badge, t))].filter(
@@ -64,6 +66,7 @@ export function ProductView({ details, locale, notifyMeAction, recommendations, 
               </TargetLink>
             )}
             <h1 className={styles.name}>{product.name}</h1>
+            {share}
             {product.rating && (
               <a href={`#${REVIEWS_ID}`} className={styles.rating} data-testid="product-rating">
                 <Stars value={product.rating.average} label={ratingLabel(product.rating.average, locale, t)} />

@@ -5,7 +5,9 @@
  * - shopper endpoints (session, me, cart, wishlist, compare, notifications): stateful
  *   in-memory store (scripts/mock/shopper.mjs). "Bearer test-customer" is a seeded customer.
  * - everything else: the modules in scripts/mock/modules.mjs, asked in order
- * Control: POST /__mode {"fail": true} → every API call returns 500. POST /__reset → fresh state.
+ * Control: POST /__mode {"fail": true} → every API call returns 500; {"auth": {...}} toggles the auth
+ * module's store flags (OTP, social, reset method, approval...). POST /__reset → fresh state.
+ * Shell switches (scripts/mock/shell.mjs): POST /__mode {"multiInventory" | "maintenance" | "banners" | "storeClosed": true}.
  */
 import fs from 'node:fs';
 import http from 'node:http';
@@ -47,9 +49,14 @@ http
 
     if (url.pathname === '/__mode' && req.method === 'POST') {
       const mode = (await readBody(req)) ?? {};
-      fail = Boolean(mode.fail);
-      delayMs = Math.max(0, Number(mode.delayMs ?? 0));
-      return send(200, { fail, delayMs });
+      // `fail` / `delayMs` as before; a body with only module switches leaves them alone
+      if ('fail' in mode || 'delayMs' in mode || !Object.keys(mode).length) {
+        fail = Boolean(mode.fail);
+        delayMs = Math.max(0, Number(mode.delayMs ?? 0));
+      }
+      // module switches, e.g. {"auth": {"otpLogin": true}} (auth.mjs), {"banners": true} (shell.mjs)
+      const switches = Object.assign({}, ...modules.map((part) => part.mode?.(mode) ?? {}));
+      return send(200, { fail, delayMs, ...switches });
     }
     if (url.pathname === '/__reset' && req.method === 'POST') {
       store.reset();
@@ -60,6 +67,14 @@ http
     }
     if (delayMs && url.pathname.startsWith('/api/')) await new Promise((resolve) => setTimeout(resolve, delayMs));
     if (url.pathname === '/health') return send(200, { ok: true });
+    // Test controls of the modules (e.g. GET /__events, POST /__seo of scripts/mock/seo.mjs).
+    if (url.pathname.startsWith('/__')) {
+      const controlBody = req.method === 'POST' ? await readBody(req) : null;
+      for (const part of modules) {
+        const answer = part.control?.(req.method, url.pathname, controlBody);
+        if (answer) return send(answer[0], answer[1]);
+      }
+    }
 
     const prefix = '/api/customer/v3';
     if (!url.pathname.startsWith(prefix)) return send(404, { error: { code: 'not_found', message: 'Not found' } });
@@ -68,12 +83,20 @@ http
     const pathname = url.pathname.slice(prefix.length) || '/';
     const locale = String(url.searchParams.get('locale') ?? req.headers['accept-language'] ?? 'en').startsWith('ar') ? 'ar' : 'en';
 
-    const recorded = pathname.match(/^\/(layout|home)$/);
-    if (recorded && req.method === 'GET') {
-      return send(200, fs.readFileSync(path.join(dir, `${recorded[1]}.${locale}.json`), 'utf8'));
+    const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '') || null;
+    for (const part of modules) {
+      const early = part.intercept?.({ method: req.method, pathname, query: url.searchParams, token, locale, headers: req.headers });
+      if (early) return send(early[0], early[1], early[2]);
     }
 
-    const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '') || null;
+    const recorded = pathname.match(/^\/(layout|home)$/);
+    if (recorded && req.method === 'GET') {
+      const answer = JSON.parse(fs.readFileSync(path.join(dir, `${recorded[1]}.${locale}.json`), 'utf8'));
+      // Modules may add the members of later phases (e.g. Layout.marketing, Home.seo).
+      for (const part of modules) if (part.decorate) answer.data = part.decorate(recorded[1], answer.data, locale);
+      return send(200, answer);
+    }
+
     const sent = ['PUT', 'POST'].includes(req.method ?? '') ? await readRequest(req) : { raw: '', json: null };
     const body = sent.json;
     const request = { method: req.method, pathname, query: url.searchParams, token, locale, body, contentType: String(req.headers['content-type'] ?? ''), headers: req.headers, raw: sent.raw };

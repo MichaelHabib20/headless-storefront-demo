@@ -8,6 +8,7 @@ import {
   getOrderCancellationReasons,
   getOrders,
   isApiError,
+  trackOrder,
   type AddressBook,
   type CancellationReason,
   type CheckoutSettings,
@@ -78,6 +79,20 @@ export const loadOrder = cache((locale: Locale, orderId: string): Promise<Accoun
 export async function loadCancellationReasons(locale: Locale): Promise<CancellationReason[] | null> {
   const result = await personal(locale, (client, ctx) => getOrderCancellationReasons(client, ctx));
   return result.status === 'ok' ? result.data.items : null;
+}
+
+/**
+ * Tracking without sign-in (`GET /orders/track`): public, no token, never creates one. `not-found`
+ * covers a wrong number / phone pair AND a store with tracking off (the API answers 404 for both).
+ */
+export async function loadTrackedOrder(locale: Locale, number: string, phone: string): Promise<AccountResult<Order>> {
+  try {
+    return { status: 'ok', data: await trackOrder(storefrontClient(), locale, number, phone) };
+  } catch (error) {
+    if (isApiError(error) && (error.kind === 'not_found' || error.kind === 'validation')) return { status: 'not-found' };
+    console.error('order tracking failed', error);
+    return { status: 'error' };
+  }
 }
 
 export interface AddressFormData {

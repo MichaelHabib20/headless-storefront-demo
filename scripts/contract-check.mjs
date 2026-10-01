@@ -80,6 +80,22 @@ const RESPONSE_SCHEMA = {
   'order-pickup': 'OrderResponse',
   'cancellation-reasons': 'CancellationReasonsResponse',
   reorder: 'ReorderResponse',
+  // auth and profile (scripts/build-auth-fixtures.mjs)
+  'auth-settings': 'AuthSettingsResponse',
+  'auth-settings-full': 'AuthSettingsResponse',
+  session: 'SessionResponse',
+  profile: 'ProfileResponse',
+  // seo + marketing (scripts/build-seo-fixtures.mjs)
+  'seo-site': 'SiteSeoResponse',
+  'sitemap-products': 'SitemapResponse',
+  // shell + content pages (scripts/build-shell-fixtures.mjs)
+  'content-page': 'PageResponse',
+  'content-contact': 'PageResponse',
+  'content-branches-page': 'PageResponse',
+  'content-branches': 'BranchesResponse',
+  'content-landing': 'LandingPageResponse',
+  'content-form': 'FormResponse',
+  'content-form-file': 'FormResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');
@@ -112,13 +128,22 @@ if (live) {
   };
   await liveResponse('me (anonymous)', 'MeResponse', 'me');
   await liveResponse('cart without a session → 401', 'ErrorResponse', 'cart', null, 'en', 401);
+  await liveResponse('auth settings', 'AuthSettingsResponse', 'auth/settings');
+  await liveResponse('auth settings (ar)', 'AuthSettingsResponse', 'auth/settings', null, 'ar');
+  await liveResponse('profile without a session → 401', 'ErrorResponse', 'account/profile', null, 'en', 401);
   const { E2E_PHONE: phone, E2E_PASSWORD: password } = process.env;
   if (phone && password) {
-    const login = await (await fetch(`${base}/api/customer/auth`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json', lang: '1' }, body: JSON.stringify({ phone, password }) })).json();
+    // v3 sign-in: a real status and {data: Session}; the legacy /api/customer/auth is not used any more
+    const signInResponse = await fetch(`${base}/api/customer/v3/auth/sign-in`, { method: 'POST', headers: { ...headers('en'), 'Content-Type': 'application/json' }, body: JSON.stringify({ identifier: phone, password }) });
+    const login = await signInResponse.json().catch(() => null);
     const token = login?.data?.token;
-    if (!token) failures.push('live sign-in with E2E_PHONE/E2E_PASSWORD failed');
+    if (!signInResponse.ok || !token) failures.push(`live v3 sign-in with E2E_PHONE/E2E_PASSWORD failed (HTTP ${signInResponse.status})`);
     else {
+      const sessionErrors = validate('SessionResponse', login);
+      if (sessionErrors.length) failures.push(`live sign-in:\n    ${sessionErrors.slice(0, 15).join('\n    ')}`);
+      else console.log('✓ live sign-in matches the contract');
       for (const locale of ['en', 'ar']) {
+        await liveResponse(`profile.${locale}`, 'ProfileResponse', 'account/profile', token, locale);
         await liveResponse(`me.${locale}`, 'MeResponse', 'me', token, locale);
         await liveResponse(`cart.${locale}`, 'CartResponse', 'cart', token, locale);
         await liveResponse(`wishlist.${locale}`, 'WishlistResponse', 'wishlist?perPage=5', token, locale);
@@ -142,8 +167,10 @@ if (normalize(fs.readFileSync(tmp, 'utf8')) !== normalize(fs.readFileSync(path.j
 }
 fs.rmSync(tmp, { force: true });
 
-// 4. same contract as the backend (when both repos are checked out side by side)
-const backendContract = path.join(root, '../saas-ecommerce-backend/docs/headless/openapi.yaml');
+// 4. same contract as the backend (when both repos are checked out side by side). SC_BACKEND_DIR
+//    points at another backend checkout (e.g. the worktree a contract change is being made in).
+const backendDir = process.env.SC_BACKEND_DIR ? path.resolve(process.env.SC_BACKEND_DIR) : path.join(root, '../saas-ecommerce-backend');
+const backendContract = path.join(backendDir, 'docs/headless/openapi.yaml');
 if (fs.existsSync(backendContract)) {
   if (normalize(fs.readFileSync(backendContract, 'utf8')) !== normalize(fs.readFileSync(contractPath, 'utf8'))) {
     failures.push('contract/openapi.yaml differs from the backend contract: run `npm run contract:sync`');

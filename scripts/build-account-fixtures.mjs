@@ -38,4 +38,7 @@ for (const locale of ['en', 'ar']) {
   write(`order-pickup.${locale}`, call('GET', '/orders/mock-order-48199'));
   write(`cancellation-reasons.${locale}`, call('GET', '/orders/cancellation-reasons'));
   write(`reorder.${locale}`, call('POST', '/orders/mock-order-48200/reorder'));
+  // orders extras: #48199 is rated already; tracking #48200 without sign-in
+  write(`order-rated.${locale}`, call('GET', '/orders/mock-order-48199'));
+  write(`order-tracked.${locale}`, [account].map((part) => part.handle({ method: 'GET', pathname: '/orders/track', query: new URLSearchParams('number=48200&phone=01000000001'), token: null, locale, body: null })).find(Boolean)[1]);
 }

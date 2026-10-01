@@ -3,6 +3,25 @@ import { checkSource } from './lib/rules.mjs';
 
 const rulesHit = (file, source) => checkSource(file, source).map((v) => v.rule);
 
+describe('orders extras rules', () => {
+  it('catches rating and review rules decided in the storefront', () => {
+    expect(rulesHit('src/components/account/X.tsx', "const canRate = order.status.code === 'delivered';")).toContain('rating-rules-from-api');
+    expect(rulesHit('src/components/account/X.tsx', 'const show = order.actions.canRate || order.status.active;')).toContain('rating-rules-from-api');
+    expect(rulesHit('src/components/product/X.tsx', 'const requiresSignIn = !me.authenticated;')).toContain('rating-rules-from-api');
+    expect(rulesHit('src/components/account/X.tsx', "const ratingForm = { driverRating: 'optional', items: true };")).toContain('rating-rules-from-api');
+    // reading the API's answer is fine
+    expect(rulesHit('src/components/account/X.tsx', "{order.actions.canRate && <button>{t('orderRate')}</button>}")).toEqual([]);
+    expect(rulesHit('src/components/account/X.tsx', 'const canRate = Boolean(order.actions.canRate && order.ratingForm);')).toEqual([]);
+    expect(rulesHit('src/sdk/v3/types.ts', "export type ReviewAccess = { requiresSignIn: boolean };")).toEqual([]);
+  });
+
+  it('keeps sharing in the share component', () => {
+    expect(rulesHit('src/components/product/X.tsx', 'navigator.share({ title, url })')).toContain('share-in-one-place');
+    expect(rulesHit('src/components/layout/X.tsx', "<a href={`https://www.facebook.com/sharer/sharer.php?u=${u}`}>")).toContain('share-in-one-place');
+    expect(rulesHit('src/components/product/ShareButton.tsx', 'await navigator.share({ title, url: pageUrl() });')).toEqual([]);
+  });
+});
+
 describe('architecture rules', () => {
   it('catches direct API calls outside the SDK', () => {
     expect(rulesHit('src/components/home/X.tsx', "const r = await fetch('/api/customer/home/sections');")).toContain('sdk-only-network');
@@ -45,8 +64,9 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/cart/M.tsx', 'if (summary.subtotal.amount >= minimumOrder.amount.amount) {')).toContain('no-price-math');
     expect(rulesHit('src/components/cart/M.tsx', 'const almost = minimumOrder.progressPercent > 80;')).toContain('no-price-math');
     expect(rulesHit('src/components/cart/M.tsx', '{summary.discount && (')).toEqual([]);
-    // reading the numbers for analytics is allowed by the contract; `=>` is not a comparison
-    expect(rulesHit('src/components/cart/M.tsx', 'track(cart.items.map((item) => item.lineTotal.amount));')).toEqual([]);
+    // reading the numbers for analytics is allowed by the contract; `=>` is not a comparison (reading
+    // them is the job of src/lib/marketing.ts: rule money-number-for-analytics-only)
+    expect(rulesHit('src/components/cart/M.tsx', 'track(cart.items.map((item) => item.lineTotal.amount));')).not.toContain('no-price-math');
     expect(rulesHit('src/components/cart/M.tsx', '<Money value={minimumOrder.amount} />')).toEqual([]);
   });
 
@@ -251,8 +271,74 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/account/AddressForm.tsx', '<input type="hidden" name="locale" value={locale} />')).toEqual([]);
   });
 
+  it('catches the legacy auth API and SDK (auth agent)', () => {
+    expect(rulesHit('src/lib/x.ts', "await fetch(`${base}/api/customer/auth`, { method: 'POST' })")).toContain('auth-via-v3');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', 'const { loginMethod } = await getAuthConfig(client);')).toContain('auth-via-v3');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', "import { login } from '@/sdk/auth';")).toContain('auth-via-v3');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', 'await saveSession(await login(client, input));')).toContain('auth-via-v3');
+    expect(rulesHit('scripts/mock/x.mjs', "if (pathname === '/api/customer/profile') {")).toContain('auth-via-v3');
+    // the v3 functions are the way
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', 'const session = await signIn(storefrontClient(), { locale, token: guest }, { identifier, password });')).toEqual([]);
+    expect(rulesHit('src/lib/auth.server.ts', 'return { ok: true, settings: await getAuthSettings(storefrontClient(), locale) };')).toEqual([]);
+  });
+
+  it('catches sign-up fields and the login method decided in the storefront (auth agent)', () => {
+    expect(rulesHit('src/app/[locale]/sign-up/SignUpForm.tsx', '<input name="referralCode" />')).toContain('auth-form-from-api');
+    expect(rulesHit('src/app/[locale]/sign-up/SignUpForm.tsx', "{showBirthdate && <input name='birthdate' type='date' />}")).toContain('auth-form-from-api');
+    expect(rulesHit('src/lib/x.ts', "const loginMethod = flag(raw, 'enablePhoneLogin') ? 'phone' : 'email';")).toContain('auth-form-from-api');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', "const method = identifier.includes('@') ? 'email' : 'phone';")).toContain('auth-form-from-api');
+    // the one component that draws the API's field list, and the contract's fixed shapes
+    expect(rulesHit('src/components/auth/AuthFields.tsx', 'name={field.name}')).toEqual([]);
+    expect(rulesHit('src/app/[locale]/account/complete-profile/CompleteProfileForm.tsx', '<input name="firstName" autoComplete="given-name" />')).toEqual([]);
+    expect(rulesHit('src/app/[locale]/sign-in/SignInForm.tsx', '<input name="identifier" type={isPhone ? "tel" : "email"} />')).toEqual([]);
+  });
+
+  it('catches tokens put in web storage (auth agent)', () => {
+    expect(rulesHit('src/components/auth/X.tsx', "localStorage.setItem('sc_token', session.token);")).toContain('no-token-in-browser-storage');
+    expect(rulesHit('src/components/auth/X.tsx', "window.sessionStorage.setItem('auth_user', JSON.stringify({ token }));")).toContain('no-token-in-browser-storage');
+    expect(rulesHit('src/components/auth/X.tsx', "localStorage.setItem('auth', jwt);")).toContain('no-token-in-browser-storage');
+    // per-viewer conveniences are fine
+    expect(rulesHit('src/components/auth/NextStepGate.tsx', "window.sessionStorage.setItem('sc_verify_phone_dismissed', '1');")).toEqual([]);
+    expect(rulesHit('src/components/layout/CookieConsent.tsx', "localStorage.setItem('sc_cookie_consent', 'accepted');")).toEqual([]);
+  });
+
   it('ignores tests and comments', () => {
     expect(rulesHit('src/components/X.test.tsx', "fetch('/api/customer/x')")).toEqual([]);
     expect(rulesHit('src/components/X.tsx', '// never call fetch( here')).toEqual([]);
+  });
+});
+
+// ---- seo + marketing
+describe('seo + marketing rules', () => {
+  it('writes JSON-LD only in src/lib/jsonld.ts', () => {
+    expect(rulesHit('src/app/[locale]/p/[slug]/page.tsx', '<script type="application/ld+json">{json}</script>')).toContain('jsonld-one-place');
+    expect(rulesHit('src/components/product/X.tsx', "const schema = { '@context': 'https://schema.org', '@type': 'Product', name };")).toContain('jsonld-one-place');
+    expect(rulesHit('src/lib/jsonld.ts', "createElement('script', { type: 'application/ld+json', dangerouslySetInnerHTML: { __html: json } })")).toEqual([]);
+    expect(rulesHit('src/app/[locale]/p/[slug]/page.tsx', '<JsonLd seo={details.seo} locale={locale} />')).toEqual([]);
+  });
+
+  it('installs tags and pixels only in MarketingTags', () => {
+    expect(rulesHit('src/app/[locale]/layout.tsx', '<Script src="https://www.googletagmanager.com/gtm.js?id=GTM-ABC1234" />')).toContain('marketing-tags-one-place');
+    expect(rulesHit('src/components/product/X.tsx', "fbq('init', '882598886877502'); s.src = 'https://connect.facebook.net/en_US/fbevents.js';")).toContain('marketing-tags-one-place');
+    expect(rulesHit('src/lib/x.ts', "const id = 'G-BVSC667874';")).toContain('marketing-tags-one-place');
+    expect(rulesHit('src/components/layout/MarketingTags.tsx', "j.src='https://www.googletagmanager.com/gtm.js?id='+i;")).toEqual([]);
+    // Meta's login SDK is not a pixel: auth's SocialButtons loads it when the store configured Facebook sign-in
+    expect(rulesHit('src/components/auth/SocialButtons.tsx', "facebook: 'https://connect.facebook.net/en_US/sdk.js',")).not.toContain('marketing-tags-one-place');
+    expect(rulesHit('src/components/auth/X.tsx', "s.src = 'https://connect.facebook.net/signals/config/882598886877502';")).toContain('marketing-tags-one-place');
+  });
+
+  it('reads the number of a price only for analytics, in src/lib/marketing.ts', () => {
+    expect(rulesHit('src/components/product/X.tsx', "window.dataLayer.push({ event: 'add_to_cart', value: product.price.amount });")).toContain('money-number-for-analytics-only');
+    expect(rulesHit('src/components/cart/X.tsx', 'const { amount, currency } = cart.summary.total;')).toContain('money-number-for-analytics-only');
+    expect(rulesHit('src/components/checkout/X.tsx', 'track(locale, { name: "purchase", value: order.totals.total?.amount });')).toContain('money-number-for-analytics-only');
+    expect(rulesHit('src/lib/marketing.ts', 'return price ? price.amount : null;')).toEqual([]);
+    expect(rulesHit('src/sdk/v3/x.ts', 'const n = price.amount;')).toEqual([]);
+    // a Money object handed to <Money> is not reading its number
+    expect(rulesHit('src/components/checkout/TotalLines.tsx', '{line.amount ? <Money value={line.amount} as="dd" /> : <dd>{line.text}</dd>}')).toEqual([]);
+  });
+
+  it('keeps the other money rules on everything but the analytics module', () => {
+    expect(rulesHit('src/lib/marketing.ts', 'value: items.reduce((sum, item) => sum + item.price.amount, 0),')).toEqual([]);
+    expect(rulesHit('src/lib/other.ts', 'value: items.reduce((sum, item) => sum + item.price.amount, 0),')).toContain('no-price-math');
   });
 });

@@ -41,7 +41,32 @@ export const routes = {
   branches: (locale: Locale) => `/${locale}/pages/branches`,
   contact: (locale: Locale) => `/${locale}/pages/contact`,
   trackOrder: (locale: Locale) => `/${locale}/track-order`,
+  // auth and account (profile, password, the pages a `next` step sends the shopper to)
+  forgotPassword: (locale: Locale) => `/${locale}/forgot-password`,
+  /** The e-mail reset link lands here with `?token=&email=` (the backend appends them); the SMS flow comes without. */
+  resetPassword: (locale: Locale) => `/${locale}/reset-password`,
+  verifyPhone: (locale: Locale) => `/${locale}/verify-phone`,
+  /** The changed-e-mail mail links here with `?email=&token=`. */
+  verifyEmail: (locale: Locale) => `/${locale}/verify-email`,
+  waitingApproval: (locale: Locale) => `/${locale}/waiting-approval`,
+  completeProfile: (locale: Locale) => `/${locale}/account/complete-profile`,
+  profile: (locale: Locale) => `/${locale}/account/profile`,
+  changePassword: (locale: Locale) => `/${locale}/account/password`,
 } as const;
+
+/** The page a `Session.next` / `Me.next` value sends the shopper to, or null when nothing is pending. */
+export function nextStepHref(locale: Locale, next: 'verify_phone' | 'waiting_approval' | 'complete_profile' | null | undefined): string | null {
+  switch (next) {
+    case 'verify_phone':
+      return routes.verifyPhone(locale);
+    case 'waiting_approval':
+      return routes.waitingApproval(locale);
+    case 'complete_profile':
+      return routes.completeProfile(locale);
+    default:
+      return null;
+  }
+}
 
 export interface ResolvedLink {
   href: string;
@@ -92,7 +117,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
  * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
  * route above is missing here.
  */
-const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order']);
+const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval']);
 
 /** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
 export function isStorefrontPath(pathname: string): boolean {
@@ -167,3 +192,31 @@ function withQuery(path: string, query: Record<string, string | number | null | 
 function isSafeUrl(url: string): boolean {
   return /^(https?|mailto|tel):/i.test(url);
 }
+
+// ---- seo + marketing
+/** The search page as a schema.org SearchAction URL template (the WebSite JSON-LD on every page). */
+export const searchUrlTemplate = (locale: Locale) => `${routes.search(locale)}?q={search_term_string}`;
+
+/** Our own route handler that forwards browser marketing events to the backend (POST /events). Not a page. */
+export const EVENTS_ENDPOINT = '/api/events';
+
+/**
+ * Sections that are private to the shopper: never indexed (robots.txt, X-Robots-Tag). Includes the
+ * auth flows (password reset, verification, approval) and order tracking, whose pages are per shopper.
+ */
+export const PRIVATE_SECTIONS = [
+  'cart',
+  'checkout',
+  'account',
+  'sign-in',
+  'sign-up',
+  'wishlist',
+  'compare',
+  'notifications',
+  'forgot-password',
+  'reset-password',
+  'verify-phone',
+  'verify-email',
+  'waiting-approval',
+  'track-order',
+] as const;

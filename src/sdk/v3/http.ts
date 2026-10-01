@@ -61,6 +61,25 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   guest_checkout_disabled: 'guest_checkout_disabled',
   phone_in_use: 'phone_in_use',
   payment_provider_error: 'payment_provider_error',
+  // orders extras
+  already_rated: 'already_rated',
+  cannot_rate: 'cannot_rate',
+  feature_disabled: 'feature_disabled',
+  // auth and account
+  invalid_credentials: 'invalid_credentials',
+  account_deactivated: 'account_deactivated',
+  social_account_only: 'social_account_only',
+  signup_disabled: 'signup_disabled',
+  provider_error: 'provider_error',
+  code_expired: 'code_expired',
+  too_many_attempts: 'too_many_attempts',
+  invalid_code: 'invalid_code',
+  sms_unavailable: 'sms_unavailable',
+  phone_already_verified: 'phone_already_verified',
+  email_in_use: 'email_in_use',
+  wrong_password: 'wrong_password',
+  // shell: the store is switched off (maintenance); the message is the merchant's
+  store_unavailable: 'store_unavailable',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {

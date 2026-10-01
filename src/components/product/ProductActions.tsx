@@ -6,6 +6,7 @@ import type { Locale } from '@/sdk';
 import { routes } from '@/lib/routing';
 import { addToCartAction, toggleCompareAction, toggleWishlistAction, type ShopperActionResult } from '@/lib/shopper.actions';
 import { formatQuantity, stepDown, stepUp, type QuantityLimits } from '../cart/quantity';
+import { useMiniCart } from '../layout/MiniCart';
 import { withCount } from '../shopper/labels';
 import { ShopperIcon } from '../shopper/ShopperIcon';
 import { useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
@@ -82,6 +83,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
   const [status, setStatus] = useState<{ text: string; error: boolean } | null>(null);
   const focusCartLink = useRef(false);
   const runInOrder = useRunInOrder();
+  const miniCart = useMiniCart();
 
   const track = (field: Field, delta: number) => setPending((current) => ({ ...current, [field]: Math.max(0, (current[field] ?? 0) + delta) }));
 
@@ -98,7 +100,10 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
 
     if (result.ok) {
       setState((current) => ({ ...current, ...change }));
-      if (!optimistic) focusCartLink.current = true;
+      if (!optimistic) {
+        focusCartLink.current = true;
+        miniCart.open(); // shell: show the cart as the API now has it
+      }
     } else if (optimistic) {
       setState((current) => ({ ...current, ...undo }));
     }

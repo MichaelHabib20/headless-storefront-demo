@@ -24,6 +24,7 @@
  * still prices a line from the home-page card (mock scaffolding, not business rules).
  */
 import { priceWithText } from './shopper.mjs';
+import { productSeoExtras } from './seo-extras.mjs';
 
 const TEXT = {
   en: {
@@ -146,6 +147,12 @@ const EXTRA_IMAGES = { 36480: [8658, 15472, 8412] };
 const VIDEOS = { 36480: { url: 'https://www.youtube.com/watch?v=jjBedtimeBath', thumbnailOf: 8658 } };
 const REVIEW_COUNTS = { 9822: 23 };
 const REVIEWS_OFF = new Set([33594]);
+
+/** `write.message` texts, written like the backend's ReviewAccess. */
+const WRITE_TEXT = {
+  en: { signIn: 'Sign in to write a review.', off: 'This store does not take reviews.' },
+  ar: { signIn: 'سجّل الدخول لكتابة تقييم.', off: 'هذا المتجر لا يستقبل التقييمات.' },
+};
 const RECOMMENDATIONS = {
   9822: [
     { key: 'related', ids: [14400, 14482, 36510, 36480] },
@@ -257,6 +264,12 @@ export function createProductModule(shopper, { now = () => new Date('2026-09-29T
   }
 
   function details(id, locale, requestedSlug) {
+    const page = pageOf(id, locale, requestedSlug);
+    // seo + marketing: breadcrumbs, structured data, preview (scripts/mock/seo-extras.mjs)
+    return { ...page, seo: { ...page.seo, ...productSeoExtras(page) } };
+  }
+
+  function pageOf(id, locale, requestedSlug) {
     const t = TEXT[locale];
     const product = card(id, locale);
     const name = escapeHtml(product.name);
@@ -313,16 +326,26 @@ export function createProductModule(shopper, { now = () => new Date('2026-09-29T
     };
   }
 
-  function reviews(id, locale, query) {
+  /** `ProductReviewsPage.write`: the mock store takes reviews from any shopper session (no order needed). */
+  function writeAccess(id, locale, token) {
+    const off = REVIEWS_OFF.has(id);
+    const signedIn = Boolean(shopper.session(token));
+    const message = off ? WRITE_TEXT[locale].off : !signedIn ? WRITE_TEXT[locale].signIn : null;
+    return { enabled: !off, requiresSignIn: !off && !signedIn, requiresOrder: false, message };
+  }
+
+  function reviews(id, locale, query, token) {
     const perPage = Math.min(50, Math.max(1, Number(query.get('perPage') ?? 20) || 20));
     const page = Math.max(1, Number(query.get('page') ?? 1) || 1);
-    if (REVIEWS_OFF.has(id)) return { enabled: false, summary: null, items: [], pagination: { page, perPage, total: 0, totalPages: 0 } };
+    const write = writeAccess(id, locale, token);
+    if (REVIEWS_OFF.has(id)) return { enabled: false, summary: null, items: [], pagination: { page, perPage, total: 0, totalPages: 0 }, write };
     const all = reviewsOf(id, locale);
     return {
       enabled: true,
       summary: reviewSummary(id),
       items: all.slice((page - 1) * perPage, page * perPage),
       pagination: { page, perPage, total: all.length, totalPages: Math.ceil(all.length / perPage) },
+      write,
     };
   }
 
@@ -369,7 +392,7 @@ export function createProductModule(shopper, { now = () => new Date('2026-09-29T
       const id = find(slug, locale);
       if (id === null) return error(404, 'not_found', t.notFound);
       if (read[2] === 'recommendations') return [200, { data: recommendations(id, locale) }];
-      if (read[2] === 'reviews') return [200, { data: reviews(id, locale, query) }];
+      if (read[2] === 'reviews') return [200, { data: reviews(id, locale, query, token) }];
       return [200, { data: details(id, locale, slug) }];
     },
     reset() {

@@ -1,39 +1,50 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { isLocale, signup } from '@/sdk';
-import { field, toFormState, type FormState } from '@/lib/form';
-import { routes } from '@/lib/routing';
-import { saveSession } from '@/lib/session';
-import { forgetGuest, guestToken } from '@/lib/shopper.server';
-import { storeClient } from '@/lib/store';
+import { after } from 'next/server';
+import { getAuthSettings, isLocale, signUp, type NextStep } from '@/sdk';
+import { toFormState, type FormState } from '@/lib/form';
+import { trackServerEvent } from '@/lib/marketing.server';
+import { translator } from '@/lib/i18n';
+import { nextStepHref, routes } from '@/lib/routing';
+import { startSession } from '@/lib/session';
+import { guestToken } from '@/lib/shopper.server';
+import { storefrontClient } from '@/lib/storefront.server';
 
+const CONFIRMATION = 'passwordConfirmation';
+
+/**
+ * Sign-up: the values are read for the fields the store's form lists (`AuthSettings.signup.fields`,
+ * re-read here rather than trusted from the browser) and sent keyed by name; the backend validates
+ * them. The password confirmation is the storefront's own check.
+ */
 export async function signUpAction(_previous: FormState, formData: FormData): Promise<FormState> {
-  const locale = isLocale(formData.get('locale')) ? (formData.get('locale') as 'en' | 'ar') : 'en';
-  const values = {
-    firstName: field(formData, 'firstName'),
-    lastName: field(formData, 'lastName'),
-    email: field(formData, 'email'),
-    phone: field(formData, 'phone'),
-    birthdate: field(formData, 'birthdate'),
-    referralCode: field(formData, 'referralCode'),
-  };
-  const password = String(formData.get('password') ?? '');
-
-  // The backend does not check the confirmation, so it is the storefront's job.
-  if (password !== String(formData.get('passwordConfirmation') ?? '')) {
-    return { fieldErrors: { passwordConfirmation: 'Passwords do not match.' }, values };
-  }
+  const locale = isLocale(formData.get('locale')) ? formData.get('locale') as 'en' | 'ar' : 'en';
+  const client = storefrontClient();
+  const values: Record<string, string> = {};
+  let next: NextStep | null;
 
   try {
-    // Signing up with the guest's token makes the backend merge the guest cart, wishlist and compare.
-    const guest = await guestToken();
-    const client = storeClient(locale);
-    await saveSession(await signup(guest ? client.withToken(guest) : client, { ...values, password }));
-    if (guest) await forgetGuest();
+    const settings = await getAuthSettings(client, locale);
+    if (!settings.signup.enabled) return { message: translator(locale)('authSignUpClosed') };
+    for (const field of settings.signup.fields) {
+      const raw = formData.get(field.name);
+      if (typeof raw === 'string') values[field.name] = field.kind === 'password' ? raw : raw.trim();
+    }
+    const shown = Object.fromEntries(Object.entries(values).filter(([name]) => settings.signup.fields.find((f) => f.name === name)?.kind !== 'password'));
+    if (settings.signup.fields.some((f) => f.name === 'password') && values.password !== String(formData.get(CONFIRMATION) ?? '')) {
+      return { fieldErrors: { [CONFIRMATION]: translator(locale)('authPasswordsMismatch') }, values: shown };
+    }
+    // The guest token goes along: the guest row becomes the customer (cart and lists kept).
+    const session = await signUp(client, { locale, token: await guestToken() }, values);
+    await startSession(session);
+    // marketing: the server-side `sign_up` event (POST /events), sent after the answer
+    after(() => trackServerEvent(locale, { name: 'sign_up' }));
+    next = session.next;
   } catch (error) {
-    return toFormState(error, values);
+    const shown = Object.fromEntries(Object.entries(values).filter(([name]) => name !== 'password'));
+    return toFormState(error, shown, {}, locale);
   }
 
-  redirect(routes.account(locale));
+  redirect(nextStepHref(locale, next) ?? routes.account(locale));
 }

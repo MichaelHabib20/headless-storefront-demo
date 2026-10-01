@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import {
   addToCompare,
   addToWishlist,
@@ -14,6 +15,7 @@ import {
   type ShopperContext,
 } from '@/sdk';
 import { translator, type MessageKey } from './i18n';
+import { trackServerEvent } from './marketing.server';
 import { withShopper } from './shopper.write';
 import { storefrontClient } from './storefront.server';
 
@@ -60,7 +62,13 @@ async function perform(locale: Locale, operation: Operation, success: MessageKey
 export async function addToCartAction(rawLocale: Locale, productId: number, quantity: number): Promise<ShopperActionResult> {
   const locale = localeOf(rawLocale);
   if (!isProductId(productId) || !isQuantity(quantity)) return failure(locale);
-  return perform(locale, (ctx) => setCartItem(storefrontClient(), ctx, productId, quantity), 'statusAddedToCart');
+  return tracked(locale, 'add_to_cart', productId, await perform(locale, (ctx) => setCartItem(storefrontClient(), ctx, productId, quantity), 'statusAddedToCart'));
+}
+
+/** After a successful write: the server-side marketing event (POST /events), sent after the answer; never fails the action. */
+async function tracked(locale: Locale, name: 'add_to_cart' | 'add_to_wishlist', productId: number, result: ShopperActionResult): Promise<ShopperActionResult> {
+  if (result.ok) after(() => trackServerEvent(locale, { name, productIds: [productId] }));
+  return result;
 }
 
 /** `add: true` puts the product in the wishlist, `false` takes it out. */
@@ -68,7 +76,7 @@ export async function toggleWishlistAction(rawLocale: Locale, productId: number,
   const locale = localeOf(rawLocale);
   if (!isProductId(productId) || typeof add !== 'boolean') return failure(locale);
   return add
-    ? perform(locale, (ctx) => addToWishlist(storefrontClient(), ctx, productId), 'statusAddedToWishlist')
+    ? tracked(locale, 'add_to_wishlist', productId, await perform(locale, (ctx) => addToWishlist(storefrontClient(), ctx, productId), 'statusAddedToWishlist'))
     : perform(locale, (ctx) => removeFromWishlist(storefrontClient(), ctx, productId), 'statusRemovedFromWishlist');
 }
 

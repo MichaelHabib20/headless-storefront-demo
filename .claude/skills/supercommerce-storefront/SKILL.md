@@ -58,11 +58,13 @@ them and **blocks the deploy** when one is broken.
 | `src/money/` | **Locked, SuperCommerce's.** `Money`, `Price`, `DiscountLabel`: the only code that shows money. Style them from your components; never edit this folder (see its `README.md`) |
 | `src/lib/` | Logic layer: `routing.ts` (Target → URL), `i18n.ts` + `messages/<area>.ts` (UI strings), `numbers.ts` (counts and quantities — never money), `home.ts`, `popup.ts`, `storefront.server.ts` (server data loading), `shopper.server.ts` (shopper session) |
 | `src/components/ui/` | Building blocks: `TargetLink`, `ResponsiveImage`, `Rail`, `SectionHeading`, `Icon` |
-| `src/components/layout/` | Site chrome: `AnnouncementBar`, `TopBar`, `SiteHeader`, `DesktopNav`, `MobileMenu`, `SiteFooter`, `CookieConsent`, `WhatsAppButton` |
+| `src/components/layout/` | Site chrome: `AnnouncementBar`, `TopBar`, `SiteHeader`, `DesktopNav`, `MobileMenu`, `SiteFooter`, `CookieConsent`, `WhatsAppButton`; shell: `MiniCart`, `MobileBottomNav`, `AppBanner`, `Banners`, `AreaChooser`, `StoreClosedNotice`, `LegalLinks`, `UspStrip` |
+| `src/components/content/` + `src/app/[locale]/{pages,l,forms}/` | CMS pages, contact, branches, landing pages, merchant forms (`FormFields` draws any `FormField[]`) |
 | `src/components/home/` | Home blocks: `PromoStrip`, `CategoryTiles`, `BrandRail`, `PopupHost`, `sections/HomeSection` + `sections/BannerLayouts` |
 | `src/components/product/ProductCard.tsx` | Product card |
 | `src/components/notifications/` | Notifications page blocks, helpers, local pagination |
 | `src/components/account/` | Address book, address form (drawn from the API), orders list/details, cancel dialog, reorder notice |
+| `src/components/auth/` + `src/app/[locale]/{sign-in,sign-up,forgot-password,reset-password,verify-phone,verify-email,waiting-approval}/`, `account/{profile,password,complete-profile}/` | Auth pages drawn from `AuthSettings`, `AuthFields` (forms from the API), `SocialButtons`, `NextStepGate` (`Me.next` banners / approval gate), `layout/AccountMenu` |
 | `src/app/[locale]/layout.tsx` | Loads `layout`, renders chrome for every page |
 | `src/app/[locale]/page.tsx` | The home page: composition of home blocks |
 | `src/app/[locale]/<area>/page.tsx` + `actions.ts` | Shopper pages (reads) and their server actions (writes) |
@@ -83,7 +85,8 @@ them and **blocks the deploy** when one is broken.
 | Header, top bar, menu, footer, softbar, WhatsApp, cookie notice | [reference/layout.md](reference/layout.md) |
 | Links, URLs, new routes | [reference/targets.md](reference/targets.md) |
 | What store settings exist and what the UI must do with them | [reference/layout.md#features](reference/layout.md) |
-| Sign in / sign up | [reference/auth.md](reference/auth.md) |
+| Sign in / up / out, social and OTP sign-in, password reset, phone / e-mail verification, waiting for approval, the account dropdown | [reference/auth.md](reference/auth.md) |
+| Profile (form from the API), change password, the account front page | [reference/account.md#profile-and-password-auth-agent](reference/account.md) |
 | Guest sessions, tokens, header counts, "add" buttons, sign-in merge | [reference/session.md](reference/session.md) |
 | Cart page, quantities, totals, checkout button, minimum order | [reference/cart.md](reference/cart.md) |
 | Wishlist, compare, hearts, move to cart | [reference/wishlist-compare.md](reference/wishlist-compare.md) |
@@ -92,7 +95,12 @@ them and **blocks the deploy** when one is broken.
 | Product page, options, gallery, notify-me, reviews, recommendations | [reference/product.md](reference/product.md) |
 | Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
+| Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
+| Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |
+| Tags and pixels (GTM, GA4, Meta, TikTok…), cookie consent for tags, analytics events, `POST /events` | [reference/marketing.md](reference/marketing.md) |
+| CMS pages, contact form, branches, landing pages, merchant forms, legal links | [reference/content.md](reference/content.md) |
+| Mini cart, mobile bottom nav, app / top / floating banners, area chooser, store closed, maintenance, USP strip | [reference/shell.md](reference/shell.md) |
 
 ## Common requests → how
 
@@ -124,7 +132,21 @@ them and **blocks the deploy** when one is broken.
 | "Redirect an old URL" | The merchant's redirect table (`GET /resolve`, handled in `src/middleware.ts`) | Hardcoded redirects |
 | "Add a field to the address form" | It comes from `CheckoutSettings.addressForm` → "needs backend support" | `<input name="landmark">` of your own |
 | "Only let pending orders be cancelled" | Nothing: show cancel only when `order.actions.canCancel` | `status.code === 'pending'`, date math on `placedAt` |
+| "Let shoppers rate / review" | Already: `order.actions.canRate` + `ratingForm`, `reviews.write`, `order.actions.canReviewProducts` | `canRate = status.code === 'delivered'`, a form of your own |
+| "Add a share button on category pages" | `<ShareButton>` (gated by `layout.features.share`) | Share links in other components |
+| "Add a bottom nav item" | It's `Layout.mobileNav` (the store's bottom-sheet config) → "needs backend / admin support"; restyle in `MobileBottomNav.module.css` | An own items array with `icon` + `href`, `label_en` / `fixed_items` |
+| "Show a maintenance page" | Nothing to build: the API answers 503 `store_unavailable`; the layout shows `StoreUnavailable` with the merchant's message | A flag or a hardcoded "we'll be back" page |
+| "Add a legal page" / "write our privacy policy" | The merchant adds it in the CMS; it appears in `Layout.legal` (footer, cookie notice) | Legal text in components or messages |
+| "Open the cart drawer after adding" | Already: `useMiniCart().open()`; the drawer shows `GET /cart` as it is | Adding up line totals in the drawer |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
+| "Sign in by e-mail instead of phone" / "add a birthdate or referral field to sign-up" | Store settings (`AuthSettings.loginMethod`, `signup.fields`) → "needs backend support" | Change the input type, add `<input name="referralCode">` |
+| "Add Google / Facebook sign-in" | Store setting (`AuthSettings.social`) → "needs backend support"; `SocialButtons` draws what is configured | Hardcode a client id or load an SDK unconditionally |
+| "Keep the user signed in in the browser" | Cookie `maxAge` in `src/lib/session.ts` (httpOnly) | A token in `localStorage` / `sessionStorage` |
+| "Let the profile edit the phone" | It's the sign-in identifier when `editable: false` → store setting | Enable the input yourself |
+| "Add a schema.org field" (gtin, founding date…) | Only if the backend sends it (`Seo.structuredData`, `GET /seo/site`) → map it in `src/lib/jsonld.ts`; else "needs backend support" | `<script type="application/ld+json">` in a page, invented values |
+| "Add JSON-LD / meta to a new page" | `seoMetadata(page.seo, locale)` + `<JsonLd seo={page.seo} locale={locale} />` | Your own title pattern or tags |
+| "Add a pixel / tag" | It is a store setting → `Layout.marketing` → "needs backend support"; snippet only in `MarketingTags.tsx` | Snippets or ids in other files, `process.env` in client code |
+| "Fire an analytics event" | `track()` from `src/lib/marketing.ts` (client) or `trackServerEvent()` from `src/lib/marketing.server.ts` (server action) | Reading `price.amount` elsewhere, computing a `value` |
 
 ## Before you say "done"
 

@@ -9,6 +9,19 @@ import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { PROMO_PLACEMENTS, promoFor } from '@/lib/home';
 import { translator } from '@/lib/i18n';
 import { loadHome } from '@/lib/storefront.server';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/lib/jsonld';
+import { seoMetadata } from '@/lib/seo';
+import { loadSiteSeo } from '@/lib/seo.server';
+
+/** The home page meta from the backend (`Home.seo`) and the store's Google site verification. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  const [home, site] = await Promise.all([loadHome(locale).catch(() => null), loadSiteSeo(locale)]);
+  const meta = home?.seo ? seoMetadata(home.seo, locale) : {};
+  return site?.verification.google ? { ...meta, verification: { google: site.verification.google } } : meta;
+}
 
 /**
  * Home page. The backend decides WHAT is shown (content, order, prices, links);
@@ -39,6 +52,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <BrandRail brands={home.featuredBrands} locale={locale} />
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.bottom)} locale={locale} />
       <PopupHost popups={home.popups} locale={locale} closeLabel={t('close')} />
+      <JsonLd seo={home.seo} locale={locale} />
     </>
   );
 }

@@ -281,7 +281,53 @@
      }
     }
    ],
-   "index": false
+   "index": false,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Mom & Baby",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "collection": {
+     "name": "Mom & Baby",
+     "description": "Everything for mom and baby : bath time, skin care and more. Read our guide .",
+     "items": [
+      {
+       "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+       "target": {
+        "type": "product",
+        "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+       },
+       "image": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp"
+      },
+      {
+       "name": "J&J Baby Sleep Time Bath 300Ml Lavender (New)",
+       "target": {
+        "type": "product",
+        "slug": "jj-baby-sleep-time-bath-300ml-lavender-new"
+       },
+       "image": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp"
+      }
+     ]
+    }
+   },
+   "pagination": {
+    "prev": null,
+    "next": 2
+   },
+   "openGraph": {
+    "title": null,
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+    "type": "website"
+   }
   }
  }
 }

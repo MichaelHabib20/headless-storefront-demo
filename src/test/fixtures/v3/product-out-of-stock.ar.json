@@ -188,7 +188,59 @@
      }
     }
    ],
-   "index": true
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "العناية بالام والطفل",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    },
+    {
+     "label": "JOHNSON & JOHNSON",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    {
+     "label": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "product": {
+     "schemaType": "Product",
+     "name": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+     "description": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل: عناية لطيفة مصممة لبشرة طفلك الحساسة.",
+     "sku": "JJ-14400",
+     "brand": "JOHNSON & JOHNSON",
+     "images": [
+      "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp"
+     ],
+     "price": 135,
+     "currency": "EGP",
+     "availability": "out_of_stock",
+     "rating": null,
+     "category": "العناية بالام والطفل"
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": "جونسون اند جونسون بيبي كولوجين بنسيم الصباح 125 مل",
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+    "type": "product"
+   }
   }
  }
 }

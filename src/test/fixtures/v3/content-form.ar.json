@@ -1,0 +1,154 @@
+{
+ "data": {
+  "slug": "feedback",
+  "title": "رأيك يهمنا",
+  "showTitle": true,
+  "submitLabel": "أرسل رأيك",
+  "requiresSignIn": true,
+  "fields": [
+   {
+    "name": "firstName",
+    "label": "الاسم الأول",
+    "kind": "text",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "phone",
+    "label": "رقم الهاتف",
+    "kind": "phone",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "email",
+    "label": "البريد الإلكتروني",
+    "kind": "email",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "field1",
+    "label": "الفرع",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "shubra",
+      "label": "شبرا",
+      "selected": false
+     },
+     {
+      "value": "obour",
+      "label": "العبور",
+      "selected": false
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "field2",
+    "label": "المواضيع",
+    "kind": "select",
+    "required": false,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "prices",
+      "label": "الأسعار",
+      "selected": false
+     },
+     {
+      "value": "service",
+      "label": "الخدمة",
+      "selected": false
+     }
+    ],
+    "multiple": true,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "field3",
+    "label": "رسالتك",
+    "kind": "textarea",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 5000
+   },
+   {
+    "name": "field4",
+    "label": "صورة",
+    "kind": "file",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   }
+  ],
+  "seo": {
+   "title": "رأيك يهمنا",
+   "description": null,
+   "canonical": {
+    "type": "form",
+    "slug": "feedback"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "form",
+      "slug": "feedback"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "form",
+      "slug": "feedback"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "رأيك يهمنا",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "رأيك يهمنا",
+     "description": null
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,95 @@
+{
+ "data": {
+  "loginMethod": "phone",
+  "signup": {
+   "enabled": true,
+   "fields": [
+    {
+     "name": "firstName",
+     "label": "First name",
+     "kind": "text",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "lastName",
+     "label": "Last name",
+     "kind": "text",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "phone",
+     "label": "Phone number",
+     "kind": "phone",
+     "required": true,
+     "placeholder": "01xxxxxxxxx",
+     "options": [],
+     "multiple": false,
+     "hint": "11 digits",
+     "maxLength": 11
+    },
+    {
+     "name": "email",
+     "label": "Email",
+     "kind": "email",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "password",
+     "label": "Password",
+     "kind": "password",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": "At least 8 characters",
+     "maxLength": null
+    },
+    {
+     "name": "birthdate",
+     "label": "Date of birth",
+     "kind": "date",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    }
+   ]
+  },
+  "otpLogin": false,
+  "passwordReset": {
+   "method": "sms"
+  },
+  "social": {
+   "google": null,
+   "facebook": null,
+   "apple": null
+  },
+  "phone": {
+   "prefix": "+20",
+   "length": 11,
+   "example": "01xxxxxxxxx"
+  },
+  "verifyPhoneAfterSignup": false,
+  "approval": {
+   "required": false,
+   "waitingText": null
+  }
+ }
+}

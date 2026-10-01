@@ -7,7 +7,8 @@ import { OrderDetails } from '@/components/account/OrderDetails';
 import { loadCancellationReasons, loadOrder } from '@/lib/account.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { cancelOrderAction, reorderAction } from '../actions';
+import { writeReviewAction } from '@/lib/reviews.actions';
+import { cancelOrderAction, rateOrderAction, reorderAction } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,5 +56,15 @@ export default async function OrderPage({ params }: { params: Params }) {
   // The reasons are only needed when the API allows cancelling.
   const reasons = order.actions.canCancel ? await loadCancellationReasons(locale) : null;
 
-  return <OrderDetails order={order} locale={locale} reasons={reasons} cancelAction={cancelOrderAction} reorderAction={reorderAction} />;
+  return (
+    <OrderDetails
+      order={order}
+      locale={locale}
+      reasons={reasons}
+      cancelAction={cancelOrderAction}
+      reorderAction={reorderAction}
+      rateAction={rateOrderAction}
+      writeReviewAction={writeReviewAction}
+    />
+  );
 }

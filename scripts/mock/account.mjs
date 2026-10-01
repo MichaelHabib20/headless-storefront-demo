@@ -89,6 +89,9 @@ const SEEDED_ADDRESS_ROW = { id: 501, cityId: 1, areaId: 11, districtId: null, v
  * The seeded customer's orders, newest first. `items[].product` is an index in the mock catalog
  * (null: a product that is not sold any more); `discount` is a percentage off that line.
  */
+/** `Order.rating` of the seeded picked-up order #48199 (rated already: no `canRate`). */
+const SEEDED_RATING = { rating: 5, driverRating: null, feedback: { en: 'Quick and friendly', ar: 'سريع وودود' } };
+
 const SEEDED_ORDERS = [
   {
     number: '48201',
@@ -124,6 +127,7 @@ const SEEDED_ORDERS = [
     payment: ['branch', false],
     items: [{ product: 3, quantity: 1 }],
     actions: { canCancel: false, canReorder: true },
+    rating: SEEDED_RATING,
   },
   {
     number: '48198',
@@ -152,6 +156,34 @@ const SEEDED_ORDERS = [
 
 const ACTIVE = new Set(['processing']);
 
+/** Every seeded order was placed with this phone (tracking without sign-in); the API shows it masked. */
+export const ORDER_PHONE = '01000000001';
+const ORDER_PHONE_MASKED = '01••••••001';
+const TRACKING_ON = true;
+
+const EXTRAS_TEXT = {
+  en: {
+    already_rated: 'You have already rated this order.',
+    cannot_rate: 'This order cannot be rated yet.',
+    feature_disabled: 'This feature is not available in this store.',
+    rating: 'Choose a rating from 1 to 5.',
+    driverRating: 'Rate the delivery too.',
+    comment: 'Write a few words about the product.',
+    orderId: 'Choose one of your delivered orders to review this product.',
+    reviewThanks: 'Thank you! Your review will show once it is approved.',
+  },
+  ar: {
+    already_rated: 'لقد قيّمت هذا الطلب من قبل.',
+    cannot_rate: 'لا يمكن تقييم هذا الطلب بعد.',
+    feature_disabled: 'هذه الخاصية غير متاحة في هذا المتجر.',
+    rating: 'اختر تقييماً من 1 إلى 5.',
+    driverRating: 'قيّم التوصيل أيضاً.',
+    comment: 'اكتب بضع كلمات عن المنتج.',
+    orderId: 'اختر أحد طلباتك التي تم توصيلها لتقييم هذا المنتج.',
+    reviewThanks: 'شكراً لك! سيظهر تقييمك بعد الموافقة عليه.',
+  },
+};
+
 export function createAccountModule(shopper) {
   const catalog = (locale) => shopper.products(locale);
 
@@ -170,6 +202,7 @@ export function createAccountModule(shopper) {
 
   function buildOrder(spec, locale) {
     const t = TEXT[locale];
+    if (spec.rating?.feedback && typeof spec.rating.feedback === 'object') spec = { ...spec, rating: { ...spec.rating, feedback: spec.rating.feedback[locale] } };
     let subtotal = 0;
     const items = spec.items.map(({ product, quantity, discount = 0, unit }) => {
       const card = product === null ? null : catalog(locale)[product];
@@ -180,6 +213,7 @@ export function createAccountModule(shopper) {
         name: card?.name ?? t.discontinuedName,
         image: card?.image ?? null,
         target: card?.target ?? null,
+        productId: card?.id ?? null,
         quantity,
         lineTotal: shopper.money(paid, locale),
         compareAt: discount ? shopper.money(full, locale) : null,
@@ -202,6 +236,8 @@ export function createAccountModule(shopper) {
       total += spec.deliveryFee;
     }
     const [method, online] = spec.payment;
+    const delivered = spec.status === 'delivered' || spec.status === 'picked_up';
+    const rating = spec.rating ? { ...spec.rating } : null;
     return {
       id: `mock-order-${spec.number}`,
       number: spec.number,
@@ -216,7 +252,12 @@ export function createAccountModule(shopper) {
       items,
       totals: { lines, total: shopper.total(total, locale) },
       note: spec.note ? t.note : null,
-      actions: { ...spec.actions },
+      // orders extras: the rating rules are the backend's (delivered + not rated → canRate);
+      // the mock store takes product reviews, with a deliverer on delivery orders only
+      actions: { ...spec.actions, canRate: delivered && !rating, canReviewProducts: delivered },
+      rating,
+      ratingForm: delivered && !rating ? { driverRating: spec.fulfilment === 'pickup' ? 'hidden' : 'optional', items: true } : null,
+      phone: ORDER_PHONE_MASKED,
     };
   }
 
@@ -260,12 +301,71 @@ export function createAccountModule(shopper) {
     for (const row of rows) row.isDefault = row.id === id;
   }
 
+  /** Tracking without sign-in: the seeded customer's orders by number + the phone they were placed with. */
+  function track(query, locale) {
+    const t = TEXT[locale];
+    const number = String(query.get('number') ?? '').trim();
+    const phone = String(query.get('phone') ?? '').replace(/\D+/g, '');
+    if (!number || !phone) return [422, { error: { code: 'validation_failed', message: t.validation_failed } }];
+    if (!TRACKING_ON) return [404, { error: { code: 'not_found', message: t.not_found } }];
+    const owner = shopper.session('test-customer');
+    const row = owner ? ordersOf(owner).find((entry) => entry.en.number === number) : null;
+    const same = phone === ORDER_PHONE || phone === `20${ORDER_PHONE}` || phone === `20${ORDER_PHONE.slice(1)}`;
+    if (!row || !same) return [404, { error: { code: 'not_found', message: t.not_found } }];
+    return [200, { data: row[locale] }];
+  }
+
+  function rate(row, body, locale) {
+    const t = TEXT[locale];
+    const x = EXTRAS_TEXT[locale];
+    const error = (httpStatus, code, extra = {}) => [httpStatus, { error: { code, message: x[code] ?? t[code], ...extra } }];
+    const skip = body?.skip === true;
+    const stars = (value) => Number.isInteger(value) && value >= 1 && value <= 5;
+    const fields = {};
+    if (!skip && !stars(body?.rating)) fields.rating = [x.rating];
+    if (row.en.ratingForm?.driverRating === 'required' && !skip && !stars(body?.driverRating)) fields.driverRating = [x.driverRating];
+    if (Object.keys(fields).length) return error(422, 'validation_failed', { fields });
+    if (row.en.rating) return error(409, 'already_rated');
+    if (!row.en.actions.canRate) return error(409, 'cannot_rate');
+    if (!skip) {
+      const feedback = typeof body.feedback === 'string' && body.feedback.trim() ? body.feedback.trim() : null;
+      const driverRating = row.en.ratingForm.driverRating === 'hidden' ? null : stars(body.driverRating) ? body.driverRating : null;
+      for (const lang of LOCALES) {
+        const order = row[lang];
+        order.rating = { rating: body.rating, driverRating, feedback };
+        order.actions = { ...order.actions, canRate: false };
+        order.ratingForm = null;
+      }
+    }
+    return [200, { data: row[locale] }];
+  }
+
+  function review(session, body, locale) {
+    const t = TEXT[locale];
+    const x = EXTRAS_TEXT[locale];
+    const error = (httpStatus, code, extra = {}) => [httpStatus, { error: { code, message: x[code] ?? t[code], ...extra } }];
+    const fields = {};
+    if (!Number.isInteger(body?.rating) || body.rating < 1 || body.rating > 5) fields.rating = [x.rating];
+    if (typeof body?.comment !== 'string' || !body.comment.trim()) fields.comment = [x.comment];
+    if (Object.keys(fields).length) return error(422, 'validation_failed', { fields });
+    if (!Number.isInteger(body?.productId) || !shopper.product(body.productId, 'en')) return error(404, 'not_found');
+    if (typeof body.orderId === 'string' && body.orderId) {
+      const row = ordersOf(session).find((entry) => entry.en.id === body.orderId);
+      if (!row) return error(404, 'not_found');
+      if (!row.en.actions.canReviewProducts) return error(422, 'validation_failed', { fields: { orderId: [x.orderId] } });
+    }
+    reviews.push({ token: session.token, productId: body.productId, rating: body.rating, comment: body.comment.trim(), orderId: body.orderId ?? null });
+    return [201, { data: { message: x.reviewThanks } }];
+  }
+
   function handle({ method, pathname, query, token, locale, body }) {
-    if (!/^\/(addresses|orders)(\/|$)/.test(pathname)) return null;
+    if (pathname === '/orders/track' && method === 'GET') return track(query, locale);
+    if (!/^\/(addresses|orders|reviews)(\/|$)/.test(pathname)) return null;
     const t = TEXT[locale];
     const error = (httpStatus, code, extra = {}) => [httpStatus, { error: { code, message: t[code], ...extra } }];
     const session = shopper.session(token);
     if (!session) return error(401, 'unauthenticated');
+    if (pathname === '/reviews' && method === 'POST') return review(session, body, locale);
 
     // address book
     const rows = addressRows(session);
@@ -315,12 +415,13 @@ export function createAccountModule(shopper) {
     if (pathname === '/orders/cancellation-reasons' && method === 'GET') {
       return [200, { data: { items: REASON_IDS.map((id, i) => ({ id, text: t.reasons[i] })) } }];
     }
-    const orderMatch = pathname.match(/^\/orders\/([^/]+)(\/cancel|\/reorder)?$/);
+    const orderMatch = pathname.match(/^\/orders\/([^/]+)(\/cancel|\/reorder|\/rate)?$/);
     if (!orderMatch) return error(404, 'not_found');
     const row = ordersOf(session).find((entry) => entry.en.id === decodeURIComponent(orderMatch[1]));
     if (!row) return error(404, 'not_found');
 
     if (!orderMatch[2] && method === 'GET') return [200, { data: row[locale] }];
+    if (orderMatch[2] === '/rate' && method === 'POST') return rate(row, body, locale);
     if (orderMatch[2] === '/cancel' && method === 'POST') {
       if (!row.en.actions.canCancel) return error(409, 'cannot_cancel');
       if (!REASON_IDS.includes(body?.reasonId)) return error(422, 'validation_failed', { fields: { reasonId: [t.reasonId] } });
@@ -328,7 +429,7 @@ export function createAccountModule(shopper) {
         const order = row[lang];
         order.status = status('cancelled', lang);
         order.timeline = timeline([['placed', 'done'], ['cancelled', 'finished']], lang);
-        order.actions = { canCancel: false, canReorder: false };
+        order.actions = { ...order.actions, canCancel: false, canReorder: false };
       }
       return [200, { data: row[locale] }];
     }
@@ -347,10 +448,21 @@ export function createAccountModule(shopper) {
     return error(404, 'not_found');
   }
 
+  /** Reviews written in this run (`POST /reviews`), for the mock tests. */
+  const reviews = [];
+
   return {
     handle,
+    /** The recorded staging layout has the orders extras off: the mock store has them on. */
+    decorate(endpoint, data) {
+      if (endpoint !== 'layout') return data;
+      return { ...data, features: { ...data.features, orderTracking: true, productReviews: true, orderRating: true, share: true } };
+    },
     reset() {
       resetAccountCounters();
+      reviews.length = 0;
     },
+    /** For tests: the reviews the mock backend received. */
+    reviewsWritten: () => reviews.slice(),
   };
 }

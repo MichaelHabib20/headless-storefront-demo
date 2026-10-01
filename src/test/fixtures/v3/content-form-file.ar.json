@@ -1,0 +1,66 @@
+{
+ "data": {
+  "slug": "prescriptions",
+  "title": "الوصفات الطبية",
+  "showTitle": false,
+  "submitLabel": "الوصفات الطبية",
+  "requiresSignIn": true,
+  "fields": [
+   {
+    "name": "field1",
+    "label": "الوصفات الطبية",
+    "kind": "file",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   }
+  ],
+  "seo": {
+   "title": "الوصفات الطبية",
+   "description": null,
+   "canonical": {
+    "type": "form",
+    "slug": "prescriptions"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "form",
+      "slug": "prescriptions"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "form",
+      "slug": "prescriptions"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "الوصفات الطبية",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "الوصفات الطبية",
+     "description": null
+    }
+   }
+  }
+ }
+}

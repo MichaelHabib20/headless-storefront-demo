@@ -77,7 +77,33 @@
      }
     }
    ],
-   "index": false
+   "index": false,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "البحث",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "collection": {
+     "name": "نتائج البحث عن \"zzzz\"",
+     "description": null,
+     "items": []
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": "website"
+   }
   }
  }
 }

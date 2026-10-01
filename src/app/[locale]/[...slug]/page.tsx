@@ -7,8 +7,11 @@ import { translator } from '@/lib/i18n';
 import { RESOLUTION_HEADER } from '@/lib/resolve';
 import { isStorefrontPath, routes } from '@/lib/routing';
 
-/** First path segments of routes that exist in the URL scheme but aren't built yet. */
-const PLANNED = new Set(['pages', 'l', 'forms', 'track-order']);
+/**
+ * First path segments of routes that exist in the URL scheme but aren't built yet. None after Phase A
+ * (track-order, pages, landing pages and forms are built); a later route is added here until its page exists.
+ */
+const PLANNED = new Set<string>([]);
 
 type Params = Promise<{ locale: string; slug: string[] }>;
 

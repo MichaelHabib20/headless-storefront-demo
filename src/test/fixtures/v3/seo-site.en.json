@@ -1,0 +1,73 @@
+{
+ "data": {
+  "organization": {
+   "name": "Seif Pharmacies",
+   "legalName": null,
+   "logo": "https://seif-online.com/storage/seif-pharmacies/uploads/logo 700 X 350 E-1746024674.png",
+   "sameAs": [
+    "https://www.facebook.com/SEIFPharmacy",
+    "https://www.instagram.com/Seif_pharmacies/"
+   ],
+   "telephone": "19199",
+   "email": "info@seif-online.com",
+   "address": {
+    "street": "12 Tahrir St.",
+    "locality": "Cairo",
+    "region": "Cairo Governorate",
+    "postalCode": "11511",
+    "country": "EG"
+   }
+  },
+  "localBusiness": {
+   "schemaType": "Pharmacy",
+   "name": "Seif Pharmacies",
+   "images": [
+    "https://seif-online.com/storage/seif-pharmacies/uploads/logo 700 X 350 E-1746024674.png"
+   ],
+   "telephone": "19199",
+   "address": {
+    "street": "12 Tahrir St.",
+    "locality": "Cairo",
+    "region": "Cairo Governorate",
+    "postalCode": "11511",
+    "country": "EG"
+   },
+   "geo": {
+    "latitude": 30.0444,
+    "longitude": 31.2357
+   },
+   "openingHours": [
+    {
+     "days": [
+      "Saturday",
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+     ],
+     "opens": "09:00",
+     "closes": "23:00"
+    },
+    {
+     "days": [
+      "Friday"
+     ],
+     "opens": "14:00",
+     "closes": "23:00"
+    }
+   ],
+   "priceRange": "$$"
+  },
+  "website": {
+   "name": "Seif Pharmacies",
+   "searchable": true
+  },
+  "verification": {
+   "google": "mock-google-verification-1"
+  },
+  "robots": {
+   "index": true
+  }
+ }
+}

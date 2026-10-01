@@ -1,0 +1,55 @@
+{
+ "data": {
+  "slug": "branches",
+  "title": "Our branches",
+  "showTitle": true,
+  "kind": "branches",
+  "content": null,
+  "iframeUrl": null,
+  "seo": {
+   "title": "Our branches",
+   "description": null,
+   "canonical": {
+    "type": "page",
+    "slug": "branches"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "page",
+      "slug": "branches"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "page",
+      "slug": "branches"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Our branches",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "Our branches",
+     "description": null
+    }
+   }
+  },
+  "contact": null
+ }
+}

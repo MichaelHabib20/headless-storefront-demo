@@ -18,10 +18,12 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
 }));
 vi.mock('@/sdk', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/sdk')>()), getProduct: vi.fn() }));
-vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({})) }));
+vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({})), loadLayout: vi.fn(async () => ({ features: { share: true } })) }));
 vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn() }));
 vi.mock('@/lib/shopper.actions', () => ({ addToCartAction: vi.fn(), toggleWishlistAction: vi.fn(), toggleCompareAction: vi.fn() }));
 vi.mock('./actions', () => ({ notifyMeAction: vi.fn() }));
+// JSON-LD reads the request headers (server only): tested in src/lib/jsonld.test.ts.
+vi.mock('@/lib/jsonld', () => ({ JsonLd: () => null }));
 vi.mock('./blocks', () => ({
   RecommendationsBlock: ({ slug }: { slug: string }) => <div data-testid="recommendations-block" data-slug={slug} />,
   ReviewsBlock: ({ page, baseHref }: { page: number; baseHref: string }) => <div data-testid="reviews-block" data-page={page} data-href={baseHref} />,
@@ -83,7 +85,7 @@ describe('product page', () => {
     const details = productFixture('en');
     vi.mocked(getProduct).mockResolvedValue(details);
     const meta = await generateMetadata({ params: params('en', details.product.slug) });
-    expect(meta.title).toBe(details.seo.title);
+    expect(meta.title).toEqual({ absolute: details.seo.title });
     expect(meta.description).toBe(details.seo.description);
     expect(meta.alternates?.canonical).toBe(`/en/p/${encodeURIComponent(details.product.slug)}`);
 

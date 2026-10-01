@@ -4,8 +4,8 @@ import { searchSuggestionsAction } from '@/lib/catalog.actions';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { HeaderBadges } from '../shopper/HeaderBadges';
-import { Icon } from '../ui/Icon';
 import { TargetLink } from '../ui/TargetLink';
+import { AccountMenu } from './AccountMenu';
 import { DesktopNav } from './DesktopNav';
 import { MobileMenu } from './MobileMenu';
 import { SearchBox } from './SearchBox';
@@ -57,10 +57,8 @@ export function SiteHeader({ layout, locale, me = null }: SiteHeaderProps) {
             </TargetLink>
           ))}
 
-          <Link href={routes.account(locale)} className={styles.icon} aria-label={t('account')}>
-            <Icon name="user" />
-          </Link>
           <HeaderBadges locale={locale} me={me} features={features} />
+          <AccountMenu locale={locale} me={me} features={features} />
         </div>
       </div>
       <div className={styles.navRow}>
