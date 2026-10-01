@@ -1,0 +1,57 @@
+{
+ "data": {
+  "slug": "about-us",
+  "title": "عن الشركة",
+  "showTitle": true,
+  "kind": "content",
+  "content": {
+   "html": "<h2>من نحن</h2><p>تُعد صيدليات سيف واحدة من <strong>السلاسل الصيدلية الرائدة</strong> في مصر.</p><ul><li>أكثر من 60 فرعًا</li><li>صيادلة مرخصون</li></ul>"
+  },
+  "iframeUrl": null,
+  "seo": {
+   "title": "عن الشركة",
+   "description": null,
+   "canonical": {
+    "type": "page",
+    "slug": "about-us"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "page",
+      "slug": "about-us"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "page",
+      "slug": "about-us"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "عن الشركة",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "عن الشركة",
+     "description": null
+    }
+   }
+  },
+  "contact": null
+ }
+}

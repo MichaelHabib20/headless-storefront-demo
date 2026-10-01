@@ -1,0 +1,55 @@
+{
+ "data": {
+  "slug": "branches",
+  "title": "فروعنا",
+  "showTitle": true,
+  "kind": "branches",
+  "content": null,
+  "iframeUrl": null,
+  "seo": {
+   "title": "فروعنا",
+   "description": null,
+   "canonical": {
+    "type": "page",
+    "slug": "branches"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "page",
+      "slug": "branches"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "page",
+      "slug": "branches"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "فروعنا",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "فروعنا",
+     "description": null
+    }
+   }
+  },
+  "contact": null
+ }
+}

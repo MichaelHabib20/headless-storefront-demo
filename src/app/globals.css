@@ -116,3 +116,11 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---- shell: room for the phone bottom nav (MobileBottomNav); floating things sit above it */
+@media (max-width: 767px) {
+  body.has-bottom-nav {
+    --bottom-nav-space: calc(61px + env(safe-area-inset-bottom));
+    padding-block-end: var(--bottom-nav-space);
+  }
+}

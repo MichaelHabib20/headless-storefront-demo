@@ -1,0 +1,119 @@
+{
+ "data": {
+  "slug": "contact",
+  "title": "تواصل معنا",
+  "showTitle": true,
+  "kind": "contact",
+  "content": {
+   "html": "<p>مواعيد العمل: الأحد-الخميس من 10 صباحًا وحتى 6 مساءً</p>"
+  },
+  "iframeUrl": null,
+  "seo": {
+   "title": "تواصل معنا",
+   "description": null,
+   "canonical": {
+    "type": "page",
+    "slug": "contact"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "page",
+      "slug": "contact"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "page",
+      "slug": "contact"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "تواصل معنا",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "ContactPage",
+     "name": "تواصل معنا",
+     "description": null
+    }
+   }
+  },
+  "contact": {
+   "hotline": "19199",
+   "email": "info@seif-online.com",
+   "address": null,
+   "whatsapp": "201221919919",
+   "fields": [
+    {
+     "name": "name",
+     "label": "الاسم",
+     "kind": "text",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 255
+    },
+    {
+     "name": "phone",
+     "label": "رقم الهاتف",
+     "kind": "phone",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 32
+    },
+    {
+     "name": "email",
+     "label": "البريد الإلكتروني",
+     "kind": "email",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 255
+    },
+    {
+     "name": "subject",
+     "label": "الموضوع",
+     "kind": "text",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 255
+    },
+    {
+     "name": "message",
+     "label": "الرسالة",
+     "kind": "textarea",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 5000
+    }
+   ]
+  }
+ }
+}

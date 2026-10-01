@@ -61,6 +61,8 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   guest_checkout_disabled: 'guest_checkout_disabled',
   phone_in_use: 'phone_in_use',
   payment_provider_error: 'payment_provider_error',
+  // shell: the store is switched off (maintenance); the message is the merchant's
+  store_unavailable: 'store_unavailable',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {

@@ -1,0 +1,536 @@
+{
+ "data": {
+  "slug": "summer-sale",
+  "title": "Summer sale",
+  "seo": {
+   "title": "Summer sale",
+   "description": null,
+   "canonical": {
+    "type": "landing_page",
+    "slug": "summer-sale"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "landing_page",
+      "slug": "summer-sale"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "landing_page",
+      "slug": "summer-sale"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Summer sale",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "Summer sale",
+     "description": null
+    }
+   }
+  },
+  "promoBanners": [
+   {
+    "id": 1,
+    "placement": "top-ad",
+    "image": {
+     "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/41545-1777463410.jpeg",
+     "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/140045-1777463396.jpeg",
+     "alt": null
+    },
+    "title": null,
+    "target": {
+     "type": "form",
+     "slug": "prescriptions"
+    }
+   }
+  ],
+  "sections": [
+   {
+    "id": 122,
+    "title": null,
+    "layout": "wide_banner",
+    "banners": [
+     {
+      "id": 205,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/21-1774360261.jpeg",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/20-1774360274.jpeg",
+       "alt": null
+      },
+      "title": null,
+      "target": {
+       "type": "form",
+       "slug": "prescriptions"
+      }
+     }
+    ],
+    "products": [],
+    "viewAll": null
+   },
+   {
+    "id": 36,
+    "title": "Baby Care",
+    "layout": "banner_grid",
+    "banners": [
+     {
+      "id": 272,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/4004004-1783495845.jpg",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/8003503-1783495892.jpg",
+       "alt": "Divol"
+      },
+      "title": null,
+      "target": {
+       "type": "list",
+       "slug": null,
+       "id": 176
+      }
+     },
+     {
+      "id": 273,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/4005-1786525846.png",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/8003505-1786525850.png",
+       "alt": "J&J BABY"
+      },
+      "title": null,
+      "target": {
+       "type": "list",
+       "slug": null,
+       "id": 125
+      }
+     },
+     {
+      "id": 274,
+      "image": {
+       "mobile": "https://cdn.supercommerce.io/seif-pharmacies/uploads/4004006-1783496287.jpeg",
+       "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/8003500-1783496814.png",
+       "alt": "Penduline"
+      },
+      "title": null,
+      "target": {
+       "type": "list",
+       "slug": null,
+       "id": 331
+      }
+     }
+    ],
+    "products": [
+     {
+      "id": 36480,
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+      "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+       "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 18,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "18 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     {
+      "id": 7346,
+      "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new",
+      "name": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+       "alt": "J&J No More Tangles Kids Cond. Spr. 200Ml (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 160,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "160 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+      }
+     },
+     {
+      "id": 8412,
+      "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new",
+      "name": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+       "alt": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 105,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "105 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+      }
+     },
+     {
+      "id": 8658,
+      "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile",
+      "name": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/251462-1786536622.webp",
+       "alt": "J&J Baby Bedtime Bath 500Ml Lavender&Camomile"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 200,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "200 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     },
+     {
+      "id": 33594,
+      "slug": "jj-baby-bath-500ml",
+      "name": "J&J Baby Bath 500Ml",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/251465-1754482083.webp",
+       "alt": "J&J Baby Bath 500Ml"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 200,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "200 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bath-500ml"
+      }
+     },
+     {
+      "id": 9822,
+      "slug": "jj-baby-cologne-100ml-dream-احلام",
+      "name": "J&J Baby Cologne 100Ml Dream احلام",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+       "alt": "J&J Baby Cologne 100Ml Dream احلام"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 135,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "135 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-dream-احلام"
+      }
+     },
+     {
+      "id": 14400,
+      "slug": "jj-baby-cologne-100ml-morning-dew",
+      "name": "J&J Baby Cologne 100Ml Morning Dew",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/364123.webp",
+       "alt": "J&J Baby Cologne 100Ml Morning Dew"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 135,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "135 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-morning-dew"
+      }
+     },
+     {
+      "id": 14482,
+      "slug": "jj-baby-cologne-100ml-lemon-fresh",
+      "name": "J&J Baby Cologne 100Ml Lemon Fresh",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/365763.webp",
+       "alt": "J&J Baby Cologne 100Ml Lemon Fresh"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 110,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "110 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-100ml-lemon-fresh"
+      }
+     },
+     {
+      "id": 36510,
+      "slug": "jj-baby-cologne-200ml-dream-ahlam",
+      "name": "J&J Baby Cologne 200Ml Dream احلام",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/366631-1760536568.webp",
+       "alt": "J&J Baby Cologne 200Ml Dream احلام"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 75,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "75 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-cologne-200ml-dream-ahlam"
+      }
+     },
+     {
+      "id": 15472,
+      "slug": "jj-baby-sleep-time-bath-300ml-lavender-new",
+      "name": "J&J Baby Sleep Time Bath 300Ml Lavender (New)",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp",
+       "alt": "J&J Baby Sleep Time Bath 300Ml Lavender (New)"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 160,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "160 EGP",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-bath-300ml-lavender-new"
+      }
+     }
+    ],
+    "viewAll": {
+     "type": "list",
+     "slug": null,
+     "id": 125
+    }
+   }
+  ]
+ }
+}

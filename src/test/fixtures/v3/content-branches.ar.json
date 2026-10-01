@@ -1,0 +1,55 @@
+{
+ "data": {
+  "groups": [
+   {
+    "name": "ستورز",
+    "branches": [
+     {
+      "id": 2,
+      "name": "صيدلية شبرا 1",
+      "address": "41 شارع شبرا",
+      "area": "وسط البلد",
+      "phone": "0225778800 / 01227744387",
+      "email": "shoubra@seifgroup.com",
+      "image": null,
+      "mapUrl": "https://g.co/kgs/q3V9Wsw",
+      "location": {
+       "latitude": 30.0658722,
+       "longitude": 31.2451537
+      }
+     },
+     {
+      "id": 4,
+      "name": "صيدلية ماستر الصحراوى",
+      "address": "طريق القاهرة-الاسكندرية الصحراوى",
+      "area": "الاسكندرية",
+      "phone": "01117708839",
+      "email": null,
+      "image": null,
+      "mapUrl": "https://www.google.com/maps?q=30.3954787,30.3752689",
+      "location": {
+       "latitude": 30.3954787,
+       "longitude": 30.3752689
+      }
+     }
+    ]
+   },
+   {
+    "name": "الفروع",
+    "branches": [
+     {
+      "id": 9,
+      "name": "صيدلية المعادي",
+      "address": null,
+      "area": "المعادي",
+      "phone": null,
+      "email": null,
+      "image": null,
+      "mapUrl": null,
+      "location": null
+     }
+    ]
+   }
+  ]
+ }
+}

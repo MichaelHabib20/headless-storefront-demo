@@ -1,0 +1,173 @@
+/* App banner, top banner, floating banner, USP strip, store-closed notice. Logical properties (RTL). */
+
+/* ---------------------------------------------------------------- app banner */
+
+.app {
+  background: var(--color-surface);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.appInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-2);
+}
+
+.appText {
+  flex: 1 1 200px;
+  min-inline-size: 0;
+}
+
+.appText p {
+  margin: 0;
+}
+
+.appTitle {
+  font-weight: 700;
+}
+
+.appBody {
+  font-size: 0.875rem;
+}
+
+.appLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.appLink {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 36px;
+  padding-inline: var(--space-3);
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dismiss {
+  display: inline-flex;
+  padding: var(--space-2);
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- top banner */
+
+.top {
+  background: var(--color-surface);
+}
+
+.topLink {
+  display: block;
+}
+
+.topImage {
+  display: block;
+  inline-size: 100%;
+  max-block-size: 120px;
+  object-fit: cover;
+}
+
+/* ---------------------------------------------------------------- floating banner */
+
+.floating {
+  position: fixed;
+  inset-inline-start: var(--space-4);
+  bottom: calc(var(--space-4) + var(--bottom-nav-space, 0px));
+  z-index: 40;
+  inline-size: min(300px, calc(100vw - 2 * var(--space-4) - 72px));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
+  background: var(--color-bg);
+}
+
+.floatingLink {
+  display: block;
+}
+
+.floatingImage {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.floatingClose {
+  position: absolute;
+  inset-block-start: -12px;
+  inset-inline-end: -12px;
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- USP strip */
+
+.usp {
+  border-block: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.uspList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding-block: var(--space-4);
+  list-style: none;
+}
+
+@media (min-width: 900px) {
+  .uspList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.uspItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.uspItem p {
+  margin: 0;
+}
+
+.uspTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.uspText {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------------------------------------------------------------- store closed */
+
+.closed {
+  padding-block: var(--space-3);
+  background: var(--color-sale);
+  color: #ffffff;
+  text-align: center;
+}
+
+.closed p {
+  margin: 0;
+}

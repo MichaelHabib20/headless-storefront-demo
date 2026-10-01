@@ -112,3 +112,22 @@ export type CategoryNode = Schemas['CategoryNode'];
 export type CategoryTree = Schemas['CategoriesResponse']['data'];
 export type BrandsPage = Schemas['BrandsResponse']['data'];
 export type Resolution = Schemas['Resolution'];
+
+// ---- shell: content pages, forms, mobile nav, area (shell agent)
+export type ContentPage = Schemas['Page'];
+export type PageContact = NonNullable<ContentPage['contact']>;
+export type FormField = Schemas['FormField'];
+export type Branch = Schemas['Branch'];
+export type BranchesPage = Schemas['BranchesResponse']['data'];
+export type BranchGroup = BranchesPage['groups'][number];
+export type LandingPage = Schemas['LandingPage'];
+export type MerchantForm = Schemas['Form'];
+export type FormValues = Schemas['FormSubmission']['values'];
+export type MessageResult = Schemas['MessageResponse']['data'];
+export type MobileNavItem = Schemas['MobileNavItem'];
+export type MobileNav = NonNullable<Layout['mobileNav']>;
+export type LegalLinks = NonNullable<Layout['legal']>;
+export type AppBanner = NonNullable<Layout['appBanner']>;
+export type AreaSelection = NonNullable<Layout['areaSelection']>;
+export type StoreStatus = NonNullable<Layout['storeStatus']>;
+export type ShopperArea = NonNullable<Me['area']>;

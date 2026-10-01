@@ -1,7 +1,7 @@
 .whatsapp {
   position: fixed;
   inset-inline-end: var(--space-4);
-  bottom: var(--space-4);
+  bottom: calc(var(--space-4) + var(--bottom-nav-space, 0px));
   z-index: 30;
   display: grid;
   place-items: center;

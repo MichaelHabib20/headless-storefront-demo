@@ -16,3 +16,5 @@ export { getBrands, getCategories, getProducts, getSearchSuggestions, listingQue
 export * from './v3/checkout';
 export * from './v3/account';
 export * from './v3/types';
+// shell: content pages, forms, the shopper's area
+export { getBranches, getForm, getLandingPage, getPage, sendContactMessage, setArea, submitForm } from './v3/content';

@@ -1,0 +1,57 @@
+{
+ "data": {
+  "slug": "about-us",
+  "title": "About Us",
+  "showTitle": true,
+  "kind": "content",
+  "content": {
+   "html": "<h2>Who we are</h2><p>Seif Pharmacies is one of the <strong>leading</strong> pharmacy chains in Egypt.</p><ul><li>Over 60 branches</li><li>Licensed pharmacists</li></ul><p><a href=\"https://example.com/story\" target=\"_blank\" rel=\"noreferrer noopener\">Our story</a></p>"
+  },
+  "iframeUrl": null,
+  "seo": {
+   "title": "About Us",
+   "description": null,
+   "canonical": {
+    "type": "page",
+    "slug": "about-us"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "page",
+      "slug": "about-us"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "page",
+      "slug": "about-us"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "About Us",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "About Us",
+     "description": null
+    }
+   }
+  },
+  "contact": null
+ }
+}
