@@ -15,6 +15,10 @@ import orderDeliveredAr from './fixtures/v3/order-delivered.ar.json';
 import orderDeliveredEn from './fixtures/v3/order-delivered.en.json';
 import orderPickupAr from './fixtures/v3/order-pickup.ar.json';
 import orderPickupEn from './fixtures/v3/order-pickup.en.json';
+import orderRatedAr from './fixtures/v3/order-rated.ar.json';
+import orderRatedEn from './fixtures/v3/order-rated.en.json';
+import orderTrackedAr from './fixtures/v3/order-tracked.ar.json';
+import orderTrackedEn from './fixtures/v3/order-tracked.en.json';
 import orderAr from './fixtures/v3/order.ar.json';
 import orderEn from './fixtures/v3/order.en.json';
 import ordersAr from './fixtures/v3/orders.ar.json';
@@ -39,6 +43,10 @@ export const orderFixture = (locale: Locale = 'en') => pick<Order>({ en: orderEn
 export const deliveredOrderFixture = (locale: Locale = 'en') => pick<Order>({ en: orderDeliveredEn, ar: orderDeliveredAr }, locale);
 /** #48199 picked up from a branch: no timeline, the delivery line has `text` instead of an amount. */
 export const pickupOrderFixture = (locale: Locale = 'en') => pick<Order>({ en: orderPickupEn, ar: orderPickupAr }, locale);
+/** #48199 as the API shows it once rated (`rating` set, `canRate` false, `ratingForm` null). */
+export const ratedOrderFixture = (locale: Locale = 'en') => pick<Order>({ en: orderRatedEn, ar: orderRatedAr }, locale);
+/** #48200 found by number + phone without sign-in (`GET /orders/track`): same `Order` shape, masked `phone`. */
+export const trackedOrderFixture = (locale: Locale = 'en') => pick<Order>({ en: orderTrackedEn, ar: orderTrackedAr }, locale);
 export const cancellationReasonsFixture = (locale: Locale = 'en') => pick<CancellationReasons>({ en: reasonsEn, ar: reasonsAr }, locale);
 /** Reordering #48200: the new cart, and the one skipped product with its reason. */
 export const reorderFixture = (locale: Locale = 'en') => pick<ReorderResult>({ en: reorderEn, ar: reorderAr }, locale);

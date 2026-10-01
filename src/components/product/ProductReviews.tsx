@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { Locale, ProductReviewsPage } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { formatNumber } from '@/lib/numbers';
@@ -15,6 +15,8 @@ interface ProductReviewsProps {
   locale: Locale;
   /** The product page URL; review pages add `?page=`. */
   baseHref: string;
+  /** The "write a review" entry point (`<WriteReview>`), drawn from `reviews.write`. */
+  writeForm?: ReactNode;
 }
 
 /**
@@ -22,16 +24,19 @@ interface ProductReviewsProps {
  * share of each star count (`percent`, used as the bar width) and the pages. Nothing is counted
  * here. When the store switched reviews off (`enabled: false`) nothing is shown.
  */
-export function ProductReviews({ reviews, locale, baseHref }: ProductReviewsProps) {
+export function ProductReviews({ reviews, locale, baseHref, writeForm }: ProductReviewsProps) {
   if (!reviews.enabled) return null;
   const t = translator(locale);
   const { summary, items, pagination } = reviews;
 
   return (
     <section id={REVIEWS_ID} className={styles.reviews} aria-labelledby={`${REVIEWS_ID}-title`} data-testid="product-reviews">
-      <h2 id={`${REVIEWS_ID}-title`} className={styles.title}>
-        {t('productReviewsTitle')}
-      </h2>
+      <div className={styles.titleRow}>
+        <h2 id={`${REVIEWS_ID}-title`} className={styles.title}>
+          {t('productReviewsTitle')}
+        </h2>
+        {writeForm}
+      </div>
 
       <div className={styles.layout}>
         {summary && (

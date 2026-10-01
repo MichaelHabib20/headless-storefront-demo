@@ -205,6 +205,35 @@ export const RULES = [
     ],
     message: 'Checkout never picks for the shopper: no default address, payment method, branch or plan in the storefront. Send only what the shopper chose; the backend preselects and echoes the choices it used (checkoutSelections(checkout) from @/sdk).',
   },
+  // --- orders extras: rating, reviews, sharing ------------------------------------------------
+  {
+    // Whether an order may be rated / its products reviewed, and whether a shopper may write a review,
+    // are backend answers (`order.actions.canRate`, `order.ratingForm`, `reviews.write`). Deriving them
+    // ("delivered orders can be rated", "signed-in users can review") drifts from the store's rules.
+    id: 'rating-rules-from-api',
+    applies: (f) => inUi(f) && !isTest(f),
+    patterns: [
+      // own values: canRate = …, canRate: true, requiresSignIn = !me.authenticated (reading `order.actions.canRate` is fine)
+      /\b(canRate|canReviewProducts|requiresSignIn|requiresOrder)\s*=(?!=)(?!\s*(Boolean\()?[\w.?]*(actions|write|access)\??\.)/,
+      /\b(canRate|canReviewProducts|requiresSignIn|requiresOrder)\s*:\s*(?!boolean\b)(true|false|!|[\w(])/,
+      // widening by own conditions: canRate || x,  x || canRate
+      /\b(canRate|canReviewProducts)\b[^;\n]*\|\|/,
+      /\|\|[^;\n]*\b(canRate|canReviewProducts)\b/,
+      /\bstatus\??\.code\s*[!=]==?\s*['"]delivered['"]/,
+      // an own rating form instead of the API's
+      /\bratingForm\s*=(?!=)/,
+      /\bratingForm\s*:\s*\{/,
+    ],
+    message:
+      'Rating and review rules come from the API: show "rate" only when order.actions.canRate (fields from order.ratingForm), "write a review" only from reviews.write / order.actions.canReviewProducts. Never derive them from the status, the date or the session.',
+  },
+  {
+    // One share component; everything else links through it (so the share targets stay in one place).
+    id: 'share-in-one-place',
+    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/components/product/ShareButton.tsx',
+    patterns: [/\bnavigator\s*\.\s*share\s*\(/, /facebook\.com\/sharer|wa\.me\/\?text|twitter\.com\/intent/],
+    message: 'Sharing lives in src/components/product/ShareButton.tsx (Web Share API + the network links). Render <ShareButton> when Layout.features.share; do not add share links elsewhere.',
+  },
 ];
 
 /**

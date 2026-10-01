@@ -8,6 +8,12 @@
    "perPage": 5,
    "total": 0,
    "totalPages": 0
+  },
+  "write": {
+   "enabled": false,
+   "requiresSignIn": false,
+   "requiresOrder": false,
+   "message": "This store does not take reviews."
   }
  }
 }

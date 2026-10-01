@@ -18,7 +18,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
 }));
 vi.mock('@/sdk', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/sdk')>()), getProduct: vi.fn() }));
-vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({})) }));
+vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({})), loadLayout: vi.fn(async () => ({ features: { share: true } })) }));
 vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn() }));
 vi.mock('@/lib/shopper.actions', () => ({ addToCartAction: vi.fn(), toggleWishlistAction: vi.fn(), toggleCompareAction: vi.fn() }));
 vi.mock('./actions', () => ({ notifyMeAction: vi.fn() }));

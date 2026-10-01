@@ -92,6 +92,7 @@ them and **blocks the deploy** when one is broken.
 | Product page, options, gallery, notify-me, reviews, recommendations | [reference/product.md](reference/product.md) |
 | Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
+| Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 
 ## Common requests → how
@@ -124,6 +125,8 @@ them and **blocks the deploy** when one is broken.
 | "Redirect an old URL" | The merchant's redirect table (`GET /resolve`, handled in `src/middleware.ts`) | Hardcoded redirects |
 | "Add a field to the address form" | It comes from `CheckoutSettings.addressForm` → "needs backend support" | `<input name="landmark">` of your own |
 | "Only let pending orders be cancelled" | Nothing: show cancel only when `order.actions.canCancel` | `status.code === 'pending'`, date math on `placedAt` |
+| "Let shoppers rate / review" | Already: `order.actions.canRate` + `ratingForm`, `reviews.write`, `order.actions.canReviewProducts` | `canRate = status.code === 'delivered'`, a form of your own |
+| "Add a share button on category pages" | `<ShareButton>` (gated by `layout.features.share`) | Share links in other components |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
 
 ## Before you say "done"

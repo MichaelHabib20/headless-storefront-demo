@@ -34,6 +34,7 @@ interface Order {
   totals: { lines: TotalLine[]; total: Money };  // TotalLine: { kind, label, amount: Money|null, text: string|null }
   note: string|null;
   actions: { canCancel: boolean; canReorder: boolean };  // the ONLY switches for the buttons
+  // + canRate / canReviewProducts, rating, ratingForm, items[].productId: see orders-extras.md
 }
 ```
 

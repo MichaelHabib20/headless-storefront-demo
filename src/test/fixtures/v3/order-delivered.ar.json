@@ -55,6 +55,7 @@
      "type": "product",
      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
     },
+    "productId": 36480,
     "quantity": 2,
     "lineTotal": {
      "amount": 32.4,
@@ -77,6 +78,7 @@
      "type": "product",
      "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
     },
+    "productId": 8412,
     "quantity": 1,
     "lineTotal": {
      "amount": 105,
@@ -89,6 +91,7 @@
     "name": "مناديل أطفال مبللة للسفر",
     "image": null,
     "target": null,
+    "productId": null,
     "quantity": 1,
     "lineTotal": {
      "amount": 45,
@@ -140,7 +143,15 @@
   "note": null,
   "actions": {
    "canCancel": false,
-   "canReorder": true
-  }
+   "canReorder": true,
+   "canRate": true,
+   "canReviewProducts": true
+  },
+  "rating": null,
+  "ratingForm": {
+   "driverRating": "optional",
+   "items": true
+  },
+  "phone": "01••••••001"
  }
 }

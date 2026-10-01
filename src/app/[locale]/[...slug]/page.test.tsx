@@ -37,7 +37,8 @@ describe('unmatched paths', () => {
 
   it('keeps "coming soon" only for routes other pages still build; the rest is 404', async () => {
     withHeader(null);
-    for (const section of ['pages', 'l', 'forms', 'track-order']) {
+    // track-order is built now (src/app/[locale]/track-order); the content routes are the shell agent's
+    for (const section of ['pages', 'l', 'forms']) {
       const { unmount } = render(await page('en', section, 'x'));
       expect(screen.getByRole('heading', { name: 'Coming soon' })).toBeInTheDocument();
       unmount();

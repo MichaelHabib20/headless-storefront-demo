@@ -1,12 +1,12 @@
 import { revalidatePath } from 'next/cache';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, cancelOrder, reorder } from '@/sdk';
+import { ApiError, cancelOrder, rateOrder, reorder } from '@/sdk';
 import { ensureShopperContext } from '@/lib/shopper.server';
-import { orderFixture, reorderFixture } from '@/test/account-fixtures';
-import { cancelOrderAction, reorderAction } from './actions';
+import { orderFixture, ratedOrderFixture, reorderFixture } from '@/test/account-fixtures';
+import { cancelOrderAction, rateOrderAction, reorderAction } from './actions';
 
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
-vi.mock('@/sdk', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/sdk')>()), cancelOrder: vi.fn(), reorder: vi.fn() }));
+vi.mock('@/sdk', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/sdk')>()), cancelOrder: vi.fn(), rateOrder: vi.fn(), reorder: vi.fn() }));
 vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({})) }));
 vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn(), guestToken: vi.fn(async () => null), forgetGuest: vi.fn() }));
 
@@ -36,6 +36,42 @@ describe('cancelOrderAction', () => {
     expect(await cancelOrderAction('en', '', 1, null)).toMatchObject({ ok: false });
     expect(await cancelOrderAction('en', 'x', 0, null)).toMatchObject({ ok: false });
     expect(cancelOrder).not.toHaveBeenCalled();
+  });
+});
+
+describe('rateOrderAction', () => {
+  it('sends the rating the dialog built and refreshes the page', async () => {
+    vi.mocked(rateOrder).mockResolvedValue(ratedOrderFixture('en'));
+    const input = { rating: 4, driverRating: 5, feedback: ' Fast ', skip: false, items: [{ productId: 7, rating: 3, comment: ' ' }] };
+
+    await expect(rateOrderAction('en', 'mock-order-48200', input)).resolves.toEqual({ ok: true, message: 'Thank you for rating your order.' });
+    expect(rateOrder).toHaveBeenCalledWith(expect.anything(), { locale: 'en', token: 'test-customer' }, 'mock-order-48200', {
+      rating: 4,
+      driverRating: 5,
+      feedback: 'Fast',
+      skip: false,
+      items: [{ productId: 7, rating: 3, comment: null }],
+    });
+    expect(revalidatePath).toHaveBeenCalledWith('/[locale]', 'layout');
+  });
+
+  it('"not now" sends skip only, with an empty message', async () => {
+    vi.mocked(rateOrder).mockResolvedValue(ratedOrderFixture('en'));
+    await expect(rateOrderAction('en', 'mock-order-48200', { rating: null, skip: true })).resolves.toEqual({ ok: true, message: '' });
+    expect(vi.mocked(rateOrder).mock.calls[0][3]).toEqual({ rating: null, driverRating: null, feedback: null, skip: true, items: [] });
+  });
+
+  it("409 already_rated: the backend's message, and the page is refreshed", async () => {
+    vi.mocked(rateOrder).mockRejectedValue(new ApiError('already_rated', 409, 'You have already rated this order.'));
+    await expect(rateOrderAction('ar', 'mock-order-48199', { rating: 5, skip: false })).resolves.toEqual({ ok: false, message: 'You have already rated this order.' });
+    expect(revalidatePath).toHaveBeenCalledWith('/[locale]', 'layout');
+  });
+
+  it('refuses impossible input without calling the API', async () => {
+    expect(await rateOrderAction('en', 'mock-order-48200', { rating: 9, skip: false })).toMatchObject({ ok: false });
+    expect(await rateOrderAction('en', 'mock-order-48200', { rating: 3, skip: false, items: [{ productId: 0, rating: 3 }] })).toMatchObject({ ok: false });
+    expect(await rateOrderAction('en', '', { rating: 3, skip: false })).toMatchObject({ ok: false });
+    expect(rateOrder).not.toHaveBeenCalled();
   });
 });
 

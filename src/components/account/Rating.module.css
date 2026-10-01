@@ -1,0 +1,66 @@
+/* Star picker (rating dialogs, review forms) and the rating panel of an order. */
+
+.stars {
+  display: inline-flex;
+  flex-direction: row;
+  gap: var(--space-1);
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.stars legend {
+  font-weight: 600;
+  margin-block-end: var(--space-2);
+}
+
+.star {
+  position: relative;
+  cursor: pointer;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--color-border, #cfcfcf);
+}
+
+.star input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.star[data-on='true'] {
+  color: var(--color-accent, #f5a623);
+}
+
+.star:has(input:focus-visible) {
+  outline: 2px solid var(--color-primary, #000);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.ratingRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+}
+
+.itemRating {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-block-start: 1px solid var(--color-border, #e5e5e5);
+}
+
+.itemName {
+  font-weight: 600;
+}
+
+.inlineButton {
+  margin-block-start: var(--space-2);
+}

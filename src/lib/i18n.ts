@@ -5,6 +5,7 @@ import { catalogMessages } from './messages/catalog';
 import { checkoutMessages } from './messages/checkout';
 import { compareMessages } from './messages/compare';
 import { notificationsMessages } from './messages/notifications';
+import { ordersExtrasMessages } from './messages/orders-extras';
 import { productMessages } from './messages/product';
 import { shopperMessages } from './messages/shopper';
 import { wishlistMessages } from './messages/wishlist';
@@ -130,8 +131,8 @@ const coreAr: Record<keyof typeof en, string> = {
  * enforced by defineMessages). Add new areas here.
  */
 const dictionaries = {
-  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en, ...checkoutMessages.en, ...accountMessages.en },
-  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar, ...checkoutMessages.ar, ...accountMessages.ar },
+  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en, ...checkoutMessages.en, ...accountMessages.en, ...ordersExtrasMessages.en },
+  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar, ...checkoutMessages.ar, ...accountMessages.ar, ...ordersExtrasMessages.ar },
 } satisfies Record<Locale, Record<string, string>>;
 
 export type MessageKey = keyof typeof dictionaries.en;

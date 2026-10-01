@@ -10,8 +10,10 @@ import type {
   AddressSaved,
   CancelOrderInput,
   CancellationReasons,
+  Locale,
   Order,
   OrdersPage,
+  RateOrderInput,
   ReorderResult,
 } from './types';
 
@@ -56,3 +58,19 @@ export const cancelOrder = (client: StorefrontClient, ctx: ShopperContext, order
 /** Puts the order's items in the cart again; answers the cart and the items that were skipped. */
 export const reorder = (client: StorefrontClient, ctx: ShopperContext, orderId: string) =>
   client.request<ReorderResult>('POST', `${order(orderId)}/reorder`, ctx);
+
+// orders extras
+
+/**
+ * Tracking without sign-in: the order whose number AND phone match (404 `not_found` otherwise, never
+ * saying which was wrong; also 404 while the store has tracking off). Public: no token.
+ */
+export const trackOrder = (client: StorefrontClient, locale: Locale, number: string, phone: string) =>
+  client.request<Order>('GET', 'orders/track', { locale, query: { number, phone } });
+
+/**
+ * Rates a delivered order. Only while `actions.canRate`; the fields to show come from `ratingForm`.
+ * 409 `already_rated` / `cannot_rate` otherwise. Answers the order with its rating.
+ */
+export const rateOrder = (client: StorefrontClient, ctx: ShopperContext, orderId: string, input: RateOrderInput) =>
+  client.request<Order>('POST', `${order(orderId)}/rate`, { ...ctx, body: input });

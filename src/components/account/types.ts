@@ -1,4 +1,4 @@
-import type { Address, Locale } from '@/sdk';
+import type { Address, Locale, RateOrderInput } from '@/sdk';
 import type { SkippedItems } from './reorder-notice';
 
 /*
@@ -26,3 +26,7 @@ export type CancelOrderAction = (locale: Locale, orderId: string, reasonId: numb
 /** Order again: what the API skipped (names and reasons as it wrote them). */
 export type ReorderActionResult = { ok: true; skipped: SkippedItems } | { ok: false; message: string };
 export type ReorderAction = (locale: Locale, orderId: string) => Promise<ReorderActionResult>;
+
+/** Rate: the page is refreshed with the order (and its rating) as the API now has it; this is the message to announce. */
+export type RateOrderResult = { ok: boolean; message: string };
+export type RateOrderAction = (locale: Locale, orderId: string, input: RateOrderInput) => Promise<RateOrderResult>;

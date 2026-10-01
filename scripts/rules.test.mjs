@@ -3,6 +3,25 @@ import { checkSource } from './lib/rules.mjs';
 
 const rulesHit = (file, source) => checkSource(file, source).map((v) => v.rule);
 
+describe('orders extras rules', () => {
+  it('catches rating and review rules decided in the storefront', () => {
+    expect(rulesHit('src/components/account/X.tsx', "const canRate = order.status.code === 'delivered';")).toContain('rating-rules-from-api');
+    expect(rulesHit('src/components/account/X.tsx', 'const show = order.actions.canRate || order.status.active;')).toContain('rating-rules-from-api');
+    expect(rulesHit('src/components/product/X.tsx', 'const requiresSignIn = !me.authenticated;')).toContain('rating-rules-from-api');
+    expect(rulesHit('src/components/account/X.tsx', "const ratingForm = { driverRating: 'optional', items: true };")).toContain('rating-rules-from-api');
+    // reading the API's answer is fine
+    expect(rulesHit('src/components/account/X.tsx', "{order.actions.canRate && <button>{t('orderRate')}</button>}")).toEqual([]);
+    expect(rulesHit('src/components/account/X.tsx', 'const canRate = Boolean(order.actions.canRate && order.ratingForm);')).toEqual([]);
+    expect(rulesHit('src/sdk/v3/types.ts', "export type ReviewAccess = { requiresSignIn: boolean };")).toEqual([]);
+  });
+
+  it('keeps sharing in the share component', () => {
+    expect(rulesHit('src/components/product/X.tsx', 'navigator.share({ title, url })')).toContain('share-in-one-place');
+    expect(rulesHit('src/components/layout/X.tsx', "<a href={`https://www.facebook.com/sharer/sharer.php?u=${u}`}>")).toContain('share-in-one-place');
+    expect(rulesHit('src/components/product/ShareButton.tsx', 'await navigator.share({ title, url: pageUrl() });')).toEqual([]);
+  });
+});
+
 describe('architecture rules', () => {
   it('catches direct API calls outside the SDK', () => {
     expect(rulesHit('src/components/home/X.tsx', "const r = await fetch('/api/customer/home/sections');")).toContain('sdk-only-network');
