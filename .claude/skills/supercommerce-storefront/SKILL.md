@@ -93,6 +93,8 @@ them and **blocks the deploy** when one is broken.
 | Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
+| Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |
+| Tags and pixels (GTM, GA4, Meta, TikTok…), cookie consent for tags, analytics events, `POST /events` | [reference/marketing.md](reference/marketing.md) |
 
 ## Common requests → how
 
@@ -125,6 +127,10 @@ them and **blocks the deploy** when one is broken.
 | "Add a field to the address form" | It comes from `CheckoutSettings.addressForm` → "needs backend support" | `<input name="landmark">` of your own |
 | "Only let pending orders be cancelled" | Nothing: show cancel only when `order.actions.canCancel` | `status.code === 'pending'`, date math on `placedAt` |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
+| "Add a schema.org field" (gtin, founding date…) | Only if the backend sends it (`Seo.structuredData`, `GET /seo/site`) → map it in `src/lib/jsonld.ts`; else "needs backend support" | `<script type="application/ld+json">` in a page, invented values |
+| "Add JSON-LD / meta to a new page" | `seoMetadata(page.seo, locale)` + `<JsonLd seo={page.seo} locale={locale} />` | Your own title pattern or tags |
+| "Add a pixel / tag" | It is a store setting → `Layout.marketing` → "needs backend support"; snippet only in `MarketingTags.tsx` | Snippets or ids in other files, `process.env` in client code |
+| "Fire an analytics event" | `track()` from `src/lib/marketing.ts` (client) or `trackServerEvent()` from `src/lib/marketing.server.ts` (server action) | Reading `price.amount` elsewhere, computing a `value` |
 
 ## Before you say "done"
 
