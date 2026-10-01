@@ -72,7 +72,7 @@ test.describe('sign in', () => {
 
   test('shows the backend’s message for a wrong password and keeps the phone typed', async ({ page, context }) => {
     await signIn(page, 'en', PHONE, 'nope');
-    await expect(page.getByRole('alert')).toHaveText('The details you entered are not correct.');
+    await expect(page.getByTestId('sign-in-form').getByRole('alert')).toHaveText('The details you entered are not correct.');
     await expect(page.locator('input[name="identifier"]')).toHaveValue(PHONE);
     expect(await cookie(context, 'sc_token')).toBeNull();
   });
@@ -80,7 +80,7 @@ test.describe('sign in', () => {
   test('signs in in Arabic with the backend’s Arabic messages', async ({ page }) => {
     await signIn(page, 'ar', PHONE, 'nope');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    await expect(page.getByRole('alert')).toHaveText('البيانات التي أدخلتها غير صحيحة.');
+    await expect(page.getByTestId('sign-in-form').getByRole('alert')).toHaveText('البيانات التي أدخلتها غير صحيحة.');
     await page.locator('input[name="password"]').fill(PASSWORD);
     await page.getByTestId('sign-in-form').getByRole('button').click();
     await expect(page).toHaveURL(/\/ar\/account$/);
@@ -98,8 +98,17 @@ test.describe('sign in', () => {
   });
 
   test('merges the guest cart into the customer on sign-in', async ({ page, context, request }) => {
+    const customerCart = await request.get(`${MOCK_API}/api/customer/v3/cart`, { headers: { Authorization: 'Bearer test-customer' } });
+    const owned = ((await customerCart.json()).data.items as { product: { slug: string } }[]).map((line) => line.product.slug);
     await open(page, '/en');
-    await page.getByTestId('product-card').filter({ has: page.getByRole('button', { name: 'Add to cart', disabled: false }) }).first().getByRole('button', { name: 'Add to cart' }).click();
+    // a product the customer has no line for yet (the merge keeps one line per product)
+    await page
+      .getByTestId('product-card')
+      .filter({ has: page.getByRole('button', { name: 'Add to cart', disabled: false }) })
+      .filter({ hasNot: page.locator(owned.map((slug) => `a[href="/en/p/${encodeURIComponent(slug)}"]`).join(', ')) })
+      .first()
+      .getByRole('button', { name: 'Add to cart' })
+      .click();
     await expect.poll(() => cookie(context, 'sc_guest')).not.toBeNull();
     const guest = (await cookie(context, 'sc_guest'))!;
     const guestCart = (await me(request, guest)).counts.cart;
@@ -128,7 +137,7 @@ test.describe('sign in', () => {
     await expect(page.getByTestId('otp-verify-form')).toContainText('We sent a verification code to your phone.');
     await page.locator('input[name="code"]').fill('0000');
     await page.getByRole('button', { name: 'Sign in with the code' }).click();
-    await expect(page.getByRole('alert')).toHaveText('The code is not correct.');
+    await expect(page.getByTestId('otp-verify-form').getByRole('alert')).toHaveText('The code is not correct.');
     await page.locator('input[name="code"]').fill('1234');
     await page.getByRole('button', { name: 'Sign in with the code' }).click();
     await expect(page).toHaveURL(/\/en\/account$/);
@@ -150,6 +159,8 @@ test.describe('sign up', () => {
     await form.locator('input[name="passwordConfirmation"]').fill('different');
     await form.getByRole('button', { name: 'Create account' }).click();
     await expect(page.getByText('The passwords do not match.')).toBeVisible(); // ours: checked before the backend
+    // passwords are never sent back to the page, so both inputs are typed again
+    await form.locator('input[name="password"]').fill('longenough');
     await form.locator('input[name="passwordConfirmation"]').fill('longenough');
     await form.getByRole('button', { name: 'Create account' }).click();
     // the backend's messages, under the fields by their v3 names
@@ -233,7 +244,7 @@ test.describe('password reset', () => {
     await page.locator('input[name="password"]').fill('newsecret1');
     await page.locator('input[name="passwordConfirmation"]').fill('newsecret1');
     await page.getByRole('button', { name: 'Save and sign in' }).click();
-    await expect(page.getByRole('alert')).toHaveText('The code is not correct.');
+    await expect(page.getByTestId('reset-password-form').getByRole('alert')).toHaveText('The code is not correct.');
     await page.locator('input[name="code"]').fill('1234');
     await page.locator('input[name="password"]').fill('newsecret1');
     await page.locator('input[name="passwordConfirmation"]').fill('newsecret1');
@@ -278,7 +289,7 @@ test.describe('waiting for approval', () => {
     await expect(page.getByTestId('approval-gate')).toContainText('Your account is being reviewed');
     await expect(page.getByTestId('home-section')).toHaveCount(0);
     await open(page, '/en/waiting-approval');
-    await page.getByTestId('sign-out').click();
+    await page.getByTestId('waiting-approval-page').getByTestId('sign-out').click();
     await expect(page).toHaveURL(/\/en$/);
     await expect(page.getByTestId('home-section').first()).toBeVisible();
   });
@@ -335,7 +346,7 @@ test.describe('profile and password', () => {
     await form.locator('input[name="newPassword"]').fill('newsecret1');
     await form.locator('input[name="passwordConfirmation"]').fill('newsecret1');
     await form.getByRole('button', { name: 'Change password' }).click();
-    await expect(page.getByRole('alert')).toHaveText('The current password is not correct.');
+    await expect(form.getByRole('alert')).toHaveText('The current password is not correct.');
 
     await form.locator('input[name="currentPassword"]').fill(PASSWORD);
     await form.locator('input[name="newPassword"]').fill('newsecret1');
