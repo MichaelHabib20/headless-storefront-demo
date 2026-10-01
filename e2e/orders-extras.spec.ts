@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { MOCK_API, acceptCookies, live, resetMock, signInAsCustomer } from './support';
 
@@ -9,6 +10,14 @@ import { MOCK_API, acceptCookies, live, resetMock, signInAsCustomer } from './su
 test.skip(live, 'needs the stateful mock API');
 
 const AUTH = { Authorization: 'Bearer test-customer' };
+
+/** Product pages of the mock (scripts/mock/product.mjs): 9822 takes reviews, 33594 has reviews off. */
+type Locale = 'en' | 'ar';
+const catalog = (locale: Locale) =>
+  (JSON.parse(fs.readFileSync(`src/test/fixtures/v3/home.${locale}.json`, 'utf8')).data.sections as { products: { id: number; slug: string }[] }[]).flatMap(
+    (s) => s.products,
+  );
+const productPath = (id: number, locale: Locale = 'en') => `/${locale}/p/${encodeURIComponent(catalog(locale).find((p) => p.id === id)!.slug)}`;
 
 async function open(page: Page, path: string) {
   const response = await page.goto(path);
@@ -100,17 +109,17 @@ test.describe('write a review', () => {
   });
 
   test('from the product page when signed in; a sign-in link otherwise', async ({ page, context }) => {
-    await open(page, '/en/p/jj-baby-cologne-100-ml-dream');
+    await open(page, productPath(9822));
     const note = page.getByTestId('write-review-sign-in');
     await expect(note).toContainText('Sign in to write a review.');
     await expect(note.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', /\/en\/sign-in\?next=/);
     expect((await context.cookies()).find((c) => c.name === 'sc_guest')).toBeUndefined();
 
     await signInAsCustomer(context);
-    await open(page, '/ar/p/jj-baby-cologne-100-ml-dream');
+    await open(page, productPath(9822, 'ar'));
     await page.getByTestId('write-review').click();
     const dialog = page.getByRole('dialog');
-    await dialog.getByLabel('3 نجوم').check();
+    await dialog.getByLabel('٣ نجوم').check();
     await dialog.getByLabel('رأيك').fill('منتج جيد');
     await dialog.getByRole('button', { name: 'إرسال التقييم' }).click();
     await expect(page.getByTestId('write-review-done')).toHaveText('شكراً لك! سيظهر تقييمك بعد الموافقة عليه.');
@@ -118,7 +127,7 @@ test.describe('write a review', () => {
 
   test('offers nothing where the store has reviews off', async ({ page, context }) => {
     await signInAsCustomer(context);
-    await open(page, '/en/p/baby-bath-500-ml');
+    await open(page, productPath(33594));
     await expect(page.getByTestId('write-review')).toHaveCount(0);
     await expect(page.getByTestId('product-reviews')).toHaveCount(0);
   });
@@ -126,10 +135,10 @@ test.describe('write a review', () => {
 
 test.describe('share a product', () => {
   test('shows the share menu with the page link (desktop and 360 px)', async ({ page }) => {
-    await open(page, '/en/p/jj-baby-cologne-100-ml-dream');
+    await open(page, productPath(9822));
     await page.getByRole('button', { name: 'Share' }).click();
     const menu = page.getByRole('menu', { name: 'Share this product' });
-    await expect(menu.getByRole('menuitem', { name: 'WhatsApp' })).toHaveAttribute('href', /wa\.me\/\?text=.*jj-baby-cologne-100-ml-dream/);
+    await expect(menu.getByRole('menuitem', { name: 'WhatsApp' })).toHaveAttribute('href', /wa\.me\/\?text=.*jj-baby-cologne-100ml-dream/);
     await expect(menu.getByRole('menuitem', { name: 'Copy link' })).toBeVisible();
 
     await page.setViewportSize({ width: 360, height: 740 });

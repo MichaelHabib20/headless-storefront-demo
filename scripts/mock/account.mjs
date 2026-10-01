@@ -453,6 +453,11 @@ export function createAccountModule(shopper) {
 
   return {
     handle,
+    /** The recorded staging layout has the orders extras off: the mock store has them on. */
+    decorate(endpoint, data) {
+      if (endpoint !== 'layout') return data;
+      return { ...data, features: { ...data.features, orderTracking: true, productReviews: true, orderRating: true, share: true } };
+    },
     reset() {
       resetAccountCounters();
       reviews.length = 0;
