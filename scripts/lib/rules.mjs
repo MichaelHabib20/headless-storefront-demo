@@ -333,6 +333,15 @@ export const RULES = [
     patterns: [/\bkind\s*[!=]==?\s*['"](contact|branches)['"]/, /['"](contact|branches)['"]\s*[!=]==?\s*[\w.?]*\bkind\b/],
     message: 'page.kind (contact / branches) is read only by src/app/[locale]/pages/[slug]/page.tsx, which passes the extra block in. Components draw what they are given.',
   },
+  // --- account extras: the old storefront's pages on their old paths --------------------------
+  {
+    // "All products" is its own page (/all-products, the Target {type: search, query: ""}); an empty search is not it.
+    id: 'all-products-route',
+    applies: (f) => inUi(f) && !isTest(f) && f !== 'src/lib/routing.ts',
+    // a link to the bare search page (the search form's `action` and the search page's own base path are fine)
+    patterns: [/\bhref\s*[=:]\s*\{?\s*routes\.search\(\s*\w+\s*\)/, /\broutes\.search\(\s*\w+\s*,\s*['"`]{2}\s*\)/],
+    message: 'Every product lives on routes.allProducts(locale) (the old /all-products page). routes.search(locale, q) is for a search text; a link to "all products" from the API is the Target {type: "search", query: ""}, so render it with <TargetLink>.',
+  },
 ];
 
 /**

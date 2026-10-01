@@ -115,7 +115,24 @@ test.describe('catalog', () => {
     await page.goto('/en/search?q=zzzz');
     await expect(page.getByTestId('listing-empty')).toContainText('No products found');
     await page.getByTestId('listing-empty').getByRole('link', { name: 'Browse all products' }).click();
-    await expect(page).toHaveURL(/\/en\/search$/);
+    await expect(page).toHaveURL(/\/en\/all-products$/);
+  });
+
+  test('all products (the old /all-products): the listing with no scope, its canonical, both languages', async ({ page, request }) => {
+    for (const locale of ['en', 'ar'] as const) {
+      const data = await listing(request, '', locale);
+      const response = await page.goto(`/${locale}/all-products`);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole('heading', { level: 1, name: data.context.title })).toBeVisible();
+      await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(data.items.length);
+      // the backend's canonical Target {type: search, query: ""} is this page
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/${locale}/all-products$`));
+      expect(await fitsScreen(page)).toBe(true);
+    }
+    // filters and pages stay on /all-products
+    await page.goto('/en/all-products');
+    await page.getByTestId('facet-value').first().click();
+    await expect(page).toHaveURL(/\/en\/all-products\?/);
   });
 
   test('every listing route: brand, list, tag, deals (with old prices from the API)', async ({ page, request }) => {

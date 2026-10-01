@@ -24,6 +24,14 @@ test.describe('mobile', () => {
     await expect(drawer).toBeHidden();
   });
 
+  test('all products (the old /all-products) on a phone, both languages', async ({ page }) => {
+    for (const locale of ['en', 'ar']) {
+      expect((await page.goto(`/${locale}/all-products`))?.status()).toBe(200);
+      await expect(page.getByTestId('listing-grid').getByTestId('product-card').first()).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+  });
+
   test('Arabic fits the screen too', async ({ page }) => {
     await page.goto('/ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

@@ -14,7 +14,7 @@ describe('resolveTarget', () => {
     [{ type: 'form', slug: 'prescriptions' }, '/en/forms/prescriptions'],
     [{ type: 'tag', slug: 'new-in' }, '/en/tags/new-in'],
     [{ type: 'search', query: 'panadol extra' }, '/en/search?q=panadol%20extra'],
-    [{ type: 'search', query: '' }, '/en/search'],
+    [{ type: 'search', query: '' }, '/en/all-products'],
     [{ type: 'deals' }, '/en/deals'],
     [{ type: 'home' }, '/en'],
   ];

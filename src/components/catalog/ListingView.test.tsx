@@ -107,7 +107,7 @@ describe('ListingView', () => {
     renderListing(listing, locale);
     const empty = screen.getByTestId('listing-empty');
     expect(within(empty).getByRole('heading', { name: locale === 'en' ? 'No products found' : 'لا توجد منتجات' })).toBeInTheDocument();
-    expect(within(empty).getByRole('link')).toHaveAttribute('href', `/${locale}/search`);
+    expect(within(empty).getByRole('link')).toHaveAttribute('href', `/${locale}/all-products`);
     expect(screen.queryByTestId('listing-filters')).toBeNull();
   });
 

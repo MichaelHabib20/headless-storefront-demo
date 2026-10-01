@@ -17,6 +17,8 @@ export const routes = {
   deals: (locale: Locale) => `/${locale}/deals`,
   /** Search results; without a query it lists all products. */
   search: (locale: Locale, query = '') => (query ? `/${locale}/search?q=${encode(query)}` : `/${locale}/search`),
+  /** Every product (the old storefront's /all-products); the Target `{type: search, query: ""}` opens it. */
+  allProducts: (locale: Locale) => `/${locale}/all-products`,
   categories: (locale: Locale) => `/${locale}/categories`,
   brands: (locale: Locale) => `/${locale}/brands`,
   cart: (locale: Locale) => `/${locale}/cart`,
@@ -99,7 +101,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
     case 'tag':
       return internal(routes.tag(locale, target.slug));
     case 'search':
-      return internal(routes.search(locale, target.query));
+      return internal(target.query ? routes.search(locale, target.query) : routes.allProducts(locale));
     case 'deals':
       return internal(routes.deals(locale));
     case 'home':
@@ -117,7 +119,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
  * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
  * route above is missing here.
  */
-const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval']);
+const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval']);
 
 /** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
 export function isStorefrontPath(pathname: string): boolean {
