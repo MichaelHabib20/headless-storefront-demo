@@ -60,13 +60,17 @@ describe('mock content module follows the contract', () => {
 });
 
 describe('mock shell module follows the contract', () => {
+  // The shell keys are added to the recorded layout by `decorate` (scripts/mock-api.mjs), like the other areas' members.
+  const recordedLayout = (locale) => JSON.parse(fs.readFileSync(`src/test/fixtures/v3/layout.${locale}.json`, 'utf8')).data;
+
   it.each(['en', 'ar'])('layout in every mode (%s)', (locale) => {
     const shell = createShellModule(createShopperStore());
-    const base = shell.intercept(request(locale, '/layout'));
-    expect(validate('Layout', base[1].data)).toEqual([]);
-    expect(base[1].data.areaSelection).toBeNull();
+    expect(shell.intercept(request(locale, '/layout'))).toBeNull();
+    const base = shell.decorate('layout', recordedLayout(locale), locale);
+    expect(validate('Layout', base)).toEqual([]);
+    expect(base.areaSelection).toBeNull();
     shell.mode({ multiInventory: true, banners: true, storeClosed: true });
-    const all = shell.intercept(request(locale, '/layout'))[1].data;
+    const all = shell.decorate('layout', recordedLayout(locale), locale);
     expect(validate('Layout', all)).toEqual([]);
     expect([all.areaSelection.required, all.topBanner !== null, all.floatingBanner !== null, all.storeStatus.acceptingOrders]).toEqual([true, true, true, false]);
   });
@@ -101,10 +105,21 @@ describe('mock shell module follows the contract', () => {
     expect(shell.intercept(request('en', '/me'))[1].data.area).toBeNull();
   });
 
+  it('the layout the mock API serves (every module adds its members, in order) follows the contract', () => {
+    for (const locale of ['en', 'ar']) {
+      const modules = createModules(createShopperStore());
+      for (const part of modules) part.mode?.({ multiInventory: true, banners: true });
+      const layout = modules.reduce((data, part) => (part.decorate ? part.decorate('layout', data, locale) : data), recordedLayout(locale));
+      expect(validate('Layout', layout)).toEqual([]);
+      // orders extras (account module), marketing (seo module) and the shell keys are all there
+      expect([layout.features.orderTracking, layout.features.share, 'marketing' in layout, layout.areaSelection !== null, layout.topBanner !== null]).toEqual([true, true, true, true, true]);
+    }
+  });
+
   it('the recorded layout fixtures carry the default shell keys', () => {
     for (const locale of ['en', 'ar']) {
-      const layout = JSON.parse(fs.readFileSync(`src/test/fixtures/v3/layout.${locale}.json`, 'utf8')).data;
-      const shell = createShellModule(createShopperStore()).intercept(request(locale, '/layout'))[1].data;
+      const layout = recordedLayout(locale);
+      const shell = createShellModule(createShopperStore()).decorate('layout', recordedLayout(locale), locale);
       for (const key of ['legal', 'appBanner', 'topBanner', 'floatingBanner', 'mobileNav', 'areaSelection', 'storeStatus']) expect(layout[key]).toEqual(shell[key]);
     }
   });
