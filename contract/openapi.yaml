@@ -28,6 +28,21 @@ info:
     Shopping: `already_available` (409). Checkout and orders: `total_changed` (409), `checkout_incomplete` (409),
     `payment_change_needs_consent` (409), `order_in_progress` (409), `cannot_cancel` (409),
     `guest_checkout_disabled` (403), `phone_in_use` (409), `payment_provider_error` (502).
+    Auth and account: `invalid_credentials` (401), `account_deactivated` (403), `social_account_only` (403),
+    `signup_disabled` (403), `feature_disabled` (403), `wrong_password` (403), `pending_approval` (403),
+    `email_in_use` (409), `phone_already_verified` (409), `already_rated` (409), `invalid_code` (422),
+    `code_expired` (422), `too_many_attempts` (429), `provider_error` (502), `sms_unavailable` (503).
+    Store: `store_unavailable` (503) on every endpoint while the merchant has switched the store off
+    (`error.message` is the merchant's maintenance text).
+
+    Auth: sign-in, sign-up, social sign-in, OTP and password reset answer a `Session` (`token` + `customer`).
+    Sent WITH a guest bearer token they merge the guest's cart, wishlist and compare into the customer.
+    `POST /auth/sign-out` revokes the token: every later call with it answers 401 `unauthenticated`.
+    `Session.next` says what the storefront must do next (`verify_phone`, `waiting_approval` or null).
+
+    Structured data and page meta come from the backend (`Seo`, `GET /seo/site`, `GET /sitemap`):
+    the storefront only turns Targets into its own URLs and serializes JSON-LD; it never invents SEO facts.
+    Marketing tags come from `Layout.marketing`; server-side conversion events are sent with `POST /events`.
 
     Money: every amount is a `Money` or a `Price` with ready-to-show text. Storefronts show that text and
     never format, add up or compare the numbers.
@@ -862,6 +877,560 @@ paths:
               schema: { $ref: '#/components/schemas/ReorderResponse' }
         default: { $ref: '#/components/responses/Error' }
 
+  # ---------------------------------------------------------------- auth (v3)
+  /auth/settings:
+    get:
+      operationId: getAuthSettings
+      summary: What the sign-in / sign-up pages show, decided from the store's configuration
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Auth settings
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthSettingsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/sign-in:
+    post:
+      operationId: signIn
+      summary: Sign in with a password. A guest bearer token, if sent, is merged into the customer.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SignInRequest' }
+      responses:
+        '200':
+          description: Signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/sign-up:
+    post:
+      operationId: signUp
+      summary: Create an account (signed in on success). A guest bearer token, if sent, becomes the customer.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SignUpRequest' }
+      responses:
+        '201':
+          description: Account created and signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/sign-out:
+    post:
+      operationId: signOut
+      summary: Revoke the bearer token (later calls with it answer 401)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Signed out
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SignedOutResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/social:
+    post:
+      operationId: signInWithProvider
+      summary: Sign in or sign up with Google, Facebook or Apple (the provider's token is verified by the backend)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SocialSignInRequest' }
+      responses:
+        '200':
+          description: Signed in. `next` = `complete_profile` when the provider gave no phone number.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/social/complete:
+    post:
+      operationId: completeSocialProfile
+      summary: Add the name and phone a social provider did not give (after `next = complete_profile`)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CompleteProfileRequest' }
+      responses:
+        '200':
+          description: Profile completed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/otp/send:
+    post:
+      operationId: sendOtp
+      summary: Send a one-time sign-in code by SMS (only when `AuthSettings.otpLogin` is true)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              additionalProperties: false
+              properties:
+                phone: { type: string }
+      responses:
+        '200':
+          description: Code sent
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CodeSentResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/otp/verify:
+    post:
+      operationId: signInWithOtp
+      summary: Sign in with the SMS code
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, code]
+              additionalProperties: false
+              properties:
+                phone: { type: string }
+                code: { type: string }
+      responses:
+        '200':
+          description: Signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/password/forgot:
+    post:
+      operationId: forgotPassword
+      summary: Start a password reset (code by SMS or link by e-mail, as the store is configured)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ForgotPasswordRequest' }
+      responses:
+        '200':
+          description: Sent. `method` says what the shopper receives and which reset request to send next.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ForgotPasswordResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/password/reset:
+    post:
+      operationId: resetPassword
+      summary: Set a new password with the SMS code or the e-mail token; signs the shopper in
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ResetPasswordRequest' }
+      responses:
+        '200':
+          description: Password changed and signed in
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/phone/send-code:
+    post:
+      operationId: sendPhoneVerificationCode
+      summary: Send (again) the SMS code that verifies the signed-in customer's phone
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Code sent
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CodeSentResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/phone/verify:
+    post:
+      operationId: verifyPhone
+      summary: Verify the signed-in customer's phone with the SMS code
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              additionalProperties: false
+              properties:
+                code: { type: string }
+      responses:
+        '200':
+          description: Phone verified
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CustomerResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /auth/email/verify:
+    post:
+      operationId: verifyEmail
+      summary: Confirm a changed e-mail address with the token from the e-mail
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, token]
+              additionalProperties: false
+              properties:
+                email: { type: string }
+                token: { type: string }
+      responses:
+        '200':
+          description: E-mail confirmed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  # ---------------------------------------------------------------- account (v3)
+  /account/profile:
+    get:
+      operationId: getProfile
+      summary: The signed-in customer's profile and the form to edit it
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProfileResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    put:
+      operationId: updateProfile
+      summary: Edit the profile. A changed phone is unverified again and a code is sent (`next = verify_phone`).
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileInput' }
+      responses:
+        '200':
+          description: Saved
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProfileResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /account/password:
+    put:
+      operationId: changePassword
+      summary: Change the password (needs the current one)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              additionalProperties: false
+              properties:
+                currentPassword: { type: string }
+                newPassword: { type: string, minLength: 8 }
+      responses:
+        '200':
+          description: Changed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /me/area:
+    put:
+      operationId: setArea
+      summary: Choose the shopper's area (multi-inventory stores; see `Layout.areaSelection`)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [areaId]
+              additionalProperties: false
+              properties:
+                areaId: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: The shopper summary with the new area
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  # ---------------------------------------------------------------- seo + marketing (v3)
+  /seo/site:
+    get:
+      operationId: getSiteSeo
+      summary: Site-wide structured-data facts (organization, local business, website) and the robots policy
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Site SEO
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SiteSeoResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /sitemap:
+    get:
+      operationId: getSitemap
+      summary: Everything a sitemap should list, as Targets (the storefront writes the URLs)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: type
+          in: query
+          required: true
+          schema: { type: string, enum: [products, categories, brands, pages, landing_pages, tags] }
+        - $ref: '#/components/parameters/Page'
+        - name: perPage
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 5000, default: 1000 }
+      responses:
+        '200':
+          description: Sitemap entries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SitemapResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /events:
+    post:
+      operationId: trackEvent
+      summary: Server-side marketing event (conversion APIs). Never affects what a page shows.
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EventRequest' }
+      responses:
+        '202':
+          description: Accepted (also when no conversion API is configured)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EventAcceptedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  # ---------------------------------------------------------------- content (v3)
+  /pages/{slug}:
+    get:
+      operationId: getPage
+      summary: A CMS page (about, policies, contact, branches...)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /branches:
+    get:
+      operationId: getBranches
+      summary: The store's branches, grouped as the merchant grouped them
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: Branches
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BranchesResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /contact:
+    post:
+      operationId: sendContactMessage
+      summary: Send a contact-us message
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ContactRequest' }
+      responses:
+        '201':
+          description: Sent
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /landing-pages/{slug}:
+    get:
+      operationId: getLandingPage
+      summary: A merchant landing page (home-style sections and banners)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Landing page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LandingPageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /forms/{slug}:
+    get:
+      operationId: getForm
+      summary: A merchant-defined form (fields, labels, what is required)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Form
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FormResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /forms/{slug}/responses:
+    post:
+      operationId: submitForm
+      summary: Submit a form (the backend validates against the form definition)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, minLength: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FormSubmission' }
+      responses:
+        '201':
+          description: Submitted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  # ---------------------------------------------------------------- orders: tracking, rating, reviews (v3)
+  /orders/track:
+    get:
+      operationId: trackOrder
+      summary: Find an order by its number and the phone it was placed with (no sign-in)
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - name: number
+          in: query
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 32 }
+        - name: phone
+          in: query
+          required: true
+          schema: { type: string, minLength: 3, maxLength: 32 }
+      responses:
+        '200':
+          description: The order (404 `not_found` when the pair does not match)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /orders/{orderId}/rate:
+    post:
+      operationId: rateOrder
+      summary: Rate a delivered order (only when `Order.actions.canRate`)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - $ref: '#/components/parameters/OrderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RateOrderRequest' }
+      responses:
+        '200':
+          description: The order with its rating
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderResponse' }
+        default: { $ref: '#/components/responses/Error' }
+  /reviews:
+    post:
+      operationId: writeProductReview
+      summary: Write a product review (moderated; it shows once the merchant approves it)
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/WriteReviewRequest' }
+      responses:
+        '201':
+          description: Review received
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
 components:
   securitySchemes:
     bearer:
@@ -1235,6 +1804,80 @@ components:
             cookieConsent: { type: boolean }
             newsletter: { type: boolean }
             guestCanViewPrices: { type: boolean }
+            productReviews: { type: boolean, description: Shoppers may write product reviews }
+            orderRating: { type: boolean, description: Shoppers may rate delivered orders }
+            share: { type: boolean, description: Show the share button on product pages }
+        # ---- added for the shell phase (optional: older recordings may lack them; absent = feature off)
+        marketing: { $ref: '#/components/schemas/Marketing' }
+        legal:
+          description: The store's legal pages (CMS). Null entries → no page.
+          type: object
+          required: [privacy, terms, cookies]
+          additionalProperties: false
+          properties:
+            privacy: { $ref: '#/components/schemas/NullableTarget' }
+            terms: { $ref: '#/components/schemas/NullableTarget' }
+            cookies: { $ref: '#/components/schemas/NullableTarget' }
+        appBanner:
+          description: The "download our app" banner. Null when switched off.
+          type: object
+          nullable: true
+          required: [title, text, links]
+          additionalProperties: false
+          properties:
+            title: { type: string, nullable: true }
+            text: { type: string, nullable: true }
+            links: { $ref: '#/components/schemas/AppLinks' }
+        topBanner:
+          description: A merchant ad shown above the header on every page; null when none is active
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Banner' }]
+        floatingBanner:
+          description: A merchant ad that floats over the page; null when none is active
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Banner' }]
+        mobileNav:
+          description: The mobile bottom bar and its "more" sheet, already filtered by the store's features
+          type: object
+          required: [items, more]
+          additionalProperties: false
+          properties:
+            items:
+              description: At most 4 fixed items plus `more`
+              type: array
+              items: { $ref: '#/components/schemas/MobileNavItem' }
+            more:
+              type: object
+              required: [title, welcomeTitle, welcomeText, items]
+              additionalProperties: false
+              properties:
+                title: { type: string }
+                welcomeTitle: { type: string, nullable: true, description: For visitors who are not signed in }
+                welcomeText: { type: string, nullable: true }
+                items:
+                  type: array
+                  items: { $ref: '#/components/schemas/MobileNavItem' }
+        areaSelection:
+          description: |
+            Multi-inventory stores ask the shopper where they are, because inventory and prices depend on it.
+            Null → the store has one inventory. The current choice is `Me.area`; change it with PUT /me/area;
+            the choices come from GET /locations.
+          type: object
+          nullable: true
+          required: [required, label, prompt]
+          additionalProperties: false
+          properties:
+            required: { type: boolean, description: True → ask before the shopper can browse prices }
+            label: { type: string, description: 'Header label, e.g. "Deliver to"' }
+            prompt: { type: string, description: 'Dialog text, e.g. "Choose your area to see what is available near you"' }
+        storeStatus:
+          description: Whether the store takes orders right now and the merchant's text when it does not
+          type: object
+          required: [acceptingOrders, message]
+          additionalProperties: false
+          properties:
+            acceptingOrders: { type: boolean }
+            message: { type: string, nullable: true }
 
     Price:
       description: |
@@ -1468,6 +2111,30 @@ components:
           additionalProperties: false
           properties:
             firstName: { type: string }
+            # added for the account phase (optional for older recordings)
+            lastName: { type: string }
+            phoneVerified: { type: boolean }
+            approval:
+              type: string
+              nullable: true
+              enum: [pending, approved, rejected, null]
+              description: Null when the store does not approve customers by hand
+        # added for the shell phase (optional for older recordings)
+        area:
+          description: The shopper's chosen area (multi-inventory stores); null when none or when the store has one inventory
+          type: object
+          nullable: true
+          required: [id, name, city]
+          additionalProperties: false
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            city: { type: string, nullable: true }
+        next:
+          description: What the storefront must do before the shopper can go on (same values as Session.next)
+          type: string
+          nullable: true
+          enum: [verify_phone, waiting_approval, complete_profile, null]
         counts:
           description: Header badges. `cart` follows the store's counting mode (lines or units).
           type: object
@@ -1712,6 +2379,34 @@ components:
               locale: { $ref: '#/components/schemas/Locale' }
               target: { $ref: '#/components/schemas/Target' }
         index: { type: boolean, description: False → tell search engines not to index this page }
+        # ---- added for the SEO phase (optional: absent = nothing to add)
+        breadcrumbs:
+          description: Home first, this page last (the last item's target may be null)
+          type: array
+          items: { $ref: '#/components/schemas/Breadcrumb' }
+        structuredData:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/StructuredData' }]
+        pagination:
+          description: 'For paginated pages: the previous / next page numbers for rel=prev/next, null at the ends'
+          type: object
+          nullable: true
+          required: [prev, next]
+          additionalProperties: false
+          properties:
+            prev: { type: integer, nullable: true, minimum: 1 }
+            next: { type: integer, nullable: true, minimum: 1 }
+        openGraph:
+          description: Social preview; null members fall back to title / description / the store logo
+          type: object
+          nullable: true
+          required: [title, description, image, type]
+          additionalProperties: false
+          properties:
+            title: { type: string, nullable: true }
+            description: { type: string, nullable: true }
+            image: { type: string, nullable: true }
+            type: { type: string, enum: [website, product, article] }
 
     ProductOption:
       description: One thing the shopper chooses (size, color). Every value says where a click on it goes.
@@ -1890,6 +2585,17 @@ components:
                   comment: { type: string, nullable: true }
                   createdAt: { type: string, format: date-time }
             pagination: { $ref: '#/components/schemas/Pagination' }
+            # added for the orders-extras phase (optional for older recordings; absent = writing is off)
+            write:
+              description: Whether and how the shopper may write a review (POST /reviews)
+              type: object
+              required: [enabled, requiresSignIn, requiresOrder, message]
+              additionalProperties: false
+              properties:
+                enabled: { type: boolean }
+                requiresSignIn: { type: boolean }
+                requiresOrder: { type: boolean, description: Only shoppers who bought it, from the order page }
+                message: { type: string, nullable: true, description: 'Why it is not possible now, e.g. "Sign in to write a review"' }
 
     ListingFacet:
       description: One filter group. Links come ready from the backend (`query`).
@@ -2622,6 +3328,30 @@ components:
           properties:
             canCancel: { type: boolean }
             canReorder: { type: boolean }
+            # added for the orders-extras phase (optional for older recordings; absent = false)
+            canRate: { type: boolean, description: Delivered, not rated yet, store has order rating on }
+            canReviewProducts: { type: boolean, description: Delivered and the store takes product reviews }
+        # added for the orders-extras phase (optional for older recordings)
+        rating:
+          description: The rating the shopper gave; null when not rated (or skipped)
+          type: object
+          nullable: true
+          required: [rating, driverRating, feedback]
+          additionalProperties: false
+          properties:
+            rating: { type: integer, minimum: 1, maximum: 5 }
+            driverRating: { type: integer, nullable: true, minimum: 1, maximum: 5 }
+            feedback: { type: string, nullable: true }
+        ratingForm:
+          description: How to draw the rating dialog; null when `actions.canRate` is false
+          type: object
+          nullable: true
+          required: [driverRating, items]
+          additionalProperties: false
+          properties:
+            driverRating: { type: string, enum: [hidden, optional, required] }
+            items: { type: boolean, description: Also rate each product }
+        phone: { type: string, nullable: true, description: The phone the order was placed with, masked (for the tracking page) }
     OrderResponse:
       type: object
       required: [data]
@@ -2669,3 +3399,768 @@ components:
                 properties:
                   name: { type: string }
                   reason: { type: string, description: Localized }
+
+    # ---------------------------------------------------------------- shared (phase: shell, auth, content)
+
+    MessageResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [message]
+          additionalProperties: false
+          properties:
+            message: { type: string, description: 'Localized, safe to show' }
+
+    # ---------------------------------------------------------------- auth
+
+    Customer:
+      description: The signed-in customer as the storefront may show it. Never contains a token.
+      type: object
+      required: [id, firstName, lastName, email, phone, phoneVerified, birthdate, image, approval]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        phoneVerified: { type: boolean }
+        birthdate: { type: string, nullable: true, description: 'YYYY-MM-DD' }
+        image: { type: string, nullable: true }
+        approval:
+          description: Null when the store does not approve customers by hand
+          type: object
+          nullable: true
+          required: [status, notes]
+          additionalProperties: false
+          properties:
+            status: { type: string, enum: [pending, approved, rejected] }
+            notes: { type: string, nullable: true, description: The merchant's note to the customer }
+        referralCode: { type: string, nullable: true, description: The customer's own code to share (null when the store has no referrals) }
+    CustomerResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Customer' }
+
+    Session:
+      type: object
+      required: [token, customer, next]
+      additionalProperties: false
+      properties:
+        token: { type: string, description: 'Send as Authorization: Bearer <token>. Keep it server-side (httpOnly cookie).' }
+        customer: { $ref: '#/components/schemas/Customer' }
+        next:
+          description: |
+            What the storefront must do next: `verify_phone` (show the SMS code page; shopping is allowed meanwhile),
+            `waiting_approval` (the store approves accounts by hand: show the waiting page, no shopping),
+            `complete_profile` (social sign-in without a phone: ask for name and phone), or null.
+          type: string
+          nullable: true
+          enum: [verify_phone, waiting_approval, complete_profile, null]
+    SessionResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Session' }
+    SignedOutResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [signedOut]
+          additionalProperties: false
+          properties:
+            signedOut: { type: boolean, enum: [true] }
+    CodeSentResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [message, destination, expiresInSeconds, codeLength]
+          additionalProperties: false
+          properties:
+            message: { type: string }
+            destination: { type: string, nullable: true, description: 'Masked phone or e-mail, e.g. 01•••••123' }
+            expiresInSeconds: { type: integer, nullable: true }
+            codeLength: { type: integer, nullable: true }
+
+    FormField:
+      description: One input of a backend-described form. Send the value back under `name`.
+      type: object
+      required: [name, label, kind, required, placeholder, options, multiple]
+      additionalProperties: false
+      properties:
+        name: { type: string }
+        label: { type: string }
+        kind: { type: string, enum: [text, email, phone, password, date, textarea, select, file, checkbox], description: 'Unknown values → text' }
+        required: { type: boolean }
+        placeholder: { type: string, nullable: true }
+        options:
+          description: For `select`
+          type: array
+          items:
+            type: object
+            required: [value, label, selected]
+            additionalProperties: false
+            properties:
+              value: { type: string }
+              label: { type: string }
+              selected: { type: boolean }
+        multiple: { type: boolean, description: For `select` and `file` }
+        hint: { type: string, nullable: true }
+        maxLength: { type: integer, nullable: true }
+
+    AuthSettings:
+      type: object
+      required: [loginMethod, signup, otpLogin, passwordReset, social, phone, verifyPhoneAfterSignup, approval]
+      additionalProperties: false
+      properties:
+        loginMethod: { type: string, enum: [email, phone], description: The identifier field of the sign-in form }
+        signup:
+          type: object
+          required: [enabled, fields]
+          additionalProperties: false
+          properties:
+            enabled: { type: boolean }
+            fields:
+              description: The sign-up form, in order (hidden fields are not listed). Password confirmation is the storefront's.
+              type: array
+              items: { $ref: '#/components/schemas/FormField' }
+        otpLogin: { type: boolean, description: Sign in with an SMS code instead of a password }
+        passwordReset:
+          type: object
+          required: [method]
+          additionalProperties: false
+          properties:
+            method: { type: string, enum: [sms, email, none], description: 'sms → code + new password; email → link with a token; none → no reset' }
+        social:
+          description: Providers the store offers, with the public client ids the browser SDKs need
+          type: object
+          required: [google, facebook, apple]
+          additionalProperties: false
+          properties:
+            google:
+              type: object
+              nullable: true
+              required: [clientId]
+              additionalProperties: false
+              properties:
+                clientId: { type: string }
+            facebook:
+              type: object
+              nullable: true
+              required: [appId]
+              additionalProperties: false
+              properties:
+                appId: { type: string }
+            apple:
+              type: object
+              nullable: true
+              required: [clientId]
+              additionalProperties: false
+              properties:
+                clientId: { type: string }
+        phone:
+          type: object
+          required: [prefix, length, example]
+          additionalProperties: false
+          properties:
+            prefix: { type: string, nullable: true, example: '+20' }
+            length: { type: integer, nullable: true }
+            example: { type: string, nullable: true }
+        verifyPhoneAfterSignup: { type: boolean }
+        approval:
+          type: object
+          required: [required, waitingText]
+          additionalProperties: false
+          properties:
+            required: { type: boolean, description: New accounts wait for the merchant's approval }
+            waitingText: { type: string, nullable: true }
+    AuthSettingsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/AuthSettings' }
+
+    SignInRequest:
+      type: object
+      required: [identifier, password]
+      additionalProperties: false
+      properties:
+        identifier: { type: string, description: E-mail or phone, as `AuthSettings.loginMethod` says }
+        password: { type: string }
+    SignUpRequest:
+      description: Values keyed by `AuthSettings.signup.fields[].name` (firstName, lastName, phone, email, password, birthdate, referralCode...)
+      type: object
+      required: [values]
+      additionalProperties: false
+      properties:
+        values:
+          type: object
+          additionalProperties: { type: string }
+    SocialSignInRequest:
+      type: object
+      required: [provider, token]
+      additionalProperties: false
+      properties:
+        provider: { type: string, enum: [google, facebook, apple] }
+        token: { type: string, description: Google id/access token, Facebook access token or Apple identity token }
+        name: { type: string, nullable: true, description: Apple only gives the name once; pass it on the first sign-in }
+    CompleteProfileRequest:
+      type: object
+      required: [firstName, lastName, phone]
+      additionalProperties: false
+      properties:
+        firstName: { type: string }
+        lastName: { type: string }
+        phone: { type: string }
+        email: { type: string, nullable: true }
+        birthdate: { type: string, nullable: true }
+    ForgotPasswordRequest:
+      type: object
+      required: [identifier]
+      additionalProperties: false
+      properties:
+        identifier: { type: string, description: E-mail or phone, as `AuthSettings.loginMethod` says }
+        resetUrl:
+          type: string
+          nullable: true
+          description: |
+            E-mail method only: the storefront's reset page; the backend appends `?token=<token>&email=<email>`.
+            Its origin must be allowed (`STOREFRONT_RETURN_ORIGINS`), otherwise 422.
+    ForgotPasswordResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [method, message, destination]
+          additionalProperties: false
+          properties:
+            method: { type: string, enum: [sms, email] }
+            message: { type: string }
+            destination: { type: string, nullable: true, description: Masked phone or e-mail }
+    ResetPasswordRequest:
+      type: object
+      required: [password]
+      additionalProperties: false
+      properties:
+        password: { type: string, minLength: 8 }
+        phone: { type: string, nullable: true, description: SMS method }
+        code: { type: string, nullable: true, description: SMS method }
+        token: { type: string, nullable: true, description: E-mail method }
+
+    # ---------------------------------------------------------------- account
+
+    ProfileResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [customer, fields, next]
+          additionalProperties: false
+          properties:
+            customer: { $ref: '#/components/schemas/Customer' }
+            fields:
+              description: The profile form, in order, with the current values (hidden fields are not listed)
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/FormField'
+                  - type: object
+                    required: [value, editable]
+                    properties:
+                      value: { type: string, nullable: true }
+                      editable: { type: boolean }
+            next:
+              type: string
+              nullable: true
+              enum: [verify_phone, verify_email, null]
+              description: After a save; `verify_email` = a confirmation link was e-mailed to the new address
+    ProfileInput:
+      description: Values keyed by `ProfileResponse.fields[].name`
+      type: object
+      required: [values]
+      additionalProperties: false
+      properties:
+        values:
+          type: object
+          additionalProperties: { type: string, nullable: true }
+
+    # ---------------------------------------------------------------- seo + marketing
+
+    Breadcrumb:
+      type: object
+      required: [label, target]
+      additionalProperties: false
+      properties:
+        label: { type: string }
+        target: { $ref: '#/components/schemas/NullableTarget' }
+
+    StructuredData:
+      description: |
+        Facts for the page's JSON-LD, decided by the backend. The storefront serializes them (adding its own
+        URLs from the Targets) and never invents values. Every member is optional; unknown members are skipped.
+      type: object
+      additionalProperties: false
+      properties:
+        product:
+          type: object
+          required: [schemaType, name, description, sku, brand, images, price, currency, availability, rating, category]
+          additionalProperties: false
+          properties:
+            schemaType: { type: string, description: 'schema.org type, e.g. Product, Drug (merchant setting per category)' }
+            name: { type: string }
+            description: { type: string, nullable: true }
+            sku: { type: string, nullable: true }
+            gtin: { type: string, nullable: true }
+            brand: { type: string, nullable: true }
+            images:
+              type: array
+              items: { type: string }
+            price: { type: number, nullable: true, description: For the Offer only; never shown }
+            currency: { type: string, nullable: true }
+            availability: { type: string, enum: [in_stock, out_of_stock, preorder, discontinued] }
+            rating:
+              type: object
+              nullable: true
+              required: [average, count]
+              additionalProperties: false
+              properties:
+                average: { type: number }
+                count: { type: integer }
+            category: { type: string, nullable: true }
+        collection:
+          description: Listing / category / brand pages
+          type: object
+          required: [name, description, items]
+          additionalProperties: false
+          properties:
+            name: { type: string }
+            description: { type: string, nullable: true }
+            items:
+              type: array
+              items:
+                type: object
+                required: [name, target, image]
+                additionalProperties: false
+                properties:
+                  name: { type: string }
+                  target: { $ref: '#/components/schemas/Target' }
+                  image: { type: string, nullable: true }
+        webPage:
+          type: object
+          required: [schemaType, name, description]
+          additionalProperties: false
+          properties:
+            schemaType: { type: string, description: 'WebPage, ContactPage, AboutPage, CollectionPage...' }
+            name: { type: string }
+            description: { type: string, nullable: true }
+            about:
+              type: array
+              items: { type: string }
+
+    SiteSeo:
+      type: object
+      required: [organization, localBusiness, website, verification, robots]
+      additionalProperties: false
+      properties:
+        organization:
+          type: object
+          required: [name, legalName, logo, sameAs, telephone, email, address]
+          additionalProperties: false
+          properties:
+            name: { type: string }
+            legalName: { type: string, nullable: true }
+            logo: { type: string, nullable: true }
+            sameAs:
+              type: array
+              items: { type: string }
+            telephone: { type: string, nullable: true }
+            email: { type: string, nullable: true }
+            address: { $ref: '#/components/schemas/PostalAddress' }
+        localBusiness:
+          description: Null when the store has no physical presence configured
+          type: object
+          nullable: true
+          required: [schemaType, name, images, telephone, address, geo, openingHours, priceRange]
+          additionalProperties: false
+          properties:
+            schemaType: { type: string, example: Pharmacy }
+            name: { type: string }
+            images:
+              type: array
+              items: { type: string }
+            telephone: { type: string, nullable: true }
+            address: { $ref: '#/components/schemas/PostalAddress' }
+            geo:
+              type: object
+              nullable: true
+              required: [latitude, longitude]
+              additionalProperties: false
+              properties:
+                latitude: { type: number }
+                longitude: { type: number }
+            openingHours:
+              type: array
+              items:
+                type: object
+                required: [days, opens, closes]
+                additionalProperties: false
+                properties:
+                  days:
+                    type: array
+                    items: { type: string, enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday] }
+                  opens: { type: string, example: '09:00' }
+                  closes: { type: string, example: '22:00' }
+            priceRange: { type: string, nullable: true }
+        website:
+          type: object
+          required: [name, searchable]
+          additionalProperties: false
+          properties:
+            name: { type: string }
+            searchable: { type: boolean, description: Add a SearchAction pointing at the search page }
+        verification:
+          type: object
+          required: [google]
+          additionalProperties: false
+          properties:
+            google: { type: string, nullable: true, description: google-site-verification meta content }
+        robots:
+          type: object
+          required: [index]
+          additionalProperties: false
+          properties:
+            index: { type: boolean, description: False → the whole site is noindex (staging, hidden stores) }
+    PostalAddress:
+      type: object
+      nullable: true
+      required: [street, locality, region, postalCode, country]
+      additionalProperties: false
+      properties:
+        street: { type: string, nullable: true }
+        locality: { type: string, nullable: true }
+        region: { type: string, nullable: true }
+        postalCode: { type: string, nullable: true }
+        country: { type: string, nullable: true, description: ISO code }
+    SiteSeoResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/SiteSeo' }
+
+    SitemapResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [items, pagination]
+          additionalProperties: false
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                required: [target, updatedAt, alternates]
+                additionalProperties: false
+                properties:
+                  target: { $ref: '#/components/schemas/Target' }
+                  updatedAt: { type: string, format: date-time, nullable: true }
+                  alternates:
+                    type: array
+                    items:
+                      type: object
+                      required: [locale, target]
+                      additionalProperties: false
+                      properties:
+                        locale: { $ref: '#/components/schemas/Locale' }
+                        target: { $ref: '#/components/schemas/Target' }
+            pagination: { $ref: '#/components/schemas/Pagination' }
+
+    Marketing:
+      description: Tag and pixel ids the merchant configured. Null members are not installed.
+      type: object
+      required: [gtmId, googleAnalyticsIds, googleAds, facebookPixelId, tiktokPixelId, snapchatPixelId, clarityId, hotjarId]
+      additionalProperties: false
+      properties:
+        gtmId: { type: string, nullable: true }
+        googleAnalyticsIds:
+          type: array
+          items: { type: string }
+        googleAds:
+          type: object
+          nullable: true
+          required: [conversionId, labels]
+          additionalProperties: false
+          properties:
+            conversionId: { type: string }
+            labels:
+              description: Conversion labels by event name (purchase, add_to_cart, view_item, sign_up)
+              type: object
+              additionalProperties: { type: string }
+        facebookPixelId: { type: string, nullable: true }
+        tiktokPixelId: { type: string, nullable: true }
+        snapchatPixelId: { type: string, nullable: true }
+        clarityId: { type: string, nullable: true }
+        hotjarId: { type: string, nullable: true }
+
+    EventRequest:
+      type: object
+      required: [name]
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          enum: [page_view, view_item, view_item_list, search, add_to_cart, remove_from_cart, view_cart, begin_checkout, add_shipping_info, add_payment_info, purchase, sign_up, login, add_to_wishlist, select_promotion]
+        eventId: { type: string, nullable: true, description: Same id given to the browser pixel, for de-duplication }
+        page:
+          type: object
+          nullable: true
+          required: [path]
+          additionalProperties: false
+          properties:
+            path: { type: string }
+            referrer: { type: string, nullable: true }
+        clickIds:
+          description: Campaign click ids from the landing URL, kept by the storefront for the session
+          type: object
+          nullable: true
+          additionalProperties: false
+          properties:
+            fbclid: { type: string, nullable: true }
+            gclid: { type: string, nullable: true }
+            ttclid: { type: string, nullable: true }
+            sccid: { type: string, nullable: true }
+        browser:
+          type: object
+          nullable: true
+          additionalProperties: false
+          properties:
+            fbp: { type: string, nullable: true }
+            fbc: { type: string, nullable: true }
+        productIds:
+          description: The products the event is about (the backend looks up names and prices itself)
+          type: array
+          items: { type: integer }
+        orderId: { type: string, nullable: true, description: For purchase (Order.id) }
+        searchTerm: { type: string, nullable: true }
+    EventAcceptedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [accepted]
+          additionalProperties: false
+          properties:
+            accepted: { type: boolean }
+
+    # ---------------------------------------------------------------- content
+
+    Page:
+      type: object
+      required: [slug, title, showTitle, kind, content, iframeUrl, seo]
+      additionalProperties: false
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        showTitle: { type: boolean }
+        kind:
+          type: string
+          enum: [content, contact, branches]
+          description: 'contact → also draw the contact form (POST /contact) and the store contact details; branches → draw GET /branches. Unknown values → content.'
+        content:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/RichText' }]
+        iframeUrl: { type: string, nullable: true, description: Some pages embed an external page }
+        seo: { $ref: '#/components/schemas/Seo' }
+        contact:
+          description: Only for `kind = contact`
+          type: object
+          nullable: true
+          required: [hotline, email, address, whatsapp, fields]
+          additionalProperties: false
+          properties:
+            hotline: { type: string, nullable: true }
+            email: { type: string, nullable: true }
+            address: { type: string, nullable: true }
+            whatsapp: { type: string, nullable: true }
+            fields:
+              type: array
+              items: { $ref: '#/components/schemas/FormField' }
+    PageResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Page' }
+
+    Branch:
+      type: object
+      required: [id, name, address, area, phone, email, image, mapUrl, location]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        address: { type: string, nullable: true }
+        area: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+        image: { type: string, nullable: true }
+        mapUrl: { type: string, nullable: true }
+        location:
+          type: object
+          nullable: true
+          required: [latitude, longitude]
+          additionalProperties: false
+          properties:
+            latitude: { type: number }
+            longitude: { type: number }
+    BranchesResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [groups]
+          additionalProperties: false
+          properties:
+            groups:
+              type: array
+              items:
+                type: object
+                required: [name, branches]
+                additionalProperties: false
+                properties:
+                  name: { type: string }
+                  branches:
+                    type: array
+                    items: { $ref: '#/components/schemas/Branch' }
+
+    ContactRequest:
+      description: Values keyed by `Page.contact.fields[].name` (name, phone, email, subject, message)
+      type: object
+      required: [values]
+      additionalProperties: false
+      properties:
+        values:
+          type: object
+          additionalProperties: { type: string }
+
+    LandingPage:
+      type: object
+      required: [slug, title, seo, promoBanners, sections]
+      additionalProperties: false
+      properties:
+        slug: { type: string }
+        title: { type: string, nullable: true }
+        seo: { $ref: '#/components/schemas/Seo' }
+        promoBanners:
+          type: array
+          items: { $ref: '#/components/schemas/PromoBanner' }
+        sections:
+          type: array
+          items: { $ref: '#/components/schemas/Section' }
+    LandingPageResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/LandingPage' }
+
+    Form:
+      type: object
+      required: [slug, title, showTitle, submitLabel, requiresSignIn, fields, seo]
+      additionalProperties: false
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        showTitle: { type: boolean }
+        submitLabel: { type: string }
+        requiresSignIn: { type: boolean, description: True → show a sign-in prompt instead of the form for visitors without a session }
+        fields:
+          type: array
+          items: { $ref: '#/components/schemas/FormField' }
+        seo: { $ref: '#/components/schemas/Seo' }
+    FormResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Form' }
+    FormSubmission:
+      description: Values keyed by `Form.fields[].name`; a multi-select sends an array; a file sends the id from POST /uploads
+      type: object
+      required: [values]
+      additionalProperties: false
+      properties:
+        values:
+          type: object
+          additionalProperties:
+            oneOf:
+              - { type: string }
+              - { type: array, items: { type: string } }
+
+    # ---------------------------------------------------------------- orders: rating, reviews
+
+    RateOrderRequest:
+      type: object
+      required: [rating]
+      additionalProperties: false
+      properties:
+        rating: { type: integer, minimum: 1, maximum: 5, nullable: true, description: Null with `skip = true` }
+        driverRating: { type: integer, minimum: 1, maximum: 5, nullable: true }
+        feedback: { type: string, nullable: true }
+        skip: { type: boolean, default: false, description: The shopper dismissed the rating }
+        items:
+          type: array
+          items:
+            type: object
+            required: [productId, rating]
+            additionalProperties: false
+            properties:
+              productId: { type: integer }
+              rating: { type: integer, minimum: 1, maximum: 5 }
+              comment: { type: string, nullable: true }
+    WriteReviewRequest:
+      type: object
+      required: [productId, rating, comment]
+      additionalProperties: false
+      properties:
+        productId: { type: integer, description: ProductCard.id (the variant) }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        comment: { type: string, minLength: 1 }
+        orderId: { type: string, nullable: true, description: Required when `ProductReviewsResponse.data.write.requiresOrder` }
+
+    # ---------------------------------------------------------------- shell
+
+    MobileNavItem:
+      type: object
+      required: [id, label, icon, target, badge]
+      additionalProperties: false
+      properties:
+        id: { type: string, description: 'home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, area, account, language, more, or a merchant button' }
+        label: { type: string }
+        icon: { type: string, nullable: true, description: An icon name (hint) or an image URL }
+        target: { $ref: '#/components/schemas/NullableTarget' }
+        badge: { type: string, nullable: true, enum: [cart, wishlist, compare, notifications, null], description: Which `Me.counts` value to show on it }

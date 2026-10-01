@@ -740,6 +740,483 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What the sign-in / sign-up pages show, decided from the store's configuration */
+        get: operations["getAuthSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/sign-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign in with a password. A guest bearer token, if sent, is merged into the customer. */
+        post: operations["signIn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/sign-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create an account (signed in on success). A guest bearer token, if sent, becomes the customer. */
+        post: operations["signUp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/sign-out": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke the bearer token (later calls with it answer 401) */
+        post: operations["signOut"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/social": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign in or sign up with Google, Facebook or Apple (the provider's token is verified by the backend) */
+        post: operations["signInWithProvider"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/social/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add the name and phone a social provider did not give (after `next = complete_profile`) */
+        post: operations["completeSocialProfile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/otp/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a one-time sign-in code by SMS (only when `AuthSettings.otpLogin` is true) */
+        post: operations["sendOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/otp/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign in with the SMS code */
+        post: operations["signInWithOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/password/forgot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start a password reset (code by SMS or link by e-mail, as the store is configured) */
+        post: operations["forgotPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/password/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Set a new password with the SMS code or the e-mail token; signs the shopper in */
+        post: operations["resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/phone/send-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send (again) the SMS code that verifies the signed-in customer's phone */
+        post: operations["sendPhoneVerificationCode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/phone/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify the signed-in customer's phone with the SMS code */
+        post: operations["verifyPhone"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/email/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm a changed e-mail address with the token from the e-mail */
+        post: operations["verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/account/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The signed-in customer's profile and the form to edit it */
+        get: operations["getProfile"];
+        /** Edit the profile. A changed phone is unverified again and a code is sent (`next = verify_phone`). */
+        put: operations["updateProfile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/account/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Change the password (needs the current one) */
+        put: operations["changePassword"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/area": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Choose the shopper's area (multi-inventory stores; see `Layout.areaSelection`) */
+        put: operations["setArea"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/seo/site": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Site-wide structured-data facts (organization, local business, website) and the robots policy */
+        get: operations["getSiteSeo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sitemap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Everything a sitemap should list, as Targets (the storefront writes the URLs) */
+        get: operations["getSitemap"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Server-side marketing event (conversion APIs). Never affects what a page shows. */
+        post: operations["trackEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pages/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A CMS page (about, policies, contact, branches...) */
+        get: operations["getPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/branches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The store's branches, grouped as the merchant grouped them */
+        get: operations["getBranches"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a contact-us message */
+        post: operations["sendContactMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/landing-pages/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A merchant landing page (home-style sections and banners) */
+        get: operations["getLandingPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/forms/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A merchant-defined form (fields, labels, what is required) */
+        get: operations["getForm"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/forms/{slug}/responses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit a form (the backend validates against the form definition) */
+        post: operations["submitForm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/track": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find an order by its number and the phone it was placed with (no sign-in) */
+        get: operations["trackOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}/rate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Rate a delivered order (only when `Order.actions.canRate`) */
+        post: operations["rateOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Write a product review (moderated; it shows once the merchant approves it) */
+        post: operations["writeProductReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -952,8 +1429,61 @@ export interface components {
                 cookieConsent: boolean;
                 newsletter: boolean;
                 guestCanViewPrices: boolean;
+                /** @description Shoppers may write product reviews */
+                productReviews?: boolean;
+                /** @description Shoppers may rate delivered orders */
+                orderRating?: boolean;
+                /** @description Show the share button on product pages */
+                share?: boolean;
             } & {
                 [key: string]: boolean;
+            };
+            marketing?: components["schemas"]["Marketing"];
+            /** @description The store's legal pages (CMS). Null entries → no page. */
+            legal?: {
+                privacy: components["schemas"]["NullableTarget"];
+                terms: components["schemas"]["NullableTarget"];
+                cookies: components["schemas"]["NullableTarget"];
+            };
+            /** @description The "download our app" banner. Null when switched off. */
+            appBanner?: {
+                title: string | null;
+                text: string | null;
+                links: components["schemas"]["AppLinks"];
+            } | null;
+            /** @description A merchant ad shown above the header on every page; null when none is active */
+            topBanner?: components["schemas"]["Banner"] | null;
+            /** @description A merchant ad that floats over the page; null when none is active */
+            floatingBanner?: components["schemas"]["Banner"] | null;
+            /** @description The mobile bottom bar and its "more" sheet, already filtered by the store's features */
+            mobileNav?: {
+                /** @description At most 4 fixed items plus `more` */
+                items: components["schemas"]["MobileNavItem"][];
+                more: {
+                    title: string;
+                    /** @description For visitors who are not signed in */
+                    welcomeTitle: string | null;
+                    welcomeText: string | null;
+                    items: components["schemas"]["MobileNavItem"][];
+                };
+            };
+            /**
+             * @description Multi-inventory stores ask the shopper where they are, because inventory and prices depend on it.
+             *     Null → the store has one inventory. The current choice is `Me.area`; change it with PUT /me/area;
+             *     the choices come from GET /locations.
+             */
+            areaSelection?: {
+                /** @description True → ask before the shopper can browse prices */
+                required: boolean;
+                /** @description Header label, e.g. "Deliver to" */
+                label: string;
+                /** @description Dialog text, e.g. "Choose your area to see what is available near you" */
+                prompt: string;
+            } | null;
+            /** @description Whether the store takes orders right now and the merchant's text when it does not */
+            storeStatus?: {
+                acceptingOrders: boolean;
+                message: string | null;
             };
         };
         /**
@@ -1113,7 +1643,25 @@ export interface components {
             isGuest: boolean;
             customer: {
                 firstName: string;
+                lastName?: string;
+                phoneVerified?: boolean;
+                /**
+                 * @description Null when the store does not approve customers by hand
+                 * @enum {string|null}
+                 */
+                approval?: "pending" | "approved" | "rejected" | null;
             } | null;
+            /** @description The shopper's chosen area (multi-inventory stores); null when none or when the store has one inventory */
+            area?: {
+                id: number;
+                name: string;
+                city: string | null;
+            } | null;
+            /**
+             * @description What the storefront must do before the shopper can go on (same values as Session.next)
+             * @enum {string|null}
+             */
+            next?: "verify_phone" | "waiting_approval" | "complete_profile" | null;
             /** @description Header badges. `cart` follows the store's counting mode (lines or units). */
             counts: {
                 cart: number;
@@ -1255,6 +1803,22 @@ export interface components {
             }[];
             /** @description False → tell search engines not to index this page */
             index: boolean;
+            /** @description Home first, this page last (the last item's target may be null) */
+            breadcrumbs?: components["schemas"]["Breadcrumb"][];
+            structuredData?: components["schemas"]["StructuredData"] | null;
+            /** @description For paginated pages: the previous / next page numbers for rel=prev/next, null at the ends */
+            pagination?: {
+                prev: number | null;
+                next: number | null;
+            } | null;
+            /** @description Social preview; null members fall back to title / description / the store logo */
+            openGraph?: {
+                title: string | null;
+                description: string | null;
+                image: string | null;
+                /** @enum {string} */
+                type: "website" | "product" | "article";
+            } | null;
         };
         /** @description One thing the shopper chooses (size, color). Every value says where a click on it goes. */
         ProductOption: {
@@ -1361,6 +1925,15 @@ export interface components {
                     createdAt: string;
                 }[];
                 pagination: components["schemas"]["Pagination"];
+                /** @description Whether and how the shopper may write a review (POST /reviews) */
+                write?: {
+                    enabled: boolean;
+                    requiresSignIn: boolean;
+                    /** @description Only shoppers who bought it */
+                    requiresOrder: boolean;
+                    /** @description Why it is not possible now, e.g. "Sign in to write a review" */
+                    message: string | null;
+                };
             };
         };
         /** @description One filter group. Links come ready from the backend (`query`). */
@@ -1819,7 +2392,26 @@ export interface components {
             actions: {
                 canCancel: boolean;
                 canReorder: boolean;
+                /** @description Delivered */
+                canRate?: boolean;
+                /** @description Delivered and the store takes product reviews */
+                canReviewProducts?: boolean;
             };
+            /** @description The rating the shopper gave; null when not rated (or skipped) */
+            rating?: {
+                rating: number;
+                driverRating: number | null;
+                feedback: string | null;
+            } | null;
+            /** @description How to draw the rating dialog; null when `actions.canRate` is false */
+            ratingForm?: {
+                /** @enum {string} */
+                driverRating: "hidden" | "optional" | "required";
+                /** @description Also rate each product */
+                items: boolean;
+            } | null;
+            /** @description The phone the order was placed with */
+            phone?: string | null;
         };
         OrderResponse: {
             data: components["schemas"]["Order"];
@@ -1841,6 +2433,494 @@ export interface components {
                     reason: string;
                 }[];
             };
+        };
+        MessageResponse: {
+            data: {
+                /** @description Localized, safe to show */
+                message: string;
+            };
+        };
+        /** @description The signed-in customer as the storefront may show it. Never contains a token. */
+        Customer: {
+            id: number;
+            firstName: string;
+            lastName: string;
+            email: string | null;
+            phone: string | null;
+            phoneVerified: boolean;
+            /** @description YYYY-MM-DD */
+            birthdate: string | null;
+            image: string | null;
+            /** @description Null when the store does not approve customers by hand */
+            approval: {
+                /** @enum {string} */
+                status: "pending" | "approved" | "rejected";
+                /** @description The merchant's note to the customer */
+                notes: string | null;
+            } | null;
+            /** @description The customer's own code to share (null when the store has no referrals) */
+            referralCode?: string | null;
+        };
+        CustomerResponse: {
+            data: components["schemas"]["Customer"];
+        };
+        Session: {
+            /** @description Send as Authorization: Bearer <token>. Keep it server-side (httpOnly cookie). */
+            token: string;
+            customer: components["schemas"]["Customer"];
+            /**
+             * @description What the storefront must do next: `verify_phone` (show the SMS code page; shopping is allowed meanwhile),
+             *     `waiting_approval` (the store approves accounts by hand: show the waiting page, no shopping),
+             *     `complete_profile` (social sign-in without a phone: ask for name and phone), or null.
+             * @enum {string|null}
+             */
+            next: "verify_phone" | "waiting_approval" | "complete_profile" | null;
+        };
+        SessionResponse: {
+            data: components["schemas"]["Session"];
+        };
+        SignedOutResponse: {
+            data: {
+                /** @enum {boolean} */
+                signedOut: true;
+            };
+        };
+        CodeSentResponse: {
+            data: {
+                message: string;
+                /** @description Masked phone or e-mail, e.g. 01•••••123 */
+                destination: string | null;
+                expiresInSeconds: number | null;
+                codeLength: number | null;
+            };
+        };
+        /** @description One input of a backend-described form. Send the value back under `name`. */
+        FormField: {
+            name: string;
+            label: string;
+            /**
+             * @description Unknown values → text
+             * @enum {string}
+             */
+            kind: "text" | "email" | "phone" | "password" | "date" | "textarea" | "select" | "file" | "checkbox";
+            required: boolean;
+            placeholder: string | null;
+            /** @description For `select` */
+            options: {
+                value: string;
+                label: string;
+                selected: boolean;
+            }[];
+            /** @description For `select` and `file` */
+            multiple: boolean;
+            hint?: string | null;
+            maxLength?: number | null;
+        };
+        AuthSettings: {
+            /**
+             * @description The identifier field of the sign-in form
+             * @enum {string}
+             */
+            loginMethod: "email" | "phone";
+            signup: {
+                enabled: boolean;
+                /** @description The sign-up form, in order (hidden fields are not listed). Password confirmation is the storefront's. */
+                fields: components["schemas"]["FormField"][];
+            };
+            /** @description Sign in with an SMS code instead of a password */
+            otpLogin: boolean;
+            passwordReset: {
+                /**
+                 * @description sms → code + new password; email → link with a token; none → no reset
+                 * @enum {string}
+                 */
+                method: "sms" | "email" | "none";
+            };
+            /** @description Providers the store offers, with the public client ids the browser SDKs need */
+            social: {
+                google: {
+                    clientId: string;
+                } | null;
+                facebook: {
+                    appId: string;
+                } | null;
+                apple: {
+                    clientId: string;
+                } | null;
+            };
+            phone: {
+                /** @example +20 */
+                prefix: string | null;
+                length: number | null;
+                example: string | null;
+            };
+            verifyPhoneAfterSignup: boolean;
+            approval: {
+                /** @description New accounts wait for the merchant's approval */
+                required: boolean;
+                waitingText: string | null;
+            };
+        };
+        AuthSettingsResponse: {
+            data: components["schemas"]["AuthSettings"];
+        };
+        SignInRequest: {
+            /** @description E-mail or phone */
+            identifier: string;
+            password: string;
+        };
+        /** @description Values keyed by `AuthSettings.signup.fields[].name` (firstName, lastName, phone, email, password, birthdate, referralCode...) */
+        SignUpRequest: {
+            values: {
+                [key: string]: string;
+            };
+        };
+        SocialSignInRequest: {
+            /** @enum {string} */
+            provider: "google" | "facebook" | "apple";
+            /** @description Google id/access token */
+            token: string;
+            /** @description Apple only gives the name once; pass it on the first sign-in */
+            name?: string | null;
+        };
+        CompleteProfileRequest: {
+            firstName: string;
+            lastName: string;
+            phone: string;
+            email?: string | null;
+            birthdate?: string | null;
+        };
+        ForgotPasswordRequest: {
+            /** @description E-mail or phone */
+            identifier: string;
+            /**
+             * @description E-mail method only: the storefront's reset page; the backend appends `?token=<token>&email=<email>`.
+             *     Its origin must be allowed (`STOREFRONT_RETURN_ORIGINS`), otherwise 422.
+             */
+            resetUrl?: string | null;
+        };
+        ForgotPasswordResponse: {
+            data: {
+                /** @enum {string} */
+                method: "sms" | "email";
+                message: string;
+                /** @description Masked phone or e-mail */
+                destination: string | null;
+            };
+        };
+        ResetPasswordRequest: {
+            password: string;
+            /** @description SMS method */
+            phone?: string | null;
+            /** @description SMS method */
+            code?: string | null;
+            /** @description E-mail method */
+            token?: string | null;
+        };
+        ProfileResponse: {
+            data: {
+                customer: components["schemas"]["Customer"];
+                /** @description The profile form, in order, with the current values (hidden fields are not listed) */
+                fields: (components["schemas"]["FormField"] & {
+                    value: string | null;
+                    editable: boolean;
+                })[];
+                /**
+                 * @description After a save; `verify_email` = a confirmation link was e-mailed to the new address
+                 * @enum {string|null}
+                 */
+                next: "verify_phone" | "verify_email" | null;
+            };
+        };
+        /** @description Values keyed by `ProfileResponse.fields[].name` */
+        ProfileInput: {
+            values: {
+                [key: string]: string | null;
+            };
+        };
+        Breadcrumb: {
+            label: string;
+            target: components["schemas"]["NullableTarget"];
+        };
+        /**
+         * @description Facts for the page's JSON-LD, decided by the backend. The storefront serializes them (adding its own
+         *     URLs from the Targets) and never invents values. Every member is optional; unknown members are skipped.
+         */
+        StructuredData: {
+            product?: {
+                /** @description schema.org type, e.g. Product, Drug (merchant setting per category) */
+                schemaType: string;
+                name: string;
+                description: string | null;
+                sku: string | null;
+                gtin?: string | null;
+                brand: string | null;
+                images: string[];
+                /** @description For the Offer only; never shown */
+                price: number | null;
+                currency: string | null;
+                /** @enum {string} */
+                availability: "in_stock" | "out_of_stock" | "preorder" | "discontinued";
+                rating: {
+                    average: number;
+                    count: number;
+                } | null;
+                category: string | null;
+            };
+            /** @description Listing / category / brand pages */
+            collection?: {
+                name: string;
+                description: string | null;
+                items: {
+                    name: string;
+                    target: components["schemas"]["Target"];
+                    image: string | null;
+                }[];
+            };
+            webPage?: {
+                /** @description WebPage, ContactPage, AboutPage, CollectionPage... */
+                schemaType: string;
+                name: string;
+                description: string | null;
+                about?: string[];
+            };
+        };
+        SiteSeo: {
+            organization: {
+                name: string;
+                legalName: string | null;
+                logo: string | null;
+                sameAs: string[];
+                telephone: string | null;
+                email: string | null;
+                address: components["schemas"]["PostalAddress"];
+            };
+            /** @description Null when the store has no physical presence configured */
+            localBusiness: {
+                /** @example Pharmacy */
+                schemaType: string;
+                name: string;
+                images: string[];
+                telephone: string | null;
+                address: components["schemas"]["PostalAddress"];
+                geo: {
+                    latitude: number;
+                    longitude: number;
+                } | null;
+                openingHours: {
+                    days: ("Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday")[];
+                    /** @example 09:00 */
+                    opens: string;
+                    /** @example 22:00 */
+                    closes: string;
+                }[];
+                priceRange: string | null;
+            } | null;
+            website: {
+                name: string;
+                /** @description Add a SearchAction pointing at the search page */
+                searchable: boolean;
+            };
+            verification: {
+                /** @description google-site-verification meta content */
+                google: string | null;
+            };
+            robots: {
+                /** @description False → the whole site is noindex (staging */
+                index: boolean;
+            };
+        };
+        PostalAddress: {
+            street: string | null;
+            locality: string | null;
+            region: string | null;
+            postalCode: string | null;
+            /** @description ISO code */
+            country: string | null;
+        } | null;
+        SiteSeoResponse: {
+            data: components["schemas"]["SiteSeo"];
+        };
+        SitemapResponse: {
+            data: {
+                items: {
+                    target: components["schemas"]["Target"];
+                    /** Format: date-time */
+                    updatedAt: string | null;
+                    alternates: {
+                        locale: components["schemas"]["Locale"];
+                        target: components["schemas"]["Target"];
+                    }[];
+                }[];
+                pagination: components["schemas"]["Pagination"];
+            };
+        };
+        /** @description Tag and pixel ids the merchant configured. Null members are not installed. */
+        Marketing: {
+            gtmId: string | null;
+            googleAnalyticsIds: string[];
+            googleAds: {
+                conversionId: string;
+                /** @description Conversion labels by event name (purchase, add_to_cart, view_item, sign_up) */
+                labels: {
+                    [key: string]: string;
+                };
+            } | null;
+            facebookPixelId: string | null;
+            tiktokPixelId: string | null;
+            snapchatPixelId: string | null;
+            clarityId: string | null;
+            hotjarId: string | null;
+        };
+        EventRequest: {
+            /** @enum {string} */
+            name: "page_view" | "view_item" | "view_item_list" | "search" | "add_to_cart" | "remove_from_cart" | "view_cart" | "begin_checkout" | "add_shipping_info" | "add_payment_info" | "purchase" | "sign_up" | "login" | "add_to_wishlist" | "select_promotion";
+            /** @description Same id given to the browser pixel */
+            eventId?: string | null;
+            page?: {
+                path: string;
+                referrer?: string | null;
+            } | null;
+            /** @description Campaign click ids from the landing URL, kept by the storefront for the session */
+            clickIds?: {
+                fbclid?: string | null;
+                gclid?: string | null;
+                ttclid?: string | null;
+                sccid?: string | null;
+            } | null;
+            browser?: {
+                fbp?: string | null;
+                fbc?: string | null;
+            } | null;
+            /** @description The products the event is about (the backend looks up names and prices itself) */
+            productIds?: number[];
+            /** @description For purchase (Order.id) */
+            orderId?: string | null;
+            searchTerm?: string | null;
+        };
+        EventAcceptedResponse: {
+            data: {
+                accepted: boolean;
+            };
+        };
+        Page: {
+            slug: string;
+            title: string;
+            showTitle: boolean;
+            /**
+             * @description contact → also draw the contact form (POST /contact) and the store contact details; branches → draw GET /branches. Unknown values → content.
+             * @enum {string}
+             */
+            kind: "content" | "contact" | "branches";
+            content: components["schemas"]["RichText"] | null;
+            /** @description Some pages embed an external page */
+            iframeUrl: string | null;
+            seo: components["schemas"]["Seo"];
+            /** @description Only for `kind = contact` */
+            contact?: {
+                hotline: string | null;
+                email: string | null;
+                address: string | null;
+                whatsapp: string | null;
+                fields: components["schemas"]["FormField"][];
+            } | null;
+        };
+        PageResponse: {
+            data: components["schemas"]["Page"];
+        };
+        Branch: {
+            id: number;
+            name: string;
+            address: string | null;
+            area: string | null;
+            phone: string | null;
+            email: string | null;
+            image: string | null;
+            mapUrl: string | null;
+            location: {
+                latitude: number;
+                longitude: number;
+            } | null;
+        };
+        BranchesResponse: {
+            data: {
+                groups: {
+                    name: string;
+                    branches: components["schemas"]["Branch"][];
+                }[];
+            };
+        };
+        /** @description Values keyed by `Page.contact.fields[].name` (name, phone, email, subject, message) */
+        ContactRequest: {
+            values: {
+                [key: string]: string;
+            };
+        };
+        LandingPage: {
+            slug: string;
+            title: string | null;
+            seo: components["schemas"]["Seo"];
+            promoBanners: components["schemas"]["PromoBanner"][];
+            sections: components["schemas"]["Section"][];
+        };
+        LandingPageResponse: {
+            data: components["schemas"]["LandingPage"];
+        };
+        Form: {
+            slug: string;
+            title: string;
+            showTitle: boolean;
+            submitLabel: string;
+            /** @description True → show a sign-in prompt instead of the form for visitors without a session */
+            requiresSignIn: boolean;
+            fields: components["schemas"]["FormField"][];
+            seo: components["schemas"]["Seo"];
+        };
+        FormResponse: {
+            data: components["schemas"]["Form"];
+        };
+        /** @description Values keyed by `Form.fields[].name`; a multi-select sends an array; a file sends the id from POST /uploads */
+        FormSubmission: {
+            values: {
+                [key: string]: string | string[];
+            };
+        };
+        RateOrderRequest: {
+            /** @description Null with `skip = true` */
+            rating: number | null;
+            driverRating?: number | null;
+            feedback?: string | null;
+            /**
+             * @description The shopper dismissed the rating
+             * @default false
+             */
+            skip: boolean;
+            items?: {
+                productId: number;
+                rating: number;
+                comment?: string | null;
+            }[];
+        };
+        WriteReviewRequest: {
+            /** @description ProductCard.id (the variant) */
+            productId: number;
+            rating: number;
+            comment: string;
+            /** @description Required when `ProductReviewsResponse.data.write.requiresOrder` */
+            orderId?: string | null;
+        };
+        MobileNavItem: {
+            /** @description home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, area, account, language, more, or a merchant button */
+            id: string;
+            label: string;
+            /** @description An icon name (hint) or an image URL */
+            icon: string | null;
+            target: components["schemas"]["NullableTarget"];
+            /**
+             * @description Which `Me.counts` value to show on it
+             * @enum {string|null}
+             */
+            badge: "cart" | "wishlist" | "compare" | "notifications" | null;
         };
     };
     responses: {
@@ -3070,6 +4150,776 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReorderResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getAuthSettings: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Auth settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthSettingsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    signIn: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignInRequest"];
+            };
+        };
+        responses: {
+            /** @description Signed in */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    signUp: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignUpRequest"];
+            };
+        };
+        responses: {
+            /** @description Account created and signed in */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    signOut: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signed out */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignedOutResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    signInWithProvider: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SocialSignInRequest"];
+            };
+        };
+        responses: {
+            /** @description Signed in. `next` = `complete_profile` when the provider gave no phone number. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    completeSocialProfile: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompleteProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Profile completed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    sendOtp: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    phone: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Code sent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSentResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    signInWithOtp: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    phone: string;
+                    code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Signed in */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    forgotPassword: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForgotPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Sent. `method` says what the shopper receives and which reset request to send next. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForgotPasswordResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    resetPassword: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Password changed and signed in */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    sendPhoneVerificationCode: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Code sent */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSentResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    verifyPhone: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Phone verified */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    verifyEmail: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    email: string;
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description E-mail confirmed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getProfile: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    updateProfile: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProfileInput"];
+            };
+        };
+        responses: {
+            /** @description Saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    changePassword: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    currentPassword: string;
+                    newPassword: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Changed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    setArea: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    areaId: number;
+                };
+            };
+        };
+        responses: {
+            /** @description The shopper summary with the new area */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getSiteSeo: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Site SEO */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteSeoResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getSitemap: {
+        parameters: {
+            query: {
+                locale?: components["parameters"]["Locale"];
+                type: "products" | "categories" | "brands" | "pages" | "landing_pages" | "tags";
+                page?: components["parameters"]["Page"];
+                perPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sitemap entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SitemapResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    trackEvent: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventRequest"];
+            };
+        };
+        responses: {
+            /** @description Accepted (also when no conversion API is configured) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventAcceptedResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getPage: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getBranches: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Branches */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BranchesResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    sendContactMessage: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ContactRequest"];
+            };
+        };
+        responses: {
+            /** @description Sent */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getLandingPage: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Landing page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LandingPageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getForm: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Form */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    submitForm: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FormSubmission"];
+            };
+        };
+        responses: {
+            /** @description Submitted */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    trackOrder: {
+        parameters: {
+            query: {
+                locale?: components["parameters"]["Locale"];
+                number: string;
+                phone: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The order (404 `not_found` when the pair does not match) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    rateOrder: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description Order.id */
+                orderId: components["parameters"]["OrderId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RateOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description The order with its rating */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    writeProductReview: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WriteReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Review received */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageResponse"];
                 };
             };
             default: components["responses"]["Error"];
