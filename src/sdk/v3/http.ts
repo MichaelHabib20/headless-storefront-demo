@@ -78,6 +78,8 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   phone_already_verified: 'phone_already_verified',
   email_in_use: 'email_in_use',
   wrong_password: 'wrong_password',
+  // shell: the store is switched off (maintenance); the message is the merchant's
+  store_unavailable: 'store_unavailable',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {

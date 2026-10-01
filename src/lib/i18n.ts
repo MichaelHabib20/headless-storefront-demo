@@ -10,6 +10,8 @@ import { ordersExtrasMessages } from './messages/orders-extras';
 import { productMessages } from './messages/product';
 import { shopperMessages } from './messages/shopper';
 import { wishlistMessages } from './messages/wishlist';
+import { contentMessages } from './messages/content';
+import { shellMessages } from './messages/shell';
 
 /**
  * UI strings owned by the storefront (buttons, headings, labels). Content text
@@ -132,8 +134,8 @@ const coreAr: Record<keyof typeof en, string> = {
  * enforced by defineMessages). Add new areas here.
  */
 const dictionaries = {
-  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en, ...checkoutMessages.en, ...accountMessages.en, ...ordersExtrasMessages.en, ...authMessages.en },
-  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar, ...checkoutMessages.ar, ...accountMessages.ar, ...ordersExtrasMessages.ar, ...authMessages.ar },
+  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en, ...checkoutMessages.en, ...accountMessages.en, ...ordersExtrasMessages.en, ...authMessages.en, ...contentMessages.en, ...shellMessages.en },
+  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar, ...checkoutMessages.ar, ...accountMessages.ar, ...ordersExtrasMessages.ar, ...authMessages.ar, ...contentMessages.ar, ...shellMessages.ar },
 } satisfies Record<Locale, Record<string, string>>;
 
 export type MessageKey = keyof typeof dictionaries.en;

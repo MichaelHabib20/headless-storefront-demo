@@ -1,0 +1,158 @@
+/* Mini cart drawer: slides in from the inline end (right in LTR, left in RTL). Above the bottom nav. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(0 0 0 / 0.45);
+}
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  inline-size: min(420px, 100%);
+  block-size: 100%;
+  padding: var(--space-5);
+  overflow-y: auto;
+  background: var(--color-bg);
+  outline: none;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.close {
+  display: inline-flex;
+  padding: var(--space-2);
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.note {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.lines {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding-block-end: var(--space-3);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.image {
+  inline-size: 64px;
+  block-size: 64px;
+  object-fit: contain;
+}
+
+.lineText {
+  min-inline-size: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.quantity,
+.warning {
+  margin: var(--space-1) 0 0;
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+
+.warning {
+  color: var(--color-sale);
+}
+
+.lineTotal {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.row dd {
+  margin: 0;
+}
+
+.total {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-block-start: auto;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 48px;
+  padding-inline: var(--space-3);
+  border: 2px solid var(--color-text);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+}
+
+.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: var(--color-bg);
+  color: var(--color-text);
+}

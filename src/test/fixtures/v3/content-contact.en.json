@@ -1,0 +1,119 @@
+{
+ "data": {
+  "slug": "contact",
+  "title": "Contact us",
+  "showTitle": true,
+  "kind": "contact",
+  "content": {
+   "html": "<p>We’re there every sunday to thursday 10 AM - 6 PM</p>"
+  },
+  "iframeUrl": null,
+  "seo": {
+   "title": "Contact us",
+   "description": null,
+   "canonical": {
+    "type": "page",
+    "slug": "contact"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "page",
+      "slug": "contact"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "page",
+      "slug": "contact"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Contact us",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "ContactPage",
+     "name": "Contact us",
+     "description": null
+    }
+   }
+  },
+  "contact": {
+   "hotline": "19199",
+   "email": "info@seif-online.com",
+   "address": null,
+   "whatsapp": "201221919919",
+   "fields": [
+    {
+     "name": "name",
+     "label": "Name",
+     "kind": "text",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 255
+    },
+    {
+     "name": "phone",
+     "label": "Phone",
+     "kind": "phone",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 32
+    },
+    {
+     "name": "email",
+     "label": "E-mail",
+     "kind": "email",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 255
+    },
+    {
+     "name": "subject",
+     "label": "Subject",
+     "kind": "text",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 255
+    },
+    {
+     "name": "message",
+     "label": "Message",
+     "kind": "textarea",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": 5000
+    }
+   ]
+  }
+ }
+}

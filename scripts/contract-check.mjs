@@ -88,6 +88,14 @@ const RESPONSE_SCHEMA = {
   // seo + marketing (scripts/build-seo-fixtures.mjs)
   'seo-site': 'SiteSeoResponse',
   'sitemap-products': 'SitemapResponse',
+  // shell + content pages (scripts/build-shell-fixtures.mjs)
+  'content-page': 'PageResponse',
+  'content-contact': 'PageResponse',
+  'content-branches-page': 'PageResponse',
+  'content-branches': 'BranchesResponse',
+  'content-landing': 'LandingPageResponse',
+  'content-form': 'FormResponse',
+  'content-form-file': 'FormResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

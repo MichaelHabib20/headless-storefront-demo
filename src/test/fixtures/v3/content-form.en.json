@@ -1,0 +1,154 @@
+{
+ "data": {
+  "slug": "feedback",
+  "title": "Feedback",
+  "showTitle": true,
+  "submitLabel": "Send feedback",
+  "requiresSignIn": true,
+  "fields": [
+   {
+    "name": "firstName",
+    "label": "First name",
+    "kind": "text",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "phone",
+    "label": "Phone",
+    "kind": "phone",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "email",
+    "label": "E-mail",
+    "kind": "email",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "field1",
+    "label": "Branch",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "shubra",
+      "label": "Shubra",
+      "selected": false
+     },
+     {
+      "value": "obour",
+      "label": "Obour",
+      "selected": false
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "field2",
+    "label": "Topics",
+    "kind": "select",
+    "required": false,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "prices",
+      "label": "Prices",
+      "selected": false
+     },
+     {
+      "value": "service",
+      "label": "Service",
+      "selected": false
+     }
+    ],
+    "multiple": true,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "field3",
+    "label": "Your message",
+    "kind": "textarea",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 5000
+   },
+   {
+    "name": "field4",
+    "label": "Photo",
+    "kind": "file",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   }
+  ],
+  "seo": {
+   "title": "Feedback",
+   "description": null,
+   "canonical": {
+    "type": "form",
+    "slug": "feedback"
+   },
+   "alternates": [
+    {
+     "locale": "en",
+     "target": {
+      "type": "form",
+      "slug": "feedback"
+     }
+    },
+    {
+     "locale": "ar",
+     "target": {
+      "type": "form",
+      "slug": "feedback"
+     }
+    }
+   ],
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Feedback",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "webPage": {
+     "schemaType": "WebPage",
+     "name": "Feedback",
+     "description": null
+    }
+   }
+  }
+ }
+}

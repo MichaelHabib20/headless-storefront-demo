@@ -14,3 +14,5 @@ export * from './v3/auth';
 export * from './v3/types';
 // seo + marketing
 export { getSiteSeo, getSitemap, trackEvent } from './v3/seo';
+// shell: content pages, forms, the shopper's area
+export { getBranches, getForm, getLandingPage, getPage, sendContactMessage, setArea, submitForm } from './v3/content';

@@ -1,21 +1,31 @@
 import type { Metadata } from 'next';
 import { Barlow, Barlow_Condensed, Cairo } from 'next/font/google';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { getMe, isLocale, type Layout, type Locale, type Me } from '@/sdk';
+import { getLocations, getMe, isApiError, isLocale, type Layout, type Locale, type Locations, type Me } from '@/sdk';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 import { MarketingTags } from '@/components/layout/MarketingTags';
 import { requestMetadataBase, SiteJsonLd } from '@/lib/jsonld';
 import { WhatsAppButton } from '@/components/layout/FloatingActions';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
+import { AppBanner } from '@/components/layout/AppBanner';
+import { AreaChooser } from '@/components/layout/AreaChooser';
+import { FloatingBanner, TopBanner } from '@/components/layout/Banners';
+import { MiniCartProvider } from '@/components/layout/MiniCart';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { StoreClosedNotice } from '@/components/layout/StoreClosedNotice';
 import { TopBar } from '@/components/layout/TopBar';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
+import { UspStrip } from '@/components/layout/UspStrip';
 import { ShopperStateProvider } from '@/components/shopper/ShopperStateProvider';
 import { NextStepGate } from '@/components/auth/NextStepGate';
 import { direction, translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
+import { APP_BANNER_COOKIE, FLOATING_BANNER_COOKIE, floatingBannerDismissed } from '@/lib/shell';
+import { chooseAreaAction, readMiniCart } from '@/lib/shell.actions';
 import { shopperContext } from '@/lib/shopper.server';
 import { loadLayout, storefrontClient } from '@/lib/storefront.server';
 import '../globals.css';
@@ -29,12 +39,16 @@ export const dynamic = 'force-dynamic';
 
 type Params = Promise<{ locale: string }>;
 
-async function safeLayout(locale: Locale): Promise<Layout | null> {
+/** The layout, or why there is none: the store is switched off (the merchant's message), or the API failed. */
+type LayoutLoad = { layout: Layout } | { maintenance: string } | { failed: true };
+
+async function safeLayout(locale: Locale): Promise<LayoutLoad> {
   try {
-    return await loadLayout(locale);
+    return { layout: await loadLayout(locale) };
   } catch (error) {
+    if (isApiError(error) && error.kind === 'store_unavailable') return { maintenance: error.message };
     console.error('layout failed to load', error);
-    return null;
+    return { failed: true };
   }
 }
 
@@ -48,10 +62,22 @@ async function safeMe(locale: Locale): Promise<Me | null> {
   }
 }
 
+/** The cities and areas of the area chooser (multi-inventory stores only); null when they can't be loaded. */
+async function safeLocations(layout: Layout, locale: Locale): Promise<Locations | null> {
+  if (!layout.areaSelection) return null;
+  try {
+    return await getLocations(storefrontClient(), locale);
+  } catch (error) {
+    console.error('locations failed to load', error);
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  const layout = await safeLayout(locale);
+  const load = await safeLayout(locale);
+  const layout = 'layout' in load ? load.layout : null;
   return {
     metadataBase: await requestMetadataBase(),
     title: { default: layout?.store.name ?? 'Store', template: `%s | ${layout?.store.name ?? 'Store'}` },
@@ -66,19 +92,35 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!isLocale(locale)) notFound();
 
   const t = translator(locale);
-  const [layout, me] = await Promise.all([safeLayout(locale), safeMe(locale)]);
+  const [load, me] = await Promise.all([safeLayout(locale), safeMe(locale)]);
+  const layout = 'layout' in load ? load.layout : null;
+  const locations = layout ? await safeLocations(layout, locale) : null;
+  const jar = await cookies();
+  const showAppBanner = Boolean(layout?.appBanner) && jar.get(APP_BANNER_COOKIE)?.value !== 'dismissed';
+  const floating = layout?.floatingBanner && !floatingBannerDismissed(jar.get(FLOATING_BANNER_COOKIE)?.value, layout.floatingBanner.id) ? layout.floatingBanner : null;
+  const hasBottomNav = Boolean(layout?.mobileNav?.items.length);
+  const cookiePolicy = layout?.legal?.cookies ?? layout?.legal?.privacy ?? null;
 
   return (
     <html lang={locale} dir={direction(locale)} className={`${barlow.variable} ${barlowCondensed.variable} ${cairo.variable}`}>
-      <body>
+      <body className={hasBottomNav ? 'has-bottom-nav' : undefined}>
         <a href="#main" className="skip-link">
           {t('skipToContent')}
         </a>
         {layout ? (
           <>
+            {layout.topBanner && <TopBanner banner={layout.topBanner} locale={locale} label={t('topBannerLabel')} />}
+            {showAppBanner && layout.appBanner && (
+              <AppBanner
+                banner={layout.appBanner}
+                labels={{ region: t('appBannerLabel'), dismiss: t('appBannerDismiss'), android: t('appBannerAndroid'), ios: t('appBannerIos'), huawei: t('appBannerHuawei') }}
+              />
+            )}
             <AnnouncementBar announcement={layout.announcement} />
             <TopBar layout={layout} locale={locale} />
             <SiteHeader layout={layout} locale={locale} me={me} />
+            {layout.areaSelection && <AreaChooser locale={locale} selection={layout.areaSelection} me={me} locations={locations} choose={chooseAreaAction} />}
+            <StoreClosedNotice status={layout.storeStatus} locale={locale} />
             {/* Product cards on any page read the shopper's cart/wishlist/compare state from here. */}
             <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
               {/* Me.next: the waiting-for-approval gate and the verify-phone / complete-profile banners. */}
@@ -96,19 +138,27 @@ export default async function LocaleLayout({ children, params }: { children: Rea
                   waitingLink: t('authWaitingTitle'),
                 }}
               >
-                <main id="main">{children}</main>
+                <MiniCartProvider locale={locale} readCart={readMiniCart}>
+                  <main id="main">{children}</main>
+                </MiniCartProvider>
               </NextStepGate>
             </ShopperStateProvider>
+            <UspStrip locale={locale} />
             <SiteFooter layout={layout} locale={locale} />
             <WhatsAppButton whatsapp={layout.whatsapp} label={t('chatOnWhatsapp')} />
-            {layout.features.cookieConsent && <CookieConsent labels={{ text: t('cookieText'), accept: t('cookieAccept') }} />}
+            {floating && <FloatingBanner banner={floating} locale={locale} labels={{ region: t('floatingBannerLabel'), dismiss: t('floatingBannerDismiss') }} />}
+            {layout.mobileNav && <MobileBottomNav nav={layout.mobileNav} locale={locale} me={me} />}
+            {layout.features.cookieConsent && (
+              <CookieConsent
+                labels={{ text: t('cookieText'), accept: t('cookieAccept') }}
+                policy={cookiePolicy ? { target: cookiePolicy, locale, label: t('cookieLearnMore') } : null}
+              />
+            )}
             <MarketingTags marketing={layout.marketing} consentRequired={layout.features.cookieConsent} />
             <SiteJsonLd locale={locale} />
           </>
         ) : (
-          <main id="main">
-            <StoreUnavailable locale={locale} />
-          </main>
+          <main id="main">{'maintenance' in load ? <StoreUnavailable locale={locale} maintenance={load.maintenance} /> : <StoreUnavailable locale={locale} />}</main>
         )}
       </body>
     </html>

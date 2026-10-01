@@ -4,6 +4,7 @@ import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { Icon, isIconName } from '../ui/Icon';
 import { TargetLink } from '../ui/TargetLink';
+import { LegalLinks } from './LegalLinks';
 import { NewsletterForm } from './NewsletterForm';
 import styles from './SiteFooter.module.css';
 
@@ -131,6 +132,8 @@ export function SiteFooter({ layout, locale }: { layout: Layout; locale: Locale 
       </div>
 
       <div className={styles.bottom}>
+        {/* shell: the merchant's legal pages (Layout.legal) */}
+        <LegalLinks legal={layout.legal} locale={locale} className={`container ${styles.legal}`} linkClassName={styles.legalLink} />
         <p className="container">
           © {new Date().getFullYear()} {store.name}. {t('rights')}
         </p>

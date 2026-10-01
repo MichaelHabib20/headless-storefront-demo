@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { Locale, Target } from '@/sdk';
+import { TargetLink } from '../ui/TargetLink';
 import styles from './CookieConsent.module.css';
 
 const KEY = 'sc_cookie_consent';
@@ -8,7 +10,13 @@ const KEY = 'sc_cookie_consent';
 export const COOKIE_CONSENT_KEY = KEY;
 export const COOKIE_CONSENT_EVENT = 'sc:cookie-consent';
 
-export function CookieConsent({ labels }: { labels: { text: string; accept: string } }) {
+interface CookieConsentProps {
+  labels: { text: string; accept: string };
+  /** shell: the store's cookie (or privacy) policy page from `Layout.legal`, linked as "Learn more". */
+  policy?: { target: Target; locale: Locale; label: string } | null;
+}
+
+export function CookieConsent({ labels, policy }: CookieConsentProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -23,7 +31,17 @@ export function CookieConsent({ labels }: { labels: { text: string; accept: stri
 
   return (
     <div className={styles.banner} role="region" aria-label={labels.text} data-testid="cookie-consent">
-      <p className={styles.text}>{labels.text}</p>
+      <p className={styles.text}>
+        {labels.text}
+        {policy && (
+          <>
+            {' '}
+            <TargetLink target={policy.target} locale={policy.locale} className={styles.policy}>
+              {policy.label}
+            </TargetLink>
+          </>
+        )}
+      </p>
       <button
         type="button"
         className={styles.accept}

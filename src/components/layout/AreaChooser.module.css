@@ -1,0 +1,129 @@
+/* "Deliver to" strip and the area dialog (multi-inventory stores). */
+
+.strip {
+  border-block-end: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.stripInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+}
+
+.label {
+  color: var(--color-muted);
+}
+
+.current {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.change {
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgb(0 0 0 / 0.5);
+}
+
+.dialog {
+  display: grid;
+  gap: var(--space-4);
+  inline-size: min(460px, 100%);
+  max-block-size: 90vh;
+  padding: var(--space-5);
+  overflow-y: auto;
+  background: var(--color-bg);
+  outline: none;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.close {
+  display: inline-flex;
+  padding: var(--space-2);
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.prompt {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+
+.select {
+  min-block-size: 48px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-sale);
+}
+
+.save {
+  min-block-size: 48px;
+  border: 0;
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

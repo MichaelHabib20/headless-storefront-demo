@@ -305,6 +305,34 @@ export const RULES = [
     ],
     message: `The number of a Price or Money (amount) is for analytics payloads only and is read only in ${MARKETING} (itemFromCard, viewItemEvent, beginCheckoutEvent, purchaseEvent). On screen use <Money> / <Price> from @/money; for an event call track() from ${MARKETING}.`,
   },
+  // --- shell + content ------------------------------------------------------------------
+  {
+    // Privacy policy, terms and cookie policy are the merchant's CMS pages (`Layout.legal`): the
+    // storefront links to them and never writes legal text of its own (it would be wrong per store).
+    id: 'no-legal-prose',
+    applies: (f) => /^src\/(app|components|lib\/messages)\//.test(f) && !isTest(f),
+    patterns: [/\b(we collect|we may (?:share|disclose)|personal (?:data|information)|third[- ]part(?:y|ies)|governing law|limitation of liability|data controller|you agree to (?:these|our) terms)\b/i],
+    message: 'Legal text (privacy policy, terms, cookie policy) is the merchant\'s CMS content: link to it with <LegalLinks legal={layout.legal} /> or <TargetLink target={layout.legal.privacy}>. A store without such a page → the merchant adds it in the CMS.',
+  },
+  {
+    // The bottom nav is `Layout.mobileNav` (merchant config merged with defaults and filtered by the
+    // store's features in the backend). An own item list drifts from the store's settings.
+    id: 'mobile-nav-from-api',
+    applies: (f) => /^src\/(app|components|lib)\//.test(f) && !isTest(f),
+    patterns: [
+      /\b(label_en|label_ar|fixed_items|more_menu_items|more_menu_text|bottom_sheet_configurations|BOTTOM_SHEET_CONFIGURATIONS)\b/,
+      // an own nav entry list: objects with both an icon and an href
+      /\{[^{}]*\bicon\s*:[^{}]*\bhref\s*:|\{[^{}]*\bhref\s*:[^{}]*\bicon\s*:/,
+    ],
+    message: 'Bottom nav items come from Layout.mobileNav (items, order, labels, icons, badges): render them with <MobileBottomNav nav={layout.mobileNav} />. Adding, removing or reordering an item is a store setting ("needs backend / admin support"), never a list in the storefront.',
+  },
+  {
+    // What a CMS page shows besides its text (`page.kind`) is read in ONE place: its route.
+    id: 'page-kind-in-route',
+    applies: (f) => inUi(f) && !isTest(f) && !f.startsWith('src/app/[locale]/pages/'),
+    patterns: [/\bkind\s*[!=]==?\s*['"](contact|branches)['"]/, /['"](contact|branches)['"]\s*[!=]==?\s*[\w.?]*\bkind\b/],
+    message: 'page.kind (contact / branches) is read only by src/app/[locale]/pages/[slug]/page.tsx, which passes the extra block in. Components draw what they are given.',
+  },
 ];
 
 /**

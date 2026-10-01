@@ -1,7 +1,7 @@
 .banner {
   position: fixed;
   inset-inline: var(--space-4);
-  bottom: var(--space-4);
+  bottom: calc(var(--space-4) + var(--bottom-nav-space, 0px));
   z-index: 60;
   display: flex;
   flex-wrap: wrap;
@@ -30,4 +30,10 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.policy {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
