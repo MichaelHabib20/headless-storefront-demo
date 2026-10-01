@@ -182,7 +182,9 @@ test.describe('checkout', () => {
     await expect(page.getByRole('banner').getByRole('link', { name: 'Cart, 2 items' })).toBeVisible();
     expect((await mockState(request)).orders).toEqual([]);
 
-    await page.getByRole('link', { name: 'Back to checkout' }).click();
+    // The pointer still rests where the bank page's link was; with the shell banners above the header that
+    // spot is the desktop menu, which opens on hover over this link. Follow it from the keyboard instead.
+    await page.getByRole('link', { name: 'Back to checkout' }).press('Enter');
     await expect(page.getByRole('heading', { level: 1, name: 'Checkout' })).toBeVisible();
     await expect(page.getByTestId('checkout-item')).toHaveCount(2);
   });
