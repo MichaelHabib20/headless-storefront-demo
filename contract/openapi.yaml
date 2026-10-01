@@ -3308,6 +3308,8 @@ components:
                 description: Null when the product no longer exists
                 nullable: true
                 allOf: [{ $ref: '#/components/schemas/ProductTarget' }]
+              # added for the orders-extras phase (optional for older recordings): the variant, for item ratings and reviews
+              productId: { type: integer, nullable: true, description: 'ProductCard.id of the variant; null when the product no longer exists' }
               quantity: { type: number }
               lineTotal: { $ref: '#/components/schemas/Money' }
               compareAt:
