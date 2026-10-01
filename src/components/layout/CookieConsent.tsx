@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import styles from './CookieConsent.module.css';
 
 const KEY = 'sc_cookie_consent';
+/** Read by <MarketingTags>: tags wait for this consent, and install on this event without a reload. */
+export const COOKIE_CONSENT_KEY = KEY;
+export const COOKIE_CONSENT_EVENT = 'sc:cookie-consent';
 
 export function CookieConsent({ labels }: { labels: { text: string; accept: string } }) {
   const [visible, setVisible] = useState(false);
@@ -30,6 +33,7 @@ export function CookieConsent({ labels }: { labels: { text: string; accept: stri
           } catch {
             /* storage blocked: hide for this page view only */
           }
+          window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
           setVisible(false);
         }}
       >

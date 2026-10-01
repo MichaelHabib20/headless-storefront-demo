@@ -96,6 +96,8 @@ them and **blocks the deploy** when one is broken.
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
 | Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
+| Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |
+| Tags and pixels (GTM, GA4, Meta, TikTok…), cookie consent for tags, analytics events, `POST /events` | [reference/marketing.md](reference/marketing.md) |
 
 ## Common requests → how
 
@@ -134,6 +136,10 @@ them and **blocks the deploy** when one is broken.
 | "Add Google / Facebook sign-in" | Store setting (`AuthSettings.social`) → "needs backend support"; `SocialButtons` draws what is configured | Hardcode a client id or load an SDK unconditionally |
 | "Keep the user signed in in the browser" | Cookie `maxAge` in `src/lib/session.ts` (httpOnly) | A token in `localStorage` / `sessionStorage` |
 | "Let the profile edit the phone" | It's the sign-in identifier when `editable: false` → store setting | Enable the input yourself |
+| "Add a schema.org field" (gtin, founding date…) | Only if the backend sends it (`Seo.structuredData`, `GET /seo/site`) → map it in `src/lib/jsonld.ts`; else "needs backend support" | `<script type="application/ld+json">` in a page, invented values |
+| "Add JSON-LD / meta to a new page" | `seoMetadata(page.seo, locale)` + `<JsonLd seo={page.seo} locale={locale} />` | Your own title pattern or tags |
+| "Add a pixel / tag" | It is a store setting → `Layout.marketing` → "needs backend support"; snippet only in `MarketingTags.tsx` | Snippets or ids in other files, `process.env` in client code |
+| "Fire an analytics event" | `track()` from `src/lib/marketing.ts` (client) or `trackServerEvent()` from `src/lib/marketing.server.ts` (server action) | Reading `price.amount` elsewhere, computing a `value` |
 
 ## Before you say "done"
 

@@ -77,7 +77,33 @@
      }
     }
    ],
-   "index": false
+   "index": false,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Search",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "collection": {
+     "name": "Search results for \"zzzz\"",
+     "description": null,
+     "items": []
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": null,
+    "description": null,
+    "image": null,
+    "type": "website"
+   }
   }
  }
 }

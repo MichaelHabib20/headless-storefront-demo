@@ -203,7 +203,62 @@
      }
     }
    ],
-   "index": true
+   "index": true,
+   "breadcrumbs": [
+    {
+     "label": "Home",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "Mom & Baby",
+     "target": {
+      "type": "category",
+      "path": [
+       "mom-baby"
+      ]
+     }
+    },
+    {
+     "label": "JOHNSON & JOHNSON",
+     "target": {
+      "type": "brand",
+      "slug": "johnson-johnson"
+     }
+    },
+    {
+     "label": "J&J Baby Cologne 100Ml Dream احلام",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "product": {
+     "schemaType": "Product",
+     "name": "J&J Baby Cologne 100Ml Dream احلام",
+     "description": "J&amp;J Baby Cologne 100Ml Dream احلام: gentle care made for your baby's delicate skin.",
+     "sku": "JJ-9822",
+     "brand": "JOHNSON & JOHNSON",
+     "images": [
+      "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp"
+     ],
+     "price": 135,
+     "currency": "EGP",
+     "availability": "in_stock",
+     "rating": {
+      "average": 4.1,
+      "count": 23
+     },
+     "category": "Mom & Baby"
+    }
+   },
+   "pagination": null,
+   "openGraph": {
+    "title": "J&J Baby Cologne 100Ml Dream احلام",
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/288661.webp",
+    "type": "product"
+   }
   }
  }
 }

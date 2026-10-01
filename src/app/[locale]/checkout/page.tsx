@@ -18,6 +18,8 @@ import { CartEmpty } from '@/components/cart/CartEmpty';
 import { CheckoutView } from '@/components/checkout/CheckoutView';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { translator } from '@/lib/i18n';
+import { beginCheckoutEvent } from '@/lib/marketing';
+import { TrackEvent } from '@/components/marketing/TrackEvent';
 import { routes } from '@/lib/routing';
 import { shopperContext } from '@/lib/shopper.server';
 import { storefrontClient } from '@/lib/storefront.server';
@@ -92,6 +94,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
   return (
     <div className={`container ${styles.page}`}>
       <h1 className={styles.title}>{t('checkoutTitle')}</h1>
+      {loaded?.checkout.cart.items.length ? <TrackEvent locale={locale} event={beginCheckoutEvent(loaded.checkout)} /> : null}
       {loaded?.checkout.cart.items.length ? (
         <CheckoutView
           checkout={loaded.checkout}

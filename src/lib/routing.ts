@@ -192,3 +192,13 @@ function withQuery(path: string, query: Record<string, string | number | null | 
 function isSafeUrl(url: string): boolean {
   return /^(https?|mailto|tel):/i.test(url);
 }
+
+// ---- seo + marketing
+/** The search page as a schema.org SearchAction URL template (the WebSite JSON-LD on every page). */
+export const searchUrlTemplate = (locale: Locale) => `${routes.search(locale)}?q={search_term_string}`;
+
+/** Our own route handler that forwards browser marketing events to the backend (POST /events). Not a page. */
+export const EVENTS_ENDPOINT = '/api/events';
+
+/** Sections that are private to the shopper: never indexed (robots.txt, X-Robots-Tag). */
+export const PRIVATE_SECTIONS = ['cart', 'checkout', 'account', 'sign-in', 'sign-up', 'wishlist', 'compare', 'notifications'] as const;

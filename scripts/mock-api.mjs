@@ -63,6 +63,14 @@ http
     }
     if (delayMs && url.pathname.startsWith('/api/')) await new Promise((resolve) => setTimeout(resolve, delayMs));
     if (url.pathname === '/health') return send(200, { ok: true });
+    // Test controls of the modules (e.g. GET /__events, POST /__seo of scripts/mock/seo.mjs).
+    if (url.pathname.startsWith('/__')) {
+      const controlBody = req.method === 'POST' ? await readBody(req) : null;
+      for (const part of modules) {
+        const answer = part.control?.(req.method, url.pathname, controlBody);
+        if (answer) return send(answer[0], answer[1]);
+      }
+    }
 
     const prefix = '/api/customer/v3';
     if (!url.pathname.startsWith(prefix)) return send(404, { error: { code: 'not_found', message: 'Not found' } });

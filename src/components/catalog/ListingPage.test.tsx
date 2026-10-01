@@ -7,6 +7,8 @@ import { productsFixture } from '@/test/fixtures';
 import { ListingPage } from './ListingPage';
 
 vi.mock('@/lib/catalog.server', () => ({ loadListing: vi.fn() }));
+// JSON-LD reads the request headers (server only): tested in src/lib/jsonld.test.ts.
+vi.mock('@/lib/jsonld', () => ({ JsonLd: () => null }));
 
 const props = { locale: 'en' as const, scope: { q: 'bath' }, params: { q: 'bath', priceMin: 'abc' }, links: { path: '/en/search', keep: { q: 'bath' } } };
 

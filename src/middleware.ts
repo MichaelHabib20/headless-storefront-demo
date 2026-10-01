@@ -2,7 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import type { Locale } from '@/sdk';
 import { RESOLUTION_HEADER } from '@/lib/resolve';
 import { answerUnknownPath } from '@/lib/resolve.server';
-import { isStorefrontPath } from '@/lib/routing';
+import { isStorefrontPath, PRIVATE_SECTIONS } from '@/lib/routing';
+import { CLICK_IDS_COOKIE, CLICK_IDS_MAX_AGE, clickIdsCookie } from '@/lib/click-ids';
 
 const LOCALES = ['en', 'ar'];
 
@@ -13,6 +14,25 @@ const LOCALES = ['en', 'ar'];
  *    has the right status: 301/302 redirect, 410 gone (the catch-all page draws it) or 404.
  */
 export async function middleware(request: NextRequest) {
+  return marketingAndRobots(request, await route(request));
+}
+
+/**
+ * 3. Campaign click ids of the landing URL (fbclid, gclid, ttclid, sccid) are kept in an httpOnly
+ *    cookie for 7 days, for the server-side marketing events (src/lib/click-ids.ts).
+ * 4. The shopper's private pages (cart, checkout, account...) answer `X-Robots-Tag: noindex`.
+ */
+function marketingAndRobots(request: NextRequest, response: NextResponse): NextResponse {
+  const clickIds = clickIdsCookie(request.nextUrl.searchParams, request.cookies.get(CLICK_IDS_COOKIE)?.value);
+  if (clickIds) {
+    response.cookies.set(CLICK_IDS_COOKIE, clickIds, { httpOnly: true, sameSite: 'lax', secure: request.nextUrl.protocol === 'https:', path: '/', maxAge: CLICK_IDS_MAX_AGE });
+  }
+  const section = request.nextUrl.pathname.split('/')[2] ?? '';
+  if ((PRIVATE_SECTIONS as readonly string[]).includes(section)) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  return response;
+}
+
+async function route(request: NextRequest): Promise<NextResponse> {
   const { pathname, search } = request.nextUrl;
   const first = pathname.split('/')[1];
   if (!LOCALES.includes(first)) {

@@ -9,6 +9,9 @@ import { positiveIntParam } from '@/components/ui/Pagination';
 import { translator } from '@/lib/i18n';
 import { resolveTarget } from '@/lib/routing';
 import { seoMetadata } from '@/lib/seo';
+import { JsonLd } from '@/lib/jsonld';
+import { viewItemEvent } from '@/lib/marketing';
+import { TrackEvent } from '@/components/marketing/TrackEvent';
 import { shopperContext } from '@/lib/shopper.server';
 import { loadLayout, storefrontClient } from '@/lib/storefront.server';
 import { notifyMeAction } from './actions';
@@ -75,6 +78,9 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
   const share = await shareEnabled(locale);
 
   return (
+    <>
+    <JsonLd seo={details.seo} locale={locale} />
+    <TrackEvent locale={locale} event={viewItemEvent(details)} />
     <ProductView
       details={details}
       locale={locale}
@@ -91,6 +97,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
         </Suspense>
       }
     />
+    </>
   );
 }
 

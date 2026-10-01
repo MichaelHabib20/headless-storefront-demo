@@ -1,0 +1,127 @@
+{
+ "data": {
+  "items": [
+   {
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+    },
+    "updatedAt": "2026-09-01T10:00:00+03:00",
+    "alternates": [
+     {
+      "locale": "en",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     {
+      "locale": "ar",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     }
+    ]
+   },
+   {
+    "target": {
+     "type": "product",
+     "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب"
+    },
+    "updatedAt": "2026-09-01T10:00:00+03:00",
+    "alternates": [
+     {
+      "locale": "en",
+      "target": {
+       "type": "product",
+       "slug": "jj-no-more-tangles-kids-cond-spr-200ml-new"
+      }
+     },
+     {
+      "locale": "ar",
+      "target": {
+       "type": "product",
+       "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب"
+      }
+     }
+    ]
+   },
+   {
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+    },
+    "updatedAt": "2026-09-01T10:00:00+03:00",
+    "alternates": [
+     {
+      "locale": "en",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+      }
+     },
+     {
+      "locale": "ar",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+      }
+     }
+    ]
+   },
+   {
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+    },
+    "updatedAt": "2026-09-01T10:00:00+03:00",
+    "alternates": [
+     {
+      "locale": "en",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     },
+     {
+      "locale": "ar",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-500ml-lavendercamomile"
+      }
+     }
+    ]
+   },
+   {
+    "target": {
+     "type": "product",
+     "slug": "-1754482110"
+    },
+    "updatedAt": "2026-09-01T10:00:00+03:00",
+    "alternates": [
+     {
+      "locale": "en",
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bath-500ml"
+      }
+     },
+     {
+      "locale": "ar",
+      "target": {
+       "type": "product",
+       "slug": "-1754482110"
+      }
+     }
+    ]
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 5,
+   "total": 10,
+   "totalPages": 2
+  }
+ }
+}

@@ -24,6 +24,7 @@
  * still prices a line from the home-page card (mock scaffolding, not business rules).
  */
 import { priceWithText } from './shopper.mjs';
+import { productSeoExtras } from './seo-extras.mjs';
 
 const TEXT = {
   en: {
@@ -263,6 +264,12 @@ export function createProductModule(shopper, { now = () => new Date('2026-09-29T
   }
 
   function details(id, locale, requestedSlug) {
+    const page = pageOf(id, locale, requestedSlug);
+    // seo + marketing: breadcrumbs, structured data, preview (scripts/mock/seo-extras.mjs)
+    return { ...page, seo: { ...page.seo, ...productSeoExtras(page) } };
+  }
+
+  function pageOf(id, locale, requestedSlug) {
     const t = TEXT[locale];
     const product = card(id, locale);
     const name = escapeHtml(product.name);

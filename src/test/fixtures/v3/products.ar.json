@@ -281,7 +281,53 @@
      }
     }
    ],
-   "index": false
+   "index": false,
+   "breadcrumbs": [
+    {
+     "label": "الرئيسية",
+     "target": {
+      "type": "home"
+     }
+    },
+    {
+     "label": "العناية بالام والطفل",
+     "target": null
+    }
+   ],
+   "structuredData": {
+    "collection": {
+     "name": "العناية بالام والطفل",
+     "description": "كل ما تحتاجه الأم والطفل : الاستحمام والعناية بالبشرة والمزيد.",
+     "items": [
+      {
+       "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+       "target": {
+        "type": "product",
+        "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+       },
+       "image": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp"
+      },
+      {
+       "name": "جونسون اند جونسون بيبي باث وقت النوم بالافندر 300 مل",
+       "target": {
+        "type": "product",
+        "slug": "جونسون-اند-جونسون-بيبي-باث-وقت-النوم-با"
+       },
+       "image": "https://seif-online.com/storage/seif-pharmacies/uploads/376615.webp"
+      }
+     ]
+    }
+   },
+   "pagination": {
+    "prev": null,
+    "next": 2
+   },
+   "openGraph": {
+    "title": null,
+    "description": null,
+    "image": "https://seif-online.com/storage/seif-pharmacies/uploads/Mom & Baby-1750944798.webp",
+    "type": "website"
+   }
   }
  }
 }
