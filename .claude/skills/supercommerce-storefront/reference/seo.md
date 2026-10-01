@@ -22,6 +22,7 @@ adds a fact of its own.
 | `GET /seo/site` → `robots.index` | `robots.txt`: `Disallow: /` when false; sitemap index empty | `src/app/robots.ts`, `src/app/sitemap.xml/route.ts` |
 | `GET /sitemap?type=&page=&perPage=` | `/sitemap.xml` (index) → `/sitemaps/<type>-<locale>-<page>.xml` (1000 URLs each, `xhtml:link` alternates, `lastmod`) | `src/lib/sitemap.ts` + the two route handlers |
 | `Layout.store.favicon` | `icons` in the layout metadata (already) | `src/app/[locale]/layout.tsx` |
+| `Layout.store.favicon` | `/favicon.ico` → 302 to it (404 when none), like the legacy server | `src/app/favicon.ico/route.ts` |
 
 `metadataBase` is the request origin (`requestMetadataBase()`), so canonical, hreflang and `og:url`
 are absolute without a hardcoded host. JSON-LD URLs use `requestOrigin(headers())`
@@ -51,6 +52,7 @@ checkout, account, sign-in, sign-up, wishlist, compare, notifications): `Disallo
 
 ## Tests to update
 
-`src/lib/jsonld.test.ts`, `src/lib/seo.test.ts`, `src/lib/sitemap.test.ts`, `scripts/mock-seo.test.mjs`
+`src/lib/jsonld.test.ts`, `src/lib/seo.test.ts`, `src/lib/sitemap.test.ts`, the route tests next to
+`src/app/robots.ts`, `src/app/sitemap.xml/route.ts`, `src/app/sitemaps/[name]/route.ts`, `src/app/favicon.ico/route.ts`, `scripts/mock-seo.test.mjs`
 (the mock: `scripts/mock/seo.mjs`, `scripts/mock/seo-extras.mjs`), fixtures
 `node scripts/build-seo-fixtures.mjs`, e2e `e2e/seo.spec.ts`.
