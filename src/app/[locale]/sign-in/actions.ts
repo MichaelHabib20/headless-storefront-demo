@@ -1,9 +1,11 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { after } from 'next/server';
 import { isLocale, sendOtp, signIn, signInWithOtp, signInWithProvider, type Locale, type NextStep, type SocialProvider } from '@/sdk';
 import { authFailureMessage } from '@/lib/auth.server';
 import { field, toFormState, type FormState } from '@/lib/form';
+import { trackServerEvent } from '@/lib/marketing.server';
 import { nextStepHref, routes, signInReturn } from '@/lib/routing';
 import { startSession } from '@/lib/session';
 import { guestToken } from '@/lib/shopper.server';
@@ -35,6 +37,8 @@ export async function signInAction(_previous: FormState, formData: FormData): Pr
     // The guest token goes along so the backend merges the guest's cart, wishlist and compare list.
     const session = await signIn(storefrontClient(), { locale, token: await guestToken() }, { identifier, password });
     await startSession(session);
+    // marketing: the server-side `login` event (POST /events), sent after the answer
+    after(() => trackServerEvent(locale, { name: 'login' }));
     next = session.next;
   } catch (error) {
     return toFormState(error, values, {}, locale);
@@ -71,6 +75,8 @@ export async function signInWithOtpAction(_previous: OtpState, formData: FormDat
   try {
     const session = await signInWithOtp(storefrontClient(), { locale, token: await guestToken() }, { phone, code });
     await startSession(session);
+    // marketing: the server-side `login` event (POST /events), sent after the answer
+    after(() => trackServerEvent(locale, { name: 'login' }));
     next = session.next;
   } catch (error) {
     const state = toFormState(error, { phone, code: '' }, {}, locale);
@@ -87,6 +93,8 @@ export async function socialSignInAction(rawLocale: Locale, provider: SocialProv
   try {
     const session = await signInWithProvider(storefrontClient(), { locale, token: await guestToken() }, { provider, token, name: name || null });
     await startSession(session);
+    // marketing: the server-side `login` event (POST /events), sent after the answer
+    after(() => trackServerEvent(locale, { name: 'login' }));
     next = session.next;
   } catch (error) {
     return { ok: false, message: authFailureMessage(error, locale, 'authSocialFailed') };

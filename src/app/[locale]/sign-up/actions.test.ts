@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, getAuthSettings, signUp, type Session } from '@/sdk';
+import { trackServerEvent } from '@/lib/marketing.server';
 import { startSession } from '@/lib/session';
 import { guestToken } from '@/lib/shopper.server';
 import { authSettingsFixture } from '@/test/auth-fixtures';
@@ -13,6 +14,8 @@ const session: Session = {
 
 vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({ marker: 'client' })) }));
 vi.mock('@/lib/session', () => ({ startSession: vi.fn() }));
+vi.mock('next/server', () => ({ after: vi.fn((task: () => unknown) => task()) }));
+vi.mock('@/lib/marketing.server', () => ({ trackServerEvent: vi.fn() }));
 vi.mock('@/lib/shopper.server', () => ({ guestToken: vi.fn() }));
 vi.mock('@/sdk', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/sdk')>()), signUp: vi.fn(), getAuthSettings: vi.fn() }));
 
@@ -69,6 +72,12 @@ describe('signUpAction', () => {
     expect(state.fieldErrors).toEqual({ phone: 'Enter a mobile number of 11 digits.', lastName: 'Last name is required.' });
     expect(state.message).toBeUndefined();
     expect(startSession).not.toHaveBeenCalled();
+    expect(trackServerEvent).not.toHaveBeenCalled();
+  });
+
+  it('sends the server-side sign_up event (POST /events) once the backend created the account', async () => {
+    await signUpAction({}, form({ ...fields, locale: 'ar' }));
+    expect(vi.mocked(trackServerEvent).mock.calls).toEqual([['ar', { name: 'sign_up' }]]);
   });
 
   it('shows the closed-sign-up text when the store turned sign-ups off', async () => {

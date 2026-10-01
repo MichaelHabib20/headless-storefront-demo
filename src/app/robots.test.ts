@@ -20,7 +20,7 @@ describe('robots.txt', () => {
     expect(answer.sitemap).toBe('https://shop.test/sitemap.xml');
     const rules = answer.rules as { userAgent: string; allow: string; disallow: string[] };
     expect(rules).toMatchObject({ userAgent: '*', allow: '/' });
-    expect(rules.disallow).toEqual(expect.arrayContaining(['/en/cart', '/ar/cart', '/en/checkout', '/ar/account', '/en/sign-in', '/api/']));
+    expect(rules.disallow).toEqual(expect.arrayContaining(['/en/cart', '/ar/cart', '/en/checkout', '/ar/account', '/en/sign-in', '/en/reset-password', '/ar/waiting-approval', '/en/track-order', '/api/']));
   });
 
   it('disallows everything when the backend says the store may not be indexed', async () => {

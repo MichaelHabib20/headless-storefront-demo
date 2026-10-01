@@ -25,7 +25,7 @@ A null id installs nothing. Ids that are not plain ids are refused.
 | `search` | search page with `q` | yes | yes (search term) |
 | `begin_checkout` | checkout page with items (`beginCheckoutEvent(checkout)`) | yes (checkout total) | yes |
 | `purchase` | checkout result page, placed/paid only, **once per checkout reference** (sessionStorage) and `eventId = purchase-<order.id>` (the backend de-duplicates 24 h) | yes (order total) | yes (order id: the backend reports only the shopper's own order) |
-| `sign_up`, `login` | **auth area**: call `track(locale, { name: 'sign_up' })` from the client after success, or `trackServerEvent(locale, { name: 'login' })` from the server action | | |
+| `sign_up`, `login` | sign-up / sign-in server actions after the backend accepted (password, SMS code, provider) — `src/app/[locale]/sign-up/actions.ts`, `sign-in/actions.ts` | — | yes (`after()`) |
 | `remove_from_cart`, `view_cart`, `add_payment_info`, `view_item_list`, `select_promotion` | available in `src/lib/marketing.ts`, not wired yet | | |
 
 `track(locale, event)` fires the browser pixels and sends the server twin (sendBeacon →

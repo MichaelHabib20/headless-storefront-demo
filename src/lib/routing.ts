@@ -200,5 +200,23 @@ export const searchUrlTemplate = (locale: Locale) => `${routes.search(locale)}?q
 /** Our own route handler that forwards browser marketing events to the backend (POST /events). Not a page. */
 export const EVENTS_ENDPOINT = '/api/events';
 
-/** Sections that are private to the shopper: never indexed (robots.txt, X-Robots-Tag). */
-export const PRIVATE_SECTIONS = ['cart', 'checkout', 'account', 'sign-in', 'sign-up', 'wishlist', 'compare', 'notifications'] as const;
+/**
+ * Sections that are private to the shopper: never indexed (robots.txt, X-Robots-Tag). Includes the
+ * auth flows (password reset, verification, approval) and order tracking, whose pages are per shopper.
+ */
+export const PRIVATE_SECTIONS = [
+  'cart',
+  'checkout',
+  'account',
+  'sign-in',
+  'sign-up',
+  'wishlist',
+  'compare',
+  'notifications',
+  'forgot-password',
+  'reset-password',
+  'verify-phone',
+  'verify-email',
+  'waiting-approval',
+  'track-order',
+] as const;

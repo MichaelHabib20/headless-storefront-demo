@@ -29,7 +29,8 @@ are absolute without a hardcoded host. JSON-LD URLs use `requestOrigin(headers()
 (`x-forwarded-host` / `host`, `x-forwarded-proto`).
 
 Private pages are the storefront's own list (`PRIVATE_SECTIONS` in `src/lib/routing.ts`: cart,
-checkout, account, sign-in, sign-up, wishlist, compare, notifications): `Disallow` in robots.txt and
+checkout, account, sign-in, sign-up, wishlist, compare, notifications, the auth flows — forgot / reset
+password, verify phone / e-mail, waiting approval — and track-order): `Disallow` in robots.txt and
 `X-Robots-Tag: noindex` from `src/middleware.ts`.
 
 ## Recipes

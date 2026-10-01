@@ -1,8 +1,10 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { after } from 'next/server';
 import { getAuthSettings, isLocale, signUp, type NextStep } from '@/sdk';
 import { toFormState, type FormState } from '@/lib/form';
+import { trackServerEvent } from '@/lib/marketing.server';
 import { translator } from '@/lib/i18n';
 import { nextStepHref, routes } from '@/lib/routing';
 import { startSession } from '@/lib/session';
@@ -36,6 +38,8 @@ export async function signUpAction(_previous: FormState, formData: FormData): Pr
     // The guest token goes along: the guest row becomes the customer (cart and lists kept).
     const session = await signUp(client, { locale, token: await guestToken() }, values);
     await startSession(session);
+    // marketing: the server-side `sign_up` event (POST /events), sent after the answer
+    after(() => trackServerEvent(locale, { name: 'sign_up' }));
     next = session.next;
   } catch (error) {
     const shown = Object.fromEntries(Object.entries(values).filter(([name]) => name !== 'password'));

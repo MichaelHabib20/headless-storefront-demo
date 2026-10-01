@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, sendOtp, signIn, signInWithOtp, signInWithProvider, type Session } from '@/sdk';
+import { trackServerEvent } from '@/lib/marketing.server';
 import { startSession } from '@/lib/session';
 import { guestToken } from '@/lib/shopper.server';
 import { sendOtpAction, signInAction, signInWithOtpAction, socialSignInAction } from './actions';
@@ -12,6 +13,8 @@ const session = (next: Session['next'] = null): Session => ({
 
 vi.mock('@/lib/storefront.server', () => ({ storefrontClient: vi.fn(() => ({ marker: 'client' })) }));
 vi.mock('@/lib/session', () => ({ startSession: vi.fn() }));
+vi.mock('next/server', () => ({ after: vi.fn((task: () => unknown) => task()) }));
+vi.mock('@/lib/marketing.server', () => ({ trackServerEvent: vi.fn() }));
 vi.mock('@/lib/shopper.server', () => ({ guestToken: vi.fn() }));
 vi.mock('@/sdk', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/sdk')>()),
@@ -93,6 +96,18 @@ describe('signInAction', () => {
     expect(state.message).toBe('البيانات التي أدخلتها غير صحيحة.');
     expect(state.values).toEqual({ identifier: 'x' });
     expect(startSession).not.toHaveBeenCalled();
+    expect(trackServerEvent).not.toHaveBeenCalled();
+  });
+
+  it('sends the server-side login event (POST /events) after a sign-in the backend accepted, by password, code or provider', async () => {
+    await signInAction({}, form({ locale: 'ar', identifier: '01222353123', password: 'secret123' }));
+    await signInWithOtpAction({}, form({ locale: 'en', phone: '01222353123', code: '1234' }));
+    await socialSignInAction('en', 'google', 'provider-token', null, null);
+    expect(vi.mocked(trackServerEvent).mock.calls).toEqual([
+      ['ar', { name: 'login' }],
+      ['en', { name: 'login' }],
+      ['en', { name: 'login' }],
+    ]);
   });
 
   it('shows the per-field messages under the fields, and our own text when the store cannot be reached', async () => {

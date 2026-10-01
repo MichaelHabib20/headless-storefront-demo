@@ -135,7 +135,7 @@ test.describe('head tags', () => {
   });
 
   test('the private pages answer X-Robots-Tag: noindex', async ({ request }) => {
-    for (const path of ['/en/cart', '/ar/checkout', '/en/account/orders', '/en/sign-in']) {
+    for (const path of ['/en/cart', '/ar/checkout', '/en/account/orders', '/en/sign-in', '/en/reset-password', '/ar/verify-phone', '/en/track-order']) {
       const res = await request.get(`${APP_URL}${path}`, { maxRedirects: 0 });
       expect(res.headers()['x-robots-tag'], path).toContain('noindex');
     }
