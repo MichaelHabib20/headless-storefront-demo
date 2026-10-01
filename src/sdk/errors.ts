@@ -42,6 +42,8 @@ export type ApiErrorKind =
   | 'phone_already_verified'
   | 'email_in_use'
   | 'wrong_password'
+  // account extras (v3 error codes, same names)
+  | 'prescription_blocked'
   | 'unknown';
 
 export class ApiError extends Error {

@@ -1,0 +1,48 @@
+{
+ "data": {
+  "items": [
+   {
+    "id": "1042",
+    "reference": "#1042",
+    "status": {
+     "code": "received",
+     "label": "Received"
+    },
+    "placedAt": "2026-09-28T09:30:00+03:00",
+    "type": null,
+    "prescriptionNumber": null,
+    "note": "Morning, please",
+    "fileCount": 2,
+    "address": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+    "cancellation": null,
+    "actions": {
+     "canCancel": true
+    }
+   },
+   {
+    "id": "1041",
+    "reference": "#1041",
+    "status": {
+     "code": "in_progress",
+     "label": "Being prepared"
+    },
+    "placedAt": "2026-09-20T18:10:00+03:00",
+    "type": null,
+    "prescriptionNumber": null,
+    "note": null,
+    "fileCount": 1,
+    "address": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+    "cancellation": null,
+    "actions": {
+     "canCancel": false
+    }
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 10,
+   "total": 2,
+   "totalPages": 1
+  }
+ }
+}

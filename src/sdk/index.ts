@@ -16,3 +16,5 @@ export * from './v3/types';
 export { getSiteSeo, getSitemap, trackEvent } from './v3/seo';
 // shell: content pages, forms, the shopper's area
 export { getBranches, getForm, getLandingPage, getPage, sendContactMessage, setArea, submitForm } from './v3/content';
+// account extras: prescriptions
+export { cancelPrescription, getPrescriptionCancellationReasons, getPrescriptionForm, getPrescriptions, sendPrescription } from './v3/prescriptions';

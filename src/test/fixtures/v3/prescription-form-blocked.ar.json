@@ -1,0 +1,80 @@
+{
+ "data": {
+  "title": "روشتة",
+  "description": {
+   "html": "<p>ارفع صورة واضحة للروشتة وسيتصل بك الصيدلي.</p>"
+  },
+  "video": null,
+  "fields": [
+   {
+    "name": "type",
+    "label": "نوع الروشتة",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "cash",
+      "label": "كاش",
+      "selected": true
+     },
+     {
+      "value": "wasfaty",
+      "label": "وصفتي",
+      "selected": false
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "prescriptionNumber",
+    "label": "رقم الروشتة",
+    "kind": "text",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": "مطلوب لروشتات وصفتي.",
+    "maxLength": 100
+   },
+   {
+    "name": "files",
+    "label": "صور الروشتة",
+    "kind": "file",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": true,
+    "hint": "صور أو ملف PDF للروشتة، حتى 10 ملفات.",
+    "maxLength": null
+   },
+   {
+    "name": "note",
+    "label": "ملاحظات للصيدلي",
+    "kind": "textarea",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 1000
+   }
+  ],
+  "addresses": [
+   {
+    "id": 501,
+    "label": "12، 12 Abbas El Akkad St، مدينة نصر، القاهرة",
+    "selected": true
+   }
+  ],
+  "blockers": [
+   {
+    "code": "verify_phone",
+    "message": "وثّق رقم هاتفك ليتمكن الصيدلي من الاتصال بك."
+   }
+  ],
+  "canSend": false
+ }
+}

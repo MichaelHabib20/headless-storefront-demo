@@ -176,3 +176,11 @@ export type AppBanner = NonNullable<Layout['appBanner']>;
 export type AreaSelection = NonNullable<Layout['areaSelection']>;
 export type StoreStatus = NonNullable<Layout['storeStatus']>;
 export type ShopperArea = NonNullable<Me['area']>;
+// ---- account extras: prescriptions
+export type PrescriptionForm = Schemas['PrescriptionForm'];
+export type PrescriptionBlocker = PrescriptionForm['blockers'][number];
+export type PrescriptionAddressChoice = Schemas['PrescriptionAddressChoice'];
+export type PrescriptionInput = Schemas['PrescriptionRequest'];
+export type Prescription = Schemas['Prescription'];
+export type PrescriptionsPage = Schemas['PrescriptionsResponse']['data'];
+export type PrescriptionSent = Schemas['PrescriptionSentResponse']['data'];

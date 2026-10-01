@@ -19,6 +19,10 @@ export const routes = {
   search: (locale: Locale, query = '') => (query ? `/${locale}/search?q=${encode(query)}` : `/${locale}/search`),
   /** Every product (the old storefront's /all-products); the Target `{type: search, query: ""}` opens it. */
   allProducts: (locale: Locale) => `/${locale}/all-products`,
+  /** The customer's prescriptions: send one, see and cancel them (the old storefront's /prescriptions). */
+  prescriptions: (locale: Locale, page?: number) => withQuery(`/${locale}/prescriptions`, { page: page && page > 1 ? page : null }),
+  /** The required address step before a prescription (the old /add-address); saves, then back to prescriptions. */
+  addAddress: (locale: Locale) => `/${locale}/add-address`,
   categories: (locale: Locale) => `/${locale}/categories`,
   brands: (locale: Locale) => `/${locale}/brands`,
   cart: (locale: Locale) => `/${locale}/cart`,
@@ -119,7 +123,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
  * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
  * route above is missing here.
  */
-const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval']);
+const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval', 'prescriptions', 'add-address']);
 
 /** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
 export function isStorefrontPath(pathname: string): boolean {
@@ -131,16 +135,17 @@ export function isStorefrontPath(pathname: string): boolean {
  * Where the address pages send the shopper after a save (`?next=` on the address list, new and edit
  * pages). Only these names are accepted — never a URL — so the parameter can't be an open redirect.
  */
-export type AddressReturn = 'checkout';
+export type AddressReturn = 'checkout' | 'prescriptions';
 
 export function addressReturn(value: string | string[] | null | undefined): AddressReturn | null {
   const raw = Array.isArray(value) ? value[0] : value;
-  return raw === 'checkout' ? 'checkout' : null;
+  return raw === 'checkout' || raw === 'prescriptions' ? raw : null;
 }
 
 /** The page an address save goes back to, or null to stay in the address book. */
 export function addressReturnHref(locale: Locale, next: AddressReturn | null): string | null {
-  return next === 'checkout' ? routes.checkout(locale) : null;
+  if (next === 'checkout') return routes.checkout(locale);
+  return next === 'prescriptions' ? routes.prescriptions(locale) : null;
 }
 
 /**
@@ -221,4 +226,6 @@ export const PRIVATE_SECTIONS = [
   'verify-email',
   'waiting-approval',
   'track-order',
+  'prescriptions',
+  'add-address',
 ] as const;

@@ -78,6 +78,16 @@ describe('account routes', () => {
     }
     expect(addressReturnHref('ar', 'checkout')).toBe('/ar/checkout');
     expect(addressReturnHref('en', null)).toBeNull();
+    // the required address step of a prescription goes back to the prescriptions page
+    expect(addressReturn('prescriptions')).toBe('prescriptions');
+    expect(addressReturnHref('ar', 'prescriptions')).toBe('/ar/prescriptions');
+  });
+
+  it('keeps the old storefront paths of the account extras', () => {
+    expect(routes.prescriptions('en')).toBe('/en/prescriptions');
+    expect(routes.prescriptions('ar', 2)).toBe('/ar/prescriptions?page=2');
+    expect(routes.addAddress('ar')).toBe('/ar/add-address');
+    expect(routes.allProducts('en')).toBe('/en/all-products');
   });
 
   it('signs in and comes back to a local page only', () => {
