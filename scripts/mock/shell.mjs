@@ -29,6 +29,8 @@ const item = (id, label, icon, target = null, badge = null) => ({ id, label, ico
 function mobileNav(locale, { multiInventory }) {
   const ar = locale === 'ar';
   const more = [
+    // enable_prescription on staging: the item opens the storefront's prescriptions page (no Target)
+    item('prescriptions', ar ? 'الوصفات الطبية' : 'Prescription', 'receipt_long'),
     item('orders', ar ? 'طلباتي' : 'Orders', 'shopping_bag'),
     item('wishlist', ar ? 'المفضلة' : 'Wishlist', 'favorite', null, 'wishlist'),
     ...(multiInventory ? [item('area', ar ? 'المنطقة' : 'Area', 'location_on')] : []),

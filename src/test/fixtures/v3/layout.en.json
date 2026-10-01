@@ -4306,6 +4306,13 @@
     "welcomeText": "Login for a seamless experience.",
     "items": [
      {
+      "id": "prescriptions",
+      "label": "Prescription",
+      "icon": "receipt_long",
+      "target": null,
+      "badge": null
+     },
+     {
       "id": "orders",
       "label": "Orders",
       "icon": "shopping_bag",

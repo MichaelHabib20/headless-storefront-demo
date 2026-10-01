@@ -85,7 +85,11 @@ function Field({ locale, field, error, value, upload, id }: FieldProps) {
       </div>
     );
   } else if (field.kind === 'file') {
-    control = <FileInput locale={locale} field={field} upload={upload} id={id} required={field.required} describedBy={describedBy} invalid={Boolean(error)} />;
+    control = field.multiple ? (
+      <FilesInput locale={locale} field={field} upload={upload} id={id} required={field.required} describedBy={describedBy} invalid={Boolean(error)} />
+    ) : (
+      <FileInput locale={locale} field={field} upload={upload} id={id} required={field.required} describedBy={describedBy} invalid={Boolean(error)} />
+    );
   } else {
     control = (
       <input
@@ -172,6 +176,69 @@ function FileInput({ locale, field, upload, id, required, describedBy, invalid }
         {state.status === 'uploading' && t('contentFormUploading')}
         {state.status === 'done' && t('contentFormUploaded').replace('{name}', state.name ?? '')}
         {state.status === 'failed' && state.message}
+      </p>
+    </div>
+  );
+}
+
+/**
+ * A file field with `multiple`: each chosen file is uploaded right away and listed with a remove
+ * button; the form sends one id per uploaded file under the field's name. How many are allowed is
+ * the backend's rule (its 422 message shows under the field).
+ */
+function FilesInput({ locale, field, upload, id, required, describedBy, invalid }: FileInputProps) {
+  const t = translator(locale);
+  const [files, setFiles] = useState<{ id: string; name: string }[]>([]);
+  const [status, setStatus] = useState<{ uploading: boolean; message?: string }>({ uploading: false });
+
+  async function choose(list: FileList | null) {
+    if (!list?.length || !upload) return;
+    setStatus({ uploading: true });
+    let message: string | undefined;
+    for (const file of Array.from(list)) {
+      const form = new FormData();
+      form.set('file', file);
+      const result = await upload(locale, form).catch(() => ({ ok: false as const, message: t('contentFormUploadFailed') }));
+      if (result.ok) setFiles((current) => [...current, { id: result.id, name: result.name }]);
+      else message = result.message;
+    }
+    setStatus({ uploading: false, message });
+  }
+
+  return (
+    <div className={styles.file}>
+      <input
+        id={id}
+        type="file" multiple
+        className={styles.fileInput}
+        accept="image/jpeg,image/png,image/webp,application/pdf"
+        required={required && files.length === 0}
+        aria-invalid={invalid || status.message ? true : undefined}
+        aria-describedby={describedBy}
+        disabled={!upload || status.uploading}
+        onChange={(event) => {
+          void choose(event.currentTarget.files);
+          event.currentTarget.value = '';
+        }}
+        data-testid={`file-${field.name}`}
+      />
+      {files.length > 0 && (
+        <ul className={styles.fileList} data-testid={`files-${field.name}`}>
+          {files.map((file) => (
+            <li key={file.id}>
+              {/* the id the API issued for the uploaded file */}
+              <input type="hidden" name={inputName(field)} value={file.id} />
+              <span>{file.name}</span>
+              <button type="button" className={styles.fileRemove} onClick={() => setFiles((current) => current.filter((entry) => entry.id !== file.id))}>
+                {t('contentFormRemoveFile').replace('{name}', file.name)}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className={status.message ? styles.fieldError : styles.hint} role="status">
+        {status.uploading && t('contentFormUploading')}
+        {!status.uploading && status.message}
       </p>
     </div>
   );

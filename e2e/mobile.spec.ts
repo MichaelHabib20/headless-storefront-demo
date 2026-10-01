@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { MOCK_API, live, signInAsCustomer } from './support';
 
 test.describe('mobile', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,6 +29,24 @@ test.describe('mobile', () => {
     for (const locale of ['en', 'ar']) {
       expect((await page.goto(`/${locale}/all-products`))?.status()).toBe(200);
       await expect(page.getByTestId('listing-grid').getByTestId('product-card').first()).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+  });
+
+  test('prescriptions on a phone: the bottom nav opens the page, both languages fit', async ({ page, context }) => {
+    test.skip(live, 'needs the mock API');
+    await page.request.post(`${MOCK_API}/__reset`);
+    await signInAsCustomer(context);
+    await page.goto('/en');
+    await page.getByTestId('mobile-bottom-nav').getByRole('button', { name: /More/ }).click();
+    const item = page.getByTestId('more-sheet').getByRole('link', { name: /Prescription/ });
+    await expect(item).toHaveAttribute('href', '/en/prescriptions');
+    await item.click();
+    await expect(page).toHaveURL(/\/en\/prescriptions$/);
+    for (const locale of ['en', 'ar']) {
+      await page.goto(`/${locale}/prescriptions`);
+      await expect(page.getByTestId('prescription-form')).toBeVisible();
+      await expect(page.getByTestId('prescription').first()).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     }
   });

@@ -4306,6 +4306,13 @@
     "welcomeText": "تسجيل الدخول لتجربة سلسة.",
     "items": [
      {
+      "id": "prescriptions",
+      "label": "الوصفات الطبية",
+      "icon": "receipt_long",
+      "target": null,
+      "badge": null
+     },
+     {
       "id": "orders",
       "label": "طلباتي",
       "icon": "shopping_bag",

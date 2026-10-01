@@ -351,4 +351,16 @@ describe('seo + marketing rules', () => {
     // the search form posts to the search page; the search page links to itself
     expect(rulesHit('src/components/layout/SearchBox.tsx', '<form action={routes.search(locale)} method="get" role="search">')).not.toContain('all-products-route');
   });
+
+  it('keeps the prescription rules on the API side', () => {
+    expect(rulesHit('src/components/prescriptions/X.tsx', "{item.status.code === 'received' && <CancelPrescription />}")).toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', 'const canSend = form.addresses.length > 0 && me.customer.phoneVerified;')).toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '<button disabled={!customer.phoneVerified}>')).toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '<input name="prescriptionNumber" required />')).toContain('prescription-rules-from-api');
+    // reading the API's answers is fine
+    expect(rulesHit('src/components/prescriptions/X.tsx', 'const canSend = form.canSend;')).not.toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '{item.actions.canCancel && <CancelPrescription />}')).not.toContain('prescription-rules-from-api');
+    expect(rulesHit('src/components/prescriptions/X.tsx', '<CancelButton canCancel={item.actions.canCancel} />')).not.toContain('prescription-rules-from-api');
+    expect(rulesHit('src/app/[locale]/prescriptions/page.tsx', "{item.status.code === 'in_progress' && <Hint />}")).toContain('prescription-rules-from-api');
+  });
 });

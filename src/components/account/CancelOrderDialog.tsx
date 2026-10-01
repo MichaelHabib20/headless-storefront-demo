@@ -16,6 +16,8 @@ interface CancelOrderDialogProps {
   onDone: (result: CancelOrderResult) => void;
   /** Closed without cancelling. */
   onClose: () => void;
+  /** The dialog's heading and confirm button when it cancels something else than an order (a prescription). */
+  labels?: { title: string; confirm: string };
 }
 
 const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), a[href]';
@@ -24,7 +26,7 @@ const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), textarea:not([
  * Modal dialog: the API's cancellation reasons and an optional note. Focus moves in on open, stays
  * inside (Tab wraps), Escape closes, and the page gets it back on close.
  */
-export function CancelOrderDialog({ locale, orderId, reasons, cancelAction, onDone, onClose }: CancelOrderDialogProps) {
+export function CancelOrderDialog({ locale, orderId, reasons, cancelAction, onDone, onClose, labels }: CancelOrderDialogProps) {
   const t = translator(locale);
   const titleId = useId();
   const dialog = useRef<HTMLDivElement>(null);
@@ -74,7 +76,7 @@ export function CancelOrderDialog({ locale, orderId, reasons, cancelAction, onDo
     <div className={styles.backdrop} onMouseDown={(event) => event.target === event.currentTarget && !pending && onClose()}>
       <div ref={dialog} className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={onKeyDown} data-testid="cancel-dialog">
         <h2 id={titleId} className={styles.dialogTitle}>
-          {t('orderCancelTitle')}
+          {labels?.title ?? t('orderCancelTitle')}
         </h2>
 
         {reasons ? (
@@ -96,7 +98,7 @@ export function CancelOrderDialog({ locale, orderId, reasons, cancelAction, onDo
             </div>
             <div className={styles.dialogActions}>
               <button type="submit" className={styles.primary} disabled={reasonId === null || pending}>
-                {pending ? t('orderCancelling') : t('orderCancelConfirm')}
+                {pending ? t('orderCancelling') : (labels?.confirm ?? t('orderCancelConfirm'))}
               </button>
               <button type="button" className={styles.secondary} onClick={onClose} disabled={pending}>
                 {t('orderCancelKeep')}

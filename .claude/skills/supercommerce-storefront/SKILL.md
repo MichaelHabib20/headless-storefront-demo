@@ -95,6 +95,7 @@ them and **blocks the deploy** when one is broken.
 | Product page, options, gallery, notify-me, reviews, recommendations | [reference/product.md](reference/product.md) |
 | Listings, filters, sort, search box, categories, brands, old URLs / redirects / 410 | [reference/catalog.md](reference/catalog.md) |
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
+| Prescriptions (send, list, cancel), the add-address step | [reference/prescriptions.md](reference/prescriptions.md) |
 | Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 | Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |
@@ -138,6 +139,8 @@ them and **blocks the deploy** when one is broken.
 | "Show a maintenance page" | Nothing to build: the API answers 503 `store_unavailable`; the layout shows `StoreUnavailable` with the merchant's message | A flag or a hardcoded "we'll be back" page |
 | "Add a legal page" / "write our privacy policy" | The merchant adds it in the CMS; it appears in `Layout.legal` (footer, cookie notice) | Legal text in components or messages |
 | "Open the cart drawer after adding" | Already: `useMiniCart().open()`; the drawer shows `GET /cart` as it is | Adding up line totals in the drawer |
+| "Let customers cancel a prescription that is being prepared" / "require photos" | Backend rules (`actions.canCancel`, `form.fields[].required`) → "needs backend support" | `status.code === 'received'`, own `required` |
+| "Link 'all products'" | `routes.allProducts(locale)` or the API's Target `{type: search, query: ""}` | `routes.search(locale)` with no text |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |
 | "Sign in by e-mail instead of phone" / "add a birthdate or referral field to sign-up" | Store settings (`AuthSettings.loginMethod`, `signup.fields`) → "needs backend support" | Change the input type, add `<input name="referralCode">` |
 | "Add Google / Facebook sign-in" | Store setting (`AuthSettings.social`) → "needs backend support"; `SocialButtons` draws what is configured | Hardcode a client id or load an SDK unconditionally |
