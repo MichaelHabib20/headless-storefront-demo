@@ -2,6 +2,8 @@ import 'server-only';
 import { getProductRecommendations, getProductReviews, type Locale } from '@/sdk';
 import { ProductRecommendations } from '@/components/product/ProductRecommendations';
 import { ProductReviews, ProductReviewsUnavailable } from '@/components/product/ProductReviews';
+import { WriteReview } from '@/components/product/WriteReview';
+import { writeReviewAction } from '@/lib/reviews.actions';
 import { shopperContext } from '@/lib/shopper.server';
 import { storefrontClient } from '@/lib/storefront.server';
 
@@ -24,11 +26,28 @@ export async function RecommendationsBlock({ locale, slug }: { locale: Locale; s
   }
 }
 
-/** One page of reviews (public); a short note when they cannot be loaded. */
-export async function ReviewsBlock({ locale, slug, page, baseHref }: { locale: Locale; slug: string; page: number; baseHref: string }) {
+interface ReviewsBlockProps {
+  locale: Locale;
+  slug: string;
+  page: number;
+  baseHref: string;
+  /** The shown variant (`details.product.id` / `.name`), for the review form. */
+  productId: number;
+  productName: string;
+}
+
+/**
+ * One page of reviews; a short note when they cannot be loaded. The shopper token, when the visitor
+ * has one, is sent so `write` says whether this shopper may write a review (reading never creates one).
+ */
+export async function ReviewsBlock({ locale, slug, page, baseHref, productId, productName }: ReviewsBlockProps) {
   try {
-    const reviews = await getProductReviews(storefrontClient(), locale, slug, { page, perPage: REVIEWS_PER_PAGE });
-    return <ProductReviews reviews={reviews} locale={locale} baseHref={baseHref} />;
+    const { token } = await shopperContext(locale);
+    const reviews = await getProductReviews(storefrontClient(), locale, slug, { page, perPage: REVIEWS_PER_PAGE }, token);
+    const writeForm = reviews.write ? (
+      <WriteReview locale={locale} productId={productId} productName={productName} access={reviews.write} writeReviewAction={writeReviewAction} />
+    ) : null;
+    return <ProductReviews reviews={reviews} locale={locale} baseHref={baseHref} writeForm={writeForm} />;
   } catch (error) {
     console.error('product reviews failed to load', error);
     return <ProductReviewsUnavailable locale={locale} />;

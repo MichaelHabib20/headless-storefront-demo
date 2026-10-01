@@ -31,6 +31,10 @@ export type ApiErrorKind =
   | 'guest_checkout_disabled'
   | 'phone_in_use'
   | 'payment_provider_error'
+  // orders extras (v3 error codes, same names)
+  | 'already_rated'
+  | 'cannot_rate'
+  | 'feature_disabled'
   | 'unknown';
 
 export class ApiError extends Error {

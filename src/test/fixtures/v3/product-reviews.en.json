@@ -74,6 +74,12 @@
    "perPage": 5,
    "total": 23,
    "totalPages": 5
+  },
+  "write": {
+   "enabled": true,
+   "requiresSignIn": true,
+   "requiresOrder": false,
+   "message": "Sign in to write a review."
   }
  }
 }

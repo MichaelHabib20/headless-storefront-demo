@@ -40,7 +40,10 @@ type V3OnlyKind =
   | 'cannot_cancel'
   | 'guest_checkout_disabled'
   | 'phone_in_use'
-  | 'payment_provider_error';
+  | 'payment_provider_error'
+  | 'already_rated'
+  | 'cannot_rate'
+  | 'feature_disabled';
 type LegacyKind = Exclude<ApiErrorKind, V3OnlyKind>;
 
 const FALLBACK_MESSAGES: Record<LegacyKind, string> = {

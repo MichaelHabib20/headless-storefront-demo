@@ -1,0 +1,157 @@
+{
+ "data": {
+  "id": "mock-order-48200",
+  "number": "48200",
+  "placedAt": "2026-09-20T12:00:00.000Z",
+  "status": {
+   "code": "delivered",
+   "label": "Delivered",
+   "active": false
+  },
+  "timeline": [
+   {
+    "label": "Order placed",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "Confirmed",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "Being prepared",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "Out for delivery",
+    "done": true,
+    "current": false
+   },
+   {
+    "label": "Delivered",
+    "done": true,
+    "current": true
+   }
+  ],
+  "fulfilment": {
+   "type": "delivery",
+   "address": "12, 12 Abbas El Akkad St, Nasr City, Cairo",
+   "branch": null
+  },
+  "payment": {
+   "method": "Credit card",
+   "online": true
+  },
+  "items": [
+   {
+    "name": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile",
+    "image": {
+     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+     "alt": "J&J Baby Bedtime Bath 125Ml Lavender&Camomile"
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+    },
+    "productId": 36480,
+    "quantity": 2,
+    "lineTotal": {
+     "amount": 32.4,
+     "currency": "EGP",
+     "display": "32.4 EGP"
+    },
+    "compareAt": {
+     "amount": 36,
+     "currency": "EGP",
+     "display": "36 EGP"
+    }
+   },
+   {
+    "name": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)",
+    "image": {
+     "url": "https://seif-online.com/storage/seif-pharmacies/uploads/235128.webp",
+     "alt": "J&J Baby Sleep Time Sh. 200Ml Natural Calm (New)"
+    },
+    "target": {
+     "type": "product",
+     "slug": "jj-baby-sleep-time-sh-200ml-natural-calm-new"
+    },
+    "productId": 8412,
+    "quantity": 1,
+    "lineTotal": {
+     "amount": 105,
+     "currency": "EGP",
+     "display": "105 EGP"
+    },
+    "compareAt": null
+   },
+   {
+    "name": "Baby Wipes Travel Pack",
+    "image": null,
+    "target": null,
+    "productId": null,
+    "quantity": 1,
+    "lineTotal": {
+     "amount": 45,
+     "currency": "EGP",
+     "display": "45 EGP"
+    },
+    "compareAt": null
+   }
+  ],
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "Subtotal",
+     "amount": {
+      "amount": 182.4,
+      "currency": "EGP",
+      "display": "182.40 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "promotion_discount",
+     "label": "Weekend offer",
+     "amount": {
+      "amount": -15,
+      "currency": "EGP",
+      "display": "-15.00 EGP"
+     },
+     "text": null
+    },
+    {
+     "kind": "delivery",
+     "label": "Delivery",
+     "amount": {
+      "amount": 25,
+      "currency": "EGP",
+      "display": "25.00 EGP"
+     },
+     "text": null
+    }
+   ],
+   "total": {
+    "amount": 192.4,
+    "currency": "EGP",
+    "display": "192.40 EGP"
+   }
+  },
+  "note": null,
+  "actions": {
+   "canCancel": false,
+   "canReorder": true,
+   "canRate": true,
+   "canReviewProducts": true
+  },
+  "rating": null,
+  "ratingForm": {
+   "driverRating": "optional",
+   "items": true
+  },
+  "phone": "01••••••001"
+ }
+}

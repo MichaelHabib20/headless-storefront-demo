@@ -1,0 +1,113 @@
+import { defineMessages } from './define';
+
+/**
+ * UI strings of the orders extras: tracking without sign-in, rating an order, writing a review and
+ * sharing a product. Keep en and ar in sync. Whether a shopper may rate / review, the rating dialog's
+ * fields, the review access sentence and every refusal come from the API — they are not here.
+ */
+export const ordersExtrasMessages = defineMessages({
+  en: {
+    // track order
+    trackTitle: 'Track your order',
+    trackIntro: 'Enter your order number and the phone number you ordered with.',
+    trackNumber: 'Order number',
+    trackPhone: 'Phone number',
+    trackSubmit: 'Find my order',
+    trackNotFound: 'We could not find an order with this number and phone number.',
+    trackPhoneUsed: 'Phone on the order',
+    trackError: 'We could not look up your order right now. Please try again.',
+
+    // rate an order
+    orderRateTitle: 'Rate your order',
+    orderRate: 'Rate this order',
+    orderRateQuestion: 'How was your order?',
+    orderRateDriver: 'How was the delivery?',
+    orderRateDriverOptional: '(optional)',
+    orderRateFeedback: 'Tell us more (optional)',
+    orderRateItems: 'Rate the products',
+    orderRateItemComment: 'Comment (optional)',
+    orderRateSubmit: 'Send my rating',
+    orderRateSending: 'Sending…',
+    orderRateSkip: 'Not now',
+    orderRateDone: 'Thank you for rating your order.',
+    orderRateError: 'We could not save your rating. Please try again.',
+    orderRatingTitle: 'Your rating',
+    orderRatingDriver: 'Delivery',
+    orderRatingFeedback: 'Your feedback',
+    ratingStar: '{n} star',
+    ratingStars: '{n} stars',
+    ratingOutOf: 'Rated {rating} out of {max}',
+
+    // write a review
+    reviewWrite: 'Write a review',
+    reviewWriteTitle: 'Write a review',
+    reviewFor: 'Review {product}',
+    reviewRating: 'Your rating',
+    reviewComment: 'Your review',
+    reviewSubmit: 'Send review',
+    reviewSending: 'Sending…',
+    reviewCancel: 'Cancel',
+    reviewSignIn: 'Sign in',
+    reviewError: 'We could not send your review. Please try again.',
+
+    // share
+    share: 'Share',
+    shareTitle: 'Share this product',
+    shareWhatsapp: 'WhatsApp',
+    shareFacebook: 'Facebook',
+    shareX: 'X',
+    shareCopy: 'Copy link',
+    shareCopied: 'Link copied',
+    shareClose: 'Close',
+  },
+  ar: {
+    trackTitle: 'تتبع طلبك',
+    trackIntro: 'أدخل رقم الطلب ورقم الهاتف الذي طلبت به.',
+    trackNumber: 'رقم الطلب',
+    trackPhone: 'رقم الهاتف',
+    trackSubmit: 'ابحث عن طلبي',
+    trackNotFound: 'لم نجد طلباً بهذا الرقم ورقم الهاتف.',
+    trackPhoneUsed: 'الهاتف المسجل على الطلب',
+    trackError: 'تعذر البحث عن طلبك الآن. حاول مرة أخرى.',
+
+    orderRateTitle: 'قيّم طلبك',
+    orderRate: 'قيّم هذا الطلب',
+    orderRateQuestion: 'كيف كان طلبك؟',
+    orderRateDriver: 'كيف كان التوصيل؟',
+    orderRateDriverOptional: '(اختياري)',
+    orderRateFeedback: 'أخبرنا المزيد (اختياري)',
+    orderRateItems: 'قيّم المنتجات',
+    orderRateItemComment: 'تعليق (اختياري)',
+    orderRateSubmit: 'إرسال تقييمي',
+    orderRateSending: 'جارٍ الإرسال…',
+    orderRateSkip: 'ليس الآن',
+    orderRateDone: 'شكراً لتقييم طلبك.',
+    orderRateError: 'تعذر حفظ تقييمك. حاول مرة أخرى.',
+    orderRatingTitle: 'تقييمك',
+    orderRatingDriver: 'التوصيل',
+    orderRatingFeedback: 'ملاحظاتك',
+    ratingStar: 'نجمة واحدة',
+    ratingStars: '{n} نجوم',
+    ratingOutOf: 'التقييم {rating} من {max}',
+
+    reviewWrite: 'اكتب تقييماً',
+    reviewWriteTitle: 'اكتب تقييماً',
+    reviewFor: 'تقييم {product}',
+    reviewRating: 'تقييمك',
+    reviewComment: 'رأيك',
+    reviewSubmit: 'إرسال التقييم',
+    reviewSending: 'جارٍ الإرسال…',
+    reviewCancel: 'إلغاء',
+    reviewSignIn: 'تسجيل الدخول',
+    reviewError: 'تعذر إرسال تقييمك. حاول مرة أخرى.',
+
+    share: 'مشاركة',
+    shareTitle: 'شارك هذا المنتج',
+    shareWhatsapp: 'واتساب',
+    shareFacebook: 'فيسبوك',
+    shareX: 'إكس',
+    shareCopy: 'نسخ الرابط',
+    shareCopied: 'تم نسخ الرابط',
+    shareClose: 'إغلاق',
+  },
+});

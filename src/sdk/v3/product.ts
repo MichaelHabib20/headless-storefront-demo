@@ -4,7 +4,7 @@
  * Reads work without a token; with one, prices and limits are the shopper's (and never cached).
  */
 import type { StorefrontClient } from './http';
-import type { Locale, NotifyMeResult, ProductDetails, ProductRecommendations, ProductReviewsPage } from './types';
+import type { Locale, MessageResult, NotifyMeResult, ProductDetails, ProductRecommendations, ProductReviewsPage, WriteReviewInput } from './types';
 
 interface Ctx {
   locale: Locale;
@@ -27,9 +27,20 @@ export const getProduct = (client: StorefrontClient, ctx: Ctx, slug: string) =>
 export const getProductRecommendations = (client: StorefrontClient, ctx: Ctx, slug: string) =>
   client.request<ProductRecommendations>('GET', `${productPath(slug)}/recommendations`, ctx);
 
-/** Rating summary and one page of reviews. Public: no shopper token. */
-export const getProductReviews = (client: StorefrontClient, locale: Locale, slug: string, { page, perPage }: PageQuery = {}) =>
-  client.request<ProductReviewsPage>('GET', `${productPath(slug)}/reviews`, { locale, query: { page, perPage } });
+/**
+ * Rating summary and one page of reviews. Public; a shopper token (when the visitor has one) only
+ * decides `write.requiresSignIn` — the read is never cached with a token and never creates one.
+ */
+export const getProductReviews = (client: StorefrontClient, locale: Locale, slug: string, { page, perPage }: PageQuery = {}, token: string | null = null) =>
+  client.request<ProductReviewsPage>('GET', `${productPath(slug)}/reviews`, { locale, token, query: { page, perPage } });
+
+/**
+ * Writes a review (moderated: it shows once approved). Needs a shopper token. Whether the shopper
+ * may write one is `ProductReviewsPage.write`; the backend answers 403 `feature_disabled`,
+ * 422 `validation_failed` (`fields.orderId` when the store wants a delivered order) or 404.
+ */
+export const writeReview = (client: StorefrontClient, ctx: Ctx, input: WriteReviewInput) =>
+  client.request<MessageResult>('POST', 'reviews', { ...ctx, body: input });
 
 /**
  * "Tell me when it is back". Needs a shopper token (a guest is fine). The email is sent only when

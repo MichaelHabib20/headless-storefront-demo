@@ -61,6 +61,9 @@ const ERROR_KINDS: Record<string, ApiErrorKind> = {
   guest_checkout_disabled: 'guest_checkout_disabled',
   phone_in_use: 'phone_in_use',
   payment_provider_error: 'payment_provider_error',
+  already_rated: 'already_rated',
+  cannot_rate: 'cannot_rate',
+  feature_disabled: 'feature_disabled',
 };
 
 function kindFor(status: number, code: string | undefined): ApiErrorKind {

@@ -70,7 +70,10 @@ http
 
     const recorded = pathname.match(/^\/(layout|home)$/);
     if (recorded && req.method === 'GET') {
-      return send(200, fs.readFileSync(path.join(dir, `${recorded[1]}.${locale}.json`), 'utf8'));
+      const answer = JSON.parse(fs.readFileSync(path.join(dir, `${recorded[1]}.${locale}.json`), 'utf8'));
+      // Modules may add the members of later phases (e.g. Layout.marketing, Home.seo).
+      for (const part of modules) if (part.decorate) answer.data = part.decorate(recorded[1], answer.data, locale);
+      return send(200, answer);
     }
 
     const token = String(req.headers.authorization ?? '').replace(/^Bearer\s+/i, '') || null;

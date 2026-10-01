@@ -11,6 +11,42 @@
   text-transform: uppercase;
 }
 
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-5);
+}
+
+.titleRow .title {
+  margin-block-end: 0;
+}
+
+.write {
+  display: flex;
+}
+
+.writeButton {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid currentColor;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.writeNote {
+  margin: 0;
+  color: var(--color-muted, #666);
+}
+
+.writeLink {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .layout {
   display: grid;
   gap: var(--space-6);

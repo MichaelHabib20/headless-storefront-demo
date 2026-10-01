@@ -112,3 +112,14 @@ export type CategoryNode = Schemas['CategoryNode'];
 export type CategoryTree = Schemas['CategoriesResponse']['data'];
 export type BrandsPage = Schemas['BrandsResponse']['data'];
 export type Resolution = Schemas['Resolution'];
+
+// orders extras: tracking without sign-in, order rating, product reviews
+export type RateOrderInput = Schemas['RateOrderRequest'];
+export type WriteReviewInput = Schemas['WriteReviewRequest'];
+/** `Order.rating`: the rating the shopper gave (null = not rated). */
+export type OrderRating = NonNullable<Order['rating']>;
+/** `Order.ratingForm`: how to draw the rating dialog (null = cannot rate now). */
+export type OrderRatingForm = NonNullable<Order['ratingForm']>;
+/** `ProductReviewsPage.write`: whether and how the shopper may write a review. */
+export type ReviewAccess = NonNullable<ProductReviewsPage['write']>;
+export type MessageResult = Schemas['MessageResponse']['data'];

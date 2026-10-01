@@ -29,7 +29,8 @@ vi.mock('@/lib/account.server', () => ({
 }));
 vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn() }));
 vi.mock('./addresses/actions', () => ({ saveAddressAction: vi.fn(), deleteAddressAction: vi.fn(), setDefaultAddressAction: vi.fn() }));
-vi.mock('./orders/actions', () => ({ cancelOrderAction: vi.fn(), reorderAction: vi.fn() }));
+vi.mock('./orders/actions', () => ({ cancelOrderAction: vi.fn(), reorderAction: vi.fn(), rateOrderAction: vi.fn() }));
+vi.mock('@/lib/reviews.actions', () => ({ writeReviewAction: vi.fn() }));
 
 const params = <T extends object>(value: T) => Promise.resolve(value);
 const query = (value: Record<string, string> = {}) => Promise.resolve(value);

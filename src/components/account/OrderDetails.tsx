@@ -7,18 +7,24 @@ import { externalHref, routes } from '@/lib/routing';
 import { Money } from '@/money';
 import { Icon } from '../ui/Icon';
 import { TargetLink } from '../ui/TargetLink';
+import { ItemReview } from './ItemReview';
 import { OrderActions } from './OrderActions';
+import { OrderRating } from './OrderRating';
 import { OrderStatusBadge } from './OrderStatusBadge';
-import type { CancelOrderAction, ReorderAction } from './types';
+import type { WriteReviewAction } from './ReviewDialog';
+import type { CancelOrderAction, RateOrderAction, ReorderAction } from './types';
 import styles from './Account.module.css';
 
 interface OrderDetailsProps {
   order: Order;
   locale: Locale;
   /** `getOrderCancellationReasons`, loaded only when the order can be cancelled; null when it failed. */
-  reasons: CancellationReason[] | null;
-  cancelAction: CancelOrderAction;
-  reorderAction: ReorderAction;
+  reasons?: CancellationReason[] | null;
+  /** The shopper's own order page has the actions; the public tracking page has none (read-only). */
+  cancelAction?: CancelOrderAction;
+  reorderAction?: ReorderAction;
+  rateAction?: RateOrderAction;
+  writeReviewAction?: WriteReviewAction;
   timeZone?: string;
 }
 
@@ -26,11 +32,12 @@ interface OrderDetailsProps {
  * One order exactly as the API describes it: status, steps, where it goes, how it is paid, the
  * lines, the price breakdown and what the shopper may do now (`actions`). Nothing is added up here.
  */
-export function OrderDetails({ order, locale, reasons, cancelAction, reorderAction, timeZone }: OrderDetailsProps) {
+export function OrderDetails({ order, locale, reasons = null, cancelAction, reorderAction, rateAction, writeReviewAction, timeZone }: OrderDetailsProps) {
   const t = translator(locale);
   const { fulfilment, payment, totals } = order;
   const branch = fulfilment.branch;
   const mapHref = externalHref(branch?.mapUrl);
+  const reviewable = Boolean(order.actions.canReviewProducts && writeReviewAction);
 
   return (
     <article className={`container ${styles.page}`} data-testid="order" data-order-id={order.id}>
@@ -94,6 +101,9 @@ export function OrderDetails({ order, locale, reasons, cancelAction, reorderActi
                   <p className={styles.muted}>
                     {t('orderQuantity')}: <span data-testid="order-item-quantity">{formatNumber(item.quantity, locale)}</span>
                   </p>
+                  {reviewable && typeof item.productId === 'number' && writeReviewAction && (
+                    <ItemReview locale={locale} orderId={order.id} productId={item.productId} productName={item.name} writeReviewAction={writeReviewAction} />
+                  )}
                 </div>
                 <p className={styles.itemPrices}>
                   <span className="visually-hidden">{t('orderLineTotal')}</span>
@@ -176,15 +186,19 @@ export function OrderDetails({ order, locale, reasons, cancelAction, reorderActi
             </section>
           )}
 
-          <OrderActions
-            locale={locale}
-            orderId={order.id}
-            canCancel={order.actions.canCancel}
-            canReorder={order.actions.canReorder}
-            reasons={reasons}
-            cancelAction={cancelAction}
-            reorderAction={reorderAction}
-          />
+          {rateAction && <OrderRating locale={locale} order={order} rateAction={rateAction} />}
+
+          {cancelAction && reorderAction && (
+            <OrderActions
+              locale={locale}
+              orderId={order.id}
+              canCancel={order.actions.canCancel}
+              canReorder={order.actions.canReorder}
+              reasons={reasons}
+              cancelAction={cancelAction}
+              reorderAction={reorderAction}
+            />
+          )}
         </div>
       </div>
     </article>
