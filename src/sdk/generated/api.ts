@@ -2623,16 +2623,35 @@ export interface components {
             data: {
                 customer: components["schemas"]["Customer"];
                 /** @description The profile form, in order, with the current values (hidden fields are not listed) */
-                fields: (components["schemas"]["FormField"] & {
-                    value: string | null;
-                    editable: boolean;
-                })[];
+                fields: components["schemas"]["ProfileField"][];
                 /**
                  * @description After a save; `verify_email` = a confirmation link was e-mailed to the new address
                  * @enum {string|null}
                  */
                 next: "verify_phone" | "verify_email" | null;
             };
+        };
+        /** @description A FormField with the customer's current value and whether it may be changed */
+        ProfileField: {
+            name: string;
+            label: string;
+            /**
+             * @description Unknown values → text
+             * @enum {string}
+             */
+            kind: "text" | "email" | "phone" | "password" | "date" | "textarea" | "select" | "file" | "checkbox";
+            required: boolean;
+            placeholder: string | null;
+            options: {
+                value: string;
+                label: string;
+                selected: boolean;
+            }[];
+            multiple: boolean;
+            hint?: string | null;
+            maxLength?: number | null;
+            value: string | null;
+            editable: boolean;
         };
         /** @description Values keyed by `ProfileResponse.fields[].name` */
         ProfileInput: {

@@ -3680,19 +3680,38 @@ components:
             fields:
               description: The profile form, in order, with the current values (hidden fields are not listed)
               type: array
-              items:
-                allOf:
-                  - $ref: '#/components/schemas/FormField'
-                  - type: object
-                    required: [value, editable]
-                    properties:
-                      value: { type: string, nullable: true }
-                      editable: { type: boolean }
+              items: { $ref: '#/components/schemas/ProfileField' }
             next:
               type: string
               nullable: true
               enum: [verify_phone, verify_email, null]
               description: After a save; `verify_email` = a confirmation link was e-mailed to the new address
+    ProfileField:
+      description: A FormField with the customer's current value and whether it may be changed
+      type: object
+      required: [name, label, kind, required, placeholder, options, multiple, value, editable]
+      additionalProperties: false
+      properties:
+        name: { type: string }
+        label: { type: string }
+        kind: { type: string, enum: [text, email, phone, password, date, textarea, select, file, checkbox], description: 'Unknown values → text' }
+        required: { type: boolean }
+        placeholder: { type: string, nullable: true }
+        options:
+          type: array
+          items:
+            type: object
+            required: [value, label, selected]
+            additionalProperties: false
+            properties:
+              value: { type: string }
+              label: { type: string }
+              selected: { type: boolean }
+        multiple: { type: boolean }
+        hint: { type: string, nullable: true }
+        maxLength: { type: integer, nullable: true }
+        value: { type: string, nullable: true }
+        editable: { type: boolean }
     ProfileInput:
       description: Values keyed by `ProfileResponse.fields[].name`
       type: object
