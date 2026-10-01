@@ -10,12 +10,14 @@
  * test it like scripts/mock-shopper.test.mjs does.
  */
 import { createAccountModule } from './account.mjs';
+import { createAuthModule } from './auth.mjs';
 import { createCatalogModule } from './catalog.mjs';
 import { createCheckoutModule } from './checkout.mjs';
 import { createProductModule } from './product.mjs';
 import { createSettingsModule } from './settings.mjs';
 
-const FACTORIES = [createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule];
+// auth first: a revoked token must answer 401 on every path
+const FACTORIES = [createAuthModule, createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule];
 
 export function createModules(shopper) {
   return FACTORIES.map((create) => create(shopper));

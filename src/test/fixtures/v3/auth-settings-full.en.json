@@ -1,0 +1,132 @@
+{
+ "data": {
+  "loginMethod": "phone",
+  "signup": {
+   "enabled": true,
+   "fields": [
+    {
+     "name": "firstName",
+     "label": "First name",
+     "kind": "text",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "lastName",
+     "label": "Last name",
+     "kind": "text",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "phone",
+     "label": "Phone number",
+     "kind": "phone",
+     "required": true,
+     "placeholder": "01xxxxxxxxx",
+     "options": [],
+     "multiple": false,
+     "hint": "11 digits",
+     "maxLength": 11
+    },
+    {
+     "name": "email",
+     "label": "Email",
+     "kind": "email",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "password",
+     "label": "Password",
+     "kind": "password",
+     "required": true,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": "At least 8 characters",
+     "maxLength": null
+    },
+    {
+     "name": "birthdate",
+     "label": "Date of birth",
+     "kind": "date",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "referralCode",
+     "label": "Referral code",
+     "kind": "text",
+     "required": false,
+     "placeholder": null,
+     "options": [],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    },
+    {
+     "name": "customerGroup",
+     "label": "Customer group",
+     "kind": "select",
+     "required": true,
+     "placeholder": null,
+     "options": [
+      {
+       "value": "3",
+       "label": "Pharmacies",
+       "selected": false
+      },
+      {
+       "value": "4",
+       "label": "Clinics",
+       "selected": false
+      }
+     ],
+     "multiple": false,
+     "hint": null,
+     "maxLength": null
+    }
+   ]
+  },
+  "otpLogin": true,
+  "passwordReset": {
+   "method": "email"
+  },
+  "social": {
+   "google": {
+    "clientId": "google-client-id"
+   },
+   "facebook": {
+    "appId": "fb-app-id"
+   },
+   "apple": null
+  },
+  "phone": {
+   "prefix": "+20",
+   "length": 11,
+   "example": "01xxxxxxxxx"
+  },
+  "verifyPhoneAfterSignup": true,
+  "approval": {
+   "required": true,
+   "waitingText": "Your account is being reviewed. We will let you know as soon as it is approved."
+  }
+ }
+}

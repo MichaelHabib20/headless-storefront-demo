@@ -58,9 +58,11 @@ components. Never run it to make a check pass. The lock itself is tested in
 | `shopper-actions.spec.ts` | Card buttons on the home page (add to cart as a guest, wishlist/compare toggles, `compare_full`), header counts |
 | `catalog.spec.ts` | Listings (filters, chips, clear all, sort, pages, price form), search + suggestions, every listing route, categories/brands pages, 404/invalid, Arabic, phone drawer, no-JS filters, unknown paths (301/302/410/404) |
 | `shopper-live.spec.ts` | The same flows against real staging as a guest and as the test customer (`E2E_LIVE=1`) |
+| `auth.spec.ts` | Sign in (phone, wrong password, Arabic, return page, guest cart merge, OTP tab + social buttons when configured), sign up (form from the API, 422 fields, verify phone after sign-up, closed), sign out revokes, password reset (SMS, e-mail link, none), waiting for approval gate, profile edit (e-mail confirmation, phone re-verification), change password, guest → sign-in prompt |
 
-Helpers in `e2e/support.ts`: `signInAsCustomer(context)` (mock: `test-customer`; live: signs in with
-`E2E_PHONE`/`E2E_PASSWORD` from `.env.local`), `resetMock(page)`, `acceptCookies(page)`, `live`.
+Helpers in `e2e/support.ts`: `signInAsCustomer(context)` (mock: `test-customer`; live: signs in through
+`POST /api/customer/v3/auth/sign-in` with `E2E_PHONE`/`E2E_PASSWORD` from `.env.local`), `liveSignIn(identifier, password)`,
+`resetMock(page)`, `acceptCookies(page)`, `live`.
 
 ## The mock API (e2e + `npm run dev` without a backend)
 
@@ -76,6 +78,8 @@ shopper endpoints are an in-memory store (`scripts/mock/shopper.mjs`) that follo
 | Money | Texts written like the backend's MoneyFormatter (`priceText()` / `totalText()`): prices `18 EGP` / `18 جنية`, totals and the minimum `196.00 EGP`, discount `10 %`; the seeded cart is 65% of the 300 EGP minimum |
 | `POST /__reset` | Fresh state (seeded customer back, guests gone) |
 | `POST /__mode {"fail": true}` | Every API call answers 500 until `{"fail": false}` |
+| `POST /__mode {"auth": {...}}` | Auth store flags (OTP, social, reset method, approval, sign-up closed...): see [auth.md](auth.md) |
+| Auth customers | `01222353123 / secret123` (= `test-customer`), `01000000002 / secret123`; codes `1234` (`scripts/mock/auth.mjs`) |
 
 State is shared by all tests (one server, one worker): **reset in `beforeEach`**, and skip
 state-dependent specs on the live API.

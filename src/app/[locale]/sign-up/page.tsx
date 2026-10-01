@@ -1,47 +1,55 @@
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { isLocale } from '@/sdk';
-import { loadAuthConfig } from '@/lib/config';
+import { AuthPage } from '@/components/auth/AuthPage';
+import { loadAuthSettings } from '@/lib/auth.server';
+import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { readSession } from '@/lib/session';
 import { SignUpForm } from './SignUpForm';
-import '../auth.css';
 
 export const dynamic = 'force-dynamic';
 
-const UNSUPPORTED_LABELS = {
-  customer_group: 'choosing a customer group',
-  international_country: 'choosing a country',
-};
+type Props = { params: Promise<{ locale: string }> };
 
-export default async function SignUpPage({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return isLocale(locale) ? { title: translator(locale)('authSignUpTitle'), robots: { index: false } } : {};
+}
+
+export default async function SignUpPage({ params }: Props) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   if (await readSession()) redirect(routes.account(locale));
-  const result = await loadAuthConfig(locale);
+  const t = translator(locale);
+  const result = await loadAuthSettings(locale);
 
   let body: React.ReactNode;
   if (!result.ok) {
-    body = <div className="alert" role="alert">{result.message}</div>;
-  } else if (!result.config.signupEnabled) {
-    body = <div className="alert" role="alert">Sign-up is currently closed for this store.</div>;
-  } else if (result.config.unsupported.length > 0) {
-    // Showing the form would only lead to a backend rejection, so say why instead.
-    const needs = result.config.unsupported.map((item) => UNSUPPORTED_LABELS[item]).join(' and ');
-    body = <div className="alert" role="alert">This store requires {needs} at sign-up, which this demo does not support yet.</div>;
+    body = (
+      <div className="alert" role="alert">
+        {result.message}
+      </div>
+    );
+  } else if (!result.settings.signup.enabled) {
+    body = (
+      <div className="alert" role="alert" data-testid="sign-up-closed">
+        {t('authSignUpClosed')}
+      </div>
+    );
   } else {
-    const { signupEmail, showBirthdate, showReferralCode, phone } = result.config;
-    body = <SignUpForm signupEmail={signupEmail} showBirthdate={showBirthdate} showReferralCode={showReferralCode} phone={phone} locale={locale} />;
+    body = (
+      <SignUpForm
+        fields={result.settings.signup.fields}
+        locale={locale}
+        labels={{ submit: t('authCreateButton'), submitting: t('authCreating'), confirmPassword: t('authConfirmPassword'), optional: t('authOptional'), choose: t('authChoose'), notEditable: t('profileNotEditable') }}
+      />
+    );
   }
 
   return (
-    <div className="auth-page">
-      <h1>Create account</h1>
-      <p className="lead">It takes less than a minute.</p>
-      <div className="card">{body}</div>
-      <p className="switch">
-        Already have an account? <Link href={routes.signIn(locale)}>Sign in</Link>
-      </p>
-    </div>
+    <AuthPage title={t('authSignUpTitle')} lead={t('authSignUpLead')} footer={{ text: t('authHaveAccount'), href: routes.signIn(locale), label: t('authSignInLink') }} testId="sign-up-page">
+      {body}
+    </AuthPage>
   );
 }

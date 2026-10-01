@@ -251,6 +251,37 @@ describe('architecture rules', () => {
     expect(rulesHit('src/components/account/AddressForm.tsx', '<input type="hidden" name="locale" value={locale} />')).toEqual([]);
   });
 
+  it('catches the legacy auth API and SDK (auth agent)', () => {
+    expect(rulesHit('src/lib/x.ts', "await fetch(`${base}/api/customer/auth`, { method: 'POST' })")).toContain('auth-via-v3');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', 'const { loginMethod } = await getAuthConfig(client);')).toContain('auth-via-v3');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', "import { login } from '@/sdk/auth';")).toContain('auth-via-v3');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', 'await saveSession(await login(client, input));')).toContain('auth-via-v3');
+    expect(rulesHit('scripts/mock/x.mjs', "if (pathname === '/api/customer/profile') {")).toContain('auth-via-v3');
+    // the v3 functions are the way
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', 'const session = await signIn(storefrontClient(), { locale, token: guest }, { identifier, password });')).toEqual([]);
+    expect(rulesHit('src/lib/auth.server.ts', 'return { ok: true, settings: await getAuthSettings(storefrontClient(), locale) };')).toEqual([]);
+  });
+
+  it('catches sign-up fields and the login method decided in the storefront (auth agent)', () => {
+    expect(rulesHit('src/app/[locale]/sign-up/SignUpForm.tsx', '<input name="referralCode" />')).toContain('auth-form-from-api');
+    expect(rulesHit('src/app/[locale]/sign-up/SignUpForm.tsx', "{showBirthdate && <input name='birthdate' type='date' />}")).toContain('auth-form-from-api');
+    expect(rulesHit('src/lib/x.ts', "const loginMethod = flag(raw, 'enablePhoneLogin') ? 'phone' : 'email';")).toContain('auth-form-from-api');
+    expect(rulesHit('src/app/[locale]/sign-in/actions.ts', "const method = identifier.includes('@') ? 'email' : 'phone';")).toContain('auth-form-from-api');
+    // the one component that draws the API's field list, and the contract's fixed shapes
+    expect(rulesHit('src/components/auth/AuthFields.tsx', 'name={field.name}')).toEqual([]);
+    expect(rulesHit('src/app/[locale]/account/complete-profile/CompleteProfileForm.tsx', '<input name="firstName" autoComplete="given-name" />')).toEqual([]);
+    expect(rulesHit('src/app/[locale]/sign-in/SignInForm.tsx', '<input name="identifier" type={isPhone ? "tel" : "email"} />')).toEqual([]);
+  });
+
+  it('catches tokens put in web storage (auth agent)', () => {
+    expect(rulesHit('src/components/auth/X.tsx', "localStorage.setItem('sc_token', session.token);")).toContain('no-token-in-browser-storage');
+    expect(rulesHit('src/components/auth/X.tsx', "window.sessionStorage.setItem('auth_user', JSON.stringify({ token }));")).toContain('no-token-in-browser-storage');
+    expect(rulesHit('src/components/auth/X.tsx', "localStorage.setItem('auth', jwt);")).toContain('no-token-in-browser-storage');
+    // per-viewer conveniences are fine
+    expect(rulesHit('src/components/auth/NextStepGate.tsx', "window.sessionStorage.setItem('sc_verify_phone_dismissed', '1');")).toEqual([]);
+    expect(rulesHit('src/components/layout/CookieConsent.tsx', "localStorage.setItem('sc_cookie_consent', 'accepted');")).toEqual([]);
+  });
+
   it('ignores tests and comments', () => {
     expect(rulesHit('src/components/X.test.tsx', "fetch('/api/customer/x')")).toEqual([]);
     expect(rulesHit('src/components/X.tsx', '// never call fetch( here')).toEqual([]);

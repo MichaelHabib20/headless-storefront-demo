@@ -11,6 +11,7 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { TopBar } from '@/components/layout/TopBar';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { ShopperStateProvider } from '@/components/shopper/ShopperStateProvider';
+import { NextStepGate } from '@/components/auth/NextStepGate';
 import { direction, translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { shopperContext } from '@/lib/shopper.server';
@@ -77,7 +78,23 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <SiteHeader layout={layout} locale={locale} me={me} />
             {/* Product cards on any page read the shopper's cart/wishlist/compare state from here. */}
             <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
-              <main id="main">{children}</main>
+              {/* Me.next: the waiting-for-approval gate and the verify-phone / complete-profile banners. */}
+              <NextStepGate
+                next={me?.next ?? null}
+                hrefs={{ verifyPhone: routes.verifyPhone(locale), completeProfile: routes.completeProfile(locale), waitingApproval: routes.waitingApproval(locale) }}
+                labels={{
+                  verifyBanner: t('authVerifyBanner'),
+                  verifyLink: t('authVerifyBannerLink'),
+                  dismiss: t('authVerifyDismiss'),
+                  completeBanner: t('authCompleteBanner'),
+                  completeLink: t('authCompleteBannerLink'),
+                  waitingTitle: t('authWaitingTitle'),
+                  waitingText: t('authWaitingPending'),
+                  waitingLink: t('authWaitingTitle'),
+                }}
+              >
+                <main id="main">{children}</main>
+              </NextStepGate>
             </ShopperStateProvider>
             <SiteFooter layout={layout} locale={locale} />
             <WhatsAppButton whatsapp={layout.whatsapp} label={t('chatOnWhatsapp')} />

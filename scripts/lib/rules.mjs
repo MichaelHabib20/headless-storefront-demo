@@ -205,6 +205,41 @@ export const RULES = [
     ],
     message: 'Checkout never picks for the shopper: no default address, payment method, branch or plan in the storefront. Send only what the shopper chose; the backend preselects and echoes the choices it used (checkoutSelections(checkout) from @/sdk).',
   },
+  // --- auth: the v3 endpoints only, forms drawn from the API, tokens only in httpOnly cookies ----
+  {
+    // The legacy customer API (`POST /api/customer/auth`, `GET configurations`) and the SDK that wrapped it are gone.
+    id: 'auth-via-v3',
+    applies: (f) => !isTest(f) && !/^scripts\/lib\/rules\.mjs$/.test(f),
+    patterns: [
+      /\/api\/customer\/(auth|configurations|profile)\b/,
+      /\b(getAuthConfig|toAuthConfig|getRawConfig|loadAuthConfig|storeClient|createClient)\s*\(/,
+      /\bfrom\s+['"][^'"]*sdk\/(auth|config|client)['"]/,
+      /\b(login|signup)\s*\(\s*client\b/,
+    ],
+    message:
+      'Auth goes through the v3 SDK only: getAuthSettings, signIn, signUp, signOut, signInWithProvider, sendOtp, signInWithOtp, forgotPassword, resetPassword, sendPhoneCode, verifyPhone, verifyEmail, getProfile, updateProfile, changePassword (src/sdk/v3/auth.ts, account.ts). The legacy auth SDK and /api/customer/auth are gone.',
+  },
+  {
+    // Which fields the sign-up / profile forms have, and whether customers sign in by phone or e-mail, is the backend's call.
+    id: 'auth-form-from-api',
+    applies: (f) => /^src\/(app|components|lib)\//.test(f) && !isTest(f) && f !== 'src/components/auth/AuthFields.tsx',
+    patterns: [
+      /\b(enablePhoneLogin|ENABLE_PHONE_LOGIN|ENABLE_SHOW_BIRTH_DATE|SIGNUP_EMAIL_CONFIG|USE_REFERRED_AS|DISABLE_REFERRAL_CODE|ENABLE_CUSTOMER_GROUPS|ENABLE_INTERNATIONAL_ADDRESS|enableOtpLogin|ENABLE_GOOGLE_SIGN_IN|ENABLE_FB_SIGN_IN)\b/,
+      /\bname=["'{`]+(birthdate|referralCode|customerGroup|country)["'`}]/,
+      // deciding the identifier by its shape instead of AuthSettings.loginMethod
+      /\b(identifier|value)\.includes\(\s*['"]@['"]\s*\)/,
+      /\/\^\[\\?\+?\\?d\s*\][\s\S]{0,20}test\(\s*(identifier|phoneOrEmail)/,
+    ],
+    message:
+      'The sign-in identifier (AuthSettings.loginMethod) and the sign-up / profile fields (AuthSettings.signup.fields, Profile.fields) come from the backend: draw them with <AuthFields> and send the values back under the names it gave. Never read store flags or guess e-mail vs phone in the storefront.',
+  },
+  {
+    // A token in web storage is readable by any script on the page.
+    id: 'no-token-in-browser-storage',
+    applies: (f) => f.startsWith('src/') && !isTest(f),
+    patterns: [/\b(localStorage|sessionStorage)\s*\.\s*setItem\s*\(\s*['"`][^'"`]*(token|sc_token|sc_guest|session|jwt|bearer)[^'"`]*['"`]/i, /\b(localStorage|sessionStorage)\s*\.\s*setItem\s*\([^,]*,\s*[^)]*\b(token|session\.token|jwt)\b/i],
+    message: 'Shopper tokens live only in httpOnly cookies set by server code (src/lib/session.ts, shopper.server.ts). Never put a token, a session or a bearer value in localStorage / sessionStorage.',
+  },
 ];
 
 /**

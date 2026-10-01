@@ -93,7 +93,8 @@ export function createShopperStore({ now = () => new Date('2026-09-29T10:00:00Z'
   let guestCounter = 0;
 
   function newState(isGuest, firstName = null) {
-    return { isGuest, firstName, cart: new Map(), wishlist: [], compare: [], read: new Set() };
+    // customerExtra (lastName, phoneVerified, approval) and next are set by the auth module (scripts/mock/auth.mjs)
+    return { isGuest, firstName, cart: new Map(), wishlist: [], compare: [], read: new Set(), customerExtra: null, next: undefined };
   }
 
   /** The seeded signed-in customer used by tests: "Bearer test-customer". */
@@ -181,11 +182,12 @@ export function createShopperStore({ now = () => new Date('2026-09-29T10:00:00Z'
     return {
       authenticated: true,
       isGuest: state.isGuest,
-      customer: state.firstName ? { firstName: state.firstName } : null,
+      customer: state.firstName ? { firstName: state.firstName, ...(state.customerExtra ?? {}) } : null,
       counts: { cart: state.cart.size, wishlist: state.wishlist.length, compare: state.compare.length, unreadNotifications: unread },
       cartQuantities: Object.fromEntries([...state.cart].map(([id, q]) => [String(id), q])),
       wishlistProductIds: [...state.wishlist],
       compareProductIds: [...state.compare],
+      ...(state.next !== undefined ? { next: state.next } : {}),
     };
   }
 
@@ -308,5 +310,12 @@ export function createShopperStore({ now = () => new Date('2026-09-29T10:00:00Z'
     products: (locale) => [...catalog[locale].values()],
     money,
     total,
+    // for the auth module: customer sessions (a token → a state; several tokens may share one state)
+    /** A fresh signed-in customer's state (empty cart and lists). */
+    newCustomerState: (firstName) => newState(false, firstName),
+    /** Makes `token` open `state` (sign-in issues a new token for an existing customer). */
+    attach: (token, state) => sessions.set(token, state),
+    /** Forgets a token (its state stays reachable through the customer's other tokens). */
+    detach: (token) => sessions.delete(token),
   };
 }

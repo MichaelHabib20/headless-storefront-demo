@@ -112,3 +112,25 @@ export type CategoryNode = Schemas['CategoryNode'];
 export type CategoryTree = Schemas['CategoriesResponse']['data'];
 export type BrandsPage = Schemas['BrandsResponse']['data'];
 export type Resolution = Schemas['Resolution'];
+
+// auth and account: sign in / up / out, social, OTP, password reset, verification, profile, password
+export type AuthSettings = Schemas['AuthSettings'];
+export type FormField = Schemas['FormField'];
+export type SocialProvider = Schemas['SocialSignInRequest']['provider'];
+export type Customer = Schemas['Customer'];
+export type Session = Schemas['Session'];
+/** What the storefront must do next after a sign-in (`Session.next`) or on any page (`Me.next`). */
+export type NextStep = NonNullable<Session['next']>;
+export type SignInInput = Schemas['SignInRequest'];
+export type SignUpValues = Schemas['SignUpRequest']['values'];
+export type SocialSignInInput = Schemas['SocialSignInRequest'];
+export type CompleteProfileInput = Schemas['CompleteProfileRequest'];
+export type ForgotPasswordInput = Schemas['ForgotPasswordRequest'];
+export type ForgotPasswordResult = Schemas['ForgotPasswordResponse']['data'];
+export type ResetPasswordInput = Schemas['ResetPasswordRequest'];
+export type CodeSent = Schemas['CodeSentResponse']['data'];
+export type SignedOut = Schemas['SignedOutResponse']['data'];
+export type MessageResult = Schemas['MessageResponse']['data'];
+export type Profile = Schemas['ProfileResponse']['data'];
+export type ProfileField = Schemas['ProfileField'];
+export type ProfileValues = Schemas['ProfileInput']['values'];

@@ -10,8 +10,11 @@ import type {
   AddressSaved,
   CancelOrderInput,
   CancellationReasons,
+  MessageResult,
   Order,
   OrdersPage,
+  Profile,
+  ProfileValues,
   ReorderResult,
 } from './types';
 
@@ -56,3 +59,14 @@ export const cancelOrder = (client: StorefrontClient, ctx: ShopperContext, order
 /** Puts the order's items in the cart again; answers the cart and the items that were skipped. */
 export const reorder = (client: StorefrontClient, ctx: ShopperContext, orderId: string) =>
   client.request<ReorderResult>('POST', `${order(orderId)}/reorder`, ctx);
+
+// profile and password (customer token only: a guest token answers 401)
+/** The customer and the profile form (`fields`, with the current values and whether each one is editable). */
+export const getProfile = (client: StorefrontClient, ctx: ShopperContext) => client.request<Profile>('GET', 'account/profile', ctx);
+
+/** Values keyed by `Profile.fields[].name`. A changed phone → `next = verify_phone`; a changed e-mail → `next = verify_email`. */
+export const updateProfile = (client: StorefrontClient, ctx: ShopperContext, values: ProfileValues) =>
+  client.request<Profile>('PUT', 'account/profile', { ...ctx, body: { values } });
+
+export const changePassword = (client: StorefrontClient, ctx: ShopperContext, input: { currentPassword: string; newPassword: string }) =>
+  client.request<MessageResult>('PUT', 'account/password', { ...ctx, body: input });

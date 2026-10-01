@@ -2516,6 +2516,30 @@ export interface components {
             hint?: string | null;
             maxLength?: number | null;
         };
+        /** @description A FormField with the customer's current value. `editable: false` = shown but not changeable (the sign-in identifier). */
+        ProfileField: {
+            name: string;
+            label: string;
+            /**
+             * @description Unknown values → text
+             * @enum {string}
+             */
+            kind: "text" | "email" | "phone" | "password" | "date" | "textarea" | "select" | "file" | "checkbox";
+            required: boolean;
+            placeholder: string | null;
+            /** @description For `select` */
+            options: {
+                value: string;
+                label: string;
+                selected: boolean;
+            }[];
+            /** @description For `select` and `file` */
+            multiple: boolean;
+            hint?: string | null;
+            maxLength?: number | null;
+            value: string | null;
+            editable: boolean;
+        };
         AuthSettings: {
             /**
              * @description The identifier field of the sign-in form
@@ -2621,10 +2645,7 @@ export interface components {
             data: {
                 customer: components["schemas"]["Customer"];
                 /** @description The profile form, in order, with the current values (hidden fields are not listed) */
-                fields: (components["schemas"]["FormField"] & {
-                    value: string | null;
-                    editable: boolean;
-                })[];
+                fields: components["schemas"]["ProfileField"][];
                 /**
                  * @description After a save; `verify_email` = a confirmation link was e-mailed to the new address
                  * @enum {string|null}

@@ -3519,6 +3519,33 @@ components:
         multiple: { type: boolean, description: For `select` and `file` }
         hint: { type: string, nullable: true }
         maxLength: { type: integer, nullable: true }
+    ProfileField:
+      description: 'A FormField with the customer''s current value. `editable: false` = shown but not changeable (the sign-in identifier).'
+      type: object
+      required: [name, label, kind, required, placeholder, options, multiple, value, editable]
+      additionalProperties: false
+      properties:
+        name: { type: string }
+        label: { type: string }
+        kind: { type: string, enum: [text, email, phone, password, date, textarea, select, file, checkbox], description: 'Unknown values → text' }
+        required: { type: boolean }
+        placeholder: { type: string, nullable: true }
+        options:
+          description: For `select`
+          type: array
+          items:
+            type: object
+            required: [value, label, selected]
+            additionalProperties: false
+            properties:
+              value: { type: string }
+              label: { type: string }
+              selected: { type: boolean }
+        multiple: { type: boolean, description: For `select` and `file` }
+        hint: { type: string, nullable: true }
+        maxLength: { type: integer, nullable: true }
+        value: { type: string, nullable: true }
+        editable: { type: boolean }
 
     AuthSettings:
       type: object
@@ -3678,14 +3705,7 @@ components:
             fields:
               description: The profile form, in order, with the current values (hidden fields are not listed)
               type: array
-              items:
-                allOf:
-                  - $ref: '#/components/schemas/FormField'
-                  - type: object
-                    required: [value, editable]
-                    properties:
-                      value: { type: string, nullable: true }
-                      editable: { type: boolean }
+              items: { $ref: '#/components/schemas/ProfileField' }
             next:
               type: string
               nullable: true
