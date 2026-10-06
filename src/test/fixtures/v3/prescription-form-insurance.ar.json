@@ -1,0 +1,174 @@
+{
+ "data": {
+  "title": "روشتة",
+  "description": {
+   "html": "<p>ارفع صورة واضحة للروشتة وسيتصل بك الصيدلي.</p>"
+  },
+  "video": null,
+  "fields": [
+   {
+    "name": "type",
+    "label": "نوع الروشتة",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "cash",
+      "label": "كاش",
+      "selected": true
+     },
+     {
+      "value": "insurance",
+      "label": "تأمين",
+      "selected": false
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "insuranceProfileId",
+    "label": "بيانات التأمين",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "7",
+      "label": "مصر للتأمين — Mona Ali",
+      "selected": true
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null,
+    "showWhen": [
+     {
+      "field": "type",
+      "values": [
+       "insurance"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "preApproved",
+    "label": "الموافقة",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "no",
+      "label": "طلب جديد",
+      "selected": true
+     },
+     {
+      "value": "yes",
+      "label": "تمت الموافقة من شركة التأمين",
+      "selected": false
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null,
+    "showWhen": [
+     {
+      "field": "type",
+      "values": [
+       "insurance"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "approvalNumber",
+    "label": "رقم الموافقة",
+    "kind": "text",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 100,
+    "showWhen": [
+     {
+      "field": "type",
+      "values": [
+       "insurance"
+      ]
+     },
+     {
+      "field": "preApproved",
+      "values": [
+       "yes"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "prescriptionNumber",
+    "label": "رقم الروشتة",
+    "kind": "text",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 100
+   },
+   {
+    "name": "files",
+    "label": "صور الروشتة",
+    "kind": "file",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": true,
+    "hint": "صور أو ملف PDF للروشتة، حتى 10 ملفات.",
+    "maxLength": null
+   },
+   {
+    "name": "invoiceFiles",
+    "label": "صور الفاتورة",
+    "kind": "file",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": true,
+    "hint": null,
+    "maxLength": null,
+    "showWhen": [
+     {
+      "field": "type",
+      "values": [
+       "insurance"
+      ]
+     }
+    ]
+   },
+   {
+    "name": "note",
+    "label": "ملاحظات للصيدلي",
+    "kind": "textarea",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 1000
+   }
+  ],
+  "addresses": [
+   {
+    "id": 501,
+    "label": "12، 12 Abbas El Akkad St، مدينة نصر، القاهرة",
+    "selected": true
+   }
+  ],
+  "blockers": [],
+  "canSend": true
+ }
+}

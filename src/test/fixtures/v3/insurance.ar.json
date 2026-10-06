@@ -1,0 +1,78 @@
+{
+ "data": {
+  "title": "التأمين",
+  "hint": "أضف بيانات تأمينك مرة واحدة، ثم اخترها عند إرسال روشتة تأمين.",
+  "fields": [
+   {
+    "name": "companyId",
+    "label": "شركة التأمين",
+    "kind": "select",
+    "required": true,
+    "placeholder": null,
+    "options": [
+     {
+      "value": "1",
+      "label": "مصر للتأمين",
+      "selected": false
+     },
+     {
+      "value": "2",
+      "label": "أكسا",
+      "selected": false
+     }
+    ],
+    "multiple": false,
+    "hint": null,
+    "maxLength": null
+   },
+   {
+    "name": "name",
+    "label": "اسم المستفيد",
+    "kind": "text",
+    "required": false,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 255
+   },
+   {
+    "name": "nationalId",
+    "label": "الرقم القومي",
+    "kind": "text",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": false,
+    "hint": null,
+    "maxLength": 50
+   },
+   {
+    "name": "insuranceCardFiles",
+    "label": "صور كارت التأمين",
+    "kind": "file",
+    "required": true,
+    "placeholder": null,
+    "options": [],
+    "multiple": true,
+    "hint": "الوجه والظهر.",
+    "maxLength": null
+   }
+  ],
+  "items": [
+   {
+    "id": "7",
+    "label": "مصر للتأمين — Mona Ali",
+    "company": {
+     "id": 1,
+     "name": "مصر للتأمين",
+     "logo": null
+    },
+    "name": "Mona Ali",
+    "nationalId": "•••• 4567",
+    "insuranceNumber": null,
+    "documents": 2
+   }
+  ]
+ }
+}

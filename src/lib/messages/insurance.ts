@@ -1,0 +1,41 @@
+import { defineMessages } from './define';
+
+/** UI strings of the insurance page (EN + AR). Titles, fields, labels and every refusal are the backend's. */
+export const insuranceMessages = defineMessages({
+  en: {
+    insuranceTitle: 'Insurance',
+    insuranceAddTitle: 'Add insurance details',
+    insuranceEditTitle: 'Change insurance details',
+    insuranceEditHint: 'Leave a number or photos empty to keep the ones on record.',
+    insuranceSave: 'Save',
+    insuranceSaving: 'Saving…',
+    insuranceEdit: 'Change',
+    insuranceDelete: 'Delete',
+    insuranceCancelEdit: 'Cancel',
+    insuranceNationalId: 'National ID',
+    insuranceMembership: 'Membership number',
+    insuranceDocuments: 'Photos on record',
+    insuranceSignIn: 'Sign in to manage your insurance details.',
+    insuranceSaveFailed: 'We could not save your insurance details. Please try again.',
+    insuranceAddFirst: 'Add insurance details',
+    accountInsuranceLink: 'Insurance',
+  },
+  ar: {
+    insuranceTitle: 'التأمين',
+    insuranceAddTitle: 'إضافة بيانات تأمين',
+    insuranceEditTitle: 'تعديل بيانات التأمين',
+    insuranceEditHint: 'اترك الرقم أو الصور فارغة للاحتفاظ بالبيانات المسجلة.',
+    insuranceSave: 'حفظ',
+    insuranceSaving: 'جارٍ الحفظ…',
+    insuranceEdit: 'تعديل',
+    insuranceDelete: 'حذف',
+    insuranceCancelEdit: 'إلغاء',
+    insuranceNationalId: 'الرقم القومي',
+    insuranceMembership: 'رقم العضوية',
+    insuranceDocuments: 'الصور المسجلة',
+    insuranceSignIn: 'سجّل الدخول لإدارة بيانات تأمينك.',
+    insuranceSaveFailed: 'تعذّر حفظ بيانات التأمين. يرجى المحاولة مرة أخرى.',
+    insuranceAddFirst: 'إضافة بيانات تأمين',
+    accountInsuranceLink: 'التأمين',
+  },
+});
