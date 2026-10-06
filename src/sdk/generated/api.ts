@@ -1420,6 +1420,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/account/bank-details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Where the store sends the customer's refunds: the form and what is on record (masked). Customer token only. 404 while the store has it off (`Layout.features.bankDetails`). */
+        get: operations["getBankDetails"];
+        /** Replace the bank details (every shown field; what is not sent is cleared). 422 validation_failed with `fields`. */
+        put: operations["saveBankDetails"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/insurance": {
         parameters: {
             query?: never;
@@ -1749,6 +1767,8 @@ export interface components {
                 vendors?: boolean;
                 /** @description The store takes insurance prescriptions: show the insurance page (`GET /insurance`; absent = off) */
                 insurance?: boolean;
+                /** @description The store asks for refund bank details: show the bank details page (`GET /account/bank-details`; absent = off) */
+                bankDetails?: boolean;
             } & {
                 [key: string]: boolean;
             };
@@ -3540,6 +3560,34 @@ export interface components {
         };
         WalletResponse: {
             data: components["schemas"]["Wallet"];
+        };
+        BankDetails: {
+            title: string;
+            hint: string | null;
+            /** @description The form (`preferredMethod` when the store offers the post office, `fullName`, `bankName`, `iban`, `swiftCode`, `nationalId`; with `showWhen`) */
+            fields: components["schemas"]["FormField"][];
+            /** @description What is on record, ready to show (IBAN and national ID masked); null when nothing is */
+            saved: {
+                label: string;
+                value: string;
+            }[] | null;
+        };
+        BankDetailsResponse: {
+            data: components["schemas"]["BankDetails"];
+        };
+        BankDetailsRequest: {
+            preferredMethod?: string | null;
+            fullName?: string | null;
+            bankName?: string | null;
+            iban?: string | null;
+            swiftCode?: string | null;
+            nationalId?: string | null;
+        };
+        BankDetailsSavedResponse: {
+            data: {
+                message: string;
+                details: components["schemas"]["BankDetails"];
+            };
         };
         InsuranceProfile: {
             id: string;
@@ -5956,6 +6004,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WalletResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getBankDetails: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The bank details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankDetailsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    saveBankDetails: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BankDetailsRequest"];
+            };
+        };
+        responses: {
+            /** @description Saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankDetailsSavedResponse"];
                 };
             };
             default: components["responses"]["Error"];

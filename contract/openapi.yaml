@@ -1641,6 +1641,39 @@ paths:
               schema: { $ref: '#/components/schemas/WalletResponse' }
         default: { $ref: '#/components/responses/Error' }
 
+  /account/bank-details:
+    get:
+      operationId: getBankDetails
+      summary: "Where the store sends the customer's refunds: the form and what is on record (masked). Customer token only. 404 while the store has it off (`Layout.features.bankDetails`)."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The bank details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BankDetailsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    put:
+      operationId: saveBankDetails
+      summary: 'Replace the bank details (every shown field; what is not sent is cleared). 422 validation_failed with `fields`.'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BankDetailsRequest' }
+      responses:
+        '200':
+          description: Saved
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BankDetailsSavedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
   /insurance:
     get:
       operationId: getInsurance
@@ -2152,6 +2185,7 @@ components:
             vouchers: { type: boolean, description: 'The store has vouchers or cashback on: show the vouchers page link (`GET /vouchers`; absent = off)' }
             vendors: { type: boolean, description: 'The store sells for several vendors: show the vendors page (`GET /vendors`; absent = off)' }
             insurance: { type: boolean, description: 'The store takes insurance prescriptions: show the insurance page (`GET /insurance`; absent = off)' }
+            bankDetails: { type: boolean, description: 'The store asks for refund bank details: show the bank details page (`GET /account/bank-details`; absent = off)' }
         # ---- added for the shell phase (optional: older recordings may lack them; absent = feature off)
         marketing: { $ref: '#/components/schemas/Marketing' }
         legal:
@@ -4947,6 +4981,59 @@ components:
       additionalProperties: false
       properties:
         data: { $ref: '#/components/schemas/Wallet' }
+
+    # ---------------------------------------------------------------- phase B: refund bank details
+
+    BankDetails:
+      type: object
+      required: [title, hint, fields, saved]
+      additionalProperties: false
+      properties:
+        title: { type: string }
+        hint: { type: string, nullable: true }
+        fields:
+          description: 'The form (`preferredMethod` when the store offers the post office, `fullName`, `bankName`, `iban`, `swiftCode`, `nationalId`; with `showWhen`)'
+          type: array
+          items: { $ref: '#/components/schemas/FormField' }
+        saved:
+          description: What is on record, ready to show (IBAN and national ID masked); null when nothing is
+          type: array
+          nullable: true
+          items:
+            type: object
+            required: [label, value]
+            additionalProperties: false
+            properties:
+              label: { type: string }
+              value: { type: string }
+    BankDetailsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/BankDetails' }
+    BankDetailsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        preferredMethod: { type: string, nullable: true }
+        fullName: { type: string, nullable: true }
+        bankName: { type: string, nullable: true }
+        iban: { type: string, nullable: true }
+        swiftCode: { type: string, nullable: true }
+        nationalId: { type: string, nullable: true }
+    BankDetailsSavedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [message, details]
+          additionalProperties: false
+          properties:
+            message: { type: string }
+            details: { $ref: '#/components/schemas/BankDetails' }
 
     # ---------------------------------------------------------------- phase B: insurance
 

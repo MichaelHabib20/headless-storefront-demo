@@ -65,6 +65,8 @@ export const routes = {
   reward: (locale: Locale, id: string) => `/${locale}/account/vouchers/${encode(id)}`,
   pointsHistory: (locale: Locale, page?: number) => withQuery(`/${locale}/account/history`, { page: page && page > 1 ? page : null }),
   freePoints: (locale: Locale) => `/${locale}/account/get-free-points`,
+  /** phase B: where refunds are sent (the old storefront's /account/bank-information). */
+  bankDetails: (locale: Locale) => `/${locale}/account/bank-information`,
   /** phase B: the customer's insurance profiles (the old storefront's /account/insurance, a dead page there). */
   insurance: (locale: Locale) => `/${locale}/account/insurance`,
   /** phase B: the store's sellers (the old storefront's /vendors) and one seller's products (it used products?vendor_ids=). */

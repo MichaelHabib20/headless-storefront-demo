@@ -22,6 +22,8 @@ export { cancelPrescription, getPrescriptionCancellationReasons, getPrescription
 export { getLoyalty, getLoyaltyHistory, getLoyaltyReferral, getLoyaltyReward, getLoyaltyRewards, redeemLoyaltyReward } from './v3/loyalty';
 // phase B: wallet
 export { getWallet } from './v3/wallet';
+// phase B: refund bank details
+export { getBankDetails, saveBankDetails } from './v3/bank-details';
 // phase B: insurance
 export { addInsuranceProfile, deleteInsuranceProfile, getInsurance, updateInsuranceProfile } from './v3/insurance';
 // phase B: vouchers

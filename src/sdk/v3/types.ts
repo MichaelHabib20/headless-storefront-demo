@@ -201,6 +201,10 @@ export type Wallet = Schemas['Wallet'];
 export type WalletEntry = Schemas['WalletEntry'];
 /** `Checkout.wallet`: paying with the balance (null / absent = not offered). */
 export type CheckoutWallet = NonNullable<Checkout['wallet']>;
+// ---- phase B: refund bank details
+export type BankDetails = Schemas['BankDetails'];
+export type BankDetailsInput = Schemas['BankDetailsRequest'];
+export type BankDetailsSaved = Schemas['BankDetailsSavedResponse']['data'];
 // ---- phase B: insurance
 export type InsuranceProfile = Schemas['InsuranceProfile'];
 export type InsurancePage = Schemas['InsurancePage'];

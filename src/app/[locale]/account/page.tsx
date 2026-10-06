@@ -8,6 +8,7 @@ import { loadProfile } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
 import { loyaltyOn } from '@/lib/loyalty.server';
 import { routes } from '@/lib/routing';
+import { bankDetailsOn } from '@/lib/bank-details.server';
 import { insuranceOn } from '@/lib/insurance.server';
 import { vouchersOn } from '@/lib/vouchers.server';
 import { walletOn } from '@/lib/wallet.server';
@@ -19,7 +20,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = translator(locale);
-  const [result, loyalty, wallet, vouchers, insurance] = await Promise.all([loadProfile(locale), loyaltyOn(locale), walletOn(locale), vouchersOn(locale), insuranceOn(locale)]);
+  const [result, loyalty, wallet, vouchers, insurance, bankDetails] = await Promise.all([loadProfile(locale), loyaltyOn(locale), walletOn(locale), vouchersOn(locale), insuranceOn(locale), bankDetailsOn(locale)]);
   if (result.status === 'signed-out') redirect(routes.signIn(locale));
 
   if (result.status !== 'ok') {
@@ -65,6 +66,11 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           {insurance && (
             <li>
               <Link href={routes.insurance(locale)}>{t('accountInsuranceLink')}</Link>
+            </li>
+          )}
+          {bankDetails && (
+            <li>
+              <Link href={routes.bankDetails(locale)}>{t('accountBankDetailsLink')}</Link>
             </li>
           )}
           <li>

@@ -19,6 +19,13 @@ export const insuranceMessages = defineMessages({
     insuranceSaveFailed: 'We could not save your insurance details. Please try again.',
     insuranceAddFirst: 'Add insurance details',
     accountInsuranceLink: 'Insurance',
+    // refund bank details
+    bankDetailsTitle: 'Bank details',
+    bankDetailsOnRecord: 'On record',
+    bankDetailsAdd: 'Add your bank details',
+    bankDetailsReplace: 'Replace your bank details',
+    bankDetailsSignIn: 'Sign in to manage your bank details.',
+    accountBankDetailsLink: 'Bank details',
   },
   ar: {
     insuranceTitle: 'التأمين',
@@ -37,5 +44,12 @@ export const insuranceMessages = defineMessages({
     insuranceSaveFailed: 'تعذّر حفظ بيانات التأمين. يرجى المحاولة مرة أخرى.',
     insuranceAddFirst: 'إضافة بيانات تأمين',
     accountInsuranceLink: 'التأمين',
+    // refund bank details
+    bankDetailsTitle: 'البيانات البنكية',
+    bankDetailsOnRecord: 'البيانات المسجلة',
+    bankDetailsAdd: 'أضف بياناتك البنكية',
+    bankDetailsReplace: 'استبدل بياناتك البنكية',
+    bankDetailsSignIn: 'سجّل الدخول لإدارة بياناتك البنكية.',
+    accountBankDetailsLink: 'البيانات البنكية',
   },
 });

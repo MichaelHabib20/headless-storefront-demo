@@ -103,6 +103,7 @@ them and **blocks the deploy** when one is broken.
 | The customer's vouchers and cashback vouchers, adding a code, voucher codes at checkout | [reference/vouchers.md](reference/vouchers.md) |
 | Vendors (multi-vendor stores): the vendors page, a vendor's products, the home vendors block | [reference/vendors.md](reference/vendors.md) |
 | Insurance profiles, the insurance prescription kind, conditional form fields (`showWhen`) | [reference/insurance.md](reference/insurance.md) |
+| Refund bank details (where refunds are sent) | [reference/bank-details.md](reference/bank-details.md) |
 | Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 | Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |

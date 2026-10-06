@@ -26,13 +26,14 @@ import { createContentModule } from './content.mjs';
 import { createShellModule } from './shell.mjs';
 import { createPrescriptionsModule } from './prescriptions.mjs';
 import { createLoyaltyModule } from './loyalty.mjs';
+import { createBankDetailsModule } from './bank-details.mjs';
 import { createInsuranceModule } from './insurance.mjs';
 import { createVendorsModule } from './vendors.mjs';
 import { createVouchersModule } from './vouchers.mjs';
 import { createWalletModule } from './wallet.mjs';
 
 // auth first: a revoked token must answer 401 on every path
-const FACTORIES = [createAuthModule, createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule, createSeoModule, createContentModule, createShellModule, createPrescriptionsModule, createLoyaltyModule, createWalletModule, createVouchersModule, createVendorsModule, createInsuranceModule];
+const FACTORIES = [createAuthModule, createSettingsModule, createProductModule, createCatalogModule, createCheckoutModule, createAccountModule, createSeoModule, createContentModule, createShellModule, createPrescriptionsModule, createLoyaltyModule, createWalletModule, createVouchersModule, createVendorsModule, createInsuranceModule, createBankDetailsModule];
 
 export function createModules(shopper) {
   return FACTORIES.map((create) => create(shopper));
