@@ -1,0 +1,312 @@
+{
+ "data": {
+  "cart": {
+   "items": [
+    {
+     "product": {
+      "id": 36480,
+      "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile",
+      "name": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل",
+      "image": {
+       "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/93718-1770893334.webp",
+       "alt": "جونسون اند جونسون بيبي باث ما قبل النوم لافندر اند كاموميل 125 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 18,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "18 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "jj-baby-bedtime-bath-125ml-lavendercamomile"
+      }
+     },
+     "quantity": 2,
+     "quantityStep": 1,
+     "unitPrice": {
+      "currency": "EGP",
+      "amount": 18,
+      "compareAt": null,
+      "discountPercent": null,
+      "display": "18 جنية",
+      "compareAtDisplay": null,
+      "discountLabel": null
+     },
+     "lineTotal": {
+      "amount": 36,
+      "currency": "EGP",
+      "display": "36 جنية"
+     },
+     "availability": {
+      "status": "available",
+      "message": null,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     }
+    },
+    {
+     "product": {
+      "id": 7346,
+      "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب",
+      "name": "جونسون اند جونسون كيدز لاتشابك بلسم سبراي 200 مل",
+      "image": {
+       "url": "https://seif-online.com/storage/seif-pharmacies/uploads/189040.webp",
+       "alt": "جونسون اند جونسون كيدز لاتشابك بلسم سبراي 200 مل"
+      },
+      "brand": {
+       "name": "JOHNSON & JOHNSON",
+       "slug": "johnson-johnson",
+       "target": {
+        "type": "brand",
+        "slug": "johnson-johnson"
+       }
+      },
+      "price": {
+       "currency": "EGP",
+       "amount": 160,
+       "compareAt": null,
+       "discountPercent": null,
+       "display": "160 جنية",
+       "compareAtDisplay": null,
+       "discountLabel": null
+      },
+      "inStock": true,
+      "badges": [],
+      "rating": null,
+      "requiresPrescription": false,
+      "purchase": {
+       "canAddToCart": true,
+       "minQuantity": 1,
+       "maxQuantity": 5
+      },
+      "target": {
+       "type": "product",
+       "slug": "جونسون-اند-جونسون-كيدز-لاتشابك-بلسم-سب"
+      }
+     },
+     "quantity": 2,
+     "quantityStep": 1,
+     "unitPrice": {
+      "currency": "EGP",
+      "amount": 160,
+      "compareAt": null,
+      "discountPercent": null,
+      "display": "160 جنية",
+      "compareAtDisplay": null,
+      "discountLabel": null
+     },
+     "lineTotal": {
+      "amount": 320,
+      "currency": "EGP",
+      "display": "320 جنية"
+     },
+     "availability": {
+      "status": "available",
+      "message": null,
+      "minQuantity": 1,
+      "maxQuantity": 5
+     }
+    }
+   ],
+   "summary": {
+    "itemCount": 4,
+    "subtotal": {
+     "amount": 356,
+     "currency": "EGP",
+     "display": "356.00 جنية"
+    },
+    "discount": null,
+    "total": {
+     "amount": 356,
+     "currency": "EGP",
+     "display": "356.00 جنية"
+    }
+   },
+   "checkout": {
+    "allowed": true,
+    "blockers": [],
+    "minimumOrder": {
+     "amount": {
+      "amount": 300,
+      "currency": "EGP",
+      "display": "300.00 جنية"
+     },
+     "remaining": {
+      "amount": 0,
+      "currency": "EGP",
+      "display": "0.00 جنية"
+     },
+     "progressPercent": 100
+    }
+   },
+   "requiresPrescription": false
+  },
+  "contact": {
+   "isGuest": false,
+   "name": "Test Customer",
+   "phone": "01000000001",
+   "email": "test.customer@example.com"
+  },
+  "fulfilment": {
+   "options": [
+    {
+     "type": "delivery",
+     "label": "التوصيل",
+     "available": true,
+     "reason": null
+    },
+    {
+     "type": "pickup",
+     "label": "استلم من الفرع",
+     "available": true,
+     "reason": null
+    }
+   ],
+   "selected": "delivery",
+   "addresses": [
+    {
+     "id": 501,
+     "isDefault": true,
+     "city": {
+      "id": 1,
+      "name": "القاهرة"
+     },
+     "area": {
+      "id": 11,
+      "name": "مدينة نصر"
+     },
+     "district": null,
+     "values": {
+      "label": "Home",
+      "street": "12 Abbas El Akkad St",
+      "building": "12",
+      "floor": "3",
+      "apartment": "7",
+      "phone": "01000000001"
+     },
+     "formatted": "12، 12 Abbas El Akkad St، مدينة نصر، القاهرة",
+     "deliverable": true
+    }
+   ],
+   "addressId": 501,
+   "branch": null,
+   "delivery": {
+    "fee": {
+     "amount": 25,
+     "currency": "EGP",
+     "display": "25.00 جنية"
+    },
+    "text": null,
+    "free": false
+   }
+  },
+  "payment": {
+   "methods": [],
+   "selected": null
+  },
+  "wallet": {
+   "label": "الدفع من رصيد محفظتي",
+   "balance": {
+    "amount": 500,
+    "currency": "EGP",
+    "display": "500.00 جنية"
+   },
+   "selected": true,
+   "amount": {
+    "amount": 381,
+    "currency": "EGP",
+    "display": "381.00 جنية"
+   },
+   "coversTotal": true,
+   "message": "رصيد محفظتك يغطي قيمة الطلب بالكامل."
+  },
+  "promo": {
+   "code": null,
+   "applied": false,
+   "message": null
+  },
+  "requirements": {
+   "prescription": {
+    "required": false,
+    "files": []
+   }
+  },
+  "totals": {
+   "lines": [
+    {
+     "kind": "subtotal",
+     "label": "المجموع الفرعي",
+     "amount": {
+      "amount": 356,
+      "currency": "EGP",
+      "display": "356.00 جنية"
+     },
+     "text": null
+    },
+    {
+     "kind": "delivery",
+     "label": "التوصيل",
+     "amount": {
+      "amount": 25,
+      "currency": "EGP",
+      "display": "25.00 جنية"
+     },
+     "text": null
+    },
+    {
+     "kind": "wallet",
+     "label": "المدفوع من المحفظة",
+     "amount": {
+      "amount": -381,
+      "currency": "EGP",
+      "display": "-381.00 جنية"
+     },
+     "text": null
+    }
+   ],
+   "total": {
+    "amount": 0,
+    "currency": "EGP",
+    "display": "0.00 جنية"
+   }
+  },
+  "minimumOrder": {
+   "amount": {
+    "amount": 300,
+    "currency": "EGP",
+    "display": "300.00 جنية"
+   },
+   "remaining": {
+    "amount": 0,
+    "currency": "EGP",
+    "display": "0.00 جنية"
+   },
+   "progressPercent": 100
+  },
+  "missing": [],
+  "blockers": [],
+  "messages": [],
+  "canPlaceOrder": true
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "data": {
+  "title": "محفظتي",
+  "balance": {
+   "amount": 150,
+   "currency": "EGP",
+   "display": "150.00 جنية"
+  },
+  "hint": "يمكنك استخدام رصيدك للدفع عند إتمام الطلب.",
+  "items": [
+   {
+    "id": "2",
+    "kind": "payment",
+    "title": "دفع للطلب رقم 48200",
+    "amount": {
+     "amount": -50,
+     "currency": "EGP",
+     "display": "-50.00 جنية"
+    },
+    "credit": false,
+    "date": "2026-09-20T10:00:00+03:00",
+    "orderId": "mock-order-48200"
+   },
+   {
+    "id": "1",
+    "kind": "deposit",
+    "title": "إضافة من المتجر",
+    "amount": {
+     "amount": 200,
+     "currency": "EGP",
+     "display": "200.00 جنية"
+    },
+    "credit": true,
+    "date": "2026-09-01T10:00:00+03:00",
+    "orderId": null
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 20,
+   "total": 2,
+   "totalPages": 1
+  }
+ }
+}

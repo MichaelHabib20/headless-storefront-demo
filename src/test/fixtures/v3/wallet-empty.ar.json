@@ -1,0 +1,18 @@
+{
+ "data": {
+  "title": "محفظتي",
+  "balance": {
+   "amount": 0,
+   "currency": "EGP",
+   "display": "0.00 جنية"
+  },
+  "hint": "يمكنك استخدام رصيدك للدفع عند إتمام الطلب.",
+  "items": [],
+  "pagination": {
+   "page": 1,
+   "perPage": 20,
+   "total": 0,
+   "totalPages": 0
+  }
+ }
+}

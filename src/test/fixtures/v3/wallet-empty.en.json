@@ -1,0 +1,18 @@
+{
+ "data": {
+  "title": "My wallet",
+  "balance": {
+   "amount": 0,
+   "currency": "EGP",
+   "display": "0.00 EGP"
+  },
+  "hint": "You can use your balance to pay at checkout.",
+  "items": [],
+  "pagination": {
+   "page": 1,
+   "perPage": 20,
+   "total": 0,
+   "totalPages": 0
+  }
+ }
+}

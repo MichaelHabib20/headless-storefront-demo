@@ -1,0 +1,45 @@
+{
+ "data": {
+  "title": "My wallet",
+  "balance": {
+   "amount": 150,
+   "currency": "EGP",
+   "display": "150.00 EGP"
+  },
+  "hint": "You can use your balance to pay at checkout.",
+  "items": [
+   {
+    "id": "2",
+    "kind": "payment",
+    "title": "Paid for order #48200",
+    "amount": {
+     "amount": -50,
+     "currency": "EGP",
+     "display": "-50.00 EGP"
+    },
+    "credit": false,
+    "date": "2026-09-20T10:00:00+03:00",
+    "orderId": "mock-order-48200"
+   },
+   {
+    "id": "1",
+    "kind": "deposit",
+    "title": "Added by the store",
+    "amount": {
+     "amount": 200,
+     "currency": "EGP",
+     "display": "200.00 EGP"
+    },
+    "credit": true,
+    "date": "2026-09-01T10:00:00+03:00",
+    "orderId": null
+   }
+  ],
+  "pagination": {
+   "page": 1,
+   "perPage": 20,
+   "total": 2,
+   "totalPages": 1
+  }
+ }
+}
