@@ -376,6 +376,37 @@ export const RULES = [
     message:
       'Loyalty rules come from the API: show points.text and reward.cost.text as they are, redeem only when reward.canRedeem (else show reward.reason), show blocker.message with the page loyaltyStepHref() gives, and link the pages LoyaltySummary.sections lists. Never count points, compare amounts, check the phone or branch on the provider.',
   },
+  {
+    // phase B: what the wallet pays, whether it pays everything, the balance and the sign of every
+    // history row are the backend's (Checkout.wallet, Wallet, WalletEntry.credit). The storefront asks
+    // with `useWallet` and draws; it never works out the amount, the rest to pay or a debit.
+    id: 'wallet-rules-from-api',
+    applies: (f) => !isTest(f) && /^src\/(components\/wallet\/|components\/checkout\/WalletSection\.tsx$|app\/\[locale\]\/account\/wallet-history\/|lib\/wallet\.server\.ts$)/.test(f),
+    patterns: [
+      // no reading the number of a Money (`balance.amount`, `entry.amount.amount`, `total.amount`): it goes through <Money>
+      /\b(balance|amount|total)\.amount\b/,
+      /(?<![-\w])(coversTotal|credit)\s*=(?!=)(?!\s*\{?\s*[\w.?]*(wallet|entry|item)\??\.)/,
+      // the legacy switch and fields
+      /\b(ENABLE_USER_WALLET|ENABLE_WALLET_FOR_GUESTS|wallet_balance|use_wallet|wallet_paid_amount)\b/,
+    ],
+    message:
+      'Wallet rules come from the API: send useWallet and draw Checkout.wallet (label, balance, message, coversTotal) and the wallet line of totals; show Wallet.balance and each entry.amount with <Money>, style by entry.credit. Never compute what the wallet pays, the rest, or whether it covers the order.',
+  },
+  {
+    // phase B: a voucher's status, what it gives, its minimum, credit and expiry text are the backend's
+    // (Voucher); the tabs are `statuses`. The storefront never re-sorts vouchers by date or builds "% off".
+    id: 'voucher-rules-from-api',
+    applies: (f) => !isTest(f) && /^src\/(components\/vouchers\/|app\/\[locale\]\/account\/voucher\/|lib\/vouchers\.server\.ts$)/.test(f),
+    patterns: [
+      // dates: `expiry` is the backend's text
+      /\bexpiresAt\b[^;\n]*(new Date|Date\.|<|>|getTime|compare)|\b(new Date|Date\.now)\b[^;\n]*\bexpiresAt\b/,
+      // building what a voucher gives, or reading a Money number
+      /%\s*off|\bamount_type\b|\bmax_amount\b|\bminimum_amount\b|\b(remaining|total)\.amount\b/,
+      /(?<![-\w])status\s*=(?!=)(?!\s*\{?\s*[\w.?]*(voucher|status|item)\??\.)/,
+    ],
+    message:
+      'Voucher rules come from the API: group by voucher.status using Vouchers.statuses (labels and counts), show benefit, minimumOrder, credit (with <Money>), detail and expiry as they are. Never compute a status from dates or usage, or build the value text.',
+  },
 ];
 
 /**

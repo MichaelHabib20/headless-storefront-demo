@@ -1,7 +1,7 @@
 import 'server-only';
 import type { Metadata } from 'next';
 import { cache } from 'react';
-import { getBrands, getCategories, getProducts, isApiError, type BrandsPage, type CategoryTree, type ListingScope, type Locale, type ProductListing } from '@/sdk';
+import { getBrands, getCategories, getProducts, getVendors, isApiError, type BrandsPage, type CategoryTree, type ListingScope, type Locale, type ProductListing, type VendorsPage } from '@/sdk';
 import { toSearchParams, type PageParams } from './listing';
 import { seoMetadata } from './seo';
 import { shopperContext } from './shopper.server';
@@ -56,6 +56,17 @@ export async function loadCategoryTree(locale: Locale): Promise<CategoryTree | n
   } catch (error) {
     console.error('categories failed to load', error);
     return null;
+  }
+}
+
+/** phase B: the vendors page; `not-found` while the store has multi-vendor off. */
+export async function loadVendorsPage(locale: Locale): Promise<{ status: 'ok'; page: VendorsPage } | { status: 'not-found' } | { status: 'error' }> {
+  try {
+    return { status: 'ok', page: await getVendors(storefrontClient(), locale) };
+  } catch (error) {
+    if (isApiError(error) && error.kind === 'not_found') return { status: 'not-found' };
+    console.error('vendors failed to load', error);
+    return { status: 'error' };
   }
 }
 

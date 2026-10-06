@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import type { FormField, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
-import { inputAttributes, inputName } from './form-values';
+import { fieldShown, inputAttributes, inputName, VALUE_PREFIX, watchedValues } from './form-values';
 import styles from './Content.module.css';
 
 /** Uploads one file (POST /uploads through a server action) and answers its id. */
@@ -29,11 +29,23 @@ interface FormFieldsProps {
  * Values are sent back under `v.<name>`; the backend validates them and its messages show here.
  */
 export function FormFields({ locale, fields, errors = {}, values = {}, upload, idPrefix }: FormFieldsProps) {
+  // phase B: fields with `showWhen` follow the current value of the fields they name
+  const [current, setCurrent] = useState(() => watchedValues(fields, values));
+  const watched = Object.keys(current);
+
+  function changed(event: ChangeEvent<HTMLDivElement>) {
+    const target = event.target as unknown as { name?: string; value?: string };
+    const name = typeof target.name === 'string' && target.name.startsWith(VALUE_PREFIX) ? target.name.slice(VALUE_PREFIX.length) : null;
+    if (name && watched.includes(name)) setCurrent((before) => ({ ...before, [name]: String(target.value ?? '') }));
+  }
+
   return (
-    <div className={styles.fields}>
-      {fields.map((field) => (
-        <Field key={field.name} locale={locale} field={field} error={errors[field.name]} value={values[field.name]} upload={upload} id={`${idPrefix}-${field.name}`} />
-      ))}
+    <div className={styles.fields} onChange={watched.length ? changed : undefined}>
+      {fields
+        .filter((field) => fieldShown(field, current))
+        .map((field) => (
+          <Field key={field.name} locale={locale} field={field} error={errors[field.name]} value={values[field.name]} upload={upload} id={`${idPrefix}-${field.name}`} />
+        ))}
     </div>
   );
 }

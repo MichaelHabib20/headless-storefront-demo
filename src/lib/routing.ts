@@ -65,6 +65,15 @@ export const routes = {
   reward: (locale: Locale, id: string) => `/${locale}/account/vouchers/${encode(id)}`,
   pointsHistory: (locale: Locale, page?: number) => withQuery(`/${locale}/account/history`, { page: page && page > 1 ? page : null }),
   freePoints: (locale: Locale) => `/${locale}/account/get-free-points`,
+  /** phase B: the customer's insurance profiles (the old storefront's /account/insurance, a dead page there). */
+  insurance: (locale: Locale) => `/${locale}/account/insurance`,
+  /** phase B: the store's sellers (the old storefront's /vendors) and one seller's products (it used products?vendor_ids=). */
+  vendors: (locale: Locale) => `/${locale}/vendors`,
+  vendor: (locale: Locale, id: number) => `/${locale}/vendors/${id}`,
+  /** phase B: the customer's vouchers and cashback vouchers (the old storefront's /account/voucher; not the loyalty rewards at /account/vouchers). */
+  myVouchers: (locale: Locale) => `/${locale}/account/voucher`,
+  /** phase B: the wallet balance and its history (the old storefront's /account/wallet-history). */
+  wallet: (locale: Locale, page?: number) => withQuery(`/${locale}/account/wallet-history`, { page: page && page > 1 ? page : null }),
 } as const;
 
 /** The page that clears a prescription blocker (`PrescriptionForm.blockers[].code`); null for a code this storefront does not know. */
@@ -138,6 +147,8 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
       return internal(routes.home(locale));
     case 'url':
       return isSafeUrl(target.url) ? { href: target.url, external: true } : null;
+    case 'vendor':
+      return target.id > 0 ? internal(routes.vendor(locale, target.id)) : null;
     default:
       return null;
   }
@@ -149,7 +160,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
  * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
  * route above is missing here.
  */
-const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval', 'prescriptions', 'add-address']);
+const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval', 'prescriptions', 'add-address', 'vendors']);
 
 /** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
 export function isStorefrontPath(pathname: string): boolean {

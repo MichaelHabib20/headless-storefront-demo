@@ -27,6 +27,26 @@ export function formValues(fields: readonly FormField[], data: FormData): Record
   return values;
 }
 
+/**
+ * phase B: whether a field is shown (and sent) now. `showWhen` is the backend's: every condition must
+ * hold — the named field's current value is one of `values`. A field without `showWhen` always shows.
+ */
+export function fieldShown(field: Pick<FormField, 'showWhen'>, current: Readonly<Record<string, string>>): boolean {
+  return (field.showWhen ?? []).every((condition) => condition.values.includes(current[condition.field] ?? ''));
+}
+
+/** The starting values of the select fields other fields depend on: what was typed before, else the backend's `selected` option. */
+export function watchedValues(fields: readonly FormField[], values: Readonly<Record<string, string | string[]>> = {}): Record<string, string> {
+  const watched = new Set(fields.flatMap((field) => (field.showWhen ?? []).map((condition) => condition.field)));
+  const current: Record<string, string> = {};
+  for (const field of fields) {
+    if (!watched.has(field.name)) continue;
+    const typed = values[field.name];
+    current[field.name] = typeof typed === 'string' ? typed : (field.options.find((option) => option.selected)?.value ?? '');
+  }
+  return current;
+}
+
 /** Only the plain-text values (a contact message has no lists). */
 export function textValues(values: Record<string, string | string[]>): Record<string, string> {
   const result: Record<string, string> = {};

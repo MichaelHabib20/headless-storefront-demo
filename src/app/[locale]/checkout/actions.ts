@@ -229,6 +229,8 @@ function cleanSelections(input: unknown): CheckoutSelections {
     prescriptionFiles: Array.isArray(raw.prescriptionFiles) ? raw.prescriptionFiles.filter((file): file is string => typeof file === 'string') : [],
   };
   if (raw.acceptPaymentChange === true) selections.acceptPaymentChange = true;
+  // phase B: the wallet switch (the backend decides whether and how much it pays)
+  if (raw.useWallet === true) selections.useWallet = true;
   return selections;
 }
 

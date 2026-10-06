@@ -70,6 +70,22 @@ export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProp
           {promo.message}
         </p>
       )}
+
+      {/* phase B: the customer's active vouchers, as the backend lists them; a tap sends the code like a typed one */}
+      {promo.suggestions && promo.suggestions.length > 0 && (
+        <div className={styles.suggestions} data-testid="promo-suggestions">
+          <p className={styles.subTitle}>{t('checkoutVoucherSuggestions')}</p>
+          <ul>
+            {promo.suggestions.map((suggestion) => (
+              <li key={suggestion.code}>
+                <button type="button" className={styles.suggestion} disabled={busy} onClick={() => onChange({ promoCode: suggestion.code })} data-testid="promo-suggestion">
+                  <strong>{suggestion.code}</strong> <span>{suggestion.benefit}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

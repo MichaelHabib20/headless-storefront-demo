@@ -8,6 +8,9 @@ import { loadProfile } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
 import { loyaltyOn } from '@/lib/loyalty.server';
 import { routes } from '@/lib/routing';
+import { insuranceOn } from '@/lib/insurance.server';
+import { vouchersOn } from '@/lib/vouchers.server';
+import { walletOn } from '@/lib/wallet.server';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +19,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = translator(locale);
-  const [result, loyalty] = await Promise.all([loadProfile(locale), loyaltyOn(locale)]);
+  const [result, loyalty, wallet, vouchers, insurance] = await Promise.all([loadProfile(locale), loyaltyOn(locale), walletOn(locale), vouchersOn(locale), insuranceOn(locale)]);
   if (result.status === 'signed-out') redirect(routes.signIn(locale));
 
   if (result.status !== 'ok') {
@@ -47,6 +50,21 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
           {loyalty && (
             <li>
               <Link href={routes.points(locale)}>{t('accountPointsLink')}</Link>
+            </li>
+          )}
+          {wallet && (
+            <li>
+              <Link href={routes.wallet(locale)}>{t('accountWalletLink')}</Link>
+            </li>
+          )}
+          {vouchers && (
+            <li>
+              <Link href={routes.myVouchers(locale)}>{t('accountVouchersLink')}</Link>
+            </li>
+          )}
+          {insurance && (
+            <li>
+              <Link href={routes.insurance(locale)}>{t('accountInsuranceLink')}</Link>
             </li>
           )}
           <li>

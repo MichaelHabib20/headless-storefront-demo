@@ -13,6 +13,7 @@
  * Test scaffolding only: the real rules are the backend's.
  */
 import { addressesOf } from './account-state.mjs';
+import { insuranceState } from './insurance.mjs';
 
 const TEXT = {
   en: {
@@ -20,7 +21,10 @@ const TEXT = {
     description: '<p>Upload a clear photo of your prescription and our pharmacist will call you.</p>',
     type: 'Prescription type', number: 'Prescription number', numberHint: 'Needed for Wasfaty prescriptions.',
     files: 'Prescription photos', filesHint: 'Photos or PDF of the prescription, up to 10 files.', note: 'Notes for the pharmacist',
-    kinds: { cash: 'Cash', wasfaty: 'Wasfaty' },
+    kinds: { cash: 'Cash', wasfaty: 'Wasfaty', insurance: 'Insurance' },
+    insuranceProfile: 'Insurance details', insuranceProfileHint: 'Add your insurance details on the insurance page first.', preApproved: 'Approval',
+    preApprovedNo: 'New request', preApprovedYes: 'Already approved by the insurance company', approvalNumber: 'Approval number', invoiceFiles: 'Invoice photos',
+    chooseProfile: 'Choose one of your insurance details.',
     status: { received: 'Received', in_progress: 'Being prepared', delivered: 'Delivered', cancelled: 'Cancelled' },
     blockers: {
       add_address: 'Add a delivery address first, then send your prescription.',
@@ -41,7 +45,10 @@ const TEXT = {
     description: '<p>ارفع صورة واضحة للروشتة وسيتصل بك الصيدلي.</p>',
     type: 'نوع الروشتة', number: 'رقم الروشتة', numberHint: 'مطلوب لروشتات وصفتي.',
     files: 'صور الروشتة', filesHint: 'صور أو ملف PDF للروشتة، حتى 10 ملفات.', note: 'ملاحظات للصيدلي',
-    kinds: { cash: 'كاش', wasfaty: 'وصفتي' },
+    kinds: { cash: 'كاش', wasfaty: 'وصفتي', insurance: 'تأمين' },
+    insuranceProfile: 'بيانات التأمين', insuranceProfileHint: 'أضف بيانات تأمينك في صفحة التأمين أولاً.', preApproved: 'الموافقة',
+    preApprovedNo: 'طلب جديد', preApprovedYes: 'تمت الموافقة من شركة التأمين', approvalNumber: 'رقم الموافقة', invoiceFiles: 'صور الفاتورة',
+    chooseProfile: 'اختر أحد بيانات التأمين الخاصة بك.',
     status: { received: 'تم الاستلام', in_progress: 'جاري التجهيز', delivered: 'تم التوصيل', cancelled: 'ملغاة' },
     blockers: {
       add_address: 'أضف عنوان التوصيل أولاً ثم أرسل الروشتة.',
@@ -67,8 +74,9 @@ export function createPrescriptionsModule(shopper) {
   let nextId = 1043;
 
   const error = (status, code, locale, extra = {}) => [status, { error: { code, message: TEXT[locale].errors[code] ?? code, ...extra } }];
-  const kinds = () => (mode.wasfaty ? ['cash', 'wasfaty'] : ['cash']);
-  const numberRequired = (kind) => kind === 'wasfaty' || mode.numberMode;
+  const insurance = insuranceState(shopper);
+  const kinds = () => ['cash', ...(mode.wasfaty ? ['wasfaty'] : []), ...(insurance.on ? ['insurance'] : [])];
+  const numberRequired = (kind, preApproved = false) => kind === 'wasfaty' || (!(kind === 'insurance' && preApproved) && mode.numberMode);
 
   /** Raw rows of a session: {id, status, kind, placedAt, note, number, fileCount, addressId, cancellation}. */
   function rowsOf(session) {
@@ -120,8 +128,17 @@ export function createPrescriptionsModule(shopper) {
     const offered = kinds();
     const fields = [];
     if (offered.length > 1) fields.push(field('type', t.type, 'select', true, { options: offered.map((kind, i) => ({ value: kind, label: t.kinds[kind], selected: i === 0 })) }));
+    // phase B: the insurance kind, its fields shown only for it (approval number only when pre-approved)
+    const isInsurance = [{ field: 'type', values: ['insurance'] }];
+    if (offered.includes('insurance')) {
+      const profiles = insurance.rows(session).map((row, i) => ({ value: String(row.id), label: insurance.present(row, locale).label, selected: i === 0 }));
+      fields.push(field('insuranceProfileId', t.insuranceProfile, 'select', true, { options: profiles, hint: profiles.length ? null : t.insuranceProfileHint, showWhen: isInsurance }));
+      fields.push(field('preApproved', t.preApproved, 'select', true, { options: [{ value: 'no', label: t.preApprovedNo, selected: true }, { value: 'yes', label: t.preApprovedYes, selected: false }], showWhen: isInsurance }));
+      fields.push(field('approvalNumber', t.approvalNumber, 'text', true, { maxLength: 100, showWhen: [...isInsurance, { field: 'preApproved', values: ['yes'] }] }));
+    }
     fields.push(field('prescriptionNumber', t.number, 'text', numberRequired(offered[0]), { hint: mode.wasfaty && !mode.numberMode ? t.numberHint : null, maxLength: 100 }));
     fields.push(field('files', t.files, 'file', !numberRequired(offered[0]), { hint: t.filesHint, multiple: true }));
+    if (offered.includes('insurance')) fields.push(field('invoiceFiles', t.invoiceFiles, 'file', false, { multiple: true, showWhen: isInsurance }));
     fields.push(field('note', t.note, 'textarea', false, { maxLength: 1000 }));
     const list = blockers(session, locale);
     return {
@@ -144,8 +161,13 @@ export function createPrescriptionsModule(shopper) {
     if (!offered.includes(kind)) fields.type = [t.choose];
     const files = Array.isArray(values.files) ? values.files : [];
     const number = typeof values.prescriptionNumber === 'string' ? values.prescriptionNumber.trim() : '';
-    if (offered.includes(kind) && numberRequired(kind) && !number) fields.prescriptionNumber = [t.required(t.number)];
-    if (offered.includes(kind) && !numberRequired(kind) && files.length === 0) fields.files = [t.required(t.files)];
+    const preApproved = kind === 'insurance' && values.preApproved === 'yes';
+    if (offered.includes(kind) && numberRequired(kind, preApproved) && !number) fields.prescriptionNumber = [t.required(t.number)];
+    if (offered.includes(kind) && !numberRequired(kind, preApproved) && !preApproved && files.length === 0) fields.files = [t.required(t.files)];
+    if (kind === 'insurance' && offered.includes(kind)) {
+      if (!insurance.rows(session).some((row) => String(row.id) === String(values.insuranceProfileId))) fields.insuranceProfileId = [t.chooseProfile];
+      if (preApproved && !(typeof values.approvalNumber === 'string' && values.approvalNumber.trim())) fields.approvalNumber = [t.required(t.approvalNumber)];
+    }
     if (files.length > 10 || files.some((id) => typeof id !== 'string' || !session.uploads?.has(id))) fields.files = [t.filesAgain];
     if (!addressesOf(session, locale).some((address) => address.id === values.addressId)) fields.addressId = [t.address];
     if (Object.keys(fields).length) return error(422, 'validation_failed', locale, { fields });

@@ -72,6 +72,8 @@ them and **blocks the deploy** when one is broken.
 | `src/components/catalog/` + `src/lib/listing.ts`, `catalog.server.ts`, `resolve.ts` | Listings (one view for category, brand, list, tag, deals, search), filters, sort, category and brand indexes, unknown-path answers |
 | `src/middleware.ts` | Locale prefix; asks `GET /resolve` for paths outside our routes (301/302/410/404) |
 | `src/app/[locale]/checkout/` + `src/components/checkout/` | Checkout page, its server actions (the only `placeOrder`), result page |
+| `src/components/wallet/` + `src/app/[locale]/account/wallet-history/` | The wallet page (balance + history); the checkout switch is `checkout/WalletSection` |
+| `src/components/vouchers/` + `src/app/[locale]/account/voucher/` | The vouchers page (tabs, add a code); the codes at checkout are in `checkout/PromoSection` |
 | `src/app/[locale]/[...slug]/page.tsx` | "Coming soon" for routes that aren't built yet |
 | `src/test/fixtures/v3/` | Recorded API responses (`npm run fixtures:record`) + shopper fixtures from the mock |
 | `scripts/` | `check-rules.mjs` (architecture rules + the `src/money` lock in `money.lock.json`), `contract-check.mjs`, `mock-api.mjs` + `mock/shopper.mjs`, `record-fixtures.mjs` |
@@ -97,6 +99,10 @@ them and **blocks the deploy** when one is broken.
 | Address book (form from the API), orders list/details, cancel, order again | [reference/account.md](reference/account.md) |
 | Prescriptions (send, list, cancel), the add-address step | [reference/prescriptions.md](reference/prescriptions.md) |
 | Loyalty points, rewards and redeeming, points history, referral (El Dokan, iVend) | [reference/loyalty.md](reference/loyalty.md) |
+| Wallet balance and history, paying with the wallet at checkout | [reference/wallet.md](reference/wallet.md) |
+| The customer's vouchers and cashback vouchers, adding a code, voucher codes at checkout | [reference/vouchers.md](reference/vouchers.md) |
+| Vendors (multi-vendor stores): the vendors page, a vendor's products, the home vendors block | [reference/vendors.md](reference/vendors.md) |
+| Insurance profiles, the insurance prescription kind, conditional form fields (`showWhen`) | [reference/insurance.md](reference/insurance.md) |
 | Track an order without sign-in, rate an order, write a review, share a product | [reference/orders-extras.md](reference/orders-extras.md) |
 | Tests, the mock API and the verify pipeline | [reference/testing.md](reference/testing.md) |
 | Page meta, JSON-LD (schema.org), breadcrumbs for search engines, rel=prev/next, robots.txt, sitemaps | [reference/seo.md](reference/seo.md) |
@@ -123,6 +129,7 @@ them and **blocks the deploy** when one is broken.
 | "Cart / wishlist count in the header" | `me.counts.*` from `getMe` | `items.length` or a count in `localStorage` |
 | "Mark notifications read when the page opens" | Not allowed: only a click marks read | Call mark-read on render / `useEffect` |
 | "Add to cart / heart for guests" | Server action with `withShopper` | Create a guest while rendering; token in the browser |
+| "Show what the wallet pays" / "hide payment when the wallet covers it" | Nothing to compute: `checkout.wallet` (`amount`, `coversTotal`, `message`) and its `wallet` total line | `Math.min(balance, total)`, hiding methods by your own comparison |
 | "Enable place order when …" / "preselect a payment method" | Nothing: `checkout.canPlaceOrder` and the backend's preselection (echo) | Own conditions, `methods[0]`, a default address |
 | "Buy now" / "place the order from elsewhere" | Link to checkout; `placeOrderAction` is the only door | `placeOrder()` outside `src/app/[locale]/checkout/`, writing `expectedTotal` |
 | "Add a new text/button" | Add the key to `en` **and** `ar` in `src/lib/i18n.ts` or `src/lib/messages/<area>.ts` | Hardcode English |

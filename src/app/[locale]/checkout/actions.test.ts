@@ -71,6 +71,7 @@ describe('placeOrderAction', () => {
         installmentPlanId: 42,
         promoCode: 'SAVE10',
         prescriptionFiles: ['up-7'],
+        useWallet: false,
         note: 'Ring twice',
       },
       expectedTotal: 987.654321,
@@ -238,6 +239,16 @@ describe('computeCheckoutAction', () => {
       note: null,
       prescriptionFiles: ['up-1'],
     });
+  });
+
+  it('phase B: passes the wallet switch on only as a real true', async () => {
+    respond(200, { data: checkoutFixture('en') });
+    await computeCheckoutAction('en', { useWallet: true } as never);
+    expect(request().body).toMatchObject({ useWallet: true });
+
+    respond(200, { data: checkoutFixture('en') });
+    await computeCheckoutAction('en', { useWallet: 'yes' } as never);
+    expect(request().body).not.toHaveProperty('useWallet');
   });
 
   it('passes the backend message on, and uses localized text for session and network problems', async () => {

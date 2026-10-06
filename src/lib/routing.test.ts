@@ -92,6 +92,13 @@ describe('account routes', () => {
 
   it('keeps the old storefront paths of loyalty', () => {
     expect(routes.points('en')).toBe('/en/account/your-points');
+    expect(routes.wallet('ar')).toBe('/ar/account/wallet-history');
+    expect(routes.wallet('en', 2)).toBe('/en/account/wallet-history?page=2');
+    expect(routes.myVouchers('ar')).toBe('/ar/account/voucher');
+    // phase B: vendors
+    expect(routes.vendors('en')).toBe('/en/vendors');
+    expect(resolveTarget({ type: 'vendor', id: 3 }, 'ar')).toEqual({ href: '/ar/vendors/3', external: false });
+    expect(isStorefrontPath('/en/vendors/3')).toBe(true);
     expect(routes.rewards('ar')).toBe('/ar/account/vouchers');
     expect(routes.reward('en', '4')).toBe('/en/account/vouchers/4');
     expect(routes.pointsHistory('en')).toBe('/en/account/history');

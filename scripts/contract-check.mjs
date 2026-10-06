@@ -109,6 +109,18 @@ const RESPONSE_SCHEMA = {
   'loyalty-redeemed': 'LoyaltyRedeemResponse',
   'loyalty-history': 'LoyaltyHistoryResponse',
   'loyalty-referral': 'LoyaltyReferralResponse',
+  // phase B: wallet (scripts/build-wallet-fixtures.mjs)
+  wallet: 'WalletResponse',
+  'wallet-empty': 'WalletResponse',
+  'checkout-wallet-part': 'CheckoutResponse',
+  'checkout-wallet-all': 'CheckoutResponse',
+  // phase B: vouchers (scripts/build-vouchers-fixtures.mjs)
+  vouchers: 'VouchersResponse',
+  'voucher-added': 'VoucherAddedResponse',
+  'checkout-voucher-suggestions': 'CheckoutResponse',
+  // phase B: insurance (scripts/build-insurance-fixtures.mjs)
+  insurance: 'InsurancePageResponse',
+  'prescription-form-insurance': 'PrescriptionFormResponse',
 };
 for (const file of fs.readdirSync(path.join(root, 'src/test/fixtures/v3'))) {
   const name = file.replace(/\.(en|ar|anonymous)\.json$/, '');

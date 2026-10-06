@@ -6,7 +6,7 @@ import type { Locale, PrescriptionForm as PrescriptionFormData } from '@/sdk';
 import { FormFields, type UploadFileAction } from '@/components/content/FormFields';
 import { RichText } from '@/components/ui/RichText';
 import { translator } from '@/lib/i18n';
-import { prescriptionStepHref } from '@/lib/routing';
+import { prescriptionStepHref, routes } from '@/lib/routing';
 import type { PrescriptionFormState, SendPrescriptionAction } from './types';
 import styles from './Prescriptions.module.css';
 
@@ -90,6 +90,12 @@ export function PrescriptionForm({ locale, form, sendAction, uploadAction }: Pre
             )}
           </fieldset>
           <FormFields locale={locale} fields={form.fields} errors={errors} values={state.values} upload={uploadAction} idPrefix="prescription" />
+          {/* phase B: the insurance kind needs a profile; the backend's hint says so, this links the page that adds one */}
+          {form.fields.some((field) => field.name === 'insuranceProfileId') && (
+            <Link href={routes.insurance(locale)} className={styles.addAddress} data-testid="prescription-insurance-link">
+              {t('insuranceAddFirst')}
+            </Link>
+          )}
           <button type="submit" className={styles.primary} disabled={pending}>
             {pending ? t('prescriptionsSending') : t('prescriptionsSend')}
           </button>

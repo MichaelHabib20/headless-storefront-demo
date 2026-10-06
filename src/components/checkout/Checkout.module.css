@@ -405,6 +405,36 @@
   font-weight: 700;
 }
 
+/* phase B: the customer's vouchers offered as codes */
+.suggestions ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestion {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-inline: var(--space-3);
+  border: 1px dashed var(--color-text);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.suggestion:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .files {
   display: grid;
   gap: var(--space-2);

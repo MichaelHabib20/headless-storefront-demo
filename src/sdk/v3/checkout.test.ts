@@ -64,6 +64,7 @@ describe('checkout SDK', () => {
       installmentPlanId: null,
       promoCode: null,
       prescriptionFiles: [],
+      useWallet: false,
     });
 
     const withFiles = pickup();
@@ -77,6 +78,7 @@ describe('checkout SDK', () => {
       installmentPlanId: 42,
       promoCode: 'SAVE10',
       prescriptionFiles: ['up-1', 'up-2'],
+      useWallet: false,
     });
 
     const nothingChosen = ready();

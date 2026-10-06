@@ -275,7 +275,7 @@ export interface paths {
         };
         /**
          * One product listing for every listing page (category, brand, list, deals, tag, search, all products)
-         * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`); none = all products.
+         * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
          *     Filter and sort parameters come from the `query` strings of a previous answer: pass them through
          *     as they are. Works without a token; with a token prices and limits are the shopper's.
          */
@@ -1403,6 +1403,115 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/wallet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's wallet balance and one page of its history, newest first. Customer token only. 404 while the store has the wallet off (`Layout.features.wallet`). */
+        get: operations["getWallet"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insurance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's insurance profiles and the form to add one. Customer token only. 404 while the store takes no insurance prescriptions (`Layout.features.insurance`). */
+        get: operations["getInsurance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insurance/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add an insurance profile. 422 validation_failed with `fields` (the v3 field names). */
+        post: operations["addInsuranceProfile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/insurance/profiles/{profileId}": {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description InsuranceProfile.id */
+                profileId: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** Change one of the customer's profiles (404 for any other). Numbers and photos not sent again stay as they are. */
+        put: operations["updateInsuranceProfile"];
+        post?: never;
+        /** Delete one of the customer's profiles (404 for any other). */
+        delete: operations["deleteInsuranceProfile"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/vendors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The store's sellers, each with the Target of its products. Public. 404 while the store has multi-vendor off (`Layout.features.vendors`). */
+        get: operations["getVendors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/vouchers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's vouchers (cashback vouchers too), each with one status. Customer token only. 404 while the store has neither vouchers nor cashback on (`Layout.features.vouchers`). */
+        get: operations["getVouchers"];
+        put?: never;
+        /** Add a voucher code to the account. 422 validation_failed with `fields.code` when the store refuses it (not valid, expired, already added). */
+        post: operations["addVoucher"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1410,7 +1519,7 @@ export interface components {
         /** @enum {string} */
         Locale: "en" | "ar";
         /** @description Where a click goes. `null` wherever a Target is optional means "not clickable". */
-        Target: components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"];
+        Target: components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"] | components["schemas"]["VendorTarget"];
         ProductTarget: {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -1508,8 +1617,17 @@ export interface components {
             type: "search";
             query: string;
         };
+        /** @description Phase B: the products of one seller (`GET /products?vendor={id}`) */
+        VendorTarget: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "vendor";
+            id: number;
+        };
         /** @description A Target, or null when not clickable. */
-        NullableTarget: (components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"]) | null;
+        NullableTarget: (components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"] | components["schemas"]["VendorTarget"]) | null;
         Image: {
             url: string;
             alt: string | null;
@@ -1623,6 +1741,14 @@ export interface components {
                 share?: boolean;
                 /** @description The store has a loyalty provider v3 supports (El Dokan, iVend): show the points entry points (absent = off) */
                 loyalty?: boolean;
+                /** @description The store has the customer wallet on: show the wallet entry points (`GET /wallet`; absent = off) */
+                wallet?: boolean;
+                /** @description The store has vouchers or cashback on: show the vouchers page link (`GET /vouchers`; absent = off) */
+                vouchers?: boolean;
+                /** @description The store sells for several vendors: show the vendors page (`GET /vendors`; absent = off) */
+                vendors?: boolean;
+                /** @description The store takes insurance prescriptions: show the insurance page (`GET /insurance`; absent = off) */
+                insurance?: boolean;
             } & {
                 [key: string]: boolean;
             };
@@ -1783,6 +1909,11 @@ export interface components {
             sections: components["schemas"]["Section"][];
             featuredBrands: components["schemas"]["Tile"][];
             popups: components["schemas"]["Popup"][];
+            /** @description The vendors block: its title and the sellers, each linking to its products. Link "view all" to your vendors page. */
+            featuredVendors?: {
+                title: string;
+                items: components["schemas"]["Tile"][];
+            };
             /** @description The home page meta and structured data: title and description, WebPage facts, preview image */
             seo?: components["schemas"]["Seo"];
         };
@@ -2164,7 +2295,7 @@ export interface components {
         ProductListing: {
             context: {
                 /** @enum {string} */
-                type: "all" | "category" | "brand" | "list" | "deals" | "tag" | "search";
+                type: "all" | "category" | "brand" | "list" | "deals" | "tag" | "search" | "vendor";
                 /** @description The page heading */
                 title: string;
                 description: components["schemas"]["RichText"] | null;
@@ -2351,6 +2482,8 @@ export interface components {
             prescriptionFiles?: string[];
             /** @description Send true after the shopper accepted a `payment_change_needs_consent` answer */
             acceptPaymentChange?: boolean;
+            /** @description Pay with the wallet balance (offered when `Checkout.wallet` is not null). The backend works out how much. */
+            useWallet?: boolean;
         };
         CheckoutContact: {
             isGuest: boolean;
@@ -2364,7 +2497,7 @@ export interface components {
              * @description For styling only; unknown values → other
              * @enum {string}
              */
-            kind: "subtotal" | "promotion_discount" | "promo_code" | "delivery" | "payment_fee" | "other";
+            kind: "subtotal" | "promotion_discount" | "promo_code" | "delivery" | "payment_fee" | "wallet" | "other";
             label: string;
             amount: components["schemas"]["Money"] | null;
             /** @description Shown instead of an amount, e.g. "Free" or "Confirmed by phone" */
@@ -2427,8 +2560,14 @@ export interface components {
                 /** @description The code that was sent */
                 code: string | null;
                 applied: boolean;
-                /** @description Why the code was refused, or a hint about what it changed */
+                /** @description Why the code was refused, or a hint about what it changed (a cashback code: what the shopper gets after delivery) */
                 message: string | null;
+                /** @description Phase B (absent = none): the customer's active vouchers. Show them as one-tap codes: tapping sends `promoCode`; the verdict comes with that answer. */
+                suggestions?: {
+                    code: string;
+                    /** @description e.g. "10% off, up to 50 EGP" */
+                    benefit: string;
+                }[];
             };
             requirements: {
                 prescription: {
@@ -2466,6 +2605,22 @@ export interface components {
             }[];
             /** @description Enable the "place order" button only when true */
             canPlaceOrder: boolean;
+            /**
+             * @description Paying with the wallet balance. Null when the store has no wallet or the balance is zero. Show a switch
+             *     labelled `label` with `balance`; send `useWallet`. When `coversTotal` the wallet pays everything:
+             *     `payment.methods` is empty and no method is needed. The amount paid is also a `wallet` line of `totals`.
+             */
+            wallet?: {
+                label: string;
+                balance: components["schemas"]["Money"];
+                /** @description The balance is used (echo of `useWallet`) */
+                selected: boolean;
+                /** @description What the wallet pays for this order (null when not used) */
+                amount: components["schemas"]["Money"] | null;
+                coversTotal: boolean;
+                /** @description e.g. "Your wallet pays for the whole order." */
+                message: string | null;
+            } | null;
         };
         CheckoutResponse: {
             data: components["schemas"]["Checkout"];
@@ -2707,6 +2862,11 @@ export interface components {
             multiple: boolean;
             hint?: string | null;
             maxLength?: number | null;
+            /** @description Phase B (absent = always shown): show and send this field only while every condition holds (another field's value is one of `values`); `required` applies only then. */
+            showWhen?: {
+                field: string;
+                values: string[];
+            }[];
         };
         AuthSettings: {
             /**
@@ -3121,7 +3281,7 @@ export interface components {
             orderId?: string | null;
         };
         MobileNavItem: {
-            /** @description home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, points, area, account, language, more, or a merchant button */
+            /** @description home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, points, wallet, area, account, language, more, or a merchant button */
             id: string;
             label: string;
             /** @description An icon name (hint) or an image URL */
@@ -3142,7 +3302,7 @@ export interface components {
             video: {
                 url: string;
             } | null;
-            /** @description The inputs in order (`type`, `prescriptionNumber`, `files`, `note`). `files` has kind `file`: send the ids POST /uploads returned. */
+            /** @description The inputs in order (`type`, `insuranceProfileId`, `preApproved`, `approvalNumber`, `approvalFiles`, `prescriptionNumber`, `files`, `invoiceFiles`, `note`; the insurance ones only for stores with insurance, with `showWhen`). Kind `file`: send the ids POST /uploads returned. */
             fields: components["schemas"]["FormField"][];
             /** @description The customer's addresses to send it to (the default first and preselected). Empty = add one first (`blockers`). */
             addresses: components["schemas"]["PrescriptionAddressChoice"][];
@@ -3173,6 +3333,15 @@ export interface components {
             /** @description Ids from POST /uploads (at most 10) */
             files: string[];
             note?: string | null;
+            /** @description One of the `insuranceProfileId` field options */
+            insuranceProfileId?: string | null;
+            /** @description The `preApproved` field option (`yes` or `no`) */
+            preApproved?: string | null;
+            approvalNumber?: string | null;
+            /** @description Ids from POST /uploads (at most 10) */
+            approvalFiles?: string[];
+            /** @description Ids from POST /uploads (at most 10) */
+            invoiceFiles?: string[];
         };
         Prescription: {
             id: string;
@@ -3342,6 +3511,148 @@ export interface components {
         };
         LoyaltyReferralResponse: {
             data: components["schemas"]["LoyaltyReferral"];
+        };
+        /** @description One change of the balance. Show `title`, `amount` (credits are positive, debits have the minus sign) and `date`; link `orderId`. */
+        WalletEntry: {
+            id: string;
+            /**
+             * @description For styling only; unknown values → other
+             * @enum {string}
+             */
+            kind: "deposit" | "refund" | "referral" | "cashback" | "payment" | "deduction" | "other";
+            /** @description e.g. "Paid for order #48213", "Refund for order #48213", "Added by the store" */
+            title: string;
+            amount: components["schemas"]["Money"];
+            /** @description True when the balance went up */
+            credit: boolean;
+            /** Format: date-time */
+            date: string;
+            /** @description The customer's own `Order.id` (link it); null otherwise */
+            orderId: string | null;
+        };
+        Wallet: {
+            title: string;
+            balance: components["schemas"]["Money"];
+            /** @description How the balance can be used */
+            hint: string | null;
+            items: components["schemas"]["WalletEntry"][];
+            pagination: components["schemas"]["Pagination"];
+        };
+        WalletResponse: {
+            data: components["schemas"]["Wallet"];
+        };
+        InsuranceProfile: {
+            id: string;
+            /** @description e.g. "Misr Insurance — Mona Ali" (the choice in the prescription form) */
+            label: string;
+            company: {
+                id: number;
+                name: string;
+                logo: string | null;
+            } | null;
+            name: string | null;
+            /** @description The last 4 digits only, e.g. "•••• 1234" */
+            nationalId: string | null;
+            insuranceNumber: string | null;
+            /** @description How many photos are stored (never their URLs) */
+            documents: number;
+        };
+        InsurancePage: {
+            title: string;
+            hint: string | null;
+            /** @description The profile form in order (`companyId`, `name`, `nationalId` and/or `nationalIdFiles`, `insuranceNumber` and/or `insuranceCardFiles`, by the store's settings). Kind `file`: the ids POST /uploads returned (front, back). */
+            fields: components["schemas"]["FormField"][];
+            items: components["schemas"]["InsuranceProfile"][];
+        };
+        InsurancePageResponse: {
+            data: components["schemas"]["InsurancePage"];
+        };
+        InsuranceProfileRequest: {
+            companyId: number;
+            name?: string | null;
+            nationalId?: string | null;
+            nationalIdFiles?: string[];
+            insuranceNumber?: string | null;
+            insuranceCardFiles?: string[];
+        };
+        InsuranceProfileSavedResponse: {
+            data: {
+                message: string;
+                profile: components["schemas"]["InsuranceProfile"];
+                page: components["schemas"]["InsurancePage"];
+            };
+        };
+        InsuranceProfileDeletedResponse: {
+            data: {
+                message: string;
+                page: components["schemas"]["InsurancePage"];
+            };
+        };
+        Vendor: {
+            id: number;
+            name: string;
+            image: components["schemas"]["Image"] | null;
+            target: components["schemas"]["Target"];
+            description: string | null;
+        };
+        VendorsResponse: {
+            data: {
+                title: string;
+                hint: string | null;
+                items: components["schemas"]["Vendor"][];
+            };
+        };
+        /** @description One voucher with exactly one status. Show the backend's texts; `status` picks the tab and the style. */
+        Voucher: {
+            id: string;
+            /** @description The code to enter at checkout */
+            code: string;
+            /**
+             * @description For grouping and styling; unknown values → show as expired
+             * @enum {string}
+             */
+            status: "active" | "used" | "expired";
+            statusLabel: string;
+            /** @description e.g. "50 EGP off", "10% off, up to 50 EGP", "Free delivery" */
+            benefit: string;
+            /** @description e.g. "On orders from 200 EGP" */
+            minimumOrder: string | null;
+            /** @description A voucher with a budget it is spent from (null otherwise) */
+            credit: {
+                total: components["schemas"]["Money"];
+                remaining: components["schemas"]["Money"];
+            } | null;
+            /** @description The merchant's description, e.g. "Cashback from order #48213" */
+            detail: string | null;
+            /** Format: date-time */
+            expiresAt: string | null;
+            /** @description "Valid until 31 Dec 2026" or "Expired on 30 Jun 2026" */
+            expiry: string | null;
+        };
+        Vouchers: {
+            title: string;
+            /** @description How vouchers are used */
+            hint: string | null;
+            /** @description Show the "add a code" form */
+            canAdd: boolean;
+            /** @description The tabs in display order, with their labels and counts */
+            statuses: {
+                /** @enum {string} */
+                status: "active" | "used" | "expired";
+                label: string;
+                count: number;
+            }[];
+            /** @description Active first (soonest expiry first), then used and expired (latest first) */
+            items: components["schemas"]["Voucher"][];
+        };
+        VouchersResponse: {
+            data: components["schemas"]["Vouchers"];
+        };
+        VoucherAddedResponse: {
+            data: {
+                message: string;
+                vouchers: components["schemas"]["Vouchers"];
+            };
         };
     };
     responses: {
@@ -3844,6 +4155,8 @@ export interface operations {
                 deals?: boolean;
                 /** @description Search text */
                 q?: string;
+                /** @description Phase B: VendorTarget.id (404 when the store has multi-vendor off) */
+                vendor?: number;
                 /** @description Filter. Only from a `query` string. */
                 brands?: string;
                 /** @description Filter. Only from a `query` string. */
@@ -5618,6 +5931,212 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LoyaltyReferralResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getWallet: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+                page?: number;
+                perPage?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The wallet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WalletResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getInsurance: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The insurance page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsurancePageResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    addInsuranceProfile: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InsuranceProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Saved */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsuranceProfileSavedResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    updateInsuranceProfile: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description InsuranceProfile.id */
+                profileId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InsuranceProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsuranceProfileSavedResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    deleteInsuranceProfile: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path: {
+                /** @description InsuranceProfile.id */
+                profileId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted; the page as it is now */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsuranceProfileDeletedResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getVendors: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The vendors */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VendorsResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    getVouchers: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The vouchers */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VouchersResponse"];
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    addVoucher: {
+        parameters: {
+            query?: {
+                locale?: components["parameters"]["Locale"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Added; the updated list */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoucherAddedResponse"];
                 };
             };
             default: components["responses"]["Error"];

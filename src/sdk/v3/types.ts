@@ -196,3 +196,23 @@ export type LoyaltyRedemption = LoyaltyRedeemed['redemption'];
 export type LoyaltyEntry = Schemas['LoyaltyEntry'];
 export type LoyaltyHistoryPage = Schemas['LoyaltyHistoryResponse']['data'];
 export type LoyaltyReferral = Schemas['LoyaltyReferral'];
+// ---- phase B: wallet
+export type Wallet = Schemas['Wallet'];
+export type WalletEntry = Schemas['WalletEntry'];
+/** `Checkout.wallet`: paying with the balance (null / absent = not offered). */
+export type CheckoutWallet = NonNullable<Checkout['wallet']>;
+// ---- phase B: insurance
+export type InsuranceProfile = Schemas['InsuranceProfile'];
+export type InsurancePage = Schemas['InsurancePage'];
+export type InsuranceProfileInput = Schemas['InsuranceProfileRequest'];
+export type InsuranceSaved = Schemas['InsuranceProfileSavedResponse']['data'];
+export type InsuranceDeleted = Schemas['InsuranceProfileDeletedResponse']['data'];
+// ---- phase B: vendors
+export type Vendor = Schemas['Vendor'];
+export type VendorsPage = Schemas['VendorsResponse']['data'];
+// ---- phase B: vouchers
+export type Voucher = Schemas['Voucher'];
+export type Vouchers = Schemas['Vouchers'];
+export type VoucherAdded = Schemas['VoucherAddedResponse']['data'];
+/** `Checkout.promo.suggestions[n]`: one of the customer's active vouchers, offered as a code. */
+export type PromoSuggestion = NonNullable<Checkout['promo']['suggestions']>[number];

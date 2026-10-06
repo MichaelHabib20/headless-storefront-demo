@@ -4,7 +4,7 @@
  * prices and limits are the shopper's); categories, brands and resolve are the same for everyone.
  */
 import type { StorefrontClient } from './http';
-import type { BrandsPage, CategoryTree, Locale, ProductListing, Resolution, SearchSuggestions } from './types';
+import type { BrandsPage, CategoryTree, Locale, ProductListing, Resolution, SearchSuggestions, VendorsPage } from './types';
 
 interface Ctx {
   locale: Locale;
@@ -24,13 +24,14 @@ export type ListingScope =
   | { tag: string }
   | { deals: true }
   | { q: string }
+  | { vendor: number }
   | Record<string, never>;
 
 /** The page's own query parameters (Next.js `searchParams`, or a URLSearchParams). */
 export type ListingParams = URLSearchParams | Record<string, string | string[] | undefined>;
 
 /** Scope parameters come only from the route; `locale` only from the client. */
-const RESERVED = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'locale'];
+const RESERVED = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor', 'locale'];
 
 /**
  * The request's query: every parameter of the page as it is (filters, sort and pages come from
@@ -48,8 +49,12 @@ export function listingQuery(scope: ListingScope, params: ListingParams = {}): s
   else if ('tag' in scope) query.set('tag', scope.tag);
   else if ('deals' in scope) query.set('deals', 'true');
   else if ('q' in scope && scope.q) query.set('q', scope.q);
+  else if ('vendor' in scope) query.set('vendor', String(scope.vendor));
   return query.toString();
 }
+
+/** phase B: the store's sellers, each with the Target of its products. 404 `not_found` while multi-vendor is off. */
+export const getVendors = (client: StorefrontClient, locale: Locale) => client.get<VendorsPage>('vendors', locale);
 
 /** One product listing for every listing page. Unknown scope → ApiError `not_found`; bad filters → `validation`. */
 export function getProducts(client: StorefrontClient, ctx: Ctx, scope: ListingScope, params?: ListingParams): Promise<ProductListing> {

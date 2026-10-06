@@ -23,6 +23,8 @@ describe('listingQuery', () => {
   it('keeps repeated parameters and their order', () => {
     expect(listingQuery({ brand: 'bioderma' }, new URLSearchParams('options=1&options=2&x=y'))).toBe('options=1&options=2&x=y&brand=bioderma');
     expect(listingQuery({}, { options: ['1', '2'] })).toBe('options=1&options=2');
+    // phase B: a vendor listing; a `vendor` in the page's own parameters is never taken over
+    expect(listingQuery({ vendor: 3 }, { sort: 'price_asc', vendor: '99' })).toBe('sort=price_asc&vendor=3');
   });
 
   it('takes the scope from the route only (one scope, never locale from the URL)', () => {

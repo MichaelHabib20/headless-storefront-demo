@@ -381,4 +381,29 @@ describe('seo + marketing rules', () => {
     // other areas are not concerned
     expect(rulesHit('src/components/cart/X.tsx', 'const total = line.total.amount;')).not.toContain('loyalty-rules-from-api');
   });
+
+  it('wallet: the backend decides what the wallet pays', () => {
+    const file = 'src/components/wallet/X.tsx';
+    expect(rulesHit('src/components/checkout/WalletSection.tsx', 'const rest = checkout.totals.total.amount - wallet.balance.amount;')).toContain('wallet-rules-from-api');
+    expect(rulesHit('src/components/checkout/WalletSection.tsx', 'const coversTotal = balance >= total;')).toContain('wallet-rules-from-api');
+    expect(rulesHit(file, 'const credit = entry.amount.amount > 0;')).toContain('wallet-rules-from-api');
+    expect(rulesHit('src/lib/wallet.server.ts', 'if (layout.ENABLE_USER_WALLET) return true;')).toContain('wallet-rules-from-api');
+    // reading the API's answers is fine
+    expect(rulesHit(file, '<span data-credit={entry.credit}><Money value={entry.amount} /></span>')).not.toContain('wallet-rules-from-api');
+    expect(rulesHit('src/components/checkout/WalletSection.tsx', '{wallet.message && <p>{wallet.message}</p>}')).not.toContain('wallet-rules-from-api');
+    // other areas are not concerned
+    expect(rulesHit('src/components/cart/X.tsx', 'const total = line.total.amount;')).not.toContain('wallet-rules-from-api');
+  });
+
+  it('vouchers: the backend decides status and texts', () => {
+    const file = 'src/components/vouchers/X.tsx';
+    expect(rulesHit(file, 'const expired = new Date(voucher.expiresAt) < new Date();')).toContain('voucher-rules-from-api');
+    expect(rulesHit(file, '<p>{voucher.amount}% off</p>')).toContain('voucher-rules-from-api');
+    expect(rulesHit(file, 'const left = voucher.credit.remaining.amount;')).toContain('voucher-rules-from-api');
+    expect(rulesHit(file, "const status = used ? 'used' : 'active';")).toContain('voucher-rules-from-api');
+    // reading the API's answers is fine
+    expect(rulesHit(file, '{voucher.expiry && <p>{voucher.expiry}</p>}')).not.toContain('voucher-rules-from-api');
+    expect(rulesHit(file, '<li data-status={voucher.status}>')).not.toContain('voucher-rules-from-api');
+    expect(rulesHit('src/components/cart/X.tsx', "const status = used ? 'used' : 'active';")).not.toContain('voucher-rules-from-api');
+  });
 });

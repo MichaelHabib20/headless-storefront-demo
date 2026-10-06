@@ -17,13 +17,15 @@ describe('bottom nav actions', () => {
     expect(navAction(item('categories'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/categories', external: false } });
     expect(navAction(item('orders'), 'en')).toMatchObject({ link: { href: '/en/account/orders' } });
     expect(navAction(item('points'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/account/your-points', external: false } });
+    expect(navAction(item('wallet'), 'en')).toEqual({ kind: 'link', link: { href: '/en/account/wallet-history', external: false } });
+    expect(navAction(item('vendors'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/vendors', external: false } });
     expect(navAction(item('more'), 'en')).toEqual({ kind: 'more' });
     expect(navAction(item('area'), 'en')).toEqual({ kind: 'area' });
     expect(navAction(item('language'), 'en')).toEqual({ kind: 'language' });
   });
 
   it('skips ids it does not know', () => {
-    expect(navAction(item('wallet'), 'en')).toEqual({ kind: 'none' });
+    expect(navAction(item('country'), 'en')).toEqual({ kind: 'none' });
   });
 
   it('badges come from Me.counts', () => {

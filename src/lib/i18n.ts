@@ -9,6 +9,10 @@ import { notificationsMessages } from './messages/notifications';
 import { ordersExtrasMessages } from './messages/orders-extras';
 import { prescriptionsMessages } from './messages/prescriptions';
 import { loyaltyMessages } from './messages/loyalty';
+import { walletMessages } from './messages/wallet';
+import { vouchersMessages } from './messages/vouchers';
+import { vendorsMessages } from './messages/vendors';
+import { insuranceMessages } from './messages/insurance';
 import { productMessages } from './messages/product';
 import { shopperMessages } from './messages/shopper';
 import { wishlistMessages } from './messages/wishlist';
@@ -136,8 +140,8 @@ const coreAr: Record<keyof typeof en, string> = {
  * enforced by defineMessages). Add new areas here.
  */
 const dictionaries = {
-  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en, ...checkoutMessages.en, ...accountMessages.en, ...ordersExtrasMessages.en, ...authMessages.en, ...contentMessages.en, ...shellMessages.en, ...prescriptionsMessages.en, ...loyaltyMessages.en },
-  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar, ...checkoutMessages.ar, ...accountMessages.ar, ...ordersExtrasMessages.ar, ...authMessages.ar, ...contentMessages.ar, ...shellMessages.ar, ...prescriptionsMessages.ar, ...loyaltyMessages.ar },
+  en: { ...en, ...cartMessages.en, ...wishlistMessages.en, ...compareMessages.en, ...notificationsMessages.en, ...shopperMessages.en, ...productMessages.en, ...catalogMessages.en, ...checkoutMessages.en, ...accountMessages.en, ...ordersExtrasMessages.en, ...authMessages.en, ...contentMessages.en, ...shellMessages.en, ...prescriptionsMessages.en, ...loyaltyMessages.en, ...walletMessages.en, ...vouchersMessages.en, ...vendorsMessages.en, ...insuranceMessages.en },
+  ar: { ...coreAr, ...cartMessages.ar, ...wishlistMessages.ar, ...compareMessages.ar, ...notificationsMessages.ar, ...shopperMessages.ar, ...productMessages.ar, ...catalogMessages.ar, ...checkoutMessages.ar, ...accountMessages.ar, ...ordersExtrasMessages.ar, ...authMessages.ar, ...contentMessages.ar, ...shellMessages.ar, ...prescriptionsMessages.ar, ...loyaltyMessages.ar, ...walletMessages.ar, ...vouchersMessages.ar, ...vendorsMessages.ar, ...insuranceMessages.ar },
 } satisfies Record<Locale, Record<string, string>>;
 
 export type MessageKey = keyof typeof dictionaries.en;

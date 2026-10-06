@@ -362,7 +362,7 @@ paths:
       operationId: getProducts
       summary: One product listing for every listing page (category, brand, list, deals, tag, search, all products)
       description: |
-        Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`); none = all products.
+        Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
         Filter and sort parameters come from the `query` strings of a previous answer: pass them through
         as they are. Works without a token; with a token prices and limits are the shopper's.
       parameters:
@@ -373,6 +373,7 @@ paths:
         - { name: tag, in: query, required: false, description: TagTarget.slug, schema: { type: string } }
         - { name: deals, in: query, required: false, schema: { type: boolean } }
         - { name: q, in: query, required: false, description: Search text, schema: { type: string, maxLength: 200 } }
+        - { name: vendor, in: query, required: false, description: 'Phase B: VendorTarget.id (404 when the store has multi-vendor off)', schema: { type: integer, minimum: 1 } }
         - { name: brands, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
         - { name: categories, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
         - { name: options, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
@@ -1621,6 +1622,144 @@ paths:
               schema: { $ref: '#/components/schemas/LoyaltyReferralResponse' }
         default: { $ref: '#/components/responses/Error' }
 
+  # ---------------------------------------------------------------- phase B (docs/headless/phase-b-v3-design.md)
+
+  /wallet:
+    get:
+      operationId: getWallet
+      summary: "The customer's wallet balance and one page of its history, newest first. Customer token only. 404 while the store has the wallet off (`Layout.features.wallet`)."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+        - { name: page, in: query, required: false, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: perPage, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        '200':
+          description: The wallet
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WalletResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /insurance:
+    get:
+      operationId: getInsurance
+      summary: "The customer's insurance profiles and the form to add one. Customer token only. 404 while the store takes no insurance prescriptions (`Layout.features.insurance`)."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The insurance page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InsurancePageResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /insurance/profiles:
+    post:
+      operationId: addInsuranceProfile
+      summary: 'Add an insurance profile. 422 validation_failed with `fields` (the v3 field names).'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InsuranceProfileRequest' }
+      responses:
+        '201':
+          description: Saved
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InsuranceProfileSavedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /insurance/profiles/{profileId}:
+    parameters:
+      - { name: profileId, in: path, required: true, description: InsuranceProfile.id, schema: { type: string, minLength: 1, maxLength: 20 } }
+      - $ref: '#/components/parameters/Locale'
+    put:
+      operationId: updateInsuranceProfile
+      summary: "Change one of the customer's profiles (404 for any other). Numbers and photos not sent again stay as they are."
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InsuranceProfileRequest' }
+      responses:
+        '200':
+          description: Saved
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InsuranceProfileSavedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: deleteInsuranceProfile
+      summary: "Delete one of the customer's profiles (404 for any other)."
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: Deleted; the page as it is now
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InsuranceProfileDeletedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /vendors:
+    get:
+      operationId: getVendors
+      summary: "The store's sellers, each with the Target of its products. Public. 404 while the store has multi-vendor off (`Layout.features.vendors`)."
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The vendors
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VendorsResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /vouchers:
+    get:
+      operationId: getVouchers
+      summary: "The customer's vouchers (cashback vouchers too), each with one status. Customer token only. 404 while the store has neither vouchers nor cashback on (`Layout.features.vouchers`)."
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      responses:
+        '200':
+          description: The vouchers
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VouchersResponse' }
+        default: { $ref: '#/components/responses/Error' }
+    post:
+      operationId: addVoucher
+      summary: 'Add a voucher code to the account. 422 validation_failed with `fields.code` when the store refuses it (not valid, expired, already added).'
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Locale'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              additionalProperties: false
+              properties:
+                code: { type: string, maxLength: 100 }
+      responses:
+        '201':
+          description: Added; the updated list
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoucherAddedResponse' }
+        default: { $ref: '#/components/responses/Error' }
+
 components:
   securitySchemes:
     bearer:
@@ -1694,6 +1833,7 @@ components:
         - $ref: '#/components/schemas/UrlTarget'
         - $ref: '#/components/schemas/TagTarget'
         - $ref: '#/components/schemas/SearchTarget'
+        - $ref: '#/components/schemas/VendorTarget'
       discriminator:
         propertyName: type
         mapping:
@@ -1709,6 +1849,7 @@ components:
           url: '#/components/schemas/UrlTarget'
           tag: '#/components/schemas/TagTarget'
           search: '#/components/schemas/SearchTarget'
+          vendor: '#/components/schemas/VendorTarget'
     ProductTarget:
       type: object
       required: [type, slug]
@@ -1798,6 +1939,14 @@ components:
       properties:
         type: { type: string, enum: [search] }
         query: { type: string }
+    VendorTarget:
+      description: 'Phase B: the products of one seller (`GET /products?vendor={id}`)'
+      type: object
+      required: [type, id]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [vendor] }
+        id: { type: integer, minimum: 1 }
 
     NullableTarget:
       description: A Target, or null when not clickable.
@@ -1815,6 +1964,7 @@ components:
         - $ref: '#/components/schemas/UrlTarget'
         - $ref: '#/components/schemas/TagTarget'
         - $ref: '#/components/schemas/SearchTarget'
+        - $ref: '#/components/schemas/VendorTarget'
 
     Image:
       type: object
@@ -1998,6 +2148,10 @@ components:
             orderRating: { type: boolean, description: Shoppers may rate delivered orders }
             share: { type: boolean, description: Show the share button on product pages }
             loyalty: { type: boolean, description: 'The store has a loyalty provider v3 supports (El Dokan, iVend): show the points entry points (absent = off)' }
+            wallet: { type: boolean, description: 'The store has the customer wallet on: show the wallet entry points (`GET /wallet`; absent = off)' }
+            vouchers: { type: boolean, description: 'The store has vouchers or cashback on: show the vouchers page link (`GET /vouchers`; absent = off)' }
+            vendors: { type: boolean, description: 'The store sells for several vendors: show the vendors page (`GET /vendors`; absent = off)' }
+            insurance: { type: boolean, description: 'The store takes insurance prescriptions: show the insurance page (`GET /insurance`; absent = off)' }
         # ---- added for the shell phase (optional: older recordings may lack them; absent = feature off)
         marketing: { $ref: '#/components/schemas/Marketing' }
         legal:
@@ -2228,6 +2382,17 @@ components:
         popups:
           type: array
           items: { $ref: '#/components/schemas/Popup' }
+        # ---- phase B (optional: absent = the store shows no vendors block)
+        featuredVendors:
+          description: 'The vendors block: its title and the sellers, each linking to its products. Link "view all" to your vendors page.'
+          type: object
+          required: [title, items]
+          additionalProperties: false
+          properties:
+            title: { type: string }
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Tile' }
         # ---- added for the SEO phase (optional: older recordings may lack it)
         seo:
           description: 'The home page meta and structured data: title and description, WebPage facts, preview image'
@@ -2842,7 +3007,7 @@ components:
           required: [type, title, description, image, query]
           additionalProperties: false
           properties:
-            type: { type: string, enum: [all, category, brand, list, deals, tag, search] }
+            type: { type: string, enum: [all, category, brand, list, deals, tag, search, vendor] }
             title: { type: string, description: The page heading }
             description:
               nullable: true
@@ -3164,6 +3329,7 @@ components:
           maxItems: 10
           items: { type: string }
         acceptPaymentChange: { type: boolean, description: 'Send true after the shopper accepted a `payment_change_needs_consent` answer' }
+        useWallet: { type: boolean, description: 'Pay with the wallet balance (offered when `Checkout.wallet` is not null). The backend works out how much.' }
 
     CheckoutContact:
       type: object
@@ -3181,7 +3347,7 @@ components:
       required: [kind, label, amount, text]
       additionalProperties: false
       properties:
-        kind: { type: string, enum: [subtotal, promotion_discount, promo_code, delivery, payment_fee, other], description: 'For styling only; unknown values → other' }
+        kind: { type: string, enum: [subtotal, promotion_discount, promo_code, delivery, payment_fee, wallet, other], description: 'For styling only; unknown values → other' }
         label: { type: string }
         amount:
           nullable: true
@@ -3284,7 +3450,17 @@ components:
           properties:
             code: { type: string, nullable: true, description: The code that was sent }
             applied: { type: boolean }
-            message: { type: string, nullable: true, description: 'Why the code was refused, or a hint about what it changed' }
+            message: { type: string, nullable: true, description: 'Why the code was refused, or a hint about what it changed (a cashback code: what the shopper gets after delivery)' }
+            suggestions:
+              description: 'Phase B (absent = none): the customer''s active vouchers. Show them as one-tap codes: tapping sends `promoCode`; the verdict comes with that answer.'
+              type: array
+              items:
+                type: object
+                required: [code, benefit]
+                additionalProperties: false
+                properties:
+                  code: { type: string }
+                  benefit: { type: string, description: 'e.g. "10% off, up to 50 EGP"' }
         requirements:
           type: object
           required: [prescription]
@@ -3344,6 +3520,26 @@ components:
               level: { type: string, enum: [info, warning] }
               text: { type: string }
         canPlaceOrder: { type: boolean, description: 'Enable the "place order" button only when true' }
+        # ---- phase B (optional: older recordings lack it; absent = no wallet)
+        wallet:
+          description: |
+            Paying with the wallet balance. Null when the store has no wallet or the balance is zero. Show a switch
+            labelled `label` with `balance`; send `useWallet`. When `coversTotal` the wallet pays everything:
+            `payment.methods` is empty and no method is needed. The amount paid is also a `wallet` line of `totals`.
+          type: object
+          nullable: true
+          required: [label, balance, selected, amount, coversTotal, message]
+          additionalProperties: false
+          properties:
+            label: { type: string }
+            balance: { $ref: '#/components/schemas/Money' }
+            selected: { type: boolean, description: The balance is used (echo of `useWallet`) }
+            amount:
+              description: What the wallet pays for this order (null when not used)
+              nullable: true
+              allOf: [{ $ref: '#/components/schemas/Money' }]
+            coversTotal: { type: boolean }
+            message: { type: string, nullable: true, description: 'e.g. "Your wallet pays for the whole order."' }
     CheckoutResponse:
       type: object
       required: [data]
@@ -3716,6 +3912,16 @@ components:
         multiple: { type: boolean, description: For `select` and `file` }
         hint: { type: string, nullable: true }
         maxLength: { type: integer, nullable: true }
+        showWhen:
+          description: 'Phase B (absent = always shown): show and send this field only while every condition holds (another field''s value is one of `values`); `required` applies only then.'
+          type: array
+          items:
+            type: object
+            required: [field, values]
+            additionalProperties: false
+            properties:
+              field: { type: string }
+              values: { type: array, items: { type: string } }
 
     AuthSettings:
       type: object
@@ -4375,7 +4581,7 @@ components:
       required: [id, label, icon, target, badge]
       additionalProperties: false
       properties:
-        id: { type: string, description: 'home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, points, area, account, language, more, or a merchant button' }
+        id: { type: string, description: 'home, categories, deals, all_products, cart, wishlist, compare, orders, notifications, prescriptions, points, wallet, area, account, language, more, or a merchant button' }
         label: { type: string }
         icon: { type: string, nullable: true, description: An icon name (hint) or an image URL }
         target: { $ref: '#/components/schemas/NullableTarget' }
@@ -4402,7 +4608,7 @@ components:
           properties:
             url: { type: string }
         fields:
-          description: 'The inputs in order (`type`, `prescriptionNumber`, `files`, `note`). `files` has kind `file`: send the ids POST /uploads returned.'
+          description: 'The inputs in order (`type`, `insuranceProfileId`, `preApproved`, `approvalNumber`, `approvalFiles`, `prescriptionNumber`, `files`, `invoiceFiles`, `note`; the insurance ones only for stores with insurance, with `showWhen`). Kind `file`: send the ids POST /uploads returned.'
           type: array
           items: { $ref: '#/components/schemas/FormField' }
         addresses:
@@ -4448,6 +4654,20 @@ components:
           maxItems: 10
           items: { type: string }
         note: { type: string, nullable: true, maxLength: 1000 }
+        # ---- phase B: the insurance kind (sent only with type = insurance)
+        insuranceProfileId: { type: string, nullable: true, description: 'One of the `insuranceProfileId` field options' }
+        preApproved: { type: string, nullable: true, description: 'The `preApproved` field option (`yes` or `no`)' }
+        approvalNumber: { type: string, nullable: true, maxLength: 100 }
+        approvalFiles:
+          description: Ids from POST /uploads (at most 10)
+          type: array
+          maxItems: 10
+          items: { type: string }
+        invoiceFiles:
+          description: Ids from POST /uploads (at most 10)
+          type: array
+          maxItems: 10
+          items: { type: string }
     Prescription:
       type: object
       required: [id, reference, status, placedAt, type, prescriptionNumber, note, fileCount, address, cancellation, actions]
@@ -4693,3 +4913,215 @@ components:
       additionalProperties: false
       properties:
         data: { $ref: '#/components/schemas/LoyaltyReferral' }
+
+    # ---------------------------------------------------------------- phase B: wallet
+
+    WalletEntry:
+      description: One change of the balance. Show `title`, `amount` (credits are positive, debits have the minus sign) and `date`; link `orderId`.
+      type: object
+      required: [id, kind, title, amount, credit, date, orderId]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [deposit, refund, referral, cashback, payment, deduction, other], description: 'For styling only; unknown values → other' }
+        title: { type: string, description: 'e.g. "Paid for order #48213", "Refund for order #48213", "Added by the store"' }
+        amount: { $ref: '#/components/schemas/Money' }
+        credit: { type: boolean, description: True when the balance went up }
+        date: { type: string, format: date-time }
+        orderId: { type: string, nullable: true, description: "The customer's own `Order.id` (link it); null otherwise" }
+    Wallet:
+      type: object
+      required: [title, balance, hint, items, pagination]
+      additionalProperties: false
+      properties:
+        title: { type: string }
+        balance: { $ref: '#/components/schemas/Money' }
+        hint: { type: string, nullable: true, description: How the balance can be used }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/WalletEntry' }
+        pagination: { $ref: '#/components/schemas/Pagination' }
+    WalletResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Wallet' }
+
+    # ---------------------------------------------------------------- phase B: insurance
+
+    InsuranceProfile:
+      type: object
+      required: [id, label, company, name, nationalId, insuranceNumber, documents]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        label: { type: string, description: 'e.g. "Misr Insurance — Mona Ali" (the choice in the prescription form)' }
+        company:
+          type: object
+          nullable: true
+          required: [id, name, logo]
+          additionalProperties: false
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            logo: { type: string, nullable: true }
+        name: { type: string, nullable: true }
+        nationalId: { type: string, nullable: true, description: 'The last 4 digits only, e.g. "•••• 1234"' }
+        insuranceNumber: { type: string, nullable: true }
+        documents: { type: integer, minimum: 0, description: How many photos are stored (never their URLs) }
+    InsurancePage:
+      type: object
+      required: [title, hint, fields, items]
+      additionalProperties: false
+      properties:
+        title: { type: string }
+        hint: { type: string, nullable: true }
+        fields:
+          description: 'The profile form in order (`companyId`, `name`, `nationalId` and/or `nationalIdFiles`, `insuranceNumber` and/or `insuranceCardFiles`, by the store''s settings). Kind `file`: the ids POST /uploads returned (front, back).'
+          type: array
+          items: { $ref: '#/components/schemas/FormField' }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/InsuranceProfile' }
+    InsurancePageResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/InsurancePage' }
+    InsuranceProfileRequest:
+      type: object
+      required: [companyId]
+      additionalProperties: false
+      properties:
+        companyId: { type: integer }
+        name: { type: string, nullable: true, maxLength: 255 }
+        nationalId: { type: string, nullable: true, maxLength: 50 }
+        nationalIdFiles: { type: array, maxItems: 2, items: { type: string } }
+        insuranceNumber: { type: string, nullable: true, maxLength: 50 }
+        insuranceCardFiles: { type: array, maxItems: 2, items: { type: string } }
+    InsuranceProfileSavedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [message, profile, page]
+          additionalProperties: false
+          properties:
+            message: { type: string }
+            profile: { $ref: '#/components/schemas/InsuranceProfile' }
+            page: { $ref: '#/components/schemas/InsurancePage' }
+    InsuranceProfileDeletedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [message, page]
+          additionalProperties: false
+          properties:
+            message: { type: string }
+            page: { $ref: '#/components/schemas/InsurancePage' }
+
+    # ---------------------------------------------------------------- phase B: vendors
+
+    Vendor:
+      type: object
+      required: [id, name, image, target, description]
+      additionalProperties: false
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        image:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Image' }]
+        target: { $ref: '#/components/schemas/Target' }
+        description: { type: string, nullable: true }
+    VendorsResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [title, hint, items]
+          additionalProperties: false
+          properties:
+            title: { type: string }
+            hint: { type: string, nullable: true }
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/Vendor' }
+
+    # ---------------------------------------------------------------- phase B: vouchers
+
+    Voucher:
+      description: One voucher with exactly one status. Show the backend's texts; `status` picks the tab and the style.
+      type: object
+      required: [id, code, status, statusLabel, benefit, minimumOrder, credit, detail, expiresAt, expiry]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        code: { type: string, description: The code to enter at checkout }
+        status: { type: string, enum: [active, used, expired], description: 'For grouping and styling; unknown values → show as expired' }
+        statusLabel: { type: string }
+        benefit: { type: string, description: 'e.g. "50 EGP off", "10% off, up to 50 EGP", "Free delivery"' }
+        minimumOrder: { type: string, nullable: true, description: 'e.g. "On orders from 200 EGP"' }
+        credit:
+          description: A voucher with a budget it is spent from (null otherwise)
+          type: object
+          nullable: true
+          required: [total, remaining]
+          additionalProperties: false
+          properties:
+            total: { $ref: '#/components/schemas/Money' }
+            remaining: { $ref: '#/components/schemas/Money' }
+        detail: { type: string, nullable: true, description: 'The merchant''s description, e.g. "Cashback from order #48213"' }
+        expiresAt: { type: string, format: date-time, nullable: true }
+        expiry: { type: string, nullable: true, description: '"Valid until 31 Dec 2026" or "Expired on 30 Jun 2026"' }
+    Vouchers:
+      type: object
+      required: [title, hint, canAdd, statuses, items]
+      additionalProperties: false
+      properties:
+        title: { type: string }
+        hint: { type: string, nullable: true, description: How vouchers are used }
+        canAdd: { type: boolean, description: Show the "add a code" form }
+        statuses:
+          description: The tabs in display order, with their labels and counts
+          type: array
+          items:
+            type: object
+            required: [status, label, count]
+            additionalProperties: false
+            properties:
+              status: { type: string, enum: [active, used, expired] }
+              label: { type: string }
+              count: { type: integer, minimum: 0 }
+        items:
+          description: Active first (soonest expiry first), then used and expired (latest first)
+          type: array
+          items: { $ref: '#/components/schemas/Voucher' }
+    VouchersResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data: { $ref: '#/components/schemas/Vouchers' }
+    VoucherAddedResponse:
+      type: object
+      required: [data]
+      additionalProperties: false
+      properties:
+        data:
+          type: object
+          required: [message, vouchers]
+          additionalProperties: false
+          properties:
+            message: { type: string }
+            vouchers: { $ref: '#/components/schemas/Vouchers' }
+

@@ -14,6 +14,7 @@ import { PlaceOrder } from './PlaceOrder';
 import { PrescriptionSection } from './PrescriptionSection';
 import { PromoSection } from './PromoSection';
 import { TotalLines } from './TotalLines';
+import { WalletSection } from './WalletSection';
 import type { ComputeCheckoutAction, ComputeResult, ContactResult, PlaceOrderAction, PlaceOrderOutcome, SaveContactAction, UploadPrescriptionAction } from './types';
 import styles from './Checkout.module.css';
 
@@ -205,7 +206,8 @@ export function CheckoutView({ checkout: first, settings, branches, locale, atte
         <div className={styles.sections}>
           <ContactSection checkout={checkout} settings={settings} locale={locale} busy={busy} onSave={saveContact} />
           <FulfilmentSection checkout={checkout} shown={shown} branches={branches} pending={pending} locale={locale} onChange={change} />
-          <PaymentSection checkout={checkout} shown={shown} pending={pending} locale={locale} onChange={change} />
+          {checkout.wallet && <WalletSection wallet={checkout.wallet} shown={shown} pending={pending} locale={locale} onChange={change} />}
+          {!checkout.wallet?.coversTotal && <PaymentSection checkout={checkout} shown={shown} pending={pending} locale={locale} onChange={change} />}
           <PrescriptionSection prescription={checkout.requirements.prescription} locale={locale} busy={busy} onUpload={uploadPrescription} onRemove={removePrescription} />
           {settings.promoCode && <PromoSection promo={checkout.promo} locale={locale} busy={busy} onChange={change} />}
           {settings.orderNote && (

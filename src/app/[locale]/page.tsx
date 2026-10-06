@@ -4,6 +4,7 @@ import { BrandRail } from '@/components/home/BrandRail';
 import { CategoryTiles } from '@/components/home/CategoryTiles';
 import { PopupHost } from '@/components/home/PopupHost';
 import { PromoStrip } from '@/components/home/PromoStrip';
+import { VendorRail } from '@/components/home/VendorRail';
 import { HomeSection } from '@/components/home/sections/HomeSection';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { PROMO_PLACEMENTS, promoFor } from '@/lib/home';
@@ -50,6 +51,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <HomeSection key={section.id} section={section} locale={locale} priority={index === 0} />
       ))}
       <BrandRail brands={home.featuredBrands} locale={locale} />
+      <VendorRail block={home.featuredVendors} locale={locale} />
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.bottom)} locale={locale} />
       <PopupHost popups={home.popups} locale={locale} closeLabel={t('close')} />
       <JsonLd seo={home.seo} locale={locale} />

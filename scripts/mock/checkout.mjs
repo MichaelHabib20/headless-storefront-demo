@@ -29,6 +29,8 @@
  */
 import { addressRows, addressesOf, newOrderIdentity, orderRows, resetAccountCounters } from './account-state.mjs';
 import { priceWithText } from './shopper.mjs';
+import { vouchersState } from './vouchers.mjs';
+import { walletState } from './wallet.mjs';
 
 export const PRESCRIPTION_PRODUCT_ID = 14482;
 export const PAYMENT = { cash: 1, cardOnDelivery: 2, cardOnline: 3, installments: 4 };
@@ -83,6 +85,11 @@ const TEXT = {
     subtotal: 'Subtotal',
     promoLine: (code) => `Promo code ${code}`,
     paymentFee: (name) => `${name} fee`,
+    walletLine: 'Paid from wallet',
+    walletLabel: 'Pay with my wallet balance',
+    walletCovers: 'Your wallet pays for the whole order.',
+    walletRest: (amount) => `Your wallet pays ${amount}. Choose how to pay the rest.`,
+    walletDropped: "Your wallet balance can't be used for this order.",
     missing: {
       sign_in: 'Sign in to place your order.',
       contact: 'Add your contact details.',
@@ -137,6 +144,11 @@ const TEXT = {
     subtotal: 'المجموع الفرعي',
     promoLine: (code) => `كود الخصم ${code}`,
     paymentFee: (name) => `رسوم ${name}`,
+    walletLine: 'المدفوع من المحفظة',
+    walletLabel: 'الدفع من رصيد محفظتي',
+    walletCovers: 'رصيد محفظتك يغطي قيمة الطلب بالكامل.',
+    walletRest: (amount) => `ستدفع ${amount} من محفظتك. اختر طريقة دفع الباقي.`,
+    walletDropped: 'لا يمكن استخدام رصيد محفظتك لهذا الطلب.',
     missing: {
       sign_in: 'سجّل الدخول لإتمام طلبك.',
       contact: 'أضف بيانات التواصل.',
@@ -328,12 +340,25 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
       }
     }
 
+    // phase B: the customer's active vouchers as codes
+    const suggestions = cart.items.length ? vouchersState(shopper).suggestions(session, locale, promo.applied ? code : null) : undefined;
+    if (suggestions) promo.suggestions = suggestions;
+
     if (address) {
       deliveryFee = freeDelivery ? 0 : (DELIVERY_FEES[address.area?.id] ?? 30);
       delivery = freeDelivery ? { fee: null, text: t.free, free: true } : { fee: total(deliveryFee, locale), text: null, free: false };
     } else if (pickupBranch) {
       delivery = { fee: null, text: t.pickupFree, free: true };
     }
+
+    // wallet (phase B): min(balance, items − promo + delivery); everything paid → no method is shown or needed
+    const wallet = walletState(shopper);
+    const balance = wallet.balanceOf(session);
+    const grand = round2(subtotal - discount + deliveryFee);
+    const useWallet = sel.useWallet === true && balance > 0 && cart.items.length > 0;
+    if (sel.useWallet === true && !useWallet) messages.push({ level: 'warning', text: t.walletDropped });
+    const walletPaid = useWallet ? round2(Math.min(balance, grand)) : 0;
+    const walletCovers = useWallet && walletPaid >= grand;
 
     // payment
     const methods = offeredMethods().map((method) => ({
@@ -351,9 +376,10 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
       if (!method) messages.push({ level: 'warning', text: t.paymentDropped });
       else payment = { methodId: method.id, planId: method.plans.some((plan) => plan.id === sel.installmentPlanId) ? sel.installmentPlanId : null };
     }
+    if (walletCovers) payment = null;
     const method = payment ? METHODS.find((item) => item.id === payment.methodId) : null;
-    if (!payment) missing.push(notice('payment_method', t.missing.payment_method));
-    else if (method.plans.length && payment.planId === null) missing.push(notice('installment_plan', t.missing.installment_plan));
+    if (!payment && !walletCovers) missing.push(notice('payment_method', t.missing.payment_method));
+    else if (method?.plans.length && payment.planId === null) missing.push(notice('installment_plan', t.missing.installment_plan));
     const paymentFee = method?.fee ?? 0;
 
     // prescription
@@ -367,6 +393,7 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
     if (discount) lines.push({ kind: 'promo_code', label: t.promoLine(code), amount: negative(discount, locale), text: null });
     if (delivery) lines.push({ kind: 'delivery', label: t.delivery, amount: delivery.fee, text: delivery.text });
     if (paymentFee) lines.push({ kind: 'payment_fee', label: t.paymentFee(method.name[locale]), amount: total(paymentFee, locale), text: null });
+    if (walletPaid) lines.push({ kind: 'wallet', label: t.walletLine, amount: negative(walletPaid, locale), text: null });
 
     blockers.unshift(...cart.checkout.blockers.map((blocker) => notice(blocker.code, blocker.message)));
 
@@ -374,10 +401,20 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
       cart,
       contact,
       fulfilment: { options, selected, addresses, addressId: address?.id ?? null, branch: pickupBranch, delivery },
-      payment: { methods, selected: payment },
+      payment: walletCovers ? { methods: [], selected: null } : { methods, selected: payment },
+      wallet: balance > 0
+        ? {
+            label: t.walletLabel,
+            balance: total(balance, locale),
+            selected: useWallet,
+            amount: walletPaid ? total(walletPaid, locale) : null,
+            coversTotal: walletCovers,
+            message: walletCovers ? t.walletCovers : walletPaid ? t.walletRest(total(walletPaid, locale).display) : null,
+          }
+        : null,
       promo,
       requirements: { prescription: { required, files } },
-      totals: { lines, total: total(subtotal - discount + deliveryFee + paymentFee, locale) },
+      totals: { lines, total: total(grand - walletPaid + paymentFee, locale) },
       minimumOrder: cart.checkout.minimumOrder,
       missing,
       blockers,
@@ -416,6 +453,8 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
   function createOrder(session, selections, note) {
     const identity = newOrderIdentity();
     const order = Object.fromEntries(['en', 'ar'].map((locale) => [locale, buildOrder(identity, compute(session, locale, selections), locale, note)]));
+    const walletPaid = compute(session, 'en', selections).wallet?.amount?.amount ?? 0;
+    if (walletPaid > 0) walletState(shopper).spend(session, walletPaid, identity.number);
     orderRows(session).unshift(order);
     session.cart.clear();
     delete session.consentForMethod;
@@ -477,7 +516,8 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
     }
 
     const note = typeof selections.note === 'string' && selections.note.trim() ? selections.note.trim() : null;
-    const method = METHODS.find((item) => item.id === checkout.payment.selected.methodId);
+    // the wallet pays everything: the backend gives legacy a pay-on-delivery method
+    const method = checkout.wallet?.coversTotal ? METHODS[0] : METHODS.find((item) => item.id === checkout.payment.selected.methodId);
     const reference = `mock-checkout-${++referenceCounter}`;
     let answer;
     if (method.online) {

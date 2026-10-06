@@ -17,6 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { priceText, priceWithText } from './shopper.mjs';
 import { listingSeoExtras } from './seo-extras.mjs';
+import { VENDOR_PRODUCTS, VENDORS, vendorsState, vendorTile } from './vendors.mjs';
 
 const FIXTURES = path.resolve('src/test/fixtures/v3');
 /** Store settings of this mock store: products per page, and the most a page may ask for. */
@@ -45,7 +46,7 @@ const TEXT = {
     invalid: 'Some filters are not valid.',
     number: 'Must be a number of 0 or more.',
     page: 'Must be a whole number of 1 or more.',
-    oneScope: 'Send at most one of category, brand, list, tag, deals or q.',
+    oneScope: 'Send at most one of category, brand, list, tag, deals, q or vendor.',
     qRequired: 'Type something to search for.',
     pathRequired: 'The path is required.',
     notFound: 'This page could not be found.',
@@ -70,7 +71,7 @@ const TEXT = {
     invalid: 'بعض الفلاتر غير صحيحة.',
     number: 'يجب أن يكون رقماً 0 أو أكثر.',
     page: 'يجب أن يكون رقماً صحيحاً 1 أو أكثر.',
-    oneScope: 'أرسل واحداً فقط من category أو brand أو list أو tag أو deals أو q.',
+    oneScope: 'أرسل واحداً فقط من category أو brand أو list أو tag أو deals أو q أو vendor.',
     qRequired: 'اكتب كلمة للبحث عنها.',
     pathRequired: 'المسار مطلوب.',
     notFound: 'هذه الصفحة غير موجودة.',
@@ -252,7 +253,7 @@ export function createCatalogModule(shopper) {
   function scopeOf(query, locale) {
     const t = TEXT[locale];
     const home = { label: t.home, target: { type: 'home' } };
-    const given = ['category', 'brand', 'list', 'tag', 'deals', 'q'].filter((key) => {
+    const given = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor'].filter((key) => {
       const value = query.get(key);
       return value !== null && value !== '' && !(key === 'deals' && (value === 'false' || value === '0'));
     });
@@ -313,6 +314,23 @@ export function createCatalogModule(shopper) {
       const target = { type: 'list', slug: found.slug, id: found.id };
       const listKey = found.slug ?? String(found.id);
       return { type: 'list', title: found.title[locale], items: all.filter((p) => facts(p).lists.includes(listKey)), target, crumbs: [home, { label: found.title[locale], target }], index: true };
+    }
+    if (scope === 'vendor') {
+      // phase B: one seller's products (404 while the store has multi-vendor off)
+      const row = vendorsState(shopper).on ? VENDORS.find((v) => String(v.id) === query.get('vendor')) : null;
+      if (!row) return null;
+      const tile = vendorTile(row, locale);
+      const description = row.description[locale];
+      return {
+        type: 'vendor',
+        title: tile.name,
+        description: description ? { html: `<p>${description}</p>` } : null,
+        image: tile.image,
+        items: all.filter((p) => (VENDOR_PRODUCTS[row.id] ?? []).includes(p.id)),
+        target: tile.target,
+        crumbs: [home, { label: tile.name, target: tile.target }],
+        index: true,
+      };
     }
     if (scope === 'tag') {
       const slug = query.get('tag');

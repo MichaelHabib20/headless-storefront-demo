@@ -55,6 +55,7 @@ export function checkoutSelections(checkout: Checkout): CheckoutSelections {
     installmentPlanId: checkout.payment.selected?.planId ?? null,
     promoCode: checkout.promo.code,
     prescriptionFiles: checkout.requirements.prescription.files.map((file) => file.id),
+    useWallet: checkout.wallet?.selected ?? false,
   };
 }
 

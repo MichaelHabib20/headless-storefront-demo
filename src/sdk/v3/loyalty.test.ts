@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createStorefrontClient, type StorefrontClient } from './http';
 import { getLoyalty, getLoyaltyHistory, getLoyaltyReferral, getLoyaltyReward, getLoyaltyRewards, redeemLoyaltyReward } from './loyalty';
+import { addVoucher, getVouchers } from './vouchers';
+import { getWallet } from './wallet';
 import type { ShopperContext } from './shopper';
 
 const ROOT = 'https://api.test/api/customer/v3/';
@@ -29,6 +31,9 @@ const CASES: { name: string; call: (client: StorefrontClient) => Promise<unknown
   { name: 'getLoyaltyReward (encodes the id)', call: (c) => getLoyaltyReward(c, customer, 'a/b'), method: 'GET', path: 'loyalty/rewards/a%2Fb', ctx: customer },
   { name: 'redeemLoyaltyReward', call: (c) => redeemLoyaltyReward(c, customer, '3'), method: 'POST', path: 'loyalty/rewards/3/redeem', ctx: customer },
   { name: 'getLoyaltyReferral', call: (c) => getLoyaltyReferral(c, customer), method: 'GET', path: 'loyalty/referral', ctx: customer },
+  // phase B: the wallet (same customer-only reads)
+  { name: 'getWallet', call: (c) => getWallet(c, customerAr), method: 'GET', path: 'wallet?page=1&perPage=20', ctx: customerAr },
+  { name: 'getWallet (paged)', call: (c) => getWallet(c, customer, 2, 10), method: 'GET', path: 'wallet?page=2&perPage=10', ctx: customer },
 ];
 
 describe('loyalty SDK', () => {
@@ -44,6 +49,22 @@ describe('loyalty SDK', () => {
     // the redeem sends no body: the reward is in the path
     expect(init.body).toBeUndefined();
     expect(init.cache).toBe('no-store');
+  });
+
+  it('getVouchers → GET vouchers; addVoucher → POST vouchers with the code only', async () => {
+    const { client, lastCall } = setup();
+    await getVouchers(client, customerAr);
+    expect([lastCall().url, lastCall().init.method]).toEqual([ROOT + 'vouchers', 'GET']);
+
+    await addVoucher(client, customer, 'WELCOME20');
+    const { url, init, headers } = lastCall();
+    expect([url, init.method, JSON.parse(String(init.body))]).toEqual([ROOT + 'vouchers', 'POST', { code: 'WELCOME20' }]);
+    expect(headers).toMatchObject({ Authorization: 'Bearer cust-token' });
+  });
+
+  it('a refused code → validation with the backend reason in fieldErrors.code', async () => {
+    const { client } = setup(422, { error: { code: 'validation_failed', message: 'Please check the highlighted fields.', fields: { code: ['This voucher has expired.'] } } });
+    await expect(addVoucher(client, customer, 'OLD')).rejects.toMatchObject({ kind: 'validation', fieldErrors: { code: ['This voucher has expired.'] } });
   });
 
   it('409 cannot_redeem → cannot_redeem with the backend reason', async () => {

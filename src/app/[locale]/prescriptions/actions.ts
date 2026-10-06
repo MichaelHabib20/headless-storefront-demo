@@ -39,14 +39,23 @@ export async function sendPrescriptionAction(_state: PrescriptionFormState, form
     type: text(formData.get('v.type')),
     prescriptionNumber: text(formData.get('v.prescriptionNumber')),
     note: text(formData.get('v.note')),
+    // phase B: the insurance kind (only present while the form shows them: `showWhen`)
+    insuranceProfileId: text(formData.get('v.insuranceProfileId')),
+    preApproved: text(formData.get('v.preApproved')),
+    approvalNumber: text(formData.get('v.approvalNumber')),
   };
+  const ids = (name: string) => formData.getAll(`v.${name}`).filter((value): value is string => typeof value === 'string' && value !== '');
+  const insurance = values.type === 'insurance';
   try {
     const sent = await sendPrescription(storefrontClient(), { locale, token }, {
       addressId: id(formData.get('addressId')) ?? 0,
-      files: formData.getAll('v.files').filter((value): value is string => typeof value === 'string' && value !== ''),
+      files: ids('files'),
       ...(values.type ? { type: values.type } : {}),
       prescriptionNumber: values.prescriptionNumber,
       note: values.note,
+      ...(insurance
+        ? { insuranceProfileId: values.insuranceProfileId, preApproved: values.preApproved, approvalNumber: values.approvalNumber, approvalFiles: ids('approvalFiles'), invoiceFiles: ids('invoiceFiles') }
+        : {}),
     });
     revalidatePath('/[locale]/prescriptions', 'page');
     return { ok: true, message: sent.message, sentId: sent.prescription.id };
