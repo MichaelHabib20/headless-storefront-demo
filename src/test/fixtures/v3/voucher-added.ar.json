@@ -1,0 +1,100 @@
+{
+ "data": {
+  "message": "تمت إضافة القسيمة إلى حسابك.",
+  "vouchers": {
+   "title": "قسائمي",
+   "hint": "استخدم القسيمة النشطة بإدخال كودها عند إتمام الطلب.",
+   "canAdd": true,
+   "statuses": [
+    {
+     "status": "active",
+     "label": "نشطة",
+     "count": 3
+    },
+    {
+     "status": "used",
+     "label": "مستخدمة",
+     "count": 1
+    },
+    {
+     "status": "expired",
+     "label": "منتهية",
+     "count": 1
+    }
+   ],
+   "items": [
+    {
+     "id": "12",
+     "code": "FREEDEL",
+     "status": "active",
+     "statusLabel": "نشطة",
+     "benefit": "توصيل مجاني",
+     "minimumOrder": "للطلبات من 200 جنية",
+     "credit": {
+      "total": {
+       "amount": 100,
+       "currency": "EGP",
+       "display": "100.00 جنية"
+      },
+      "remaining": {
+       "amount": 60,
+       "currency": "EGP",
+       "display": "60.00 جنية"
+      }
+     },
+     "detail": "استرداد نقدي من الطلب رقم 48200",
+     "expiresAt": "2026-11-30T23:59:59+02:00",
+     "expiry": "صالحة حتى 30 نوفمبر 2026"
+    },
+    {
+     "id": "11",
+     "code": "SAVE10",
+     "status": "active",
+     "statusLabel": "نشطة",
+     "benefit": "خصم 10%",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2026-12-31T23:59:59+02:00",
+     "expiry": "صالحة حتى 31 ديسمبر 2026"
+    },
+    {
+     "id": "15",
+     "code": "WELCOME20",
+     "status": "active",
+     "statusLabel": "نشطة",
+     "benefit": "خصم 20%، بحد أقصى 100 جنية",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2027-03-31T23:59:59+02:00",
+     "expiry": "صالحة حتى 31 مارس 2027"
+    },
+    {
+     "id": "13",
+     "code": "ONCE",
+     "status": "used",
+     "statusLabel": "مستخدمة",
+     "benefit": "خصم 50 جنية",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2027-03-31T23:59:59+02:00",
+     "expiry": "صالحة حتى 31 مارس 2027"
+    },
+    {
+     "id": "14",
+     "code": "OLD",
+     "status": "expired",
+     "statusLabel": "منتهية",
+     "benefit": "خصم 30 جنية",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2026-06-30T23:59:59+02:00",
+     "expiry": "انتهت في 30 يونيو 2026"
+    }
+   ]
+  }
+ }
+}

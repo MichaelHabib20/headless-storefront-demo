@@ -1,0 +1,100 @@
+{
+ "data": {
+  "message": "The voucher was added to your account.",
+  "vouchers": {
+   "title": "My vouchers",
+   "hint": "Use an active voucher by entering its code at checkout.",
+   "canAdd": true,
+   "statuses": [
+    {
+     "status": "active",
+     "label": "Active",
+     "count": 3
+    },
+    {
+     "status": "used",
+     "label": "Used",
+     "count": 1
+    },
+    {
+     "status": "expired",
+     "label": "Expired",
+     "count": 1
+    }
+   ],
+   "items": [
+    {
+     "id": "12",
+     "code": "FREEDEL",
+     "status": "active",
+     "statusLabel": "Active",
+     "benefit": "Free delivery",
+     "minimumOrder": "On orders from 200 EGP",
+     "credit": {
+      "total": {
+       "amount": 100,
+       "currency": "EGP",
+       "display": "100.00 EGP"
+      },
+      "remaining": {
+       "amount": 60,
+       "currency": "EGP",
+       "display": "60.00 EGP"
+      }
+     },
+     "detail": "Cashback from order #48200",
+     "expiresAt": "2026-11-30T23:59:59+02:00",
+     "expiry": "Valid until 30 Nov 2026"
+    },
+    {
+     "id": "11",
+     "code": "SAVE10",
+     "status": "active",
+     "statusLabel": "Active",
+     "benefit": "10% off",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2026-12-31T23:59:59+02:00",
+     "expiry": "Valid until 31 Dec 2026"
+    },
+    {
+     "id": "15",
+     "code": "WELCOME20",
+     "status": "active",
+     "statusLabel": "Active",
+     "benefit": "20% off, up to 100 EGP",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2027-03-31T23:59:59+02:00",
+     "expiry": "Valid until 31 Mar 2027"
+    },
+    {
+     "id": "13",
+     "code": "ONCE",
+     "status": "used",
+     "statusLabel": "Used",
+     "benefit": "50 EGP off",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2027-03-31T23:59:59+02:00",
+     "expiry": "Valid until 31 Mar 2027"
+    },
+    {
+     "id": "14",
+     "code": "OLD",
+     "status": "expired",
+     "statusLabel": "Expired",
+     "benefit": "30 EGP off",
+     "minimumOrder": null,
+     "credit": null,
+     "detail": null,
+     "expiresAt": "2026-06-30T23:59:59+02:00",
+     "expiry": "Expired on 30 Jun 2026"
+    }
+   ]
+  }
+ }
+}
