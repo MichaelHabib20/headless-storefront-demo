@@ -180,8 +180,8 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
         cartLink(styles.inCart)
       ) : (
         <button type="button" className={styles.add} disabled={!canAddToCart} aria-disabled={Boolean(pending.cartQuantity) || undefined} onClick={() => putInCart(addQuantity)}>
-          <Icon name="bag" size={16} />
-          <span>{labels.addToCart}</span>
+          <Icon name="cart" size={22} />
+          <span className="visually-hidden">{labels.addToCart}</span>
         </button>
       );
   }
