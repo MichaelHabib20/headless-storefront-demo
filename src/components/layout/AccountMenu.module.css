@@ -11,6 +11,8 @@
   padding-inline: var(--space-1);
   list-style: none;
   cursor: pointer;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 .trigger::-webkit-details-marker {
   display: none;

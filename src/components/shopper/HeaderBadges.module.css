@@ -4,6 +4,8 @@
   place-items: center;
   width: 40px;
   height: 40px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 @media (max-width: 479px) {
@@ -20,8 +22,8 @@
   height: 18px;
   padding-inline: 4px;
   border-radius: 9px;
-  background: var(--color-text);
-  color: var(--color-bg);
+  background: var(--color-on-primary);
+  color: var(--color-primary);
   font-size: 0.6875rem;
   font-weight: 700;
   line-height: 18px;
