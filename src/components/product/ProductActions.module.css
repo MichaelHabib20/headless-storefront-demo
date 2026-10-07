@@ -81,6 +81,7 @@
 /* Product cards only (the product page keeps its own look): brand-colour buttons, white icons/text. */
 .actions:not(.withQuantity) :is(.add, .inCart, .toggle) {
   border-color: var(--color-primary);
+  border-radius: 8px;
   background: var(--color-primary);
   color: var(--color-on-primary);
 }
