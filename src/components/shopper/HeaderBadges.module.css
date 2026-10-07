@@ -4,6 +4,7 @@
   place-items: center;
   width: 40px;
   height: 40px;
+  border-radius: 50%;
   background: var(--color-primary);
   color: var(--color-on-primary);
 }
@@ -11,6 +12,7 @@
 @media (max-width: 479px) {
   .link {
     width: 34px;
+    height: 34px;
   }
 }
 

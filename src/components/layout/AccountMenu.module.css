@@ -9,8 +9,10 @@
   min-width: 40px;
   height: 40px;
   padding-inline: var(--space-1);
+  justify-content: center;
   list-style: none;
   cursor: pointer;
+  border-radius: 999px;
   background: var(--color-primary);
   color: var(--color-on-primary);
 }
