@@ -88,6 +88,10 @@
     display: block;
     height: 48px;
   }
+  /* The menu items fill the whole row, so there is no gap between an item and its mega menu. */
+  .navRow > :global(.container) {
+    height: 100%;
+  }
 }
 
 .shortcut {
