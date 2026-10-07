@@ -42,7 +42,7 @@ test('off (as on staging): no page, no account link, no codes at checkout', asyn
 test('a visitor is asked to sign in', async ({ page, context, request }) => {
   await vouchers(request, true);
   await open(page, '/en/account/voucher');
-  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/sign-in\?next=%2Fen%2Faccount%2Fvoucher/);
+  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/session\/signin\?returnUrl=%2Fen%2Faccount%2Fvoucher/);
   expect((await context.cookies()).find((cookie) => cookie.name === 'sc_guest')).toBeUndefined();
 });
 

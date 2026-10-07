@@ -10,7 +10,7 @@ vi.mock('@/lib/catalog.server', () => ({ loadListing: vi.fn() }));
 // JSON-LD reads the request headers (server only): tested in src/lib/jsonld.test.ts.
 vi.mock('@/lib/jsonld', () => ({ JsonLd: () => null }));
 
-const props = { locale: 'en' as const, scope: { q: 'bath' }, params: { q: 'bath', priceMin: 'abc' }, links: { path: '/en/search', keep: { q: 'bath' } } };
+const props = { locale: 'en' as const, scope: { q: 'bath' }, params: { search: 'bath', priceMin: 'abc' }, links: { path: '/en/products', keep: { search: 'bath' } } };
 
 describe('ListingPage', () => {
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('ListingPage', () => {
   it('passes the scope and every page parameter to the loader, and draws the listing', async () => {
     vi.mocked(loadListing).mockResolvedValue({ status: 'ok', listing: productsFixture('en') });
     render(await ListingPage(props));
-    expect(loadListing).toHaveBeenCalledWith('en', { q: 'bath' }, { q: 'bath', priceMin: 'abc' });
+    expect(loadListing).toHaveBeenCalledWith('en', { q: 'bath' }, { search: 'bath', priceMin: 'abc' });
     expect(screen.getByTestId('listing')).toBeInTheDocument();
   });
 
@@ -29,14 +29,14 @@ describe('ListingPage', () => {
     vi.mocked(loadListing).mockResolvedValue({ status: 'invalid', message: 'Some filters are not valid.' });
     render(await ListingPage(props));
     expect(screen.getByRole('alert')).toHaveTextContent('Some filters are not valid.');
-    expect(screen.getByRole('link', { name: 'Show everything' })).toHaveAttribute('href', '/en/search?q=bath');
+    expect(screen.getByRole('link', { name: 'Show everything' })).toHaveAttribute('href', '/en/products?search=bath');
   });
 
   it('offers a retry of the same page when the API is down', async () => {
     vi.mocked(loadListing).mockResolvedValue({ status: 'error' });
     render(await ListingPage(props));
     expect(screen.getByTestId('listing-error')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/search?q=bath&priceMin=abc');
+    expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/products?search=bath&priceMin=abc');
   });
 
   it('an unknown scope is a 404', async () => {

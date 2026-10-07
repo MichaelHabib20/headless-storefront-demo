@@ -66,9 +66,10 @@ export function shellKeys(locale, mode = freshMode()) {
   const ar = locale === 'ar';
   return {
     legal: {
-      privacy: { type: 'page', slug: 'privacy-policy' },
-      terms: { type: 'page', slug: 'terms-and-conditions' },
-      cookies: { type: 'page', slug: 'cookie-policy' },
+      // `legal`: the backend flags legal pages; the storefront links them at the root (/privacy-policy)
+      privacy: { type: 'page', slug: 'privacy-policy', legal: 'privacy' },
+      terms: { type: 'page', slug: 'terms-and-conditions', legal: 'terms' },
+      cookies: { type: 'page', slug: 'cookie-policy', legal: 'cookies' },
     },
     appBanner: {
       title: null,

@@ -35,7 +35,7 @@ test.describe('home page', () => {
     await expect(page).toHaveTitle(/.+/);
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
     await expect(page.getByTestId('announcement')).toBeVisible();
-    await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Skin Care', exact: true })).toHaveAttribute('href', '/en/c/skin-care');
+    await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Skin Care', exact: true })).toHaveAttribute('href', '/en/product/skin-care');
     await expect(page.getByRole('heading', { name: 'Shop by category' })).toBeVisible();
     await expect(page.getByTestId('promo-top-ad')).toBeVisible();
 
@@ -72,7 +72,7 @@ test.describe('home page', () => {
     const name = (await card.getByRole('heading').textContent())?.trim() ?? '';
     const productLink = card.getByRole('link');
     const href = await productLink.getAttribute('href');
-    expect(href).toMatch(/^\/en\/p\/.+/);
+    expect(href).toMatch(/^\/en\/.+/);
     await productLink.click();
     // rendered on demand: allow for a slow first render
     await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: 30_000 });
@@ -81,21 +81,25 @@ test.describe('home page', () => {
 
   test('switches language on the same page', async ({ page }) => {
     await acceptCookies(page);
-    await page.goto('/en/deals');
+    await page.goto('/en/products/deals');
     await page.getByRole('link', { name: 'Switch language' }).first().click();
-    await expect(page).toHaveURL(/\/ar\/deals$/);
+    await expect(page).toHaveURL(/\/ar\/products\/deals$/);
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   });
 
-  test('redirects bare paths to a language', async ({ page, browser }) => {
+  test('redirects bare paths to English with a 301, whatever the browser language (the old storefront)', async ({ page, browser, request }) => {
     await page.goto('/');
     await expect(page).toHaveURL(/\/en$/);
 
     const arabic = await browser.newContext({ locale: 'ar-EG', extraHTTPHeaders: { 'Accept-Language': 'ar-EG,ar;q=0.9' } });
     const arabicPage = await arabic.newPage();
     await arabicPage.goto(`${APP_URL}/`);
-    await expect(arabicPage).toHaveURL(/\/ar$/);
+    await expect(arabicPage).toHaveURL(/\/en$/);
     await arabic.close();
+
+    const bare = await request.get(`${APP_URL}/cart?x=1`, { maxRedirects: 0 });
+    expect(bare.status()).toBe(301);
+    expect(bare.headers().location).toMatch(/\/en\/cart\?x=1$/);
   });
 
   test('unknown pages are 404', async ({ page }) => {

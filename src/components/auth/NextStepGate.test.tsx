@@ -6,7 +6,7 @@ import { NextStepGate } from './NextStepGate';
 const pathname = vi.hoisted(() => ({ current: '/en' }));
 vi.mock('next/navigation', () => ({ usePathname: () => pathname.current }));
 
-const hrefs = { verifyPhone: '/en/verify-phone', completeProfile: '/en/account/complete-profile', waitingApproval: '/en/waiting-approval' };
+const hrefs = { verifyPhone: '/en/verify-phone', completeProfile: '/en/account/complete-profile', waitingApproval: '/en/session/waiting-approval' };
 const labels = { verifyBanner: 'Not verified yet.', verifyLink: 'Verify it now', dismiss: 'Dismiss', completeBanner: 'Complete it.', completeLink: 'Complete your profile', waitingTitle: 'Being reviewed', waitingText: 'Wait.', waitingLink: 'More' };
 
 beforeEach(() => {
@@ -33,9 +33,9 @@ describe('NextStepGate', () => {
     );
     expect(screen.queryByText('shop')).toBeNull();
     expect(screen.getByTestId('approval-gate')).toHaveTextContent('Being reviewed');
-    expect(screen.getByRole('link', { name: 'More' })).toHaveAttribute('href', '/en/waiting-approval');
+    expect(screen.getByRole('link', { name: 'More' })).toHaveAttribute('href', '/en/session/waiting-approval');
 
-    pathname.current = '/en/waiting-approval';
+    pathname.current = '/en/session/waiting-approval';
     rerender(
       <NextStepGate next="waiting_approval" hrefs={hrefs} labels={labels}>
         <p>waiting page</p>

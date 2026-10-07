@@ -17,9 +17,9 @@ test.describe('mobile', () => {
     await expect(drawer).toBeVisible();
     // Categories with sub-categories expand; the first entry links to the whole category.
     await drawer.getByText('Skin Care', { exact: true }).first().click();
-    await expect(drawer.getByRole('link', { name: 'Skin Care', exact: true })).toHaveAttribute('href', '/en/c/skin-care');
+    await expect(drawer.getByRole('link', { name: 'Skin Care', exact: true })).toHaveAttribute('href', '/en/product/skin-care');
     await drawer.getByText('Body Care', { exact: true }).first().click();
-    await expect(drawer.getByRole('link', { name: 'Body Scrub', exact: true })).toHaveAttribute('href', '/en/c/skin-care/body-care/body-scrub');
+    await expect(drawer.getByRole('link', { name: 'Body Scrub', exact: true })).toHaveAttribute('href', '/en/product/skin-care/body-care/body-scrub');
 
     await drawer.getByRole('button', { name: 'Close menu' }).click();
     await expect(drawer).toBeHidden();

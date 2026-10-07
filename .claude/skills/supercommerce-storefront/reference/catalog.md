@@ -7,12 +7,15 @@ the products, their order, the filters, the counts and every link. The storefron
 
 | URL | Page | Scope sent to `GET /products` |
 |---|---|---|
-| `/{locale}/c/{path...}` | `src/app/[locale]/c/[...path]/page.tsx` | `category=a/b/c` (the path joined with `/`) |
-| `/{locale}/brands/{slug}` | `brands/[slug]/page.tsx` | `brand=slug` |
-| `/{locale}/lists/{slug or id}` | `lists/[key]/page.tsx` | `list=key` |
-| `/{locale}/tags/{slug}` | `tags/[slug]/page.tsx` | `tag=slug` |
-| `/{locale}/deals` | `deals/page.tsx` | `deals=true` |
-| `/{locale}/search?q=` | `search/page.tsx` | `q=…` (search text) |
+These are the old storefront's URLs (backend `docs/headless/url-parity-plan.md`); keep them.
+
+| `/{locale}/{slug}` | `[...slug]/page.tsx` → `_product/ProductPage.tsx` | the product (`GET /products/{slug}`); not a product → `GET /resolve` (a category, CMS page or brand slug moves there), else 404 |
+| `/{locale}/product/{path...}` | `src/app/[locale]/product/[...path]/page.tsx` | `category=a/b/c` (the path joined with `/`); `/product/{cat}/brand/{b}` adds `brands=b`; `/product/deals/{cat}` → `deals=true` |
+| `/{locale}/product/brand/{slug}` | `product/brand/[slug]/page.tsx` | `brand=slug` (`a--b`: several brands) |
+| `/{locale}/products/list/{slug or id}[/{cat}]` | `products/list/[key]/[[...category]]/page.tsx` | `list=key` |
+| `/{locale}/products/tag/{slug}` | `products/tag/[slug]/page.tsx` | `tag=slug` |
+| `/{locale}/products/deals[/{name}]` | `products/deals/[[...name]]/page.tsx` | `deals=true` |
+| `/{locale}/products?search=` (also `?q=`) | `products/page.tsx` (also `/product`) | `q=…` (search text); the old id parameters (`category_id`, `list_ids`, `brand_id`, `price_from`, …) pass through, the backend reads them, and filter links keep the scope ones |
 | `/{locale}/all-products` | `all-products/page.tsx` | no scope: every product (the old storefront's page; the Target `{type: search, query: ""}` and the bottom nav's "All products" open it). Link with `routes.allProducts(locale)`, never an empty search (rule `all-products-route`) |
 | `/{locale}/categories` | `categories/page.tsx` | `GET /categories` (the tree) |
 | `/{locale}/brands` | `brands/page.tsx` | `GET /brands?page=` (24 tiles a page) |
@@ -68,9 +71,13 @@ of `range.query` as hidden fields (`formFields()`).
 
 ## Unknown paths
 
-`src/middleware.ts` runs before rendering. A path whose first segment (after the locale) is not
-one of the storefront's routes (`isStorefrontPath()` in `routing.ts`) is sent to `GET /resolve`
-with its query and locale prefix. `answerForResolution()` (`src/lib/resolve.ts`) decides:
+`src/middleware.ts` runs before rendering, the way the old storefront's server did:
+1. no `/en` or `/ar` → 301 to `/en` + the path;
+2. the interim paths this storefront used before (`/p/x`, `/c/...`, `/sign-in`...) → 301 to the old URL (`interimRedirect()`);
+3. `/orders/...` → shown as `/account/...` (the old guest-order alias);
+4. one of our public pages (`isStorefrontPath()`) → `GET /resolve?only=redirects`: the merchant's
+   redirect table may still move it (301/302) or mark it gone (410); answers are reused for a minute;
+5. any other path → `GET /resolve` with its query and locale prefix. `answerForResolution()` (`src/lib/resolve.ts`) decides:
 
 | `result` | Answer |
 |---|---|
@@ -80,9 +87,9 @@ with its query and locale prefix. `answerForResolution()` (`src/lib/resolve.ts`)
 | `not_found` / API down | 404 page |
 
 It cannot loop: a destination on this site must be one of our routes and not the requested path;
-only http(s) is followed. **A new route must be added to `routes` and its first segment to
-`OWN_SECTIONS` in `routing.ts`** (a test fails otherwise); a route missing there still works but
-costs one `/resolve` call per request.
+only http(s) is followed. **A new route must be added to `routes`, its shape to `OWN_PATHS` and its
+first segment to `RESERVED_SEGMENTS` in `routing.ts`** (a test fails otherwise; a reserved segment
+can never be a product slug).
 
 ## Change the look
 
@@ -129,7 +136,7 @@ costs one `/resolve` call per request.
 |---|---|
 | Categories | The recorded menu's tree; products in `mom-baby/baby-care/baby-toiletries-bath-accessories`, `every-day-essentials/body-fresheners/body-cologne`, `hair-care` |
 | Brands | `johnson-johnson` (10 products), `bioderma` and the other featured brands (empty) |
-| List / tag / deals | `/lists/125`, `/lists/best-sellers`, `/tags/new-arrivals`, `/deals` (3 products with an old price) |
+| List / tag / deals | `/products/list/125`, `/products/list/best-sellers`, `/products/tag/new-arrivals`, `/products/deals` (3 products with an old price) |
 | Search | By name or brand; `q=zzzz` → no results |
 | Pages | 8 per page (`perPage` up to 48) |
 | Invalid | `priceMin=abc`, `page=0` → 422 |

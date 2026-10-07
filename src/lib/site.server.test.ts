@@ -54,7 +54,7 @@ describe('checkoutReturnUrl', () => {
 
   it('is the result page of this storefront in the shopper language', async () => {
     request({ origin: 'https://shop.example.com' });
-    await expect(checkoutReturnUrl('ar')).resolves.toBe('https://shop.example.com/ar/checkout/result');
+    await expect(checkoutReturnUrl('ar')).resolves.toBe('https://shop.example.com/ar/checkout/final-receipt');
   });
 
   it('is null when the origin is unknown', async () => {

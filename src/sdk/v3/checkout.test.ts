@@ -93,7 +93,7 @@ describe('checkout SDK', () => {
     // an amount no formula would produce: it must be passed through untouched
     checkout.totals.total = { amount: 381.015, currency: 'EGP', display: 'TOTAL-TEXT' };
 
-    const answer = await placeOrder(client, ctx, { checkout, acceptTerms: true, returnUrl: 'https://shop.test/en/checkout/result', idempotencyKey: 'key-1', note: '  Ring twice ' });
+    const answer = await placeOrder(client, ctx, { checkout, acceptTerms: true, returnUrl: 'https://shop.test/en/checkout/final-receipt', idempotencyKey: 'key-1', note: '  Ring twice ' });
 
     expect(answer.next.reference).toBe('r-1');
     const { url, init, headers, json } = lastCall();
@@ -104,7 +104,7 @@ describe('checkout SDK', () => {
       selections: { ...checkoutSelections(checkout), note: 'Ring twice' },
       expectedTotal: 381.015,
       acceptTerms: true,
-      returnUrl: 'https://shop.test/en/checkout/result',
+      returnUrl: 'https://shop.test/en/checkout/final-receipt',
     });
   });
 

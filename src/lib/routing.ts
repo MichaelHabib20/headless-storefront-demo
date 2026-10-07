@@ -1,22 +1,37 @@
 import type { Locale, Target } from '@/sdk';
 
+/** Legal pages: the old storefront served them at the root, not under /pages (PageTarget.legal). */
+export const LEGAL_PATHS = { privacy: 'privacy-policy', terms: 'terms-and-conditions', cookies: 'cookie-policy' } as const;
+export type LegalKind = keyof typeof LEGAL_PATHS;
+
+/** The CMS slug of a legal page (`Layout.legal[kind]`), or the fixed slug of its root path without one. */
+export function legalPageSlug(target: Target | null | undefined, kind: LegalKind): string {
+  return target?.type === 'page' ? target.slug : LEGAL_PATHS[kind];
+}
+
 /**
- * The storefront's URL scheme. The ONLY place that turns a backend Target into a URL.
+ * The storefront's URL scheme: the OLD storefront's URLs, unchanged (docs/headless/url-parity-plan.md
+ * in the backend repo), so indexed pages, shared links and the links in e-mails keep working.
+ * The ONLY place that turns a backend Target into a URL.
  * Components render links with <TargetLink>, never by inspecting `target.type`.
  */
 export const routes = {
   home: (locale: Locale) => `/${locale}`,
-  product: (locale: Locale, slug: string) => `/${locale}/p/${encode(slug)}`,
-  category: (locale: Locale, path: readonly string[]) => `/${locale}/c/${path.map(encode).join('/')}`,
-  brand: (locale: Locale, slug: string) => `/${locale}/brands/${encode(slug)}`,
-  list: (locale: Locale, key: string | number) => `/${locale}/lists/${encode(String(key))}`,
-  page: (locale: Locale, slug: string) => `/${locale}/pages/${encode(slug)}`,
-  landingPage: (locale: Locale, slug: string) => `/${locale}/l/${encode(slug)}`,
+  /** A product is a single segment at the root: /en/{slug} (Arabic slug on /ar). */
+  product: (locale: Locale, slug: string) => `/${locale}/${encode(slug)}`,
+  /** Category, group or sub-category: /product/{cat}[/{group}][/{sub}] (Arabic slugs on /ar, from the API). */
+  category: (locale: Locale, path: readonly string[]) => `/${locale}/product/${path.map(encode).join('/')}`,
+  /** Brand listing; several brands are joined with `--` (the old a--b listing). */
+  brand: (locale: Locale, slug: string) => `/${locale}/product/brand/${slug.split('--').map(encode).join('--')}`,
+  list: (locale: Locale, key: string | number) => `/${locale}/products/list/${encode(String(key))}`,
+  /** A CMS page under /pages; a legal page at the root (/privacy-policy, /terms-and-conditions, /cookie-policy). */
+  page: (locale: Locale, slug: string, legal?: LegalKind | null) => (legal && LEGAL_PATHS[legal] ? `/${locale}/${LEGAL_PATHS[legal]}` : `/${locale}/pages/${encode(slug)}`),
+  landingPage: (locale: Locale, slug: string) => `/${locale}/landing-page/${encode(slug)}`,
   form: (locale: Locale, slug: string) => `/${locale}/forms/${encode(slug)}`,
-  tag: (locale: Locale, slug: string) => `/${locale}/tags/${encode(slug)}`,
-  deals: (locale: Locale) => `/${locale}/deals`,
-  /** Search results; without a query it lists all products. */
-  search: (locale: Locale, query = '') => (query ? `/${locale}/search?q=${encode(query)}` : `/${locale}/search`),
+  tag: (locale: Locale, slug: string) => `/${locale}/products/tag/${encode(slug)}`,
+  deals: (locale: Locale) => `/${locale}/products/deals`,
+  /** Search results (`?search=`, the old storefront's name); without a query it lists all products. */
+  search: (locale: Locale, query = '') => (query ? `/${locale}/products?search=${encode(query)}` : `/${locale}/products`),
   /** Every product (the old storefront's /all-products); the Target `{type: search, query: ""}` opens it. */
   allProducts: (locale: Locale) => `/${locale}/all-products`,
   /** The customer's prescriptions: send one, see and cancel them (the old storefront's /prescriptions). */
@@ -26,38 +41,45 @@ export const routes = {
   categories: (locale: Locale) => `/${locale}/categories`,
   brands: (locale: Locale) => `/${locale}/brands`,
   cart: (locale: Locale) => `/${locale}/cart`,
-  wishlist: (locale: Locale) => `/${locale}/wishlist`,
+  wishlist: (locale: Locale) => `/${locale}/favorites`,
   compare: (locale: Locale) => `/${locale}/compare`,
   notifications: (locale: Locale) => `/${locale}/notifications`,
   checkout: (locale: Locale) => `/${locale}/checkout`,
-  /** Where the shopper lands after placing an order or paying; `reference` comes from the API. */
+  /**
+   * Where the shopper lands after placing an order or paying (the old /checkout/final-receipt);
+   * `reference` comes from the API. Old gateways land here with `?order_id=&is_success=` instead.
+   */
   checkoutResult: (locale: Locale, reference?: string) =>
-    reference ? `/${locale}/checkout/result?checkout=${encode(reference)}` : `/${locale}/checkout/result`,
-  orders: (locale: Locale) => `/${locale}/account/orders`,
-  order: (locale: Locale, id: string) => `/${locale}/account/orders/${encode(id)}`,
+    reference ? `/${locale}/checkout/final-receipt?checkout=${encode(reference)}` : `/${locale}/checkout/final-receipt`,
+  orders: (locale: Locale) => `/${locale}/account/order-history`,
+  /** By uuid (or number, for old orders): the order e-mails link here. */
+  order: (locale: Locale, id: string) => `/${locale}/account/order-history/${encode(id)}`,
   /** The address book; `next` carries a return page (see addressReturn), `saved` the id of the address just saved. */
   addresses: (locale: Locale, { next, saved }: { next?: AddressReturn | null; saved?: number | null } = {}) =>
-    withQuery(`/${locale}/account/addresses`, { next, saved }),
-  newAddress: (locale: Locale, next?: AddressReturn | null) => withQuery(`/${locale}/account/addresses/new`, { next }),
-  editAddress: (locale: Locale, id: number, next?: AddressReturn | null) => withQuery(`/${locale}/account/addresses/${id}/edit`, { next }),
+    withQuery(`/${locale}/account/address`, { next, saved }),
+  newAddress: (locale: Locale, next?: AddressReturn | null) => withQuery(`/${locale}/account/address/add`, { next }),
+  editAddress: (locale: Locale, id: number, next?: AddressReturn | null) => withQuery(`/${locale}/account/address/edit/${id}`, { next }),
   account: (locale: Locale) => `/${locale}/account`,
   /** `returnTo`: a page of this storefront to come back to after signing in (checked with safeReturnPath). */
-  signIn: (locale: Locale, returnTo?: string | null) => withQuery(`/${locale}/sign-in`, { next: returnTo }),
-  signUp: (locale: Locale) => `/${locale}/sign-up`,
+  signIn: (locale: Locale, returnTo?: string | null) => withQuery(`/${locale}/session/signin`, { returnUrl: returnTo }),
+  signUp: (locale: Locale) => `/${locale}/session/signup`,
   branches: (locale: Locale) => `/${locale}/pages/branches`,
   contact: (locale: Locale) => `/${locale}/pages/contact`,
-  trackOrder: (locale: Locale) => `/${locale}/track-order`,
+  trackOrder: (locale: Locale) => `/${locale}/account/track-your-order`,
   // auth and account (profile, password, the pages a `next` step sends the shopper to)
-  forgotPassword: (locale: Locale) => `/${locale}/forgot-password`,
-  /** The e-mail reset link lands here with `?token=&email=` (the backend appends them); the SMS flow comes without. */
-  resetPassword: (locale: Locale) => `/${locale}/reset-password`,
+  forgotPassword: (locale: Locale) => `/${locale}/session/forgot-password`,
+  /**
+   * The e-mail reset link lands here with `?token=` (the old mail: `?changePassword=true&token=`, the
+   * v3 mail adds `&email=`); the SMS flow comes with `?phone=`.
+   */
+  resetPassword: (locale: Locale) => `/${locale}/session/change-password`,
   verifyPhone: (locale: Locale) => `/${locale}/verify-phone`,
-  /** The changed-e-mail mail links here with `?email=&token=`. */
-  verifyEmail: (locale: Locale) => `/${locale}/verify-email`,
-  waitingApproval: (locale: Locale) => `/${locale}/waiting-approval`,
+  /** The changed-e-mail mail links here with `?email=&token=` (the old storefront's mixed-case path). */
+  verifyEmail: (locale: Locale) => `/${locale}/session/verifyEmail`,
+  waitingApproval: (locale: Locale) => `/${locale}/session/waiting-approval`,
   completeProfile: (locale: Locale) => `/${locale}/account/complete-profile`,
   profile: (locale: Locale) => `/${locale}/account/profile`,
-  changePassword: (locale: Locale) => `/${locale}/account/password`,
+  changePassword: (locale: Locale) => `/${locale}/account/change-password`,
   // loyalty (the old storefront's paths): points, rewards ("vouchers"), one reward, history, referral
   points: (locale: Locale) => `/${locale}/account/your-points`,
   rewards: (locale: Locale) => `/${locale}/account/vouchers`,
@@ -134,7 +156,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
       return key ? internal(routes.list(locale, key)) : null;
     }
     case 'page':
-      return internal(routes.page(locale, target.slug));
+      return internal(routes.page(locale, target.slug, target.legal));
     case 'landing_page':
       return internal(routes.landingPage(locale, target.slug));
     case 'form':
@@ -157,17 +179,125 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
 }
 
 /**
- * The first path segment (after the locale) of every route above; '' is the home page.
- * A path outside these is not one of this storefront's pages: the middleware asks the backend
- * what it is (old storefront URLs, the merchant's redirects). routing.test.ts fails when a
- * route above is missing here.
+ * First path segments that are never a product slug: this storefront's own sections, the old
+ * storefront's other pages (the backend resolves them: /brand/{id}, /category/..., /blog) and the
+ * interim paths of INTERIM_REDIRECTS. A single segment outside this list is a product (/en/{slug}).
  */
-const OWN_SECTIONS = new Set(['', 'p', 'c', 'brands', 'lists', 'pages', 'l', 'forms', 'tags', 'deals', 'search', 'all-products', 'categories', 'cart', 'wishlist', 'compare', 'notifications', 'checkout', 'account', 'sign-in', 'sign-up', 'track-order', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'waiting-approval', 'prescriptions', 'add-address', 'vendors']);
+export const RESERVED_SEGMENTS = new Set([
+  // own sections
+  'product', 'products', 'pages', 'forms', 'landing-page', 'brand-page', 'all-products', 'categories', 'all-categories', 'brands', 'vendors',
+  'privacy-policy', 'terms-and-conditions', 'cookie-policy',
+  'cart', 'checkout', 'favorites', 'compare', 'notifications', 'prescriptions', 'add-address', 'verify-phone', 'session', 'account', 'orders',
+  // old storefront pages the backend resolves
+  'brand', 'category', 'category-view', 'blog', 'under-construction', 'not-found',
+  // interim paths (INTERIM_REDIRECTS)
+  'p', 'c', 'l', 'lists', 'tags', 'deals', 'search', 'wishlist', 'sign-in', 'sign-up', 'forgot-password', 'reset-password', 'verify-email', 'waiting-approval', 'track-order',
+]);
 
-/** Whether a locale-prefixed path (`/en/c/x`) belongs to one of this storefront's own routes. */
+/**
+ * The shapes of this storefront's own pages, after the locale. A path outside them (an old URL the
+ * storefront doesn't render, a row of the merchant's redirect table) is asked about in the
+ * middleware, before rendering. routing.test.ts fails when a route above is missing here.
+ */
+const OWN_PATHS: RegExp[] = [
+  /^$/,
+  /^[^/]+$/, // a product (reserved first segments are checked first)
+  /^product(\/[^/]+){0,4}$/,
+  /^products(\/deals(\/[^/]+)?|\/list\/[^/]+(\/[^/]+)?|\/tag\/[^/]+)?$/,
+  /^(pages|forms|landing-page|brand-page)\/[^/]+$/,
+  /^(all-products|categories|all-categories|brands|vendors|privacy-policy|terms-and-conditions|cookie-policy)$/,
+  /^vendors\/[^/]+$/,
+];
+
+/** The shopper's own pages (no SEO, no merchant redirects): every path under these is ours. */
+const PRIVATE_PATHS = /^(cart|checkout|favorites|compare|notifications|prescriptions|add-address|verify-phone|session|account|orders)(\/.*)?$/;
+
+/** Single-segment pages of our own; any other reserved segment alone is not a product. */
+const OWN_SINGLE = new Set(['product', 'products', 'all-products', 'categories', 'all-categories', 'brands', 'vendors', 'privacy-policy', 'terms-and-conditions', 'cookie-policy']);
+
+/** The path after the locale (`product/x`), '' for the home page; null without a locale. */
+function rest(pathname: string): string | null {
+  const parts = pathname.split(/[?#]/)[0].split('/');
+  if (!Object.hasOwn(LOCALE_SEGMENTS, parts[1] ?? '')) return null;
+  return parts.slice(2).join('/').replace(/\/+$/, '');
+}
+
+/** Whether a locale-prefixed path (`/en/product/x`) is one of this storefront's own pages. */
 export function isStorefrontPath(pathname: string): boolean {
-  const section = pathname.split(/[?#]/)[0].split('/')[2] ?? '';
-  return OWN_SECTIONS.has(section);
+  const path = rest(pathname);
+  if (path === null) return false;
+  if (PRIVATE_PATHS.test(path)) return true;
+  if (!path.includes('/') && RESERVED_SEGMENTS.has(path) && !OWN_SINGLE.has(path)) return false;
+  return OWN_PATHS.some((shape) => shape.test(path));
+}
+
+/** Whether a locale-prefixed path is one of the shopper's own pages (cart, account, session...). */
+export function isPrivatePath(pathname: string): boolean {
+  const path = rest(pathname);
+  return path !== null && PRIVATE_PATHS.test(path);
+}
+
+/**
+ * The interim URLs this storefront used before it took over the old storefront's URLs (staging,
+ * AI Designer previews, test e-mails): a permanent redirect to the old URL. One release, then remove.
+ * Returns the new path + query, or null.
+ */
+export function interimRedirect(pathname: string, search: string): string | null {
+  const parts = pathname.split('/');
+  const locale = parts[1];
+  if (!Object.hasOwn(LOCALE_SEGMENTS, locale ?? '')) return null;
+  const path = parts.slice(2).join('/').replace(/\/$/, '');
+  const query = new URLSearchParams(search);
+  const withSearch = (target: string, q: URLSearchParams = query) => (q.size ? `${target}?${q}` : target);
+  const rename = (from: string, to: string) => {
+    if (query.has(from)) {
+      query.set(to, query.get(from) ?? '');
+      query.delete(from);
+    }
+  };
+  const map: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
+    [/^p\/([^/]+)$/, (m) => m[1]],
+    [/^c\/(.+)$/, (m) => `product/${m[1]}`],
+    [/^lists\/([^/]+)$/, (m) => `products/list/${m[1]}`],
+    [/^tags\/([^/]+)$/, (m) => `products/tag/${m[1]}`],
+    [/^l\/([^/]+)$/, (m) => `landing-page/${m[1]}`],
+    [/^deals$/, () => 'products/deals'],
+    [/^search$/, () => {
+      rename('q', 'search');
+      return 'products';
+    }],
+    [/^wishlist$/, () => 'favorites'],
+    [/^sign-in$/, () => {
+      rename('next', 'returnUrl');
+      return 'session/signin';
+    }],
+    [/^sign-up$/, () => 'session/signup'],
+    [/^forgot-password$/, () => 'session/forgot-password'],
+    [/^reset-password$/, () => 'session/change-password'],
+    [/^verify-email$/, () => 'session/verifyEmail'],
+    [/^waiting-approval$/, () => 'session/waiting-approval'],
+    [/^track-order$/, () => 'account/track-your-order'],
+    [/^checkout\/result$/, () => 'checkout/final-receipt'],
+    [/^account\/orders(\/[^/]+)?$/, (m) => `account/order-history${m[1] ?? ''}`],
+    [/^account\/addresses$/, () => 'account/address'],
+    [/^account\/addresses\/new$/, () => 'account/address/add'],
+    [/^account\/addresses\/([^/]+)\/edit$/, (m) => `account/address/edit/${m[1]}`],
+    [/^account\/password$/, () => 'account/change-password'],
+  ];
+  for (const [shape, to] of map) {
+    const m = path.match(shape);
+    if (m) return withSearch(`/${locale}/${to(m)}`);
+  }
+  return null;
+}
+
+/**
+ * Old account pages this storefront doesn't have (saved cards, the affiliate programme): the account
+ * home instead of a 404. Returns the account path, or null.
+ */
+export function retiredAccountPage(pathname: string): string | null {
+  const m = pathname.match(/^\/(en|ar)\/(account|orders)\/(cards|affiliate-wallet-history|link-builder)\/?$/);
+  return m ? routes.account(m[1] as Locale) : null;
 }
 
 /**
@@ -212,7 +342,7 @@ export function externalHref(url: string | null | undefined): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
 }
 
-/** Same path in the other language: /en/p/x → /ar/p/x */
+/** Same path in the other language: /en/x → /ar/x (a product page then moves to its Arabic slug). */
 export function switchLocalePath(pathname: string, to: Locale): string {
   const [, , ...rest] = pathname.split('/');
   return `/${[to, ...rest].filter(Boolean).join('/')}`;
@@ -241,30 +371,26 @@ function isSafeUrl(url: string): boolean {
 
 // ---- seo + marketing
 /** The search page as a schema.org SearchAction URL template (the WebSite JSON-LD on every page). */
-export const searchUrlTemplate = (locale: Locale) => `${routes.search(locale)}?q={search_term_string}`;
+export const searchUrlTemplate = (locale: Locale) => `${routes.search(locale)}?search={search_term_string}`;
 
 /** Our own route handler that forwards browser marketing events to the backend (POST /events). Not a page. */
 export const EVENTS_ENDPOINT = '/api/events';
 
 /**
- * Sections that are private to the shopper: never indexed (robots.txt, X-Robots-Tag). Includes the
- * auth flows (password reset, verification, approval) and order tracking, whose pages are per shopper.
+ * Sections that are private to the shopper: never indexed (robots.txt, X-Robots-Tag). The old
+ * storefront's list: `session` holds the auth flows, `account` / `orders` the account pages and
+ * order tracking.
  */
 export const PRIVATE_SECTIONS = [
   'cart',
   'checkout',
   'account',
-  'sign-in',
-  'sign-up',
-  'wishlist',
+  'orders',
+  'session',
+  'favorites',
   'compare',
   'notifications',
-  'forgot-password',
-  'reset-password',
   'verify-phone',
-  'verify-email',
-  'waiting-approval',
-  'track-order',
   'prescriptions',
   'add-address',
 ] as const;

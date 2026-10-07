@@ -7,7 +7,7 @@ import { CheckoutResultView } from './CheckoutResultView';
 import { ResultPoller } from './ResultPoller';
 
 const router = vi.hoisted(() => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }));
-vi.mock('next/navigation', () => ({ useRouter: () => router, usePathname: () => '/en/checkout/result' }));
+vi.mock('next/navigation', () => ({ useRouter: () => router, usePathname: () => '/en/checkout/final-receipt' }));
 
 const status = () => screen.getByTestId('checkout-result').getAttribute('data-status');
 
@@ -31,11 +31,11 @@ describe('CheckoutResultView', () => {
     expect(items).toHaveLength(order.items.length);
     expect(items[0]).toHaveTextContent(order.items[0].name);
     expect(items[0]).toHaveTextContent(order.items[0].lineTotal.display);
-    expect(within(items[0]).getByRole('link')).toHaveAttribute('href', expect.stringMatching(/^\/en\/p\//));
+    expect(within(items[0]).getByRole('link')).toHaveAttribute('href', expect.stringMatching(/^\/en\/[^/]+$/));
 
     expect(screen.getAllByTestId('checkout-total-line').map((line) => line.textContent)).toEqual(order.totals.lines.map((line) => `${line.label}${line.amount?.display ?? line.text}`));
     expect(screen.getByTestId('checkout-total').textContent).toBe(order.totals.total.display);
-    expect(screen.getByRole('link', { name: 'View order' })).toHaveAttribute('href', `/en/account/orders/${order.id}`);
+    expect(screen.getByRole('link', { name: 'View order' })).toHaveAttribute('href', `/en/account/order-history/${order.id}`);
     expect(screen.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/en');
   });
 
@@ -50,7 +50,7 @@ describe('CheckoutResultView', () => {
     expect(screen.getByTestId('result-fulfilment')).toHaveTextContent('فرع مدينة نصر — 45 شارع مكرم عبيد');
     expect(screen.getByText('الاستلام من')).toBeVisible();
     expect(screen.getByTestId('checkout-total').textContent).toBe(result.order!.totals.total.display);
-    expect(screen.getByRole('link', { name: 'عرض الطلب' })).toHaveAttribute('href', `/ar/account/orders/${result.order!.id}`);
+    expect(screen.getByRole('link', { name: 'عرض الطلب' })).toHaveAttribute('href', `/ar/account/order-history/${result.order!.id}`);
   });
 
   it('placed without an order still thanks the shopper and links to the orders', () => {
@@ -58,7 +58,7 @@ describe('CheckoutResultView', () => {
     render(<CheckoutResultView result={result} locale="en" />);
 
     expect(screen.queryByTestId('result-order')).toBeNull();
-    expect(screen.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/orders');
+    expect(screen.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/order-history');
   });
 
   it.each(['failed', 'cancelled'] as const)('%s: shows the backend message and a way back to checkout only when it says so', (value) => {
@@ -122,7 +122,7 @@ describe('ResultPoller', () => {
     tick(30_000);
     expect(router.refresh).toHaveBeenCalledTimes(3);
     expect(screen.getByTestId('result-still-pending')).toHaveTextContent('We are still confirming your payment.');
-    expect(screen.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/orders');
+    expect(screen.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/order-history');
 
     act(() => screen.getByRole('button', { name: 'Check again' }).click());
     expect(router.refresh).toHaveBeenCalledTimes(4);

@@ -37,7 +37,7 @@ test.describe('CMS pages', () => {
   });
 
   test('unknown pages, landing pages and forms are 404', async ({ page }) => {
-    for (const path of ['/en/pages/nope', '/en/l/nope', '/ar/forms/nope']) {
+    for (const path of ['/en/pages/nope', '/en/landing-page/nope', '/ar/forms/nope']) {
       const response = await page.goto(path);
       expect(response?.status()).toBe(404);
     }
@@ -97,12 +97,12 @@ test.describe('branches', () => {
 
 test.describe('landing page', () => {
   test('promo banner and the sections in the merchant order', async ({ page }) => {
-    await page.goto('/en/l/summer-sale');
+    await page.goto('/en/landing-page/summer-sale');
     const landing = page.getByTestId('landing-page');
     await expect(landing.getByTestId('home-section')).toHaveCount(2);
     await expect(landing.locator('[data-testid^="promo-"]')).toHaveCount(1);
     await expect(page).toHaveTitle(/Summer sale/);
-    await page.goto('/ar/l/summer-sale');
+    await page.goto('/ar/landing-page/summer-sale');
     await expect(page.getByTestId('landing-page').getByTestId('home-section')).toHaveCount(2);
   });
 });
@@ -112,7 +112,7 @@ test.describe('merchant forms', () => {
     await page.goto('/en/forms/feedback');
     const prompt = page.getByTestId('form-sign-in');
     await expect(prompt).toBeVisible();
-    await expect(prompt.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=%2Fen%2Fforms%2Ffeedback');
+    await expect(prompt.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=%2Fen%2Fforms%2Ffeedback');
     await expect(page.getByTestId('merchant-form')).toHaveCount(0);
     expect((await page.context().cookies()).find((cookie) => cookie.name === 'sc_guest')).toBeUndefined();
   });

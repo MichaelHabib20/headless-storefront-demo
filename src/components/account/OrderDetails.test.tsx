@@ -49,7 +49,7 @@ describe('OrderDetails', () => {
       if (item.compareAt) expect(within(items[index]).getByTestId('order-item-compare-at').textContent).toBe(item.compareAt.display);
       else expect(within(items[index]).queryByTestId('order-item-compare-at')).toBeNull();
     });
-    expect(within(items[0]).getByRole('link')).toHaveAttribute('href', `/${locale}/p/${encodeURIComponent(order.items[0].target!.slug)}`);
+    expect(within(items[0]).getByRole('link')).toHaveAttribute('href', `/${locale}/${encodeURIComponent(order.items[0].target!.slug)}`);
 
     const lines = screen.getAllByTestId('order-total-line');
     order.totals.lines.forEach((line, index) => {

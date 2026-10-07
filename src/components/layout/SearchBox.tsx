@@ -136,7 +136,7 @@ export function SearchBox({ locale, labels, suggest, className }: SearchBoxProps
       </label>
       <input
         id={inputId}
-        name="q"
+        name="search"
         type="search"
         role="combobox"
         autoComplete="off"

@@ -1,6 +1,6 @@
 # Auth: sign in / up / out, social, OTP, password reset, verification, approval
 
-Pages: `/[locale]/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`, `/verify-phone`, `/verify-email`,
+Pages (the old storefront's paths): `/[locale]/session/signin` (`?returnUrl=`), `/session/signup`, `/session/forgot-password`, `/session/change-password` (reset), `/verify-phone`, `/session/verifyEmail`,
 `/waiting-approval`, `/account/complete-profile`. Components in `src/components/auth/` (`AuthPage`, `AuthFields`,
 `SocialButtons`, `NextStepGate`) and `src/components/layout/AccountMenu.tsx`; server reads in `src/lib/auth.server.ts`,
 sign-out in `src/lib/auth.actions.ts`, page actions in `src/app/[locale]/<page>/actions.ts`, strings in

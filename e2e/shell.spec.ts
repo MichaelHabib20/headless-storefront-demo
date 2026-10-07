@@ -36,9 +36,9 @@ test.describe('desktop', () => {
     await page.goto('/en');
     await expect(page.getByTestId('mobile-bottom-nav')).toBeHidden();
     const legal = page.getByRole('contentinfo').getByTestId('legal-links');
-    await expect(legal.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', '/en/pages/privacy-policy');
-    await expect(legal.getByRole('link', { name: 'Terms and conditions' })).toHaveAttribute('href', '/en/pages/terms-and-conditions');
-    await expect(legal.getByRole('link', { name: 'Cookie policy' })).toHaveAttribute('href', '/en/pages/cookie-policy');
+    await expect(legal.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', '/en/privacy-policy');
+    await expect(legal.getByRole('link', { name: 'Terms and conditions' })).toHaveAttribute('href', '/en/terms-and-conditions');
+    await expect(legal.getByRole('link', { name: 'Cookie policy' })).toHaveAttribute('href', '/en/cookie-policy');
     await expect(page.getByTestId('app-banner')).toContainText('Download App Now');
     await expect(page.getByTestId('usp-strip').getByRole('listitem')).toHaveCount(4);
   });
@@ -54,9 +54,9 @@ test.describe('desktop', () => {
   test('top and floating banners link through their Targets; the floating one closes', async ({ page }) => {
     await setMode(page, { banners: true });
     await page.goto('/ar');
-    await expect(page.getByTestId('top-banner').getByRole('link')).toHaveAttribute('href', '/ar/deals');
+    await expect(page.getByTestId('top-banner').getByRole('link')).toHaveAttribute('href', '/ar/products/deals');
     const floating = page.getByTestId('floating-banner');
-    await expect(floating.getByRole('link')).toHaveAttribute('href', '/ar/l/summer-sale');
+    await expect(floating.getByRole('link')).toHaveAttribute('href', '/ar/landing-page/summer-sale');
     await floating.getByRole('button', { name: 'إغلاق العرض' }).click();
     await expect(floating).toBeHidden();
     await page.reload();
@@ -122,7 +122,7 @@ test.describe('cookie notice', () => {
   test('links the store cookie policy', async ({ page }) => {
     await page.goto('/en');
     const notice = page.getByTestId('cookie-consent');
-    await expect(notice.getByRole('link', { name: 'Learn more' })).toHaveAttribute('href', '/en/pages/cookie-policy');
+    await expect(notice.getByRole('link', { name: 'Learn more' })).toHaveAttribute('href', '/en/cookie-policy');
   });
 });
 

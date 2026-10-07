@@ -18,6 +18,8 @@ export function seoMetadata(seo: Seo, locale: Locale): Metadata {
     const link = resolveTarget(alternate.target, alternate.locale);
     if (link && !link.external) languages[alternate.locale] = link.href;
   }
+  // x-default: the Arabic page, like the old storefront
+  if (languages.ar) languages['x-default'] = languages.ar;
 
   const meta: Metadata = {
     title: { absolute: seo.title },

@@ -78,7 +78,7 @@ test.describe('live: guest shopper', () => {
     const guest = (await guestCookie(context))!;
     expect((await api<Me>('me', guest)).counts).toMatchObject({ wishlist: 1, compare: 1 });
 
-    await open(page, '/en/wishlist');
+    await open(page, '/en/favorites');
     await expect(page.getByTestId('wishlist-item')).toHaveCount(1);
     await page.getByTestId('wishlist-item').first().getByRole('button', { name: /^Remove/ }).click();
     await expect(page.getByTestId('wishlist-empty')).toBeVisible();
@@ -143,7 +143,7 @@ test.describe('live: signed-in customer', () => {
     const header = page.getByRole('banner');
     if (me.counts.cart) await expect(header).toContainText(String(me.counts.cart));
 
-    await open(page, '/en/wishlist');
+    await open(page, '/en/favorites');
     const wishlist = await api<{ pagination: { total: number } }>('wishlist?perPage=12', token);
     if (wishlist.pagination.total) await expect(page.getByTestId('wishlist-item')).toHaveCount(Math.min(12, wishlist.pagination.total));
     else await expect(page.getByTestId('wishlist-empty')).toBeVisible();
@@ -162,7 +162,7 @@ test.describe('live: signed-in customer', () => {
     // Reading the page never marks anything as read.
     expect((await api<Me>('me', token)).counts.unreadNotifications).toBe(me.counts.unreadNotifications);
 
-    await open(page, '/ar/wishlist');
+    await open(page, '/ar/favorites');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   });
 });

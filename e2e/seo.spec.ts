@@ -64,7 +64,7 @@ test.describe('JSON-LD', () => {
       expect(graphs.map((g) => g['@type']).sort()).toEqual(['Organization', 'Pharmacy', 'WebPage', 'WebSite']);
       const website = byType(graphs, 'WebSite')!;
       expect(website.url).toBe(`${APP_URL}/${locale}`);
-      expect((website.potentialAction as Json).target).toEqual({ '@type': 'EntryPoint', urlTemplate: `${APP_URL}/${locale}/search?q={search_term_string}` });
+      expect((website.potentialAction as Json).target).toEqual({ '@type': 'EntryPoint', urlTemplate: `${APP_URL}/${locale}/products?search={search_term_string}` });
       expect(byType(graphs, 'Pharmacy')!.openingHoursSpecification).toHaveLength(2);
       for (const url of ourUrls(graphs)) expect(url.startsWith(`${APP_URL}/`)).toBe(true);
     });
@@ -72,12 +72,12 @@ test.describe('JSON-LD', () => {
     test(`product: Product + Offer from the backend, BreadcrumbList from Seo.breadcrumbs (${locale})`, async ({ page, request }) => {
       const slug = (await api<{ items: { slug: string }[] }>(request, 'products?perPage=1', locale)).items[0].slug;
       const details = await api<{ seo: { breadcrumbs: { label: string }[]; structuredData: { product: Json } }; product: { slug: string } }>(request, `products/${encodeURIComponent(slug)}`, locale);
-      await page.goto(`/${locale}/p/${encodeURIComponent(details.product.slug)}`);
+      await page.goto(`/${locale}/${encodeURIComponent(details.product.slug)}`);
       const graphs = await jsonLd(page);
 
       const product = byType(graphs, 'Product')!;
       expect(product.name).toBe(details.seo.structuredData.product.name);
-      expect(product.url).toBe(`${APP_URL}/${locale}/p/${encodeURIComponent(details.product.slug)}`);
+      expect(product.url).toBe(`${APP_URL}/${locale}/${encodeURIComponent(details.product.slug)}`);
       const offer = product.offers as Json | undefined;
       if (details.seo.structuredData.product.price !== null) expect(offer).toMatchObject({ price: details.seo.structuredData.product.price, priceCurrency: details.seo.structuredData.product.currency });
       const trail = byType(graphs, 'BreadcrumbList')!.itemListElement as Json[];
@@ -95,7 +95,7 @@ test.describe('JSON-LD', () => {
         const collection = byType(graphs, 'CollectionPage')!;
         const items = (collection.mainEntity as { itemListElement: Json[] }).itemListElement;
         expect(items.length).toBeGreaterThan(0);
-        expect(String(items[0].url)).toMatch(new RegExp(`^${APP_URL.replace(/\./g, '\\.')}/${locale}/p/`));
+        expect(String(items[0].url)).toMatch(new RegExp(`^${APP_URL.replace(/\./g, '\\.')}/${locale}/`));
         expect(byType(graphs, 'BreadcrumbList')).toBeTruthy();
       }
       const listing = await api<{ seo: { structuredData: { collection: { name: string } } } }>(request, 'products?category=mom-baby', locale);
@@ -116,17 +116,17 @@ test.describe('head tags', () => {
     await expect(page.locator('head link[rel="prev"]')).toHaveAttribute('href', '/en/all-products');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
 
-    await page.goto('/ar/search?q=baby');
+    await page.goto('/ar/products?search=baby');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   });
 
   test('Open Graph and Twitter cards, og:type product, absolute canonical, Google verification on home', async ({ page, request }) => {
     const slug = (await api<{ items: { slug: string }[] }>(request, 'products?perPage=1')).items[0].slug;
-    await page.goto(`/en/p/${encodeURIComponent(slug)}`);
+    await page.goto(`/en/${encodeURIComponent(slug)}`);
     await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'product');
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /^https?:\/\//);
-    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', `${APP_URL}/en/p/${encodeURIComponent(slug)}`);
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${APP_URL}/en/p/${encodeURIComponent(slug)}`);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', `${APP_URL}/en/${encodeURIComponent(slug)}`);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${APP_URL}/en/${encodeURIComponent(slug)}`);
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', /summary/);
 
     await page.goto('/ar');
@@ -136,7 +136,7 @@ test.describe('head tags', () => {
   });
 
   test('the private pages answer X-Robots-Tag: noindex', async ({ request }) => {
-    for (const path of ['/en/cart', '/ar/checkout', '/en/account/orders', '/en/sign-in', '/en/reset-password', '/ar/verify-phone', '/en/track-order']) {
+    for (const path of ['/en/cart', '/ar/checkout', '/en/account/order-history', '/en/session/signin', '/en/session/change-password', '/ar/verify-phone', '/en/account/track-your-order']) {
       const res = await request.get(`${APP_URL}${path}`, { maxRedirects: 0 });
       expect(res.headers()['x-robots-tag'], path).toContain('noindex');
     }
@@ -149,7 +149,7 @@ test.describe('robots.txt and sitemaps', () => {
     const robots = await (await request.get(`${APP_URL}/robots.txt`)).text();
     expect(robots).toContain('Disallow: /en/cart');
     expect(robots).toContain('Disallow: /ar/checkout');
-    expect(robots).toContain(`Sitemap: ${APP_URL}/sitemap.xml`);
+    expect(robots).toContain(`Sitemap: ${APP_URL}/sitemap_index.xml`);
 
     await request.post(`${MOCK_API}/__seo`, { data: { robotsIndex: false } });
     const hidden = await (await request.get(`${APP_URL}/robots.txt`)).text();
@@ -158,26 +158,26 @@ test.describe('robots.txt and sitemaps', () => {
     expect(await (await request.get(`${APP_URL}/sitemap.xml`)).text()).not.toContain('<sitemap>');
   });
 
-  test('sitemap index → child sitemaps with both languages, under the test origin', async ({ request }) => {
-    const index = await request.get(`${APP_URL}/sitemap.xml`);
+  test('sitemap index → child sitemaps with both languages, under the test origin (the old file names)', async ({ request }) => {
+    const index = await request.get(`${APP_URL}/sitemap_index.xml`);
     expect(index.headers()['content-type']).toContain('application/xml');
     const children = [...(await index.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
     for (const type of ['products', 'categories', 'brands', 'pages', 'landing_pages', 'tags']) {
-      expect(children).toContain(`${APP_URL}/sitemaps/${type}-en-1.xml`);
-      expect(children).toContain(`${APP_URL}/sitemaps/${type}-ar-1.xml`);
+      expect(children).toContain(`${APP_URL}/sitemap_${type}_en.xml`);
+      expect(children).toContain(`${APP_URL}/sitemap_${type}_ar.xml`);
     }
 
-    const products = await (await request.get(`${APP_URL}/sitemaps/products-ar-1.xml`)).text();
+    const products = await (await request.get(`${APP_URL}/sitemap_products_ar.xml`)).text();
     const locs = [...products.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
     expect(locs.length).toBeGreaterThan(5);
-    for (const loc of locs) expect(loc.startsWith(`${APP_URL}/ar/p/`)).toBe(true);
+    for (const loc of locs) expect(loc.startsWith(`${APP_URL}/ar/`)).toBe(true);
     expect(products).toContain('hreflang="en"');
     expect(products).toContain('<lastmod>');
 
-    const categories = await (await request.get(`${APP_URL}/sitemaps/categories-en-1.xml`)).text();
-    expect(categories).toContain(`<loc>${APP_URL}/en/c/`);
-    expect((await request.get(`${APP_URL}/sitemaps/orders-en-1.xml`)).status()).toBe(404);
-    expect((await request.get(`${APP_URL}/sitemaps/products-en-99.xml`)).status()).toBe(404);
+    const categories = await (await request.get(`${APP_URL}/sitemap_categories_en.xml`)).text();
+    expect(categories).toContain(`<loc>${APP_URL}/en/product/`);
+    expect((await request.get(`${APP_URL}/sitemap_orders_en.xml`)).status()).toBe(404);
+    expect((await request.get(`${APP_URL}/sitemap_products_en_99.xml`)).status()).toBe(404);
   });
 });
 
@@ -215,7 +215,7 @@ test.describe('server-side events (POST /events)', () => {
       return api<{ product: { slug: string; name: string } }>(request, `products/${encodeURIComponent(slug)}`);
     });
     await page.addInitScript(() => window.localStorage.setItem('sc_cookie_consent', 'accepted'));
-    await page.goto(`/en/p/${encodeURIComponent(details.product.slug)}`);
+    await page.goto(`/en/${encodeURIComponent(details.product.slug)}`);
     await page.waitForLoadState('networkidle');
 
     const buy = page.getByTestId('product-info').getByRole('group', { name: details.product.name, exact: true });
@@ -231,7 +231,7 @@ test.describe('server-side events (POST /events)', () => {
   });
 
   test('a campaign click id is kept and sent with the events', async ({ page, request, context }) => {
-    await page.goto('/en/search?q=baby&fbclid=IwAR-test.1');
+    await page.goto('/en/products?search=baby&fbclid=IwAR-test.1');
     const cookie = (await context.cookies()).find((c) => c.name === 'sc_click_ids');
     expect(cookie?.httpOnly).toBe(true);
     await expect.poll(async () => (await events(request)).find((e) => e.name === 'search')).toMatchObject({ searchTerm: 'baby', clickIds: { fbclid: 'IwAR-test.1' } });
@@ -252,7 +252,7 @@ test.describe('server-side events (POST /events)', () => {
     await expect(page.getByTestId('checkout-updating')).toHaveCount(0);
     await page.getByTestId('checkout-terms').check();
     await page.getByTestId('place-order').click();
-    await expect(page).toHaveURL(/\/en\/checkout\/result\?checkout=/);
+    await expect(page).toHaveURL(/\/en\/checkout\/final-receipt\?checkout=/);
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'placed');
     await page.reload();
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'placed');

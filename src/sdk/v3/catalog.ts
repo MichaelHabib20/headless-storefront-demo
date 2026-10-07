@@ -75,5 +75,6 @@ export const getBrands = (client: StorefrontClient, locale: Locale, { page, perP
   client.request<BrandsPage>('GET', 'brands', { locale, query: { page, perPage } });
 
 /** What a path the storefront has no page for is: `path` is the path and query as requested, with the locale prefix. */
-export const resolvePath = (client: StorefrontClient, locale: Locale, path: string) =>
-  client.request<Resolution>('GET', 'resolve', { locale, query: { path } });
+/** `redirectsOnly`: only the merchant's redirect table (for a page the storefront has); `none` when no row applies. */
+export const resolvePath = (client: StorefrontClient, locale: Locale, path: string, redirectsOnly = false) =>
+  client.request<Resolution>('GET', 'resolve', { locale, query: redirectsOnly ? { path, only: 'redirects' } : { path } });

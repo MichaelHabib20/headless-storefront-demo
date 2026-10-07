@@ -41,7 +41,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   http.fetch.mockReset();
   vi.mocked(shopperContext).mockImplementation(async (locale) => ({ locale, token: 'shopper-token' }));
-  vi.mocked(checkoutReturnUrl).mockImplementation(async (locale) => `https://shop.test/${locale}/checkout/result`);
+  vi.mocked(checkoutReturnUrl).mockImplementation(async (locale) => `https://shop.test/${locale}/checkout/final-receipt`);
 });
 
 describe('placeOrderAction', () => {
@@ -56,7 +56,7 @@ describe('placeOrderAction', () => {
 
     const outcome = await place(checkout, { note: '  Ring twice ' });
 
-    expect(outcome).toEqual({ ok: true, url: '/en/checkout/result?checkout=ref-9' });
+    expect(outcome).toEqual({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-9' });
     expect(http.fetch).toHaveBeenCalledTimes(1);
     const sent = request();
     expect(sent.url).toBe('https://api.test/api/customer/v3/orders');
@@ -76,7 +76,7 @@ describe('placeOrderAction', () => {
       },
       expectedTotal: 987.654321,
       acceptTerms: true,
-      returnUrl: 'https://shop.test/en/checkout/result',
+      returnUrl: 'https://shop.test/en/checkout/final-receipt',
     });
     // nothing else of the checkout leaks into the request: the selections are its echo
     expect((sent.body as { selections: unknown }).selections).toEqual({ ...checkoutSelections(checkout), note: 'Ring twice' });
@@ -94,7 +94,7 @@ describe('placeOrderAction', () => {
       selections: { ...checkoutSelections(delivery), note: null },
       expectedTotal: delivery.totals.total.amount,
       acceptTerms: true,
-      returnUrl: 'https://shop.test/ar/checkout/result',
+      returnUrl: 'https://shop.test/ar/checkout/final-receipt',
     });
     expect(checkoutReturnUrl).toHaveBeenCalledWith('ar');
   });
@@ -135,7 +135,7 @@ describe('placeOrderAction', () => {
 
   it('a next step it does not know goes to the result page, which asks the backend', async () => {
     respond(200, { data: { next: { type: 'something_new', url: null, reference: 'ref 5' }, order: null } });
-    expect(await place(checkoutFixture('en'))).toEqual({ ok: true, url: '/en/checkout/result?checkout=ref%205' });
+    expect(await place(checkoutFixture('en'))).toEqual({ ok: true, url: '/en/checkout/final-receipt?checkout=ref%205' });
   });
 
   it.each(['total_changed', 'checkout_incomplete'] as const)('%s: hands back the fresh checkout and the backend message, with a new key', async (code) => {
@@ -161,7 +161,7 @@ describe('placeOrderAction', () => {
     respond(200, done('ref-6'));
     const accepted = await place(fresh, { acceptPaymentChange: true, attemptKey: (asked as { attemptKey: string }).attemptKey });
 
-    expect(accepted).toEqual({ ok: true, url: '/en/checkout/result?checkout=ref-6' });
+    expect(accepted).toEqual({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-6' });
     expect(request().body).toMatchObject({ expectedTotal: 391, selections: { acceptPaymentChange: true } });
     expect(request().headers['Idempotency-Key']).toMatch(UUID);
   });

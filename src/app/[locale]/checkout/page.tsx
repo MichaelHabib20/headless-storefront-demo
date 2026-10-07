@@ -112,7 +112,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
           <CartEmpty locale={locale} />
           {!loaded && (
             <p className={styles.signIn} data-testid="checkout-sign-in-hint">
-              {t('checkoutSignInHint')} <Link href={`${routes.signIn(locale)}?next=checkout`}>{t('checkoutSignIn')}</Link>
+              {t('checkoutSignInHint')} <Link href={routes.signIn(locale, 'checkout')}>{t('checkoutSignIn')}</Link>
             </p>
           )}
         </>

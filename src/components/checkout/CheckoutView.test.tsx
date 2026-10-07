@@ -153,7 +153,7 @@ describe('CheckoutView: drawing the API answer', () => {
     const remote = screen.getAllByTestId('checkout-address')[1];
     expect(within(remote).getByRole('radio')).toBeDisabled();
     expect(remote).toHaveTextContent('We do not deliver to this address right now.');
-    expect(screen.getByTestId('checkout-add-address')).toHaveAttribute('href', '/en/account/addresses?next=checkout');
+    expect(screen.getByTestId('checkout-add-address')).toHaveAttribute('href', '/en/account/address?next=checkout');
   });
 
   it('hides the promo field and the note when the store settings switch them off', () => {
@@ -400,7 +400,7 @@ describe('CheckoutView: guests', () => {
 
     const prompt = screen.getByTestId('checkout-sign-in');
     expect(prompt).toHaveTextContent('Sign in to place your order.');
-    expect(within(prompt).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=checkout');
+    expect(within(prompt).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=checkout');
     expect(screen.queryByTestId('checkout-contact-form')).toBeNull();
     expect(screen.getByTestId('checkout-blockers')).toHaveTextContent('This store needs an account to place an order.');
   });
@@ -419,7 +419,7 @@ describe('CheckoutView: placing the order', () => {
   it('sends the checkout on screen as one piece, then leaves for the next page', async () => {
     const checkout = checkoutFixture('en');
     const { user, placeAction, navigate } = setup(checkout);
-    placeAction.mockResolvedValue({ ok: true, url: '/en/checkout/result?checkout=ref-1' });
+    placeAction.mockResolvedValue({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-1' });
 
     await user.type(screen.getByRole('textbox', { name: 'Order note' }), 'Ring twice');
     await user.click(terms());
@@ -427,7 +427,7 @@ describe('CheckoutView: placing the order', () => {
 
     expect(placeAction).toHaveBeenCalledTimes(1);
     expect(placeAction).toHaveBeenCalledWith('en', { checkout, note: 'Ring twice', acceptTerms: true, attemptKey: 'attempt-key-1', acceptPaymentChange: false });
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/en/checkout/result?checkout=ref-1'));
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/en/checkout/final-receipt?checkout=ref-1'));
     // the browser is leaving: nothing can be clicked twice
     expect(placeButton()).toBeDisabled();
     expect(placeButton()).toHaveTextContent('Placing your order…');
@@ -440,7 +440,7 @@ describe('CheckoutView: placing the order', () => {
       c.totals.total = { amount: 391, currency: 'EGP', display: 'TOTAL-WITH-FEE' };
     });
     computeAction.mockResolvedValue({ ok: true, checkout: newer });
-    placeAction.mockResolvedValue({ ok: true, url: '/en/checkout/result?checkout=ref-2' });
+    placeAction.mockResolvedValue({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-2' });
 
     await user.click(radio('payment-method', 1));
     await waitFor(() => expect(screen.getByTestId('checkout-total').textContent).toBe('TOTAL-WITH-FEE'));
@@ -456,7 +456,7 @@ describe('CheckoutView: placing the order', () => {
     const fresh = withTotal('TOTAL-NEW-401', 401);
     placeAction
       .mockResolvedValueOnce({ ok: false, message: 'Your order total changed to TOTAL-NEW-401. Please review it and confirm again.', checkout: fresh, attemptKey: 'attempt-key-2' })
-      .mockResolvedValueOnce({ ok: true, url: '/en/checkout/result?checkout=ref-3' });
+      .mockResolvedValueOnce({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-3' });
 
     await user.click(terms());
     await user.click(placeButton());
@@ -476,7 +476,7 @@ describe('CheckoutView: placing the order', () => {
     await user.click(placeButton());
 
     expect(placeAction).toHaveBeenLastCalledWith('en', { checkout: fresh, note: '', acceptTerms: true, attemptKey: 'attempt-key-2', acceptPaymentChange: false });
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/en/checkout/result?checkout=ref-3'));
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/en/checkout/final-receipt?checkout=ref-3'));
   });
 
   it('checkout incomplete: shows the fresh checkout with what is missing', async () => {
@@ -509,7 +509,7 @@ describe('CheckoutView: placing the order', () => {
     });
     placeAction
       .mockResolvedValueOnce({ ok: false, message: 'The payment method of your order changed. Please accept the change to continue.', checkout: fresh, needsConsent: true, attemptKey: 'attempt-key-2' })
-      .mockResolvedValueOnce({ ok: true, url: '/en/checkout/result?checkout=ref-4' });
+      .mockResolvedValueOnce({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-4' });
 
     await user.click(terms());
     await user.click(placeButton());
@@ -526,7 +526,7 @@ describe('CheckoutView: placing the order', () => {
     await user.click(placeButton());
 
     expect(placeAction).toHaveBeenLastCalledWith('en', { checkout: fresh, note: '', acceptTerms: true, attemptKey: 'attempt-key-2', acceptPaymentChange: true });
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/en/checkout/result?checkout=ref-4'));
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith('/en/checkout/final-receipt?checkout=ref-4'));
   });
 
   it('payment change: choosing something else instead is a normal order again', async () => {
@@ -557,7 +557,7 @@ describe('CheckoutView: placing the order', () => {
   ])('%s: shows the message, stays on the page and never retries by itself', async (_kind, message, nextKey) => {
     const checkout = checkoutFixture('en');
     const { user, placeAction, navigate } = setup(checkout);
-    placeAction.mockResolvedValueOnce({ ok: false, message, attemptKey: nextKey }).mockResolvedValueOnce({ ok: true, url: '/en/checkout/result?checkout=ref-5' });
+    placeAction.mockResolvedValueOnce({ ok: false, message, attemptKey: nextKey }).mockResolvedValueOnce({ ok: true, url: '/en/checkout/final-receipt?checkout=ref-5' });
 
     await user.click(terms());
     await user.click(placeButton());

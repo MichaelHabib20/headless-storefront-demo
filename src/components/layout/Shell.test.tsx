@@ -16,7 +16,7 @@ import { StoreUnavailable } from './StoreUnavailable';
 import { UspStrip } from './UspStrip';
 
 const refresh = vi.fn();
-vi.mock('next/navigation', () => ({ usePathname: () => '/en/deals', useRouter: () => ({ refresh }) }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/en/products/deals', useRouter: () => ({ refresh }) }));
 
 // links are not followed in jsdom
 document.addEventListener('click', (event) => {
@@ -33,7 +33,7 @@ describe('mobile bottom nav', () => {
     const me = meFixture('en');
     render(<MobileBottomNav nav={layoutFixture('en').mobileNav!} locale="en" me={me} />);
     const bar = screen.getByTestId('mobile-bottom-nav');
-    expect(within(bar).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/en', '/en/categories', '/en/deals', '/en/cart']);
+    expect(within(bar).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/en', '/en/categories', '/en/products/deals', '/en/cart']);
     expect(within(bar).getByRole('link', { name: /Deals/ })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByTestId('nav-badge-cart')).toHaveTextContent(String(me.counts.cart));
 
@@ -41,7 +41,7 @@ describe('mobile bottom nav', () => {
     const sheet = screen.getByTestId('more-sheet');
     expect(within(sheet).getByRole('heading', { name: 'More' })).toBeInTheDocument();
     expect(within(sheet).getByRole('link', { name: /Our Branches/ })).toHaveAttribute('href', '/en/pages/branches');
-    expect(within(sheet).getByRole('link', { name: /عربي/ })).toHaveAttribute('href', '/ar/deals');
+    expect(within(sheet).getByRole('link', { name: /عربي/ })).toHaveAttribute('href', '/ar/products/deals');
     expect(within(sheet).queryByText('Welcome to Seif Pharmacies!')).toBeNull(); // signed in
 
     fireEvent.keyDown(document, { key: 'Escape' });
@@ -84,8 +84,8 @@ describe('banners', () => {
         <FloatingBanner banner={{ ...banner, target: { type: 'landing_page', slug: 'summer-sale' } }} locale="ar" labels={{ region: 'عرض', dismiss: 'إغلاق العرض' }} />
       </>,
     );
-    expect(within(screen.getByTestId('top-banner')).getByRole('link')).toHaveAttribute('href', '/ar/deals');
-    expect(within(screen.getByTestId('floating-banner')).getByRole('link')).toHaveAttribute('href', '/ar/l/summer-sale');
+    expect(within(screen.getByTestId('top-banner')).getByRole('link')).toHaveAttribute('href', '/ar/products/deals');
+    expect(within(screen.getByTestId('floating-banner')).getByRole('link')).toHaveAttribute('href', '/ar/landing-page/summer-sale');
     fireEvent.click(screen.getByRole('button', { name: 'إغلاق العرض' }));
     expect(screen.queryByTestId('floating-banner')).toBeNull();
     expect(document.cookie).toContain(`${FLOATING_BANNER_COOKIE}=2001`);
@@ -95,8 +95,8 @@ describe('banners', () => {
 describe('legal, USP, store status, maintenance', () => {
   it('legal links are the merchant pages', () => {
     render(<LegalLinks legal={layoutFixture('ar').legal} locale="ar" />);
-    expect(screen.getByRole('link', { name: 'سياسة الخصوصية' })).toHaveAttribute('href', '/ar/pages/privacy-policy');
-    expect(screen.getByRole('link', { name: 'الشروط والأحكام' })).toHaveAttribute('href', '/ar/pages/terms-and-conditions');
+    expect(screen.getByRole('link', { name: 'سياسة الخصوصية' })).toHaveAttribute('href', '/ar/privacy-policy');
+    expect(screen.getByRole('link', { name: 'الشروط والأحكام' })).toHaveAttribute('href', '/ar/terms-and-conditions');
   });
 
   it('no legal links without pages', () => {

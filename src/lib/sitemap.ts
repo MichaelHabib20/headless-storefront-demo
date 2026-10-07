@@ -3,8 +3,11 @@
  * exists (Targets, dates, both languages); this file only turns Targets into URLs of this
  * storefront (the origin of the request) and writes the XML. Pure, no I/O.
  *
- *   /sitemap.xml                 → index of the child sitemaps
- *   /sitemaps/<type>-<page>.xml  → one page of one type, every entry with its hreflang alternates
+ * The old storefront's file names (its backend wrote them; Search Console knows them):
+ *   /sitemap_index.xml                    → index of the child sitemaps (also /sitemap.xml)
+ *   /sitemap_<type>_<locale>[_<page>].xml → one page of one type and language, every entry with its
+ *                                           hreflang alternates (page 1 has no number)
+ * Served from /sitemaps/<name> through the rewrites in next.config.mjs.
  */
 import type { Locale, SitemapEntry, SitemapType } from '@/sdk';
 import { resolveTarget } from './routing';
@@ -13,7 +16,7 @@ export const SITEMAP_TYPES: readonly SitemapType[] = ['products', 'categories', 
 /** Entries per child sitemap (one backend page). The protocol allows 50,000; the contract 5,000. */
 export const SITEMAP_PAGE_SIZE = 1000;
 /** Child sitemaps are per language: the URLs of a sitemap are in the language of its name. */
-const NAME = /^(products|categories|brands|pages|landing_pages|tags)-(en|ar)-(\d{1,6})\.xml$/;
+const NAME = /^sitemap_(products|categories|brands|pages|landing_pages|tags)_(en|ar)(?:_([2-9]|[1-9]\d{1,5}))?\.xml$/;
 
 export interface ChildSitemap {
   type: SitemapType;
@@ -22,14 +25,14 @@ export interface ChildSitemap {
 }
 
 export function childSitemapName({ type, locale, page }: ChildSitemap): string {
-  return `${type}-${locale}-${page}.xml`;
+  return page > 1 ? `sitemap_${type}_${locale}_${page}.xml` : `sitemap_${type}_${locale}.xml`;
 }
 
-/** `products-en-2.xml` → its type, language and page; null for anything else. */
+/** `sitemap_products_en_2.xml` → its type, language and page; null for anything else. */
 export function parseChildSitemapName(name: string): ChildSitemap | null {
   const match = NAME.exec(name);
   if (!match) return null;
-  const page = Number(match[3]);
+  const page = match[3] ? Number(match[3]) : 1;
   return page >= 1 ? { type: match[1] as SitemapType, locale: match[2] as Locale, page } : null;
 }
 
@@ -37,7 +40,7 @@ const escapeXml = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, 
 
 /** The sitemap index: one child per type, language and page. */
 export function sitemapIndexXml(origin: string, children: readonly ChildSitemap[]): string {
-  const rows = children.map((child) => `  <sitemap><loc>${escapeXml(`${origin}/sitemaps/${childSitemapName(child)}`)}</loc></sitemap>`);
+  const rows = children.map((child) => `  <sitemap><loc>${escapeXml(`${origin}/${childSitemapName(child)}`)}</loc></sitemap>`);
   return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows.join('\n')}\n</sitemapindex>\n`;
 }
 

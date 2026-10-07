@@ -68,7 +68,7 @@ describe('checkout page', () => {
     expect(getPickupBranches).not.toHaveBeenCalled();
     expect(ensureShopperContext).not.toHaveBeenCalled();
     expect(screen.getByTestId('cart-empty')).toBeVisible();
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=checkout');
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=checkout');
     expect(screen.queryByTestId('place-order')).toBeNull();
   });
 

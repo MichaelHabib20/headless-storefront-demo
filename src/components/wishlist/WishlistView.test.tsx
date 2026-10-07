@@ -25,7 +25,7 @@ describe('WishlistView', () => {
     expect(items).toHaveLength(wishlist.items.length);
     wishlist.items.forEach((product, i) => {
       expect(within(items[i]).getByTestId('product-card')).toHaveTextContent(product.name);
-      expect(within(items[i]).getByRole('link')).toHaveAttribute('href', `/${locale}/p/${encodeURIComponent(product.slug)}`);
+      expect(within(items[i]).getByRole('link')).toHaveAttribute('href', `/${locale}/${encodeURIComponent(product.slug)}`);
       expect(within(items[i]).getAllByRole('button')).toHaveLength(2);
     });
   });
@@ -41,8 +41,8 @@ describe('WishlistView', () => {
 
     const nav = screen.getByRole('navigation', { name: 'Wishlist pages' });
     expect(within(nav).getByRole('link', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
-    expect(within(nav).getByRole('link', { name: 'Page 2' })).toHaveAttribute('href', '/en/wishlist?page=2');
-    expect(within(nav).getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/wishlist?page=2');
+    expect(within(nav).getByRole('link', { name: 'Page 2' })).toHaveAttribute('href', '/en/favorites?page=2');
+    expect(within(nav).getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/favorites?page=2');
     expect(within(nav).queryByRole('link', { name: 'Previous' })).toBeNull();
   });
 
@@ -55,8 +55,8 @@ describe('WishlistView', () => {
     expect(screen.getAllByRole('button', { name: /^إزالة/ })).toHaveLength(2);
 
     const nav = screen.getByRole('navigation', { name: 'صفحات المفضلة' });
-    expect(within(nav).getByRole('link', { name: 'صفحة ٢' })).toHaveAttribute('href', '/ar/wishlist?page=2&perPage=2');
-    expect(within(nav).getByRole('link', { name: 'التالي' })).toHaveAttribute('href', '/ar/wishlist?page=2&perPage=2');
+    expect(within(nav).getByRole('link', { name: 'صفحة ٢' })).toHaveAttribute('href', '/ar/favorites?page=2&perPage=2');
+    expect(within(nav).getByRole('link', { name: 'التالي' })).toHaveAttribute('href', '/ar/favorites?page=2&perPage=2');
   });
 
   it('hides page links when everything fits on one page', () => {
@@ -98,7 +98,7 @@ describe('WishlistView', () => {
   it('says so when the wishlist could not be loaded', () => {
     render(<WishlistView state={{ status: 'error' }} locale="en" onRemove={idle()} onMoveToCart={idle()} />);
     expect(screen.getByRole('alert')).toHaveTextContent('We could not load your wishlist');
-    expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/wishlist');
+    expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/favorites');
   });
 
   it('hides a removed item at once and brings it back when the API refuses', async () => {

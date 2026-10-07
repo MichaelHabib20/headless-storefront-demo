@@ -10,7 +10,7 @@ import styles from './NotifyMe.module.css';
  */
 export type NotifyMeActionResult = { ok: true; message: string } | { ok: false; message: string; emailError?: string };
 
-/** The server action (src/app/[locale]/p/[slug]/actions.ts). `email` is null unless the shopper typed one. */
+/** The server action (src/app/[locale]/_product/actions.ts). `email` is null unless the shopper typed one. */
 export type NotifyMeAction = (locale: Locale, productId: number, email: string | null) => Promise<NotifyMeActionResult>;
 
 export interface NotifyMeLabels {

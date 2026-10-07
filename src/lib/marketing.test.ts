@@ -120,11 +120,11 @@ describe('fireBrowserEvent', () => {
 
 describe('track', () => {
   it('sends the server twin with ids only and the same event id', async () => {
-    history.replaceState(null, '', '/en/p/x?y=1');
+    history.replaceState(null, '', '/en/x?y=1');
     const id = track('en', { name: 'add_to_cart', items: [{ id: 9822, name: 'B', price: 18 }, { id: null, name: 'no id' }] });
     await flush();
 
-    expect(beacons).toEqual([{ url: '/api/events', body: { locale: 'en', name: 'add_to_cart', eventId: id, productIds: [9822], orderId: null, searchTerm: null, page: { path: '/en/p/x?y=1', referrer: null } } }]);
+    expect(beacons).toEqual([{ url: '/api/events', body: { locale: 'en', name: 'add_to_cart', eventId: id, productIds: [9822], orderId: null, searchTerm: null, page: { path: '/en/x?y=1', referrer: null } } }]);
     expect(Object.keys(beacons[0].body as object)).not.toContain('value');
   });
 

@@ -45,7 +45,7 @@ selected {methodId, planId} }`, `promo {code, applied, message}`, `requirements.
   20 times, then a calm "still confirming" message. Unknown status or reference → neutral message + orders link.
 - **Addresses:** "Add a new address" links to `routes.addresses(locale) + '?next=checkout'`. The addresses
   page sends the shopper back to `routes.checkout(locale)` (optionally `?address=<id>`, sent as the first choice).
-- **Sign in:** `missing: sign_in` shows its message and a link to `/{locale}/sign-in?next=checkout`;
+- **Sign in:** `missing: sign_in` shows its message and a link to `/{locale}/session/signin?returnUrl=checkout`;
   sign-in comes back to checkout.
 
 ## What the backend decides vs what you decide

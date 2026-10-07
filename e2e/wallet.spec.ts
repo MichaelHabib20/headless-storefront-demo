@@ -46,7 +46,7 @@ test('off (as on staging): no page, no account link, no checkout switch', async 
 test('a visitor is asked to sign in, and no guest session is created', async ({ page, context, request }) => {
   await wallet(request, { on: true });
   await open(page, '/en/account/wallet-history');
-  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/sign-in\?next=%2Fen%2Faccount%2Fwallet-history/);
+  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/session\/signin\?returnUrl=%2Fen%2Faccount%2Fwallet-history/);
   expect((await context.cookies()).find((cookie) => cookie.name === 'sc_guest')).toBeUndefined();
 });
 
@@ -62,7 +62,7 @@ test('the wallet page: balance and history, in English and Arabic', async ({ pag
   await expect(entries).toHaveCount(2);
   await expect(entries.first()).toContainText('Paid for order #48200');
   await expect(entries.first().getByTestId('wallet-entry-amount')).toHaveText('-50.00 EGP');
-  await expect(entries.first().getByRole('link', { name: 'View order' })).toHaveAttribute('href', '/en/account/orders/mock-order-48200');
+  await expect(entries.first().getByRole('link', { name: 'View order' })).toHaveAttribute('href', '/en/account/order-history/mock-order-48200');
 
   await open(page, '/ar/account/wallet-history');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
@@ -86,7 +86,7 @@ test('checkout: the wallet pays part, the rest is paid by a method', async ({ pa
 
   await page.getByTestId('checkout-terms').check();
   await page.getByTestId('place-order').click();
-  await expect(page).toHaveURL(/\/en\/checkout\/result\?checkout=/);
+  await expect(page).toHaveURL(/\/en\/checkout\/final-receipt\?checkout=/);
   await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'placed');
 
   const after = await (await request.get(`${API}/wallet`, { headers: CUSTOMER })).json();

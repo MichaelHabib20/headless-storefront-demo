@@ -278,6 +278,10 @@ export interface paths {
          * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
          *     Filter and sort parameters come from the `query` strings of a previous answer: pass them through
          *     as they are. Works without a token; with a token prices and limits are the shopper's.
+         *     The old storefront's names are read too, so its listing URLs can be passed through unchanged:
+         *     `search`, `category_id`, `group_id`, `sub_category_id`, `list_ids`, `vendor_ids`, `promotions`, `brand_id`,
+         *     `options_values_ids` / `attribute_id`, `in_stock`, `price_from`, `price_to` and the old `sort` keys
+         *     (`low`, `high`, `a-z`, `z-a`, `popular`, `recent`, `high-discount`, `low-rate`, `high-rate`).
          */
         get: operations["getProducts"];
         put?: never;
@@ -439,6 +443,8 @@ export interface paths {
          * @description For paths the storefront has no page for. Always 200; `result` says what to do:
          *     `target` → redirect (permanent) to the storefront's own URL of that Target; `redirect` → follow
          *     `target` or `url` with `permanent`; `gone` → answer 410; `not_found` → answer 404.
+         *     With `only=redirects` only the merchant's redirect table is checked (for paths the storefront serves
+         *     itself): `redirect`, `gone`, or `none` (no row: show the page).
          */
         get: operations["resolvePath"];
         put?: never;
@@ -1552,7 +1558,7 @@ export interface components {
              * @enum {string}
              */
             type: "category";
-            /** @description Category slug, then optional group / sub-category slugs. */
+            /** @description Category slug, then optional group / sub-category slugs, in the language of the link (Arabic links use slug_ar, falling back to slug, like the old storefront's URLs). */
             path: string[];
         };
         BrandTarget: {
@@ -1561,6 +1567,7 @@ export interface components {
              * @enum {string}
              */
             type: "brand";
+            /** @description In the language of the link (slug_ar in Arabic links); several brands joined with -- (the old storefront's a--b listing) */
             slug: string;
         };
         ListTarget: {
@@ -1579,6 +1586,11 @@ export interface components {
              */
             type: "page";
             slug: string;
+            /**
+             * @description A legal page: the old storefront served it at the root (/privacy-policy, /terms-and-conditions, /cookie-policy), not under /pages
+             * @enum {string}
+             */
+            legal?: "privacy" | "terms" | "cookies";
         };
         LandingPageTarget: {
             /**
@@ -2373,8 +2385,11 @@ export interface components {
             };
         };
         Resolution: {
-            /** @enum {string} */
-            result: "target" | "redirect" | "gone" | "not_found";
+            /**
+             * @description none: only with only=redirects, no redirect row applies
+             * @enum {string}
+             */
+            result: "target" | "redirect" | "gone" | "not_found" | "none";
             target: components["schemas"]["NullableTarget"];
             /** @description Where to redirect when it is not something the backend knows as a Target */
             url: string | null;
@@ -4438,6 +4453,8 @@ export interface operations {
                 locale?: components["parameters"]["Locale"];
                 /** @description Path and query as requested, e.g. /en/product/skin-care/face-care */
                 path: string;
+                /** @description redirects = the redirect table only */
+                only?: "redirects";
             };
             header?: never;
             path?: never;

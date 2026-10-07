@@ -1,6 +1,6 @@
 # Product page
 
-Route: `src/app/[locale]/p/[slug]/page.tsx` (the URL of `routes.product`). The backend picks the
+Route: `/{locale}/{slug}` (the old storefront's URL, `routes.product`), drawn by `src/app/[locale]/[...slug]/page.tsx` with `src/app/[locale]/_product/ProductPage.tsx`. The backend picks the
 variant, prices it, decides every option's state and where each option value leads. The page draws.
 
 ## Data
@@ -33,9 +33,9 @@ interface ProductDetails {
 
 | Path | What |
 |---|---|
-| `src/app/[locale]/p/[slug]/page.tsx` | Loads the product (once per request, shared with `generateMetadata`), redirect / 404 / API down |
-| `src/app/[locale]/p/[slug]/blocks.tsx` | `RecommendationsBlock`, `ReviewsBlock`: load on their own inside `<Suspense>`; a failure never breaks the page |
-| `src/app/[locale]/p/[slug]/actions.ts` | `notifyMeAction` (server action, `withShopper`) |
+| `src/app/[locale]/_product/ProductPage.tsx` | Loads the product (once per request, shared with `generateMetadata`), redirect / 404 / API down |
+| `src/app/[locale]/_product/blocks.tsx` | `RecommendationsBlock`, `ReviewsBlock`: load on their own inside `<Suspense>`; a failure never breaks the page |
+| `src/app/[locale]/_product/actions.ts` | `notifyMeAction` (server action, `withShopper`) |
 | `src/components/product/ProductView.tsx` | Page layout: gallery, info column, description, specifications, slots for the blocks |
 | `ProductGallery.tsx` | Thumbnails (click, arrow keys, Home/End), video slide (opens `video.url` in a new tab) |
 | `ProductOptions.tsx` | Option values as `<TargetLink>`s, drawn by `display` and `state` |
@@ -60,7 +60,7 @@ interface ProductDetails {
 ## Rules
 
 1. **Options are links.** Render each value with `<TargetLink target={value.target}>`. Never work out
-   which variant matches a combination, never build `/p/...` from option values, never enable a value
+   which variant matches a combination, never build product URLs from option values, never enable a value
    with `state: 'unavailable'` or a `null` target. Unknown `display` → buttons (`optionLook()`).
 2. **Redirect when told.** `details.redirect` set → `permanentRedirect(resolveTarget(redirect).href)`.
 3. **Buy box:** reuse `ProductActions` with `quantity={{ limits: quantityLimits(details), labels }}`.

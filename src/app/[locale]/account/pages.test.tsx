@@ -5,11 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { hasShopperToken, loadAddressBook, loadAddressForm, loadCancellationReasons, loadOrder, loadOrders } from '@/lib/account.server';
 import { ensureShopperContext } from '@/lib/shopper.server';
 import { addressesFixture, cancellationReasonsFixture, checkoutSettingsFixture, deliveredOrderFixture, locationsFixture, orderFixture, ordersFixture } from '@/test/account-fixtures';
-import EditAddressPage from './addresses/[id]/edit/page';
-import NewAddressPage from './addresses/new/page';
-import AddressesPage from './addresses/page';
-import OrderPage from './orders/[id]/page';
-import OrdersPage from './orders/page';
+import EditAddressPage from './address/edit/[id]/page';
+import NewAddressPage from './address/add/page';
+import AddressesPage from './address/page';
+import OrderPage from './order-history/[id]/page';
+import OrdersPage from './order-history/page';
 
 vi.mock('next/navigation', () => ({
   notFound: vi.fn(() => {
@@ -28,8 +28,8 @@ vi.mock('@/lib/account.server', () => ({
   hasShopperToken: vi.fn(),
 }));
 vi.mock('@/lib/shopper.server', () => ({ shopperContext: vi.fn(), ensureShopperContext: vi.fn() }));
-vi.mock('./addresses/actions', () => ({ saveAddressAction: vi.fn(), deleteAddressAction: vi.fn(), setDefaultAddressAction: vi.fn() }));
-vi.mock('./orders/actions', () => ({ cancelOrderAction: vi.fn(), reorderAction: vi.fn(), rateOrderAction: vi.fn() }));
+vi.mock('./address/actions', () => ({ saveAddressAction: vi.fn(), deleteAddressAction: vi.fn(), setDefaultAddressAction: vi.fn() }));
+vi.mock('./order-history/actions', () => ({ cancelOrderAction: vi.fn(), reorderAction: vi.fn(), rateOrderAction: vi.fn() }));
 vi.mock('@/lib/reviews.actions', () => ({ writeReviewAction: vi.fn() }));
 
 const params = <T extends object>(value: T) => Promise.resolve(value);
@@ -46,14 +46,14 @@ describe('who may see the account pages', () => {
     render(await OrdersPage({ params: params({ locale: 'en' }), searchParams: query({ page: '2' }) }));
 
     expect(screen.getByTestId('account-sign-in')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=%2Fen%2Faccount%2Forders%3Fpage%3D2');
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=%2Fen%2Faccount%2Forder-history%3Fpage%3D2');
     expect(ensureShopperContext).not.toHaveBeenCalled();
   });
 
   it('does the same on the address pages (Arabic)', async () => {
     vi.mocked(loadAddressBook).mockResolvedValue({ status: 'signed-out' });
     render(await AddressesPage({ params: params({ locale: 'ar' }), searchParams: query({ next: 'checkout' }) }));
-    expect(screen.getByRole('link', { name: 'تسجيل الدخول' })).toHaveAttribute('href', '/ar/sign-in?next=%2Far%2Faccount%2Faddresses%3Fnext%3Dcheckout');
+    expect(screen.getByRole('link', { name: 'تسجيل الدخول' })).toHaveAttribute('href', '/ar/session/signin?returnUrl=%2Far%2Faccount%2Faddress%3Fnext%3Dcheckout');
     expect(screen.queryByRole('link', { name: 'إضافة عنوان جديد' })).toBeNull();
 
     vi.mocked(hasShopperToken).mockResolvedValue(false);
@@ -76,7 +76,7 @@ describe('address pages', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'My addresses' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Back to checkout/ })).toHaveAttribute('href', '/en/checkout');
-    expect(screen.getByRole('link', { name: 'Add a new address' })).toHaveAttribute('href', '/en/account/addresses/new?next=checkout');
+    expect(screen.getByRole('link', { name: 'Add a new address' })).toHaveAttribute('href', '/en/account/address/add?next=checkout');
     expect(screen.getAllByTestId('address')).toHaveLength(2);
     expect(screen.getByTestId('addresses-status')).toHaveTextContent('The address was saved.');
   });
@@ -85,7 +85,7 @@ describe('address pages', () => {
     vi.mocked(loadAddressBook).mockResolvedValue({ status: 'ok', data: addressesFixture('en') });
     render(await AddressesPage({ params: params({ locale: 'en' }), searchParams: query({ next: 'https://evil.test' }) }));
     expect(screen.queryByRole('link', { name: /Back to checkout/ })).toBeNull();
-    expect(screen.getByRole('link', { name: 'Add a new address' })).toHaveAttribute('href', '/en/account/addresses/new');
+    expect(screen.getByRole('link', { name: 'Add a new address' })).toHaveAttribute('href', '/en/account/address/add');
   });
 
   it('draws the new address form from the API', async () => {
@@ -138,6 +138,6 @@ describe('order pages', () => {
   it('asks to sign in on an order page without a session', async () => {
     vi.mocked(loadOrder).mockResolvedValue({ status: 'signed-out' });
     render(await OrderPage({ params: params({ locale: 'en', id: 'mock-order-48201' }) }));
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=%2Fen%2Faccount%2Forders%2Fmock-order-48201');
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=%2Fen%2Faccount%2Forder-history%2Fmock-order-48201');
   });
 });

@@ -90,4 +90,10 @@ describe('catalog SDK', () => {
     expect(answer.result).toBe('not_found');
     expect(last().url).toBe(`${ROOT}resolve?path=%2Fen%2Fproduct%2F12%3Futm%3Dx`);
   });
+
+  it('resolvePath can ask about the redirect table only', async () => {
+    const { client, last } = setup(200, { data: { result: 'none', target: null, url: null, permanent: false } });
+    expect((await resolvePath(client, 'en', '/en/x', true)).result).toBe('none');
+    expect(last().url).toBe(`${ROOT}resolve?path=%2Fen%2Fx&only=redirects`);
+  });
 });

@@ -16,17 +16,17 @@ describe('AccountMenu', () => {
 
     expect(screen.getByTestId('account-menu-name')).toHaveTextContent('Mona Ali');
     expect(screen.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/en/account/profile');
-    expect(screen.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/orders');
-    expect(screen.getByRole('link', { name: 'My addresses' })).toHaveAttribute('href', '/en/account/addresses');
+    expect(screen.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/order-history');
+    expect(screen.getByRole('link', { name: 'My addresses' })).toHaveAttribute('href', '/en/account/address');
     expect(screen.getByRole('link', { name: 'Notifications' })).toHaveAttribute('href', '/en/notifications');
-    expect(screen.getByRole('link', { name: 'Change password' })).toHaveAttribute('href', '/en/account/password');
+    expect(screen.getByRole('link', { name: 'Change password' })).toHaveAttribute('href', '/en/account/change-password');
     expect(screen.getByTestId('sign-out')).toHaveTextContent('Sign out');
     expect(screen.queryByTestId('menu-sign-in')).toBeNull();
   });
 
   it('offers sign-in and create-account to visitors and guests, the latter only when sign-ups are on', () => {
     const { rerender } = render(<AccountMenu locale="ar" me={anonymousMeFixture()} features={features} />);
-    expect(screen.getByTestId('menu-sign-in')).toHaveAttribute('href', '/ar/sign-in');
+    expect(screen.getByTestId('menu-sign-in')).toHaveAttribute('href', '/ar/session/signin');
     expect(screen.getByTestId('menu-sign-up')).toHaveTextContent('إنشاء حساب');
     expect(screen.queryByTestId('sign-out')).toBeNull();
 

@@ -37,7 +37,7 @@ test.describe('cart page', () => {
     await expect(lines).toHaveCount(2);
     await expect(lines.first()).toContainText('J&J Baby Bedtime Bath');
     await expect(lines.first().getByTestId('cart-quantity')).toHaveText('2');
-    await expect(lines.first().getByRole('link', { name: /J&J Baby Bedtime Bath/ })).toHaveAttribute('href', /^\/en\/p\/.+/);
+    await expect(lines.first().getByRole('link', { name: /J&J Baby Bedtime Bath/ })).toHaveAttribute('href', /^\/en\/.+/);
 
     await expect(page.getByTestId('cart-subtotal')).toHaveText('196.00 EGP');
     await expect(page.getByTestId('cart-total')).toHaveText('196.00 EGP');

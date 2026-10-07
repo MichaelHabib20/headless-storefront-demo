@@ -121,6 +121,9 @@ const REDIRECTS = {
   '/summer-sale': { result: 'redirect', target: { type: 'deals' }, url: null, permanent: false },
   '/our-blog': { result: 'redirect', target: null, url: 'https://blog.example.com/', permanent: true },
   '/discontinued-offer': { result: 'gone', target: null, url: null, permanent: true },
+  // Rows on pages the storefront has (it checks the table there too, with only=redirects)
+  '/products/tag/old-tag': { result: 'redirect', target: { type: 'deals' }, url: null, permanent: true },
+  '/product/retired-category': { result: 'gone', target: null, url: null, permanent: true },
   // Broken rows a merchant can type: the storefront must not loop or follow them.
   '/self-redirect': { result: 'redirect', target: null, url: '/{locale}/self-redirect', permanent: false },
   '/unsafe-redirect': { result: 'redirect', target: { type: 'url', url: 'javascript:alert(1)' }, url: null, permanent: true },
@@ -565,16 +568,19 @@ export function createCatalogModule(shopper) {
     const notFound = { result: 'not_found', target: null, url: null, permanent: false };
     if (!match) return answer(notFound);
     const [, pathLocale, rest = ''] = match;
+    const row = REDIRECTS[rest];
 
-    // The old storefront's product URLs: /{locale}/product/{id or slug in either language}[/...]
-    const old = rest.match(/^\/product\/(.+)$/);
+    // only=redirects: the merchant's redirect table alone, for a page the storefront has
+    if (query.get('only') === 'redirects') return answer(row ? { ...row, url: row.url ? row.url.replace('{locale}', pathLocale) : null } : { ...notFound, result: 'none' });
+
+    // The old storefront's other product URLs: /products/{slug}, /products/{name}/{id}
+    const old = rest.match(/^\/products\/(?!deals$|deals\/|list\/|tag\/)(.+)$/);
     if (old) {
       const segments = old[1].split('/').map((s) => decodeURIComponent(s));
       const found = [...shopper.products('en'), ...shopper.products('ar')].find((p) => segments.some((s) => s === String(p.id) || s === p.slug));
       const target = found ? shopper.product(found.id, pathLocale)?.target : null;
       return answer(target ? { result: 'target', target, url: null, permanent: true } : notFound);
     }
-    const row = REDIRECTS[rest];
     if (!row) {
       // the old storefront's brand-images page by brand id → the brand page; unknown id → not found
       const brandId = rest.match(/^\/brand\/(\d+)$/);

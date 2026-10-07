@@ -5,7 +5,7 @@ import type { ReviewAccess } from '@/sdk';
 import type { WriteReviewAction } from '../account/ReviewDialog';
 import { WriteReview } from './WriteReview';
 
-vi.mock('next/navigation', () => ({ usePathname: () => '/en/p/panadol' }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/en/panadol' }));
 
 const access = (overrides: Partial<ReviewAccess> = {}): ReviewAccess => ({ enabled: true, requiresSignIn: false, requiresOrder: false, message: null, ...overrides });
 
@@ -26,7 +26,7 @@ describe('WriteReview (drawn from reviews.write)', () => {
     setup(access({ requiresSignIn: true, message: 'Sign in to write a review.' }));
     const note = screen.getByTestId('write-review-sign-in');
     expect(note).toHaveTextContent('Sign in to write a review.');
-    expect(within(note).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=%2Fen%2Fp%2Fpanadol');
+    expect(within(note).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=%2Fen%2Fpanadol');
   });
 
   it("shows the API's sentence when a delivered order is required", () => {

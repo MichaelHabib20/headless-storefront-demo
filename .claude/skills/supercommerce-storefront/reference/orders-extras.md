@@ -1,6 +1,6 @@
 # Orders extras: track an order, rate it, write a review, share a product
 
-Pages: `/[locale]/track-order` (public), the order page `/[locale]/account/orders/[id]` (rating, reviews
+Pages: `/[locale]/account/track-your-order` (public), the order page `/[locale]/account/order-history/[id]` (rating, reviews
 per line), the product page (review form, share button). Components in `src/components/account/`
 (`OrderRating`, `RateOrderDialog`, `ItemReview`, `ReviewDialog`, `StarInput`, `TrackOrderForm`) and
 `src/components/product/` (`WriteReview`, `ShareButton`); strings in `src/lib/messages/orders-extras.ts`.
@@ -53,7 +53,7 @@ interface ProductReviewsPage { …; write?: { enabled; requiresSignIn; requiresO
 5. **One share component** (`share-in-one-place` rule): `<ShareButton>` when `layout.features.share`.
    Web Share API where available, else WhatsApp / Facebook / X / copy. Nothing about the product is
    decided there; the URL is the page's own.
-6. **Writes are server actions** (`rateOrderAction` in `account/orders/actions.ts`, `writeReviewAction`
+6. **Writes are server actions** (`rateOrderAction` in `account/order-history/actions.ts`, `writeReviewAction`
    in `src/lib/reviews.actions.ts`), then `revalidatePath('/[locale]', 'layout')`.
 
 ## Recipes

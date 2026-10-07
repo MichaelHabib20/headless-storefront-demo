@@ -5,7 +5,7 @@ import { parseChildSitemapName, SITEMAP_PAGE_SIZE, urlSetXml, xmlResponse } from
 
 export const dynamic = 'force-dynamic';
 
-/** GET /sitemaps/<type>-<locale>-<page>.xml: one page of one type of `GET /sitemap`, as a urlset. */
+/** GET /sitemap_<type>_<locale>[_<page>].xml (rewritten here by next.config.mjs): one page of one type of `GET /sitemap`, as a urlset. */
 export async function GET(_request: Request, { params }: { params: Promise<{ name: string }> }): Promise<Response> {
   const child = parseChildSitemapName((await params).name);
   if (!child) return new Response('Not found', { status: 404 });

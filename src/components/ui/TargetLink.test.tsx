@@ -6,7 +6,7 @@ import { TargetLink } from './TargetLink';
 describe('TargetLink', () => {
   it('renders internal targets as locale links', () => {
     render(<TargetLink target={{ type: 'brand', slug: 'bioderma' }} locale="ar">Bioderma</TargetLink>);
-    expect(screen.getByRole('link', { name: 'Bioderma' })).toHaveAttribute('href', '/ar/brands/bioderma');
+    expect(screen.getByRole('link', { name: 'Bioderma' })).toHaveAttribute('href', '/ar/product/brand/bioderma');
   });
 
   it('opens external targets safely in a new tab', () => {
