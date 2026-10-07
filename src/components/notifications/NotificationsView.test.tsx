@@ -55,9 +55,9 @@ describe('NotificationsView', () => {
   it.each(['en', 'ar'] as const)('links each notification to its target (%s)', (locale) => {
     setup(ok(notificationsFixture(locale)), locale);
 
-    expect(within(item(902)).getByRole('link')).toHaveAttribute('href', `/${locale}/lists/125`);
+    expect(within(item(902)).getByRole('link')).toHaveAttribute('href', `/${locale}/products/list/125`);
     expect(within(item(903)).getByRole('link')).toHaveAttribute('href', `/${locale}/forms/prescriptions`);
-    expect(within(item(910)).getByRole('link')).toHaveAttribute('href', `/${locale}/deals`);
+    expect(within(item(910)).getByRole('link')).toHaveAttribute('href', `/${locale}/products/deals`);
     // No target → plain content, not clickable.
     expect(within(item(901)).queryByRole('link')).toBeNull();
   });

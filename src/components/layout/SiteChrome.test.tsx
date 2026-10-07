@@ -26,7 +26,7 @@ describe('site chrome', () => {
     for (const item of layout.navigation) {
       expect(within(nav).getAllByText(item.label).length).toBeGreaterThan(0);
     }
-    expect(within(nav).getByText('Skin Care').closest('a')).toHaveAttribute('href', '/en/c/skin-care');
+    expect(within(nav).getByText('Skin Care').closest('a')).toHaveAttribute('href', '/en/product/skin-care');
     expect(within(nav).getByText('Home').closest('a')).toHaveAttribute('href', '/en');
   });
 

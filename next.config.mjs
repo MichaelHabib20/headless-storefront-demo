@@ -7,6 +7,13 @@ const nextConfig = {
     // (the default limit of a server action body is 1 MB).
     serverActions: { bodySizeLimit: '11mb' },
   },
+  // The old storefront's sitemap file names (src/lib/sitemap.ts), served by the sitemap routes.
+  async rewrites() {
+    return [
+      { source: '/sitemap_index.xml', destination: '/sitemap.xml' },
+      { source: '/:name(sitemap_[a-z_]+_(?:en|ar)(?:_\\d+)?\\.xml)', destination: '/sitemaps/:name' },
+    ];
+  },
 };
 
 export default nextConfig;

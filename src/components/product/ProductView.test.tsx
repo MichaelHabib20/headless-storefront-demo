@@ -10,7 +10,7 @@ import { ProductView } from './ProductView';
 vi.mock('@/lib/shopper.actions', () => ({ addToCartAction: vi.fn(), toggleWishlistAction: vi.fn(), toggleCompareAction: vi.fn() }));
 
 const notifyMeAction = vi.fn();
-const productHref = (locale: Locale, slug: string) => `/${locale}/p/${encodeURIComponent(slug)}`;
+const productHref = (locale: Locale, slug: string) => `/${locale}/${encodeURIComponent(slug)}`;
 
 function renderView(details: ProductDetails, { locale = 'en' as Locale, me = anonymousMeFixture() as Me | null } = {}) {
   return render(
@@ -34,13 +34,13 @@ describe('ProductView', () => {
 
     const title = screen.getByRole('heading', { level: 1, name: product.name });
     expect(title).toBeVisible();
-    expect(within(title.closest('header')!).getByRole('link', { name: product.brand!.name })).toHaveAttribute('href', '/en/brands/johnson-johnson');
+    expect(within(title.closest('header')!).getByRole('link', { name: product.brand!.name })).toHaveAttribute('href', '/en/product/brand/johnson-johnson');
     expect(screen.getByTestId('product-price').textContent).toBe(product.price!.display);
     expect(screen.queryByTestId('product-discount')).toBeNull();
 
     const trail = screen.getByRole('navigation', { name: 'Breadcrumb' });
     expect(within(trail).getAllByRole('listitem')).toHaveLength(details.breadcrumbs.length);
-    expect(within(trail).getByRole('link', { name: details.breadcrumbs[1].label })).toHaveAttribute('href', '/en/c/mom-baby');
+    expect(within(trail).getByRole('link', { name: details.breadcrumbs[1].label })).toHaveAttribute('href', '/en/product/mom-baby');
 
     expect(screen.getByTestId('product-rating')).toHaveAttribute('href', '#reviews');
     expect(screen.getByRole('img', { name: 'Rated 4.1 out of 5' })).toBeInTheDocument();

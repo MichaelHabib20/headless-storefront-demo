@@ -6,7 +6,7 @@ import type { Locale, ProductListing } from '@/sdk';
 import { emptyProductsFixture, productsFixture } from '@/test/fixtures';
 import { ListingView } from './ListingView';
 
-const PATH = { en: '/en/c/mom-baby', ar: '/ar/c/mom-baby' };
+const PATH = { en: '/en/product/mom-baby', ar: '/ar/product/mom-baby' };
 
 function renderListing(listing: ProductListing, locale: Locale = 'en', extra: { keep?: Record<string, string>; current?: string } = {}) {
   return render(<ListingView listing={listing} locale={locale} links={{ path: PATH[locale], keep: extra.keep }} current={extra.current} />);

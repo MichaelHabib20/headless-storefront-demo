@@ -9,7 +9,7 @@ import { loadAddressForm } from '@/lib/account.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { customerToken } from '@/lib/session';
-import { saveAddressAction } from '../account/addresses/actions';
+import { saveAddressAction } from '../account/address/actions';
 
 export const dynamic = 'force-dynamic';
 

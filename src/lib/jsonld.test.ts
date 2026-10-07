@@ -71,8 +71,8 @@ describe('page JSON-LD from Seo', () => {
       '@type': 'Drug',
       name: '</script><script>alert(1)</script>',
       description: 'line\u2028break',
-      url: 'https://shop.test/en/p/odd%20slug%2F%C3%BC',
-      offers: { '@type': 'Offer', url: 'https://shop.test/en/p/odd%20slug%2F%C3%BC', price: 0.1, priceCurrency: 'EGP', availability: 'https://schema.org/PreOrder' },
+      url: 'https://shop.test/en/odd%20slug%2F%C3%BC',
+      offers: { '@type': 'Offer', url: 'https://shop.test/en/odd%20slug%2F%C3%BC', price: 0.1, priceCurrency: 'EGP', availability: 'https://schema.org/PreOrder' },
     });
     expect(node).not.toHaveProperty('sku');
     expect(node).not.toHaveProperty('aggregateRating');
@@ -90,7 +90,7 @@ describe('page JSON-LD from Seo', () => {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://shop.test/en' },
-        { '@type': 'ListItem', position: 2, name: 'Ünïcode & <b>“quotes”</b>', item: 'https://shop.test/en/c/a/b%20c' },
+        { '@type': 'ListItem', position: 2, name: 'Ünïcode & <b>“quotes”</b>', item: 'https://shop.test/en/product/a/b%20c' },
         { '@type': 'ListItem', position: 3, name: 'Unknown' },
         { '@type': 'ListItem', position: 4, name: '</script><script>alert(1)</script>' },
       ],
@@ -104,7 +104,7 @@ describe('page JSON-LD from Seo', () => {
       const details = productFixture(locale);
       const graphs = seoGraphs(details.seo, { locale, origin: 'https://shop.test' });
       expect(graphs.map((g) => g['@type'])).toEqual(['Product', 'BreadcrumbList']);
-      expect(graphs[0].url).toBe(`https://shop.test/${locale}/p/${encodeURIComponent(details.product.slug)}`);
+      expect(graphs[0].url).toBe(`https://shop.test/${locale}/${encodeURIComponent(details.product.slug)}`);
       expect((graphs[0].offers as { price: number }).price).toBe(details.seo.structuredData?.product?.price);
     }
   });
@@ -115,7 +115,7 @@ describe('page JSON-LD from Seo', () => {
     expect(node['@type']).toBe('CollectionPage');
     const list = node.mainEntity as { itemListElement: { position: number; url: string; name: string }[]; numberOfItems: number };
     expect(list.numberOfItems).toBe(listing.seo.structuredData!.collection!.items.length);
-    expect(list.itemListElement[0]).toMatchObject({ position: 1, url: `https://shop.test/ar/p/${encodeURIComponent((listing.items[0].target as { slug: string }).slug)}` });
+    expect(list.itemListElement[0]).toMatchObject({ position: 1, url: `https://shop.test/ar/${encodeURIComponent((listing.items[0].target as { slug: string }).slug)}` });
     expect(seoGraphs(listing.seo, { locale: 'ar', origin: '' }).map((g) => g['@type'])).toEqual(['CollectionPage', 'BreadcrumbList']);
   });
 
@@ -137,7 +137,7 @@ describe('site JSON-LD from GET /seo/site', () => {
     expect(website).toMatchObject({
       '@type': 'WebSite',
       url: 'http://127.0.0.1:3302/ar',
-      potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: 'http://127.0.0.1:3302/ar/search?q={search_term_string}' } },
+      potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: 'http://127.0.0.1:3302/ar/products?search={search_term_string}' } },
     });
     expect(organization).toMatchObject({ '@type': 'Organization', name: 'صيدليات سيف', telephone: '19199', address: { '@type': 'PostalAddress', addressCountry: 'EG' } });
     expect(business).toMatchObject({ '@type': 'Pharmacy', geo: { '@type': 'GeoCoordinates', latitude: 30.0444 }, priceRange: '$$' });

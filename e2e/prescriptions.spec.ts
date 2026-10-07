@@ -34,7 +34,7 @@ test.beforeEach(async ({ page }) => {
 test('a visitor is asked to sign in, and no guest session is created', async ({ page, context }) => {
   await open(page, '/en/prescriptions');
   await expect(page.getByTestId('account-sign-in')).toBeVisible();
-  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/sign-in\?next=%2Fen%2Fprescriptions/);
+  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/session\/signin\?returnUrl=%2Fen%2Fprescriptions/);
   expect((await context.cookies()).find((cookie) => cookie.name === 'sc_guest')).toBeUndefined();
   // a private page
   const response = await page.request.get('/en/prescriptions', { maxRedirects: 0 });

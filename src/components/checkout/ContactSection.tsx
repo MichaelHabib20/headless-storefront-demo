@@ -39,7 +39,7 @@ export function ContactSection({ checkout, settings, locale, busy, onSave }: Con
   const [message, setMessage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const signInHref = `${routes.signIn(locale)}?next=checkout`;
+  const signInHref = routes.signIn(locale, 'checkout');
   const showForm = contact.isGuest && !signIn && (editing || !hasContact);
   const showEmail = settings.guestEmail !== 'hidden';
 

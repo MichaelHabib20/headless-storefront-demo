@@ -1,21 +1,26 @@
 import { describe, expect, it } from 'vitest';
 import type { Locale, Target } from '@/sdk';
-import { addressReturn, addressReturnHref, externalHref, isStorefrontPath, loyaltyStepHref, resolveTarget, routes, safeReturnPath, signInReturn, switchLocalePath } from './routing';
+import { addressReturn, addressReturnHref, externalHref, interimRedirect, isPrivatePath, isStorefrontPath, loyaltyStepHref, resolveTarget, retiredAccountPage, routes, safeReturnPath, signInReturn, switchLocalePath } from './routing';
 
+/** The old storefront's URLs (url-parity-plan §1 in the backend repo): every link builds one of them. */
 describe('resolveTarget', () => {
   const cases: Array<[Target, string]> = [
-    [{ type: 'product', slug: 'jj-bath' }, '/en/p/jj-bath'],
-    [{ type: 'category', path: ['skin-care', 'face-care'] }, '/en/c/skin-care/face-care'],
-    [{ type: 'brand', slug: 'bioderma' }, '/en/brands/bioderma'],
-    [{ type: 'list', slug: 'summer', id: 3 }, '/en/lists/summer'],
-    [{ type: 'list', slug: null, id: 125 }, '/en/lists/125'],
+    [{ type: 'product', slug: 'jj-bath' }, '/en/jj-bath'],
+    [{ type: 'category', path: ['skin-care', 'face-care'] }, '/en/product/skin-care/face-care'],
+    [{ type: 'brand', slug: 'bioderma' }, '/en/product/brand/bioderma'],
+    [{ type: 'brand', slug: 'bioderma--vichy' }, '/en/product/brand/bioderma--vichy'],
+    [{ type: 'list', slug: 'summer', id: 3 }, '/en/products/list/summer'],
+    [{ type: 'list', slug: null, id: 125 }, '/en/products/list/125'],
     [{ type: 'page', slug: 'about-us' }, '/en/pages/about-us'],
-    [{ type: 'landing_page', slug: 'ramadan' }, '/en/l/ramadan'],
+    [{ type: 'page', slug: 'privacy', legal: 'privacy' }, '/en/privacy-policy'],
+    [{ type: 'page', slug: 'terms', legal: 'terms' }, '/en/terms-and-conditions'],
+    [{ type: 'page', slug: 'cookies', legal: 'cookies' }, '/en/cookie-policy'],
+    [{ type: 'landing_page', slug: 'ramadan' }, '/en/landing-page/ramadan'],
     [{ type: 'form', slug: 'prescriptions' }, '/en/forms/prescriptions'],
-    [{ type: 'tag', slug: 'new-in' }, '/en/tags/new-in'],
-    [{ type: 'search', query: 'panadol extra' }, '/en/search?q=panadol%20extra'],
+    [{ type: 'tag', slug: 'new-in' }, '/en/products/tag/new-in'],
+    [{ type: 'search', query: 'panadol extra' }, '/en/products?search=panadol%20extra'],
     [{ type: 'search', query: '' }, '/en/all-products'],
-    [{ type: 'deals' }, '/en/deals'],
+    [{ type: 'deals' }, '/en/products/deals'],
     [{ type: 'home' }, '/en'],
   ];
 
@@ -24,7 +29,12 @@ describe('resolveTarget', () => {
   });
 
   it('prefixes the locale', () => {
-    expect(resolveTarget({ type: 'product', slug: 'x' }, 'ar')?.href).toBe('/ar/p/x');
+    expect(resolveTarget({ type: 'product', slug: 'x' }, 'ar')?.href).toBe('/ar/x');
+  });
+
+  it('writes Arabic category and brand slugs as the API sends them, encoded', () => {
+    expect(resolveTarget({ type: 'category', path: ['الادوية', 'مضادات'] }, 'ar')?.href).toBe(`/ar/product/${encodeURIComponent('الادوية')}/${encodeURIComponent('مضادات')}`);
+    expect(resolveTarget({ type: 'brand', slug: 'بيوديرما--vichy' }, 'ar')?.href).toBe(`/ar/product/brand/${encodeURIComponent('بيوديرما')}--vichy`);
   });
 
   it('encodes Arabic slugs', () => {
@@ -53,21 +63,79 @@ describe('isStorefrontPath', () => {
     expect(isStorefrontPath(href), href).toBe(true);
   });
 
-  it('leaves everything else to the backend resolver', () => {
-    expect(isStorefrontPath('/en/product/skin-care/face-care')).toBe(false);
-    expect(isStorefrontPath('/ar/old-page?x=1')).toBe(false);
-    expect(isStorefrontPath('/en')).toBe(true);
-    expect(isStorefrontPath('/en/c/x?sort=y')).toBe(true);
+  it('knows the old storefront pages it renders', () => {
+    for (const path of [
+      '/en', '/en/', '/ar/some-product', '/en/product', '/en/product/skin-care/face-care?sort=y', '/en/product/skin-care/brand/bioderma',
+      '/en/product/deals/skin-care', '/en/products', '/en/products?search=x', '/en/products/deals', '/en/products/deals/summer',
+      '/en/products/list/125', '/en/products/list/baby/skin-care', '/en/products/tag/new', '/en/landing-page/x', '/en/brand-page/x',
+      '/en/pages/about-us', '/en/forms/x', '/en/privacy-policy', '/en/terms-and-conditions', '/en/cookie-policy', '/en/all-categories',
+      '/en/brands', '/en/vendors/3', '/en/session/signin', '/en/orders/order-history/abc', '/en/account/anything/deep',
+    ]) {
+      expect(isStorefrontPath(path), path).toBe(true);
+    }
+  });
+
+  it('leaves the old pages it does not render to the backend resolver', () => {
+    for (const path of [
+      '/en/products/some-product', '/en/products/name/1471', '/en/products/deals/name/1471', '/en/brands/bioderma', '/en/brand/758',
+      '/en/category/skin-care', '/en/category-view', '/en/blog', '/en/skin-care/face-care', '/en/a/b/c/d/e/f', '/en/p/x', '/en/c/x', '/en/deals',
+      '/fr/x', '/x',
+    ]) {
+      expect(isStorefrontPath(path), path).toBe(false);
+    }
+  });
+
+  it('tells the shopper-private pages (no SEO, no merchant redirects)', () => {
+    expect(isPrivatePath('/en/session/signin')).toBe(true);
+    expect(isPrivatePath('/ar/orders/order-history/x')).toBe(true);
+    expect(isPrivatePath('/en/checkout/final-receipt')).toBe(true);
+    expect(isPrivatePath('/en/sessions')).toBe(false);
+    expect(isPrivatePath('/en/product/x')).toBe(false);
+  });
+});
+
+describe('interim URLs (before the old URLs were taken over)', () => {
+  it.each([
+    ['/en/p/jj-bath', '', '/en/jj-bath'],
+    ['/ar/c/skin-care/face-care', '?page=2', '/ar/product/skin-care/face-care?page=2'],
+    ['/en/lists/125', '', '/en/products/list/125'],
+    ['/en/tags/new', '', '/en/products/tag/new'],
+    ['/en/l/ramadan', '', '/en/landing-page/ramadan'],
+    ['/en/deals', '?sort=x', '/en/products/deals?sort=x'],
+    ['/en/search', '?q=panadol&brands=a', '/en/products?brands=a&search=panadol'],
+    ['/en/wishlist', '', '/en/favorites'],
+    ['/en/sign-in', '?next=%2Fen%2Fcart', '/en/session/signin?returnUrl=%2Fen%2Fcart'],
+    ['/en/reset-password', '?token=t&email=e', '/en/session/change-password?token=t&email=e'],
+    ['/en/verify-email', '?token=t', '/en/session/verifyEmail?token=t'],
+    ['/en/checkout/result', '?checkout=r', '/en/checkout/final-receipt?checkout=r'],
+    ['/en/account/orders/abc', '', '/en/account/order-history/abc'],
+    ['/en/account/addresses/501/edit', '?next=checkout', '/en/account/address/edit/501?next=checkout'],
+    ['/en/account/password', '', '/en/account/change-password'],
+    ['/en/track-order', '?number=1', '/en/account/track-your-order?number=1'],
+  ])('%s%s → %s', (path, search, to) => {
+    expect(interimRedirect(path, search)).toBe(to);
+  });
+
+  it('leaves the old URLs alone', () => {
+    for (const path of ['/en/jj-bath', '/en/product/x', '/en/products', '/en/account/order-history', '/en/session/signin', '/x']) {
+      expect(interimRedirect(path, ''), path).toBeNull();
+    }
+  });
+
+  it('sends the old account pages that are not built to the account home', () => {
+    expect(retiredAccountPage('/ar/account/cards')).toBe('/ar/account');
+    expect(retiredAccountPage('/en/orders/link-builder')).toBe('/en/account');
+    expect(retiredAccountPage('/en/account/profile')).toBeNull();
   });
 });
 
 describe('account routes', () => {
   it('builds the address book links with their return page and the saved address', () => {
-    expect(routes.addresses('en')).toBe('/en/account/addresses');
-    expect(routes.addresses('ar', { next: 'checkout', saved: 602 })).toBe('/ar/account/addresses?next=checkout&saved=602');
-    expect(routes.newAddress('en', 'checkout')).toBe('/en/account/addresses/new?next=checkout');
-    expect(routes.editAddress('en', 501)).toBe('/en/account/addresses/501/edit');
-    expect(routes.order('en', 'mock-order-48201')).toBe('/en/account/orders/mock-order-48201');
+    expect(routes.addresses('en')).toBe('/en/account/address');
+    expect(routes.addresses('ar', { next: 'checkout', saved: 602 })).toBe('/ar/account/address?next=checkout&saved=602');
+    expect(routes.newAddress('en', 'checkout')).toBe('/en/account/address/add?next=checkout');
+    expect(routes.editAddress('en', 501)).toBe('/en/account/address/edit/501');
+    expect(routes.order('en', 'mock-order-48201')).toBe('/en/account/order-history/mock-order-48201');
   });
 
   it('accepts only the known return page (no open redirect)', () => {
@@ -115,8 +183,8 @@ describe('account routes', () => {
   });
 
   it('signs in and comes back to a local page only', () => {
-    expect(routes.signIn('en')).toBe('/en/sign-in');
-    expect(routes.signIn('en', '/en/account/orders')).toBe('/en/sign-in?next=%2Fen%2Faccount%2Forders');
+    expect(routes.signIn('en')).toBe('/en/session/signin');
+    expect(routes.signIn('en', '/en/account/orders')).toBe('/en/session/signin?returnUrl=%2Fen%2Faccount%2Forders');
     expect(safeReturnPath('/en/account/orders')).toBe('/en/account/orders');
     expect(safeReturnPath('/ar/account/orders/mock-order-1?x=1')).toBe('/ar/account/orders/mock-order-1?x=1');
     for (const value of ['https://evil.test', '//evil.test', '/\\evil.test', '/en//evil.test', '/fr/x', 'en/x', '/english', ' /en', '/constructor', undefined]) {
@@ -140,7 +208,7 @@ describe('account routes', () => {
 
 describe('switchLocalePath', () => {
   it('keeps the path and swaps the locale', () => {
-    expect(switchLocalePath('/en/p/jj-bath', 'ar')).toBe('/ar/p/jj-bath');
+    expect(switchLocalePath('/en/jj-bath', 'ar')).toBe('/ar/jj-bath');
     expect(switchLocalePath('/ar', 'en')).toBe('/en');
   });
 });

@@ -1,7 +1,7 @@
 # Account: address book and orders
 
 Pages: `/[locale]/account/addresses` (list), `/addresses/new`, `/addresses/[id]/edit`,
-`/[locale]/account/orders` (list), `/orders/[id]` (details). Components in `src/components/account/`,
+`/[locale]/account/order-history` (list), `/order-history/[id]` (details; the old storefront's paths, also under `/orders/...`). Components in `src/components/account/`,
 server reads in `src/lib/account.server.ts`, server actions in `src/app/[locale]/account/*/actions.ts`,
 strings in `src/lib/messages/account.ts`. Session rules: [session.md](session.md).
 

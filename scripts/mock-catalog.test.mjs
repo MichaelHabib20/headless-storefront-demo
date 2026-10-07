@@ -118,7 +118,7 @@ describe('mock catalog module follows the contract', () => {
   it('resolves old URLs and the redirect table', () => {
     const { get } = api('ar');
     const resolve = (path) => get('/resolve', `path=${encodeURIComponent(path)}`).data;
-    expect(resolve('/ar/product/36480/old-name')).toMatchObject({ result: 'target', target: { type: 'product' }, permanent: true });
+    expect(resolve('/ar/products/old-name/36480')).toMatchObject({ result: 'target', target: { type: 'product' }, permanent: true });
     expect(resolve('/en/summer-sale')).toMatchObject({ result: 'redirect', target: { type: 'deals' }, permanent: false });
     expect(resolve('/en/our-blog')).toMatchObject({ result: 'redirect', url: 'https://blog.example.com/', permanent: true });
     expect(resolve('/ar/brand/758')).toMatchObject({ result: 'target', target: { type: 'brand', slug: 'bioderma' }, permanent: true });
@@ -128,6 +128,15 @@ describe('mock catalog module follows the contract', () => {
     expect(resolve('/en/discontinued-offer').result).toBe('gone');
     expect(resolve('/en/product/999999').result).toBe('not_found');
     expect(resolve('/en/definitely-not-a-page/x').result).toBe('not_found');
+  });
+
+  it('answers only from the redirect table with only=redirects', () => {
+    const { get } = api('en');
+    const only = (path) => get('/resolve', `path=${encodeURIComponent(path)}&only=redirects`).data;
+    expect(only('/en/products/tag/old-tag')).toMatchObject({ result: 'redirect', target: { type: 'deals' }, permanent: true });
+    expect(only('/en/product/retired-category').result).toBe('gone');
+    expect(only('/en/products/old-name/36480').result).toBe('none');
+    expect(only('/en/blog').result).toBe('none');
   });
 
   it('is part of the mock API', () => {

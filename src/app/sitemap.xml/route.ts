@@ -7,7 +7,7 @@ import { SITEMAP_PAGE_SIZE, SITEMAP_TYPES, sitemapIndexXml, xmlResponse, type Ch
 export const dynamic = 'force-dynamic';
 
 /**
- * GET /sitemap.xml: the sitemap index. One child sitemap per type, language and page of
+ * GET /sitemap_index.xml (the old storefront's name, rewritten here) and /sitemap.xml: the sitemap index. One child sitemap per type, language and page of
  * `GET /sitemap` (its `pagination.totalPages`). A store the backend hides from search engines
  * (`SiteSeo.robots.index` false) lists nothing.
  */

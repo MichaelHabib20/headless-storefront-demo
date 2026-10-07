@@ -15,7 +15,7 @@ describe('OrdersList', () => {
     const rows = screen.getAllByTestId('order-summary');
     expect(rows).toHaveLength(orders.items.length);
     const first = within(rows[0]);
-    expect(first.getByRole('link', { name: number })).toHaveAttribute('href', `/${locale}/account/orders/mock-order-48201`);
+    expect(first.getByRole('link', { name: number })).toHaveAttribute('href', `/${locale}/account/order-history/mock-order-48201`);
     expect(rows[0]).toHaveTextContent(date);
     expect(first.getByTestId('order-status')).toHaveTextContent(orders.items[0].status.label);
     orders.items.forEach((order, index) => {

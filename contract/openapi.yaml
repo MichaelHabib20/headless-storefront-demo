@@ -365,6 +365,10 @@ paths:
         Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
         Filter and sort parameters come from the `query` strings of a previous answer: pass them through
         as they are. Works without a token; with a token prices and limits are the shopper's.
+        The old storefront's names are read too, so its listing URLs can be passed through unchanged:
+        `search`, `category_id`, `group_id`, `sub_category_id`, `list_ids`, `vendor_ids`, `promotions`, `brand_id`,
+        `options_values_ids` / `attribute_id`, `in_stock`, `price_from`, `price_to` and the old `sort` keys
+        (`low`, `high`, `a-z`, `z-a`, `popular`, `recent`, `high-discount`, `low-rate`, `high-rate`).
       parameters:
         - $ref: '#/components/parameters/Locale'
         - { name: category, in: query, required: false, description: 'CategoryTarget.path joined with "/"', schema: { type: string } }
@@ -528,9 +532,12 @@ paths:
         For paths the storefront has no page for. Always 200; `result` says what to do:
         `target` → redirect (permanent) to the storefront's own URL of that Target; `redirect` → follow
         `target` or `url` with `permanent`; `gone` → answer 410; `not_found` → answer 404.
+        With `only=redirects` only the merchant's redirect table is checked (for paths the storefront serves
+        itself): `redirect`, `gone`, or `none` (no row: show the page).
       parameters:
         - $ref: '#/components/parameters/Locale'
         - { name: path, in: query, required: true, description: 'Path and query as requested, e.g. /en/product/skin-care/face-care', schema: { type: string, maxLength: 2000 } }
+        - { name: only, in: query, required: false, description: 'redirects = the redirect table only', schema: { type: string, enum: [redirects] } }
       responses:
         '200':
           description: Resolution
@@ -1897,7 +1904,7 @@ components:
       properties:
         type: { type: string, enum: [category] }
         path:
-          description: Category slug, then optional group / sub-category slugs.
+          description: "Category slug, then optional group / sub-category slugs, in the language of the link (Arabic links use slug_ar, falling back to slug, like the old storefront's URLs)."
           type: array
           minItems: 1
           maxItems: 3
@@ -1908,7 +1915,7 @@ components:
       additionalProperties: false
       properties:
         type: { type: string, enum: [brand] }
-        slug: { type: string, minLength: 1 }
+        slug: { type: string, minLength: 1, description: "In the language of the link (slug_ar in Arabic links); several brands joined with -- (the old storefront's a--b listing)" }
     ListTarget:
       type: object
       required: [type, slug, id]
@@ -1924,6 +1931,7 @@ components:
       properties:
         type: { type: string, enum: [page] }
         slug: { type: string, minLength: 1 }
+        legal: { type: string, enum: [privacy, terms, cookies], description: "A legal page: the old storefront served it at the root (/privacy-policy, /terms-and-conditions, /cookie-policy), not under /pages" }
     LandingPageTarget:
       type: object
       required: [type, slug]
@@ -3155,7 +3163,7 @@ components:
       required: [result, target, url, permanent]
       additionalProperties: false
       properties:
-        result: { type: string, enum: [target, redirect, gone, not_found] }
+        result: { type: string, enum: [target, redirect, gone, not_found, none], description: "none: only with only=redirects, no redirect row applies" }
         target: { $ref: '#/components/schemas/NullableTarget' }
         url: { type: string, nullable: true, description: Where to redirect when it is not something the backend knows as a Target }
         permanent: { type: boolean, description: '301 when true, 302 when false' }

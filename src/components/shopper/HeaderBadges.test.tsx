@@ -20,7 +20,7 @@ describe('header badges', () => {
     const cart = screen.getByRole('link', { name: 'Cart, 2 items' });
     expect(cart).toHaveAttribute('href', '/en/cart');
     expect(cart).toHaveTextContent('2');
-    expect(screen.getByRole('link', { name: 'Wishlist, 3 items' })).toHaveAttribute('href', '/en/wishlist');
+    expect(screen.getByRole('link', { name: 'Wishlist, 3 items' })).toHaveAttribute('href', '/en/favorites');
     expect(screen.getByRole('link', { name: 'Compare, 2 products' })).toHaveAttribute('href', '/en/compare');
     const notifications = screen.getByRole('link', { name: 'Notifications, 24 unread' });
     expect(notifications).toHaveAttribute('href', '/en/notifications');
@@ -65,7 +65,7 @@ describe('header badges', () => {
   it('labels the icons in Arabic', () => {
     render(<HeaderBadges locale="ar" me={meFixture('ar')} features={allOn} />);
     expect(screen.getByRole('link', { name: 'السلة، عدد المنتجات: ٢' })).toHaveAttribute('href', '/ar/cart');
-    expect(screen.getByRole('link', { name: 'المفضلة، عدد المنتجات: ٣' })).toHaveAttribute('href', '/ar/wishlist');
+    expect(screen.getByRole('link', { name: 'المفضلة، عدد المنتجات: ٣' })).toHaveAttribute('href', '/ar/favorites');
     expect(screen.getByRole('link', { name: 'المقارنة، عدد المنتجات: ٢' })).toHaveAttribute('href', '/ar/compare');
     expect(screen.getByRole('link', { name: 'الإشعارات، غير المقروءة: ٢٤' })).toHaveAttribute('href', '/ar/notifications');
   });
@@ -77,7 +77,7 @@ describe('header badges', () => {
     const { container } = render(<SiteHeader layout={layout} locale="en" me={meFixture('en')} />);
 
     expect(container.querySelector('a[href="/en/cart"]')).toHaveAttribute('aria-label', 'Cart, 2 items');
-    expect(container.querySelector('a[href="/en/wishlist"]')).toHaveAttribute('aria-label', 'Wishlist, 3 items');
+    expect(container.querySelector('a[href="/en/favorites"]')).toHaveAttribute('aria-label', 'Wishlist, 3 items');
     expect(container.querySelector('a[href="/en/notifications"]')).toHaveAttribute('aria-label', 'Notifications, 24 unread');
     expect(container.querySelector('a[href="/en/compare"]')).toBeNull();
     expect(container.querySelector('a[href="/en/account"]')).toHaveAttribute('aria-label', 'Account');

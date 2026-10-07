@@ -10,7 +10,7 @@ beforeEach(() => vi.mocked(trackServerEvent).mockReset());
 
 describe('POST /api/events (browser → backend events)', () => {
   it('forwards the contract fields the browser may know', async () => {
-    const response = await post({ locale: 'ar', name: 'purchase', eventId: 'purchase-u1', orderId: 'u1', productIds: [1, -2, 'x', 3], price: 999, page: { path: '/ar/checkout/result?checkout=r', referrer: 'https://bank.test' } });
+    const response = await post({ locale: 'ar', name: 'purchase', eventId: 'purchase-u1', orderId: 'u1', productIds: [1, -2, 'x', 3], price: 999, page: { path: '/ar/checkout/final-receipt?checkout=r', referrer: 'https://bank.test' } });
 
     expect(response.status).toBe(204);
     expect(trackServerEvent).toHaveBeenCalledWith('ar', {
@@ -19,7 +19,7 @@ describe('POST /api/events (browser → backend events)', () => {
       productIds: [1, 3],
       orderId: 'u1',
       searchTerm: null,
-      page: { path: '/ar/checkout/result?checkout=r', referrer: 'https://bank.test' },
+      page: { path: '/ar/checkout/final-receipt?checkout=r', referrer: 'https://bank.test' },
     });
   });
 

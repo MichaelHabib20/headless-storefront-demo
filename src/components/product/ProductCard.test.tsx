@@ -27,7 +27,7 @@ describe('ProductCard', () => {
     render(<ProductCard product={product()} locale="en" />);
     const card = screen.getByTestId('product-card');
 
-    expect(within(card).getByRole('link')).toHaveAttribute('href', '/en/p/jj-bath');
+    expect(within(card).getByRole('link')).toHaveAttribute('href', '/en/jj-bath');
     expect(card).toHaveTextContent('PRICE-TEXT-1');
     expect(card.querySelector('s')).toHaveTextContent('OLD-PRICE-TEXT-1');
     expect(card).toHaveTextContent('JOHNSON & JOHNSON');
@@ -80,6 +80,6 @@ describe('ProductCard', () => {
     const card = screen.getByTestId('product-card');
     expect(card).toHaveTextContent('Best seller');
     expect(card).toHaveTextContent('طلب مسبق');
-    expect(within(card).getByRole('link')).toHaveAttribute('href', '/ar/p/jj-bath');
+    expect(within(card).getByRole('link')).toHaveAttribute('href', '/ar/jj-bath');
   });
 });

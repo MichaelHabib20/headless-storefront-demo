@@ -46,21 +46,21 @@ test.describe('wishlist and compare', () => {
 
     test('wishlist shows the saved products', async ({ page, request }) => {
       const errors = collectErrors(page);
-      await page.goto('/en/wishlist');
+      await page.goto('/en/favorites');
 
       await expect(page.getByRole('heading', { level: 1, name: 'My wishlist' })).toBeVisible();
       await expect(page.getByText('Saved items: 3')).toBeVisible();
       const items = page.getByTestId('wishlist-item');
       await expect(items).toHaveCount(3);
       await expect(items.first().getByTestId('product-price')).toHaveText(await firstWishlistPrice(request, 'en'));
-      await expect(items.first().getByRole('link')).toHaveAttribute('href', /^\/en\/p\/.+/);
+      await expect(items.first().getByRole('link')).toHaveAttribute('href', /^\/en\/.+/);
       await expect(page.getByTestId('pagination')).toHaveCount(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       expect(errors).toEqual([]);
     });
 
     test('removes a product from the wishlist', async ({ page, request }) => {
-      await page.goto('/en/wishlist');
+      await page.goto('/en/favorites');
       const items = page.getByTestId('wishlist-item');
       await expect(items).toHaveCount(3);
       const name = await items.first().getByRole('heading').innerText();
@@ -78,7 +78,7 @@ test.describe('wishlist and compare', () => {
 
     test('moves a product to the cart', async ({ page, request }) => {
       const before = await customerState(request);
-      await page.goto('/en/wishlist');
+      await page.goto('/en/favorites');
       const items = page.getByTestId('wishlist-item');
       await expect(items).toHaveCount(3);
 
@@ -97,29 +97,29 @@ test.describe('wishlist and compare', () => {
 
     test('pages through the wishlist', async ({ page }) => {
       // The mock catalogue is smaller than the default page size; use a small page.
-      await page.goto('/en/wishlist?perPage=2');
+      await page.goto('/en/favorites?perPage=2');
       const nav = page.getByRole('navigation', { name: 'Wishlist pages' });
       await expect(page.getByTestId('wishlist-item')).toHaveCount(2);
       await expect(nav.getByRole('link', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
 
       await nav.getByRole('link', { name: 'Next' }).click();
-      await expect(page).toHaveURL(/\/en\/wishlist\?page=2&perPage=2$/);
+      await expect(page).toHaveURL(/\/en\/favorites\?page=2&perPage=2$/);
       await expect(page.getByTestId('wishlist-item')).toHaveCount(1);
       await expect(nav.getByRole('link', { name: 'Page 2' })).toHaveAttribute('aria-current', 'page');
 
       await nav.getByRole('link', { name: 'Previous' }).click();
-      await expect(page).toHaveURL(/\/en\/wishlist\?perPage=2$/);
+      await expect(page).toHaveURL(/\/en\/favorites\?perPage=2$/);
       await expect(page.getByTestId('wishlist-item')).toHaveCount(2);
     });
 
     test('goes back to the last page when the current one is past the end', async ({ page }) => {
-      await page.goto('/en/wishlist?page=5&perPage=2');
-      await expect(page).toHaveURL(/\/en\/wishlist\?page=2&perPage=2$/);
+      await page.goto('/en/favorites?page=5&perPage=2');
+      await expect(page).toHaveURL(/\/en\/favorites\?page=2&perPage=2$/);
       await expect(page.getByTestId('wishlist-item')).toHaveCount(1);
 
       // removing the only item of the last page lands on the previous page
       await page.getByTestId('wishlist-item').getByRole('button', { name: /^Remove/ }).click();
-      await expect(page).toHaveURL(/\/en\/wishlist\?perPage=2$/);
+      await expect(page).toHaveURL(/\/en\/favorites\?perPage=2$/);
       await expect(page.getByTestId('wishlist-item')).toHaveCount(2);
     });
 
@@ -160,7 +160,7 @@ test.describe('wishlist and compare', () => {
 
     test('Arabic pages are right-to-left', async ({ page, request }) => {
       const errors = collectErrors(page);
-      await page.goto('/ar/wishlist');
+      await page.goto('/ar/favorites');
       await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
       await expect(page.getByRole('heading', { level: 1, name: 'قائمة المفضلة' })).toBeVisible();
       await expect(page.getByTestId('wishlist-item')).toHaveCount(3);
@@ -197,7 +197,7 @@ test.describe('wishlist and compare', () => {
   test.describe('guest', () => {
     test('sees empty states and no session is created', async ({ page, context }) => {
       const errors = collectErrors(page);
-      await page.goto('/en/wishlist');
+      await page.goto('/en/favorites');
       await expect(page.getByRole('heading', { name: 'Your wishlist is empty' })).toBeVisible();
       await expect(page.getByTestId('wishlist-empty').getByRole('link', { name: 'Start shopping' })).toHaveAttribute('href', '/en');
       await expect(page.getByTestId('wishlist-item')).toHaveCount(0);
@@ -206,7 +206,7 @@ test.describe('wishlist and compare', () => {
       await expect(page.getByRole('heading', { name: 'Nothing to compare yet' })).toBeVisible();
       await expect(page.getByTestId('compare-empty').getByRole('link', { name: 'Start shopping' })).toHaveAttribute('href', '/en');
 
-      await page.goto('/ar/wishlist');
+      await page.goto('/ar/favorites');
       await expect(page.getByRole('heading', { name: 'قائمة المفضلة فارغة' })).toBeVisible();
       await page.goto('/ar/compare');
       await expect(page.getByRole('heading', { name: 'لا توجد منتجات للمقارنة' })).toBeVisible();
@@ -217,7 +217,7 @@ test.describe('wishlist and compare', () => {
 
     test('an unknown token shows the empty state too', async ({ page, context }) => {
       await context.addCookies([{ name: 'sc_token', value: 'expired-token', domain: '127.0.0.1', path: '/' }]);
-      await page.goto('/en/wishlist');
+      await page.goto('/en/favorites');
       await expect(page.getByRole('heading', { name: 'Your wishlist is empty' })).toBeVisible();
       await page.goto('/en/compare');
       await expect(page.getByRole('heading', { name: 'Nothing to compare yet' })).toBeVisible();

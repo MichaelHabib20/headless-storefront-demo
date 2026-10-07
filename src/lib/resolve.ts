@@ -12,7 +12,9 @@ export const RESOLUTION_HEADER = 'x-storefront-resolution';
 export type PathAnswer =
   | { kind: 'redirect'; location: string; status: 301 | 302 }
   | { kind: 'gone' }
-  | { kind: 'not_found' };
+  | { kind: 'not_found' }
+  /** Only for a redirect-table check: no row applies, show the page. */
+  | { kind: 'none' };
 
 const NOT_FOUND: PathAnswer = { kind: 'not_found' };
 
@@ -26,6 +28,7 @@ const NOT_FOUND: PathAnswer = { kind: 'not_found' };
  * Anything else ends as not found.
  */
 export function answerForResolution(resolution: Resolution, locale: Locale, requested: URL): PathAnswer {
+  if (resolution.result === 'none') return { kind: 'none' };
   if (resolution.result === 'gone') return { kind: 'gone' };
   if (resolution.result === 'target') return redirectTo(resolveTarget(resolution.target, locale)?.href, 301, requested);
   if (resolution.result === 'redirect') {

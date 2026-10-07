@@ -20,7 +20,7 @@ describe('CartLineItem', () => {
     render(<CartLineItem item={item} locale="en" />);
     const line = screen.getByTestId('cart-line');
 
-    expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/en/p/${item.product.slug}`);
+    expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/en/${item.product.slug}`);
     expect(line).toHaveTextContent('JOHNSON & JOHNSON');
     expect(line).toHaveTextContent(item.unitPrice.display);
     expect(within(line).getByTestId('cart-line-total')).toHaveTextContent(item.lineTotal.display);
@@ -34,7 +34,7 @@ describe('CartLineItem', () => {
     render(<CartLineItem item={item} locale="ar" onQuantityChange={vi.fn()} onRemove={vi.fn()} />);
     const line = screen.getByTestId('cart-line');
 
-    expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/ar/p/${item.product.slug}`);
+    expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/ar/${item.product.slug}`);
     expect(within(line).getByTestId('cart-line-total')).toHaveTextContent(item.lineTotal.display);
     expect(within(line).getByTestId('cart-quantity')).toHaveTextContent('٢');
     expect(within(line).getByRole('button', { name: 'زيادة الكمية' })).toBeEnabled();

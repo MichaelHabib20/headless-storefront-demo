@@ -18,7 +18,7 @@ describe('wallet page (as the backend wrote it)', () => {
     const entries = screen.getAllByTestId('wallet-entry');
     expect(entries.map((entry) => entry.getAttribute('data-kind'))).toEqual(['payment', 'deposit']);
     expect(within(entries[0]).getByTestId('wallet-entry-amount').textContent).toBe(wallet.items[0].amount.display);
-    expect(within(entries[0]).getByRole('link', { name: 'View order' })).toHaveAttribute('href', `/en/account/orders/${wallet.items[0].orderId}`);
+    expect(within(entries[0]).getByRole('link', { name: 'View order' })).toHaveAttribute('href', `/en/account/order-history/${wallet.items[0].orderId}`);
     expect(within(entries[1]).queryByRole('link')).toBeNull();
     unmount();
 

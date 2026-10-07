@@ -70,7 +70,7 @@ describe('SearchBox', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
 
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(push).toHaveBeenCalledWith(`/en/p/${encodeURIComponent(data.products[1].target.slug)}`);
+    expect(push).toHaveBeenCalledWith(`/en/${encodeURIComponent(data.products[1].target.slug)}`);
     expect(input).toHaveAttribute('aria-expanded', 'false');
   });
 
@@ -86,22 +86,22 @@ describe('SearchBox', () => {
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     fireEvent.keyDown(input, { key: 'ArrowUp' });
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(push).toHaveBeenCalledWith('/en/search?q=johnson');
+    expect(push).toHaveBeenCalledWith('/en/products?search=johnson');
   });
 
   it('submitting opens the search page for the text', async () => {
     const { input } = setup();
     fireEvent.change(input, { target: { value: '  baby bath ' } });
     fireEvent.submit(input.closest('form')!);
-    expect(push).toHaveBeenCalledWith('/en/search?q=baby%20bath');
+    expect(push).toHaveBeenCalledWith('/en/products?search=baby%20bath');
   });
 
   it('works as a plain GET form without JavaScript', () => {
     const { input } = setup('ar');
     const form = input.closest('form')!;
-    expect(form).toHaveAttribute('action', '/ar/search');
+    expect(form).toHaveAttribute('action', '/ar/products');
     expect(form).toHaveAttribute('method', 'get');
-    expect(input).toHaveAttribute('name', 'q');
+    expect(input).toHaveAttribute('name', 'search');
     expect(screen.getByRole('search')).toBe(form);
   });
 

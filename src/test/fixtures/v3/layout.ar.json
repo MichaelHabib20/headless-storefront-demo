@@ -4237,15 +4237,18 @@
   "legal": {
    "privacy": {
     "type": "page",
-    "slug": "privacy-policy"
+    "slug": "privacy-policy",
+    "legal": "privacy"
    },
    "terms": {
     "type": "page",
-    "slug": "terms-and-conditions"
+    "slug": "terms-and-conditions",
+    "legal": "terms"
    },
    "cookies": {
     "type": "page",
-    "slug": "cookie-policy"
+    "slug": "cookie-policy",
+    "legal": "cookies"
    }
   },
   "appBanner": {

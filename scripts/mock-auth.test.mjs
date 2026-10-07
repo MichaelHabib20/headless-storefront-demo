@@ -60,7 +60,7 @@ describe('mock auth module follows the contract', () => {
     expectValid('AuthSettingsResponse', call('GET', '/auth/settings').payload);
     expectValid('CodeSentResponse', call('POST', '/auth/otp/send', { phone: '01222353123' }).payload);
     expectValid('SessionResponse', call('POST', '/auth/otp/verify', { phone: '01222353123', code: CODE }).payload);
-    expectValid('ForgotPasswordResponse', call('POST', '/auth/password/forgot', { identifier: 'test@example.com', resetUrl: 'http://127.0.0.1:3301/en/reset-password' }).payload);
+    expectValid('ForgotPasswordResponse', call('POST', '/auth/password/forgot', { identifier: 'test@example.com', resetUrl: 'http://127.0.0.1:3301/en/session/change-password' }).payload);
     const afterReset = call('POST', '/auth/password/reset', { token: RESET_TOKEN, password: 'newsecret2' });
     expectValid('SessionResponse', afterReset.payload);
     const social = call('POST', '/auth/social', { provider: 'google', token: 'google-ok' });
@@ -196,7 +196,7 @@ describe('mock password reset, profile and password', () => {
     const { call, auth } = api();
     auth.mode({ auth: { passwordReset: 'email' } });
     expect(call('POST', '/auth/password/forgot', { identifier: 'test@example.com', resetUrl: 'https://evil.test/x' }).payload.error.fields).toHaveProperty('resetUrl');
-    expect(call('POST', '/auth/password/forgot', { identifier: 'test@example.com', resetUrl: 'http://127.0.0.1:3301/en/reset-password' }).payload.data).toMatchObject({ method: 'email', destination: 't•••@example.com' });
+    expect(call('POST', '/auth/password/forgot', { identifier: 'test@example.com', resetUrl: 'http://127.0.0.1:3301/en/session/change-password' }).payload.data).toMatchObject({ method: 'email', destination: 't•••@example.com' });
     expect(call('POST', '/auth/password/reset', { token: 'nope', password: 'newsecret1' }).payload.error.code).toBe('code_expired');
     expect(call('POST', '/auth/password/reset', { token: RESET_TOKEN, password: 'newsecret1' }).payload.data.customer.firstName).toBe('Test');
     auth.mode({ auth: { passwordReset: 'none' } });

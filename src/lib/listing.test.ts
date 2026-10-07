@@ -3,21 +3,21 @@ import { formFields, listingHref, listingPageHref, swatchColor, toSearchParams }
 
 describe('listing links', () => {
   it('puts the backend query after the page path as it is', () => {
-    expect(listingHref('/en/c/skin-care', 'brands=a%2Cb&sort=price_asc')).toBe('/en/c/skin-care?brands=a%2Cb&sort=price_asc');
-    expect(listingHref('/en/deals', '')).toBe('/en/deals');
-    expect(listingHref('/en/deals', '?sort=x')).toBe('/en/deals?sort=x');
+    expect(listingHref('/en/product/skin-care', 'brands=a%2Cb&sort=price_asc')).toBe('/en/product/skin-care?brands=a%2Cb&sort=price_asc');
+    expect(listingHref('/en/products/deals', '')).toBe('/en/products/deals');
+    expect(listingHref('/en/products/deals', '?sort=x')).toBe('/en/products/deals?sort=x');
   });
 
   it('keeps the search text first on the search page', () => {
-    expect(listingHref('/ar/search', 'inStock=true', { q: 'بيبي' })).toBe('/ar/search?q=%D8%A8%D9%8A%D8%A8%D9%8A&inStock=true');
-    expect(listingHref('/en/search', '', { q: 'bath' })).toBe('/en/search?q=bath');
+    expect(listingHref('/ar/products', 'inStock=true', { search: 'بيبي' })).toBe('/ar/products?search=%D8%A8%D9%8A%D8%A8%D9%8A&inStock=true');
+    expect(listingHref('/en/products', '', { search: 'bath' })).toBe('/en/products?search=bath');
   });
 
   it('changes only the page on page links', () => {
-    expect(listingPageHref('/en/search', 'q=bath&options=1&options=2', 3)).toBe('/en/search?q=bath&options=1&options=2&page=3');
-    expect(listingPageHref('/en/deals', 'page=3&sort=x', 2)).toBe('/en/deals?page=2&sort=x');
-    expect(listingPageHref('/en/deals', 'page=3&sort=x', 1)).toBe('/en/deals?sort=x');
-    expect(listingPageHref('/en/deals', '', 1)).toBe('/en/deals');
+    expect(listingPageHref('/en/products', 'search=bath&options=1&options=2', 3)).toBe('/en/products?search=bath&options=1&options=2&page=3');
+    expect(listingPageHref('/en/products/deals', 'page=3&sort=x', 2)).toBe('/en/products/deals?page=2&sort=x');
+    expect(listingPageHref('/en/products/deals', 'page=3&sort=x', 1)).toBe('/en/products/deals?sort=x');
+    expect(listingPageHref('/en/products/deals', '', 1)).toBe('/en/products/deals');
   });
 
   it('reads the page parameters with repeated values', () => {
@@ -26,8 +26,8 @@ describe('listing links', () => {
   });
 
   it('turns the range query into hidden fields, the page parameters first', () => {
-    expect(formFields('brands=a&sort=price_asc', { q: 'bath' })).toEqual([
-      ['q', 'bath'],
+    expect(formFields('brands=a&sort=price_asc', { search: 'bath' })).toEqual([
+      ['search', 'bath'],
       ['brands', 'a'],
       ['sort', 'price_asc'],
     ]);

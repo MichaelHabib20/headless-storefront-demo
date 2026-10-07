@@ -76,7 +76,7 @@ test.describe('checkout', () => {
     await expect(page.getByTestId('cart-minimum-remaining')).toHaveText('104.00 EGP');
     await page.getByTestId('checkout-terms').check();
     await expect(placeButton(page)).toBeDisabled();
-    await expect(page.getByTestId('checkout-add-address')).toHaveAttribute('href', '/en/account/addresses?next=checkout');
+    await expect(page.getByTestId('checkout-add-address')).toHaveAttribute('href', '/en/account/address?next=checkout');
     expect(errors).toEqual([]);
   });
 
@@ -91,7 +91,7 @@ test.describe('checkout', () => {
     await page.getByRole('textbox', { name: 'Order note' }).fill('Ring the bell twice');
     await place(page);
 
-    await expect(page).toHaveURL(/\/en\/checkout\/result\?checkout=mock-checkout-1$/);
+    await expect(page).toHaveURL(/\/en\/checkout\/final-receipt\?checkout=mock-checkout-1$/);
     const result = page.getByTestId('checkout-result');
     await expect(result).toHaveAttribute('data-status', 'placed');
     await expect(page.getByRole('heading', { level: 1, name: 'Thank you for your order' })).toBeVisible();
@@ -101,7 +101,7 @@ test.describe('checkout', () => {
     await expect(page.getByTestId('result-payment')).toHaveText('Cash on delivery');
     await expect(page.getByText('Ring the bell twice')).toBeVisible();
     await expect(page.getByTestId('checkout-total')).toHaveText('381.00 EGP');
-    await expect(page.getByRole('link', { name: 'View order' })).toHaveAttribute('href', '/en/account/orders/mock-order-48211');
+    await expect(page.getByRole('link', { name: 'View order' })).toHaveAttribute('href', '/en/account/order-history/mock-order-48211');
     await expect(page.getByRole('banner').getByRole('link', { name: 'Cart', exact: true })).toBeVisible();
 
     // the backend has the order, an empty cart, and got exactly the total that was on screen
@@ -161,12 +161,12 @@ test.describe('checkout', () => {
     await expect(page.getByTestId('pay-total')).toHaveText('381.00 EGP');
     await page.getByRole('link', { name: 'Pay', exact: true }).click();
 
-    await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/en\/checkout\/result\?checkout=mock-checkout-1$/);
+    await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/en\/checkout\/final-receipt\?checkout=mock-checkout-1$/);
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'paid');
     await expect(page.getByText('Thank you! Your payment was received and your order is placed.')).toBeVisible();
     await expect(page.getByTestId('result-order-number')).toHaveText('48211');
     await expect(page.getByRole('banner').getByRole('link', { name: 'Cart', exact: true })).toBeVisible();
-    expect((await mockState(request)).orderRequests[0].body).toMatchObject({ returnUrl: expect.stringMatching(/^http:\/\/127\.0\.0\.1:\d+\/en\/checkout\/result$/) });
+    expect((await mockState(request)).orderRequests[0].body).toMatchObject({ returnUrl: expect.stringMatching(/^http:\/\/127\.0\.0\.1:\d+\/en\/checkout\/final-receipt$/) });
   });
 
   test('online payment, declined: the backend message and a way back to checkout; the cart is still there', async ({ page, context, request }) => {
@@ -206,11 +206,11 @@ test.describe('checkout', () => {
 
   test('a result URL that says "paid" is not believed', async ({ page, context }) => {
     await signIn(context);
-    await page.goto('/en/checkout/result?checkout=made-up&status=paid');
+    await page.goto('/en/checkout/final-receipt?checkout=made-up&status=paid');
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'unknown');
-    await expect(page.getByTestId('checkout-result').getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/orders');
+    await expect(page.getByTestId('checkout-result').getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/order-history');
 
-    await page.goto('/en/checkout/result');
+    await page.goto('/en/checkout/final-receipt');
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'unknown');
   });
 
@@ -376,7 +376,7 @@ test.describe('checkout', () => {
 
     const prompt = page.getByTestId('checkout-sign-in');
     await expect(prompt).toContainText('Sign in to place your order.');
-    await expect(prompt.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=checkout');
+    await expect(prompt.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=checkout');
     await expect(page.getByTestId('checkout-blockers')).toContainText('This store needs an account to place an order.');
   });
 
@@ -384,7 +384,7 @@ test.describe('checkout', () => {
     await openCheckout(page);
 
     await expect(page.getByTestId('cart-empty')).toBeVisible();
-    await expect(page.getByTestId('checkout-sign-in-hint').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/sign-in?next=checkout');
+    await expect(page.getByTestId('checkout-sign-in-hint').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/en/session/signin?returnUrl=checkout');
     await expect(page.getByTestId('place-order')).toHaveCount(0);
     expect((await context.cookies()).some((cookie) => cookie.name === 'sc_guest')).toBe(false);
   });
@@ -402,7 +402,7 @@ test.describe('checkout', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await place(page);
 
-    await expect(page).toHaveURL(/\/ar\/checkout\/result\?checkout=/);
+    await expect(page).toHaveURL(/\/ar\/checkout\/final-receipt\?checkout=/);
     await expect(page.getByRole('heading', { level: 1, name: 'شكراً لطلبك' })).toBeVisible();
     await expect(page.getByText('شكراً لك! استلمنا طلبك.')).toBeVisible();
     await expect(page.getByTestId('checkout-total')).toHaveText('381.00 جنية');

@@ -8,14 +8,18 @@ const answer = (resolution: Partial<Resolution>, url = requested) =>
 
 describe('answers for unknown paths', () => {
   it('a known target is a permanent redirect to our own URL of it', () => {
-    expect(answer({ result: 'target', target: { type: 'product', slug: 'jj-bath' } })).toEqual({ kind: 'redirect', location: '/en/p/jj-bath', status: 301 });
-    expect(answerForResolution({ result: 'target', target: { type: 'deals' }, url: null, permanent: false }, 'ar', requested)).toEqual({ kind: 'redirect', location: '/ar/deals', status: 301 });
+    expect(answer({ result: 'target', target: { type: 'product', slug: 'jj-bath' } })).toEqual({ kind: 'redirect', location: '/en/jj-bath', status: 301 });
+    expect(answerForResolution({ result: 'target', target: { type: 'deals' }, url: null, permanent: false }, 'ar', requested)).toEqual({ kind: 'redirect', location: '/ar/products/deals', status: 301 });
   });
 
   it('a redirect follows its target or its url, permanent or not as told', () => {
-    expect(answer({ result: 'redirect', target: { type: 'deals' }, permanent: false })).toEqual({ kind: 'redirect', location: '/en/deals', status: 302 });
+    expect(answer({ result: 'redirect', target: { type: 'deals' }, permanent: false })).toEqual({ kind: 'redirect', location: '/en/products/deals', status: 302 });
     expect(answer({ result: 'redirect', url: 'https://blog.example.com/a', permanent: true })).toEqual({ kind: 'redirect', location: 'https://blog.example.com/a', status: 301 });
-    expect(answer({ result: 'redirect', url: '/en/c/skin-care?sort=x', permanent: false })).toEqual({ kind: 'redirect', location: '/en/c/skin-care?sort=x', status: 302 });
+    expect(answer({ result: 'redirect', url: '/en/product/skin-care?sort=x', permanent: false })).toEqual({ kind: 'redirect', location: '/en/product/skin-care?sort=x', status: 302 });
+  });
+
+  it('a redirect-table check without a row shows the page', () => {
+    expect(answer({ result: 'none' })).toEqual({ kind: 'none' });
   });
 
   it('gone and not_found', () => {
@@ -26,9 +30,9 @@ describe('answers for unknown paths', () => {
 
   it('never loops: a destination on this site must be one of our routes and not the same path', () => {
     expect(answer({ result: 'redirect', url: '/en/old-path?x=1' })).toEqual({ kind: 'not_found' });
-    expect(answer({ result: 'redirect', url: '/en/another-unknown' })).toEqual({ kind: 'not_found' });
-    expect(answer({ result: 'redirect', url: 'http://shop.test/en/another-unknown' })).toEqual({ kind: 'not_found' });
-    expect(answer({ result: 'redirect', url: 'http://shop.test/en/deals' })).toEqual({ kind: 'redirect', location: '/en/deals', status: 302 });
+    expect(answer({ result: 'redirect', url: '/en/another/unknown' })).toEqual({ kind: 'not_found' });
+    expect(answer({ result: 'redirect', url: 'http://shop.test/en/another/unknown' })).toEqual({ kind: 'not_found' });
+    expect(answer({ result: 'redirect', url: 'http://shop.test/en/products/deals' })).toEqual({ kind: 'redirect', location: '/en/products/deals', status: 302 });
   });
 
   it('never follows unsafe or unusable destinations', () => {

@@ -47,7 +47,7 @@ describe('AddressBook', () => {
 
   it('links to the edit page and keeps the return page', () => {
     setup('en', { next: 'checkout' });
-    expect(within(card(501)).getByRole('link', { name: 'Edit' })).toHaveAttribute('href', '/en/account/addresses/501/edit?next=checkout');
+    expect(within(card(501)).getByRole('link', { name: 'Edit' })).toHaveAttribute('href', '/en/account/address/edit/501?next=checkout');
     // the default address has no "make default"
     expect(within(card(501)).queryByRole('button', { name: 'Make default' })).toBeNull();
   });

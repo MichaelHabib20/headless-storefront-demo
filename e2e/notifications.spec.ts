@@ -37,7 +37,7 @@ test.describe('notifications (signed in)', () => {
     await expect(page.getByTestId('notification')).toHaveCount(10);
     await expect(page.locator('[data-testid="notification"][data-read="false"]')).toHaveCount(9);
     await expect(notification(page, 'Upload your prescription')).toHaveAttribute('data-read', 'true');
-    await expect(notification(page, 'Baby care week').getByRole('link')).toHaveAttribute('href', '/en/lists/125');
+    await expect(notification(page, 'Baby care week').getByRole('link')).toHaveAttribute('href', '/en/products/list/125');
   });
 
   test('marking one as read lowers the unread count', async ({ page, request }) => {
@@ -78,7 +78,7 @@ test.describe('notifications (signed in)', () => {
   test('opening a notification marks it as read', async ({ page, request }) => {
     await page.goto('/en/notifications');
     await notification(page, 'Baby care week').getByRole('link').click();
-    await expect(page).toHaveURL(/\/en\/lists\/125$/);
+    await expect(page).toHaveURL(/\/en\/products\/list\/125$/);
 
     await expect.poll(() => unreadOnServer(request)).toBe(23);
     await page.goto('/en/notifications');
@@ -106,7 +106,7 @@ test.describe('notifications (signed in)', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByRole('heading', { level: 1, name: 'الإشعارات' })).toBeVisible();
     await expect(page.getByTestId('notifications-unread')).toHaveText('٢٤ غير مقروءة');
-    await expect(notification(page, 'أسبوع العناية بالطفل').getByRole('link')).toHaveAttribute('href', '/ar/lists/125');
+    await expect(notification(page, 'أسبوع العناية بالطفل').getByRole('link')).toHaveAttribute('href', '/ar/products/list/125');
 
     await page.getByRole('button', { name: 'تحديد الكل كمقروء' }).click();
     await expect(page.getByTestId('notifications-unread')).toHaveText('اطّلعت على كل الإشعارات');

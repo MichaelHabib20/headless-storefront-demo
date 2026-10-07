@@ -30,7 +30,7 @@ async function me(request: APIRequestContext, token: string) {
 }
 
 async function signIn(page: Page, locale = 'en', phone = PHONE, password = PASSWORD) {
-  await open(page, `/${locale}/sign-in`);
+  await open(page, `/${locale}/session/signin`);
   await page.getByTestId('sign-in-form').getByRole('textbox').first().fill(phone);
   await page.getByTestId('sign-in-form').locator('input[name="password"]').fill(password);
   await page.getByTestId('sign-in-form').getByRole('button').click();
@@ -43,7 +43,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('sign in', () => {
   test('signs in by phone (the store’s login method), keeps the session in httpOnly cookies and shows the name in the header', async ({ page, context, request }) => {
-    await open(page, '/en/sign-in');
+    await open(page, '/en/session/signin');
     await expect(page.getByTestId('sign-in-page')).toContainText('Sign in');
     // the identifier field is the one the API said: a phone, not an e-mail
     const identifier = page.getByTestId('sign-in-form').locator('input[name="identifier"]');
@@ -88,13 +88,13 @@ test.describe('sign in', () => {
   });
 
   test('comes back to the page that asked for the sign-in', async ({ page }) => {
-    await open(page, '/en/account/orders');
+    await open(page, '/en/account/order-history');
     await page.getByTestId('account-sign-in').getByRole('link', { name: 'Sign in' }).click();
-    await expect(page).toHaveURL(/\/en\/sign-in\?next=/);
+    await expect(page).toHaveURL(/\/en\/session\/signin\?returnUrl=/);
     await page.locator('input[name="identifier"]').fill(PHONE);
     await page.locator('input[name="password"]').fill(PASSWORD);
     await page.getByTestId('sign-in-form').getByRole('button').click();
-    await expect(page).toHaveURL(/\/en\/account\/orders$/);
+    await expect(page).toHaveURL(/\/en\/account\/order-history$/);
   });
 
   test('merges the guest cart into the customer on sign-in', async ({ page, context, request }) => {
@@ -105,7 +105,7 @@ test.describe('sign in', () => {
     await page
       .getByTestId('product-card')
       .filter({ has: page.getByRole('button', { name: 'Add to cart', disabled: false }) })
-      .filter({ hasNot: page.locator(owned.map((slug) => `a[href="/en/p/${encodeURIComponent(slug)}"]`).join(', ')) })
+      .filter({ hasNot: page.locator(owned.map((slug) => `a[href="/en/${encodeURIComponent(slug)}"]`).join(', ')) })
       .first()
       .getByRole('button', { name: 'Add to cart' })
       .click();
@@ -125,7 +125,7 @@ test.describe('sign in', () => {
 
   test('offers the SMS-code tab and the social buttons only when the store configured them', async ({ page, request }) => {
     await mode(request, { otpLogin: true, social: { google: { clientId: 'google-client-id' }, facebook: { appId: 'fb-app-id' } } });
-    await open(page, '/en/sign-in');
+    await open(page, '/en/session/signin');
     await expect(page.getByTestId('social-sign-in')).toBeVisible();
     await expect(page.getByTestId('social-google')).toBeVisible();
     await expect(page.getByTestId('social-facebook')).toHaveText('Continue with Facebook');
@@ -146,7 +146,7 @@ test.describe('sign in', () => {
 
 test.describe('sign up', () => {
   test('draws the form the API describes, shows its 422 messages, then creates the account and signs in', async ({ page, context, request }) => {
-    await open(page, '/en/sign-up');
+    await open(page, '/en/session/signup');
     const form = page.getByTestId('sign-up-form');
     // the store's fields, in its order, plus our confirmation
     await expect(form.locator('input:not([type=hidden])')).toHaveCount(7);
@@ -182,7 +182,7 @@ test.describe('sign up', () => {
 
   test('sends the new customer to verify the phone when the store asks for it', async ({ page, request }) => {
     await mode(request, { verifyPhoneAfterSignup: true });
-    await open(page, '/ar/sign-up');
+    await open(page, '/ar/session/signup');
     const form = page.getByTestId('sign-up-form');
     await form.locator('input[name="firstName"]').fill('سارة');
     await form.locator('input[name="lastName"]').fill('حسن');
@@ -205,9 +205,9 @@ test.describe('sign up', () => {
 
   test('says so when the store closed sign-ups', async ({ page, request }) => {
     await mode(request, { signupEnabled: false });
-    await open(page, '/en/sign-up');
+    await open(page, '/en/session/signup');
     await expect(page.getByTestId('sign-up-closed')).toHaveText('This store does not accept new accounts at the moment.');
-    await open(page, '/en/sign-in');
+    await open(page, '/en/session/signin');
     await expect(page.getByRole('link', { name: 'Create an account' })).toHaveCount(0);
   });
 });
@@ -232,13 +232,13 @@ test.describe('sign out', () => {
 
 test.describe('password reset', () => {
   test('by SMS: forgot → code + new password → signed in', async ({ page }) => {
-    await open(page, '/en/sign-in');
+    await open(page, '/en/session/signin');
     await page.getByRole('link', { name: 'Forgot your password?' }).click();
     await expect(page.getByTestId('forgot-password-page')).toContainText('Enter your phone number');
     await page.locator('input[name="identifier"]').fill(PHONE);
     await page.getByRole('button', { name: 'Continue' }).click();
 
-    await expect(page).toHaveURL(/\/en\/reset-password\?phone=01222353123$/);
+    await expect(page).toHaveURL(/\/en\/session\/change-password\?phone=01222353123$/);
     await expect(page.locator('input[name="phone"]')).toHaveValue(PHONE);
     await page.locator('input[name="code"]').fill('9999');
     await page.locator('input[name="password"]').fill('newsecret1');
@@ -254,15 +254,15 @@ test.describe('password reset', () => {
 
   test('by e-mail: the link lands on the reset page with the token', async ({ page, request }) => {
     await mode(request, { passwordReset: 'email' });
-    await open(page, '/en/forgot-password');
+    await open(page, '/en/session/forgot-password');
     await expect(page.getByTestId('forgot-password-page')).toContainText('Enter your e-mail address');
     await page.locator('input[name="identifier"]').fill('test@example.com');
     await page.getByRole('button', { name: 'Continue' }).click();
     await expect(page.getByTestId('reset-link-sent')).toContainText('a reset link is on its way');
 
-    await open(page, '/en/reset-password');
+    await open(page, '/en/session/change-password');
     await expect(page.getByTestId('reset-link-invalid')).toContainText('This reset link is not complete.');
-    await open(page, '/en/reset-password?token=reset-token-ok&email=test%40example.com');
+    await open(page, '/en/session/change-password?token=reset-token-ok&email=test%40example.com');
     await expect(page.locator('input[name="phone"]')).toHaveCount(0);
     await page.locator('input[name="password"]').fill('newsecret1');
     await page.locator('input[name="passwordConfirmation"]').fill('newsecret1');
@@ -272,9 +272,9 @@ test.describe('password reset', () => {
 
   test('says to contact the store when no reset method is configured', async ({ page, request }) => {
     await mode(request, { passwordReset: 'none' });
-    await open(page, '/ar/sign-in');
+    await open(page, '/ar/session/signin');
     await expect(page.getByRole('link', { name: 'نسيت كلمة المرور؟' })).toHaveCount(0);
-    await open(page, '/ar/forgot-password');
+    await open(page, '/ar/session/forgot-password');
     await expect(page.getByTestId('reset-unavailable')).toContainText('تواصل معنا');
   });
 });
@@ -283,12 +283,12 @@ test.describe('waiting for approval', () => {
   test('replaces the shop with the waiting notice until the merchant approves', async ({ page, request }) => {
     await mode(request, { approval: true });
     await signIn(page, 'en', '01000000002');
-    await expect(page).toHaveURL(/\/en\/waiting-approval$/);
+    await expect(page).toHaveURL(/\/en\/session\/waiting-approval$/);
     await expect(page.getByTestId('approval-status')).toHaveAttribute('data-status', 'pending');
     await open(page, '/en');
     await expect(page.getByTestId('approval-gate')).toContainText('Your account is being reviewed');
     await expect(page.getByTestId('home-section')).toHaveCount(0);
-    await open(page, '/en/waiting-approval');
+    await open(page, '/en/session/waiting-approval');
     await page.getByTestId('waiting-approval-page').getByTestId('sign-out').click();
     await expect(page).toHaveURL(/\/en$/);
     await expect(page.getByTestId('home-section').first()).toBeVisible();
@@ -319,7 +319,7 @@ test.describe('profile and password', () => {
     await expect(page.getByTestId('profile-status')).toContainText('We sent a confirmation link to your new e-mail address.');
     await expect(page.getByTestId('account-menu-trigger')).toContainText('Tess');
 
-    await open(page, '/en/verify-email?email=tess%40example.com&token=email-token-ok');
+    await open(page, '/en/session/verifyEmail?email=tess%40example.com&token=email-token-ok');
     await page.getByRole('button', { name: 'Confirm' }).click();
     await expect(page.getByTestId('email-verified')).toHaveText('Your e-mail address was confirmed.');
   });
@@ -340,7 +340,7 @@ test.describe('profile and password', () => {
   });
 
   test('changes the password with the backend’s refusals', async ({ page }) => {
-    await open(page, '/en/account/password');
+    await open(page, '/en/account/change-password');
     const form = page.getByTestId('password-form');
     await form.locator('input[name="currentPassword"]').fill('wrong');
     await form.locator('input[name="newPassword"]').fill('newsecret1');
@@ -357,7 +357,7 @@ test.describe('profile and password', () => {
 
   test('a guest gets the sign-in prompt on the account pages, without a guest session being started', async ({ page, context }) => {
     await context.clearCookies();
-    await open(page, '/en/account/password');
+    await open(page, '/en/account/change-password');
     await expect(page.getByTestId('account-sign-in')).toBeVisible();
     expect(await cookie(context, 'sc_guest')).toBeNull();
   });

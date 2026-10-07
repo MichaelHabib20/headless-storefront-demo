@@ -44,7 +44,7 @@ test('off (as on staging): no pages, no account link', async ({ page, context })
 test('a visitor is asked to sign in, and no guest session is created', async ({ page, context, request }) => {
   await mode(request, { provider: 'elDokan' });
   await open(page, '/en/account/your-points');
-  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/sign-in\?next=%2Fen%2Faccount%2Fyour-points/);
+  await expect(page.getByTestId('account-sign-in').getByRole('link')).toHaveAttribute('href', /\/en\/session\/signin\?returnUrl=%2Fen%2Faccount%2Fyour-points/);
   expect((await context.cookies()).find((cookie) => cookie.name === 'sc_guest')).toBeUndefined();
   const response = await page.request.get('/en/account/your-points', { maxRedirects: 0 });
   expect(response.headers()['x-robots-tag']).toContain('noindex');
@@ -109,7 +109,7 @@ test('history newest first, with the order linked (AR)', async ({ page, context,
   await expect(entries).toHaveCount(5);
   await expect(entries.first()).toHaveAttribute('data-kind', 'pending');
   await expect(entries.nth(1)).toContainText('-500 نقطة');
-  await expect(entries.nth(3).getByRole('link', { name: 'عرض الطلب' })).toHaveAttribute('href', '/ar/account/orders/mock-order-48200');
+  await expect(entries.nth(3).getByRole('link', { name: 'عرض الطلب' })).toHaveAttribute('href', '/ar/account/order-history/mock-order-48200');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 

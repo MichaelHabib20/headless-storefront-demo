@@ -8,14 +8,14 @@ const item = (id: string, target: MobileNavItem['target'] = null, badge: MobileN
 
 describe('bottom nav actions', () => {
   it('follows the Target when the API sends one', () => {
-    expect(navAction(item('deals', { type: 'deals' }), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/deals', external: false } });
+    expect(navAction(item('deals', { type: 'deals' }), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/products/deals', external: false } });
     expect(navAction(item('menu_button_1', { type: 'page', slug: 'branches' }), 'en')).toEqual({ kind: 'link', link: { href: '/en/pages/branches', external: false } });
   });
 
   it('maps the ids of our own pages and actions', () => {
     expect(navAction(item('cart'), 'en')).toEqual({ kind: 'link', link: { href: '/en/cart', external: false } });
     expect(navAction(item('categories'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/categories', external: false } });
-    expect(navAction(item('orders'), 'en')).toMatchObject({ link: { href: '/en/account/orders' } });
+    expect(navAction(item('orders'), 'en')).toMatchObject({ link: { href: '/en/account/order-history' } });
     expect(navAction(item('points'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/account/your-points', external: false } });
     expect(navAction(item('wallet'), 'en')).toEqual({ kind: 'link', link: { href: '/en/account/wallet-history', external: false } });
     expect(navAction(item('vendors'), 'ar')).toEqual({ kind: 'link', link: { href: '/ar/vendors', external: false } });

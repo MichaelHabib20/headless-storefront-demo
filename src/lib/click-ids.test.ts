@@ -25,12 +25,12 @@ describe('eventRequest (POST /events body)', () => {
     const body = eventRequest(
       { name: 'add_to_cart', eventId: 'e-1', productIds: [9822, -1, 1.5, 7346] },
       { clickIds: '{"fbclid":"fb1"}', fbp: 'fb.1.123', fbc: null },
-      'https://shop.test/en/p/x?y=1',
+      'https://shop.test/en/x?y=1',
     );
     expect(body).toEqual({
       name: 'add_to_cart',
       eventId: 'e-1',
-      page: { path: '/en/p/x?y=1', referrer: null },
+      page: { path: '/en/x?y=1', referrer: null },
       clickIds: { fbclid: 'fb1' },
       browser: { fbp: 'fb.1.123', fbc: null },
       productIds: [9822, 7346],
@@ -40,9 +40,9 @@ describe('eventRequest (POST /events body)', () => {
   });
 
   it('makes an event id when none is given and works without cookies or referer', () => {
-    const body = eventRequest({ name: 'purchase', orderId: 'uuid-1', page: { path: '/ar/checkout/result?checkout=r', referrer: 'https://bank.test/' } }, {}, null);
+    const body = eventRequest({ name: 'purchase', orderId: 'uuid-1', page: { path: '/ar/checkout/final-receipt?checkout=r', referrer: 'https://bank.test/' } }, {}, null);
     expect(body.eventId).toMatch(/^purchase-[0-9a-f-]{36}$/);
-    expect(body).toMatchObject({ clickIds: null, browser: null, orderId: 'uuid-1', page: { path: '/ar/checkout/result?checkout=r', referrer: 'https://bank.test/' } });
+    expect(body).toMatchObject({ clickIds: null, browser: null, orderId: 'uuid-1', page: { path: '/ar/checkout/final-receipt?checkout=r', referrer: 'https://bank.test/' } });
     expect(eventRequest({ name: 'login' }, { fbp: '<bad>' }, 'not a url')).toMatchObject({ page: null, browser: null });
   });
 });

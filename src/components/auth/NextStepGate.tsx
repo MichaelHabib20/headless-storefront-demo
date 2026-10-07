@@ -15,8 +15,8 @@ interface NextStepGateProps {
 }
 
 const DISMISSED_KEY = 'sc_verify_phone_dismissed';
-/** Pages that stay reachable while the account waits for approval (second path segment). */
-const OPEN_SECTIONS = new Set(['waiting-approval', 'sign-in', 'sign-up', 'forgot-password', 'reset-password', 'verify-phone', 'verify-email', 'pages']);
+/** Pages that stay reachable while the account waits for approval (second path segment): the auth flows, the CMS and legal pages. */
+const OPEN_SECTIONS = new Set(['session', 'verify-phone', 'pages', 'privacy-policy', 'terms-and-conditions', 'cookie-policy']);
 
 /**
  * What the shopper must do before going on, from `Me.next`:

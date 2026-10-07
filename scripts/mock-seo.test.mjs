@@ -45,7 +45,7 @@ describe('mock seo module follows the contract', () => {
 
   it('accepts events (202), keeps them for the e2e, de-duplicates eventId and refuses bodies outside the contract', () => {
     const seo = createSeoModule(createShopperStore());
-    const event = { name: 'add_to_cart', eventId: 'e-1', productIds: [9822], page: { path: '/en/p/x', referrer: null }, clickIds: { fbclid: 'abc' } };
+    const event = { name: 'add_to_cart', eventId: 'e-1', productIds: [9822], page: { path: '/en/x', referrer: null }, clickIds: { fbclid: 'abc' } };
     expect(validate('EventRequest', event)).toEqual([]);
 
     const [status, body] = seo.handle(request('en', '/events', { method: 'POST', body: event, token: 'guest-1' }));

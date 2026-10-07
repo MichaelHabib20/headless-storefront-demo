@@ -26,10 +26,10 @@ describe('GET /sitemap.xml (index)', () => {
 
     expect(response.headers.get('Content-Type')).toBe('application/xml; charset=utf-8');
     expect(xml.match(/<loc>[^<]+<\/loc>/g)).toEqual([
-      '<loc>https://shop.test/sitemaps/products-en-1.xml</loc>',
-      '<loc>https://shop.test/sitemaps/products-en-2.xml</loc>',
-      '<loc>https://shop.test/sitemaps/products-ar-1.xml</loc>',
-      '<loc>https://shop.test/sitemaps/products-ar-2.xml</loc>',
+      '<loc>https://shop.test/sitemap_products_en.xml</loc>',
+      '<loc>https://shop.test/sitemap_products_en_2.xml</loc>',
+      '<loc>https://shop.test/sitemap_products_ar.xml</loc>',
+      '<loc>https://shop.test/sitemap_products_ar_2.xml</loc>',
     ]);
     expect(vi.mocked(loadSitemapPage).mock.calls.every(([, , page, perPage]) => page === 1 && perPage === 1000)).toBe(true);
   });
@@ -45,6 +45,6 @@ describe('GET /sitemap.xml (index)', () => {
     vi.mocked(loadSitemapPage).mockImplementation(async (locale, type) => (type === 'brands' ? null : type === 'tags' ? sitemapProductsFixture(locale) : empty()));
     const xml = await (await GET()).text();
     expect(xml).not.toContain('brands-');
-    expect(xml).toContain('<loc>https://shop.test/sitemaps/tags-en-1.xml</loc>');
+    expect(xml).toContain('<loc>https://shop.test/sitemap_tags_en.xml</loc>');
   });
 });

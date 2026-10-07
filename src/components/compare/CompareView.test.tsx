@@ -25,7 +25,7 @@ describe('CompareView', () => {
     expect(products).toHaveLength(compare.products.length);
     compare.products.forEach((product, i) => {
       expect(within(products[i]).getByTestId('product-card')).toHaveTextContent(product.name);
-      expect(within(products[i]).getByRole('link')).toHaveAttribute('href', `/${locale}/p/${product.slug}`);
+      expect(within(products[i]).getByRole('link')).toHaveAttribute('href', `/${locale}/${product.slug}`);
     });
 
     const rows = screen.getAllByTestId('compare-row');

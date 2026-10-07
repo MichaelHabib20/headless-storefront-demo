@@ -64,13 +64,13 @@ them and **blocks the deploy** when one is broken.
 | `src/components/product/ProductCard.tsx` | Product card |
 | `src/components/notifications/` | Notifications page blocks, helpers, local pagination |
 | `src/components/account/` | Address book, address form (drawn from the API), orders list/details, cancel dialog, reorder notice |
-| `src/components/auth/` + `src/app/[locale]/{sign-in,sign-up,forgot-password,reset-password,verify-phone,verify-email,waiting-approval}/`, `account/{profile,password,complete-profile}/` | Auth pages drawn from `AuthSettings`, `AuthFields` (forms from the API), `SocialButtons`, `NextStepGate` (`Me.next` banners / approval gate), `layout/AccountMenu` |
+| `src/components/auth/` + `src/app/[locale]/session/{signin,signup,forgot-password,change-password,verifyEmail,waiting-approval}/`, `verify-phone/`, `account/{profile,change-password,complete-profile}/` | Auth pages drawn from `AuthSettings`, `AuthFields` (forms from the API), `SocialButtons`, `NextStepGate` (`Me.next` banners / approval gate), `layout/AccountMenu` |
 | `src/app/[locale]/layout.tsx` | Loads `layout`, renders chrome for every page |
 | `src/app/[locale]/page.tsx` | The home page: composition of home blocks |
 | `src/app/[locale]/<area>/page.tsx` + `actions.ts` | Shopper pages (reads) and their server actions (writes) |
 | `src/app/[locale]/[...slug]/page.tsx` | "Coming soon" for routes that aren't built yet; the "no longer available" page (410) |
 | `src/components/catalog/` + `src/lib/listing.ts`, `catalog.server.ts`, `resolve.ts` | Listings (one view for category, brand, list, tag, deals, search), filters, sort, category and brand indexes, unknown-path answers |
-| `src/middleware.ts` | Locale prefix; asks `GET /resolve` for paths outside our routes (301/302/410/404) |
+| `src/middleware.ts` | The old storefront's URL rules: locale prefix (301 /en), interim-path 301s, the merchant's redirect table on our pages (`/resolve?only=redirects`), `GET /resolve` for paths outside our routes (301/302/410/404) |
 | `src/app/[locale]/checkout/` + `src/components/checkout/` | Checkout page, its server actions (the only `placeOrder`), result page |
 | `src/components/wallet/` + `src/app/[locale]/account/wallet-history/` | The wallet page (balance + history); the checkout switch is `checkout/WalletSection` |
 | `src/components/vouchers/` + `src/app/[locale]/account/voucher/` | The vouchers page (tabs, add a code); the codes at checkout are in `checkout/PromoSection` |

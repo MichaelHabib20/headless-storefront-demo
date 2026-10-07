@@ -23,7 +23,7 @@ describe('HomeSection', () => {
     render(<HomeSection section={babyCare} locale="en" />);
 
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(babyCare.title!);
-    expect(screen.getByRole('link', { name: 'View all' })).toHaveAttribute('href', expect.stringMatching(/^\/en\/lists\//));
+    expect(screen.getByRole('link', { name: 'View all' })).toHaveAttribute('href', expect.stringMatching(/^\/en\/products\/list\//));
   });
 
   it('has no heading when the merchant hid the title', () => {

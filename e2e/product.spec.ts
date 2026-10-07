@@ -19,7 +19,7 @@ const catalog = (locale: Locale) =>
     (s) => s.products,
   );
 const slugOf = (id: number, locale: Locale = 'en') => catalog(locale).find((p) => p.id === id)!.slug;
-const path = (id: number, locale: Locale = 'en') => `/${locale}/p/${encodeURIComponent(slugOf(id, locale))}`;
+const path = (id: number, locale: Locale = 'en') => `/${locale}/${encodeURIComponent(slugOf(id, locale))}`;
 
 async function api<T>(request: APIRequestContext, endpoint: string, locale: Locale = 'en', token?: string): Promise<T> {
   const response = await request.get(`${MOCK_API}/api/customer/v3/${endpoint}`, {
@@ -74,10 +74,10 @@ test.describe('product page', () => {
     await expect(page.getByRole('heading', { level: 1, name: data.product.name })).toBeVisible();
     await expect(page).toHaveTitle(new RegExp(`^${data.seo.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
     const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
-    expect(decodeURIComponent(canonical ?? '')).toMatch(new RegExp(`/en/p/${slugOf(9822)}$`));
+    expect(decodeURIComponent(canonical ?? '')).toMatch(new RegExp(`/en/${slugOf(9822)}$`));
     await expect(info(page).getByTestId('product-price')).toHaveText(data.product.price.display);
-    await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Mom & Baby' })).toHaveAttribute('href', '/en/c/mom-baby');
-    await expect(page.getByRole('main').getByRole('link', { name: 'JOHNSON & JOHNSON' }).first()).toHaveAttribute('href', '/en/brands/johnson-johnson');
+    await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Mom & Baby' })).toHaveAttribute('href', '/en/product/mom-baby');
+    await expect(page.getByRole('main').getByRole('link', { name: 'JOHNSON & JOHNSON' }).first()).toHaveAttribute('href', '/en/product/brand/johnson-johnson');
     for (const notice of data.notices) await expect(page.getByTestId('product-notices')).toContainText(notice.text);
     await expect(page.getByTestId('product-sku')).toHaveText(data.sku!);
     for (const row of data.specifications) await expect(page.getByTestId('product-specifications')).toContainText(row.value);
@@ -223,16 +223,16 @@ test.describe('product page', () => {
   });
 
   test('an English address in Arabic redirects permanently to the Arabic one', async ({ page, request }) => {
-    const response = await request.get(`${APP_URL}/ar/p/${encodeURIComponent(slugOf(7346, 'en'))}`, { maxRedirects: 0 });
+    const response = await request.get(`${APP_URL}/ar/${encodeURIComponent(slugOf(7346, 'en'))}`, { maxRedirects: 0 });
     expect(response.status()).toBe(308);
-    expect(response.headers().location).toContain(`/ar/p/${encodeURIComponent(slugOf(7346, 'ar'))}`);
+    expect(response.headers().location).toContain(`/ar/${encodeURIComponent(slugOf(7346, 'ar'))}`);
 
     // the language switch lands on the same product in Arabic
     const arabic = await details(request, 7346, 'ar');
     await open(page, path(7346));
     await page.getByRole('link', { name: 'Switch language' }).first().click();
     await expect(page.getByRole('heading', { level: 1, name: arabic.product.name })).toBeVisible();
-    expect(decodeURIComponent(new URL(page.url()).pathname)).toBe(`/ar/p/${slugOf(7346, 'ar')}`);
+    expect(decodeURIComponent(new URL(page.url()).pathname)).toBe(`/ar/${slugOf(7346, 'ar')}`);
   });
 
   test('reviews: pages from the API, and none when the store switched them off', async ({ page, request }) => {
@@ -251,7 +251,7 @@ test.describe('product page', () => {
   });
 
   test('an unknown product is a 404', async ({ page }) => {
-    const response = await page.goto('/en/p/definitely-not-a-product');
+    const response = await page.goto('/en/definitely-not-a-product');
     expect(response?.status()).toBe(404);
     await expect(page.getByText('Page not found')).toBeVisible();
   });

@@ -116,7 +116,7 @@ describe('points history', () => {
     expect(entries[1]).toHaveTextContent('-500 points');
     expect(entries[3]).toHaveTextContent('+120 points');
     expect(within(entries[0]).getByText('Available from 12 Oct 2026')).toBeInTheDocument();
-    expect(within(entries[3]).getByRole('link', { name: 'View order' })).toHaveAttribute('href', '/en/account/orders/mock-order-48200');
+    expect(within(entries[3]).getByRole('link', { name: 'View order' })).toHaveAttribute('href', '/en/account/order-history/mock-order-48200');
   });
 
   it('says when there is nothing yet (AR)', () => {

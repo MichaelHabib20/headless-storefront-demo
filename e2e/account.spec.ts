@@ -41,17 +41,17 @@ test.describe('address book', () => {
   test.beforeEach(async ({ context }) => signInAsCustomer(context));
 
   test('lists the saved addresses with the text the API wrote', async ({ page }) => {
-    await open(page, '/en/account/addresses');
+    await open(page, '/en/account/address');
 
     await expect(page.getByRole('heading', { level: 1, name: 'My addresses' })).toBeVisible();
     await expect(cards(page)).toHaveCount(1);
     await expect(cards(page).first()).toContainText('Default address');
     await expect(cards(page).first().getByTestId('address-text')).toHaveText('12, 12 Abbas El Akkad St, Nasr City, Cairo');
-    await expect(page.getByRole('link', { name: 'Add a new address' })).toHaveAttribute('href', '/en/account/addresses/new');
+    await expect(page.getByRole('link', { name: 'Add a new address' })).toHaveAttribute('href', '/en/account/address/add');
   });
 
   test('adds an address on the form the API describes, and shows its 422 messages next to the inputs', async ({ page, request }) => {
-    await open(page, '/en/account/addresses/new');
+    await open(page, '/en/account/address/add');
 
     // location pickers fed by GET /locations: the areas of the chosen city
     await expect(page.getByLabel('Area')).toBeDisabled();
@@ -74,7 +74,7 @@ test.describe('address book', () => {
     await page.getByLabel('Phone').fill('01000000002');
     await page.getByRole('button', { name: 'Save address' }).click();
 
-    await expect(page).toHaveURL(/\/en\/account\/addresses\?saved=\d+$/);
+    await expect(page).toHaveURL(/\/en\/account\/address\?saved=\d+$/);
     await expect(page.getByTestId('addresses-status')).toHaveText('The address was saved.');
     const added = cards(page).filter({ hasText: 'Desert Rd' });
     await expect(added.getByTestId('address-text')).toHaveText('4, Desert Rd, Remote Oasis, Giza');
@@ -83,7 +83,7 @@ test.describe('address book', () => {
   });
 
   test('editing continues with the new id the API gives the address', async ({ page, request }) => {
-    await open(page, '/en/account/addresses/501/edit');
+    await open(page, '/en/account/address/edit/501');
     await expect(page.getByLabel('Street')).toHaveValue('12 Abbas El Akkad St');
     await page.getByLabel('Street').fill('90 Makram Ebeid St');
     await page.getByRole('button', { name: 'Save address' }).click();
@@ -95,10 +95,10 @@ test.describe('address book', () => {
     const card = cards(page).first();
     await expect(card).toHaveAttribute('data-address-id', String(saved.id));
     await expect(card.getByTestId('address-text')).toHaveText('12, 90 Makram Ebeid St, Nasr City, Cairo');
-    await expect(card.getByRole('link', { name: 'Edit' })).toHaveAttribute('href', `/en/account/addresses/${saved.id}/edit`);
+    await expect(card.getByRole('link', { name: 'Edit' })).toHaveAttribute('href', `/en/account/address/edit/${saved.id}`);
 
     // the old id is gone
-    const old = await open(page, '/en/account/addresses/501/edit');
+    const old = await open(page, '/en/account/address/edit/501');
     expect(old?.status()).toBe(404);
   });
 
@@ -107,7 +107,7 @@ test.describe('address book', () => {
       headers: AUTH,
       data: { cityId: 2, areaId: 21, values: { street: 'Tahrir St', building: '8', phone: '01000000003' } },
     });
-    await open(page, '/en/account/addresses');
+    await open(page, '/en/account/address');
     await expect(cards(page)).toHaveCount(2);
 
     const dokki = cards(page).filter({ hasText: 'Dokki' });
@@ -127,10 +127,10 @@ test.describe('address book', () => {
   });
 
   test('?next=checkout goes back to checkout after a save, and nowhere else', async ({ page }) => {
-    await open(page, '/en/account/addresses?next=checkout');
+    await open(page, '/en/account/address?next=checkout');
     await expect(page.getByRole('link', { name: 'Back to checkout' })).toHaveAttribute('href', '/en/checkout');
     await page.getByRole('link', { name: 'Add a new address' }).click();
-    await expect(page).toHaveURL(/\/en\/account\/addresses\/new\?next=checkout$/);
+    await expect(page).toHaveURL(/\/en\/account\/address\/add\?next=checkout$/);
     await page.waitForLoadState('networkidle');
 
     await page.getByLabel('City').selectOption({ label: 'Cairo' });
@@ -141,18 +141,18 @@ test.describe('address book', () => {
     await page.getByRole('button', { name: 'Save address' }).click();
     await expect(page).toHaveURL(/\/en\/checkout$/);
 
-    await open(page, '/en/account/addresses/new?next=https://evil.test');
+    await open(page, '/en/account/address/add?next=https://evil.test');
     await page.getByLabel('City').selectOption({ label: 'Cairo' });
     await page.getByLabel('Area').selectOption({ label: 'Maadi' });
     await page.getByLabel('Street').fill('Road 10');
     await page.getByLabel('Building').fill('21');
     await page.getByLabel('Phone').fill('01000000005');
     await page.getByRole('button', { name: 'Save address' }).click();
-    await expect(page).toHaveURL(/\/en\/account\/addresses\?saved=\d+$/);
+    await expect(page).toHaveURL(/\/en\/account\/address\?saved=\d+$/);
   });
 
   test('works in Arabic, right to left', async ({ page }) => {
-    await open(page, '/ar/account/addresses/new');
+    await open(page, '/ar/account/address/add');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByRole('heading', { level: 1, name: 'عنوان جديد' })).toBeVisible();
     // labels as the API wrote them
@@ -172,25 +172,25 @@ test.describe('orders', () => {
   test.beforeEach(async ({ context }) => signInAsCustomer(context));
 
   test('lists the orders as the API sent them, with pages', async ({ page }) => {
-    await open(page, '/en/account/orders');
+    await open(page, '/en/account/order-history');
 
     await expect(page.getByRole('heading', { level: 1, name: 'My orders' })).toBeVisible();
     const rows = page.getByTestId('order-summary');
     await expect(rows).toHaveCount(10);
     const first = rows.first();
-    await expect(first.getByRole('link', { name: 'Order #48201' })).toHaveAttribute('href', '/en/account/orders/mock-order-48201');
+    await expect(first.getByRole('link', { name: 'Order #48201' })).toHaveAttribute('href', '/en/account/order-history/mock-order-48201');
     await expect(first.getByTestId('order-status')).toHaveText('Being prepared');
     await expect(first.getByTestId('order-total')).toHaveText('408.00 EGP');
     await expect(first.getByTestId('order-item-count')).toHaveText('3');
     await expect(first).toContainText('September 28, 2026');
 
     await page.getByRole('navigation', { name: 'Order pages' }).getByRole('link', { name: 'Next' }).click();
-    await expect(page).toHaveURL(/\/en\/account\/orders\?page=2$/);
+    await expect(page).toHaveURL(/\/en\/account\/order-history\?page=2$/);
     await expect(rows).toHaveCount(2);
   });
 
   test('shows an order: steps, address, payment, lines and the price breakdown', async ({ page }) => {
-    await open(page, '/en/account/orders/mock-order-48201');
+    await open(page, '/en/account/order-history/mock-order-48201');
 
     await expect(page.getByRole('heading', { level: 1, name: 'Order #48201' })).toBeVisible();
     await expect(page.getByTestId('order-status')).toHaveText('Being prepared');
@@ -202,7 +202,7 @@ test.describe('orders', () => {
     await expect(items).toHaveCount(2);
     await expect(items.nth(1).getByTestId('order-item-total')).toHaveText('243 EGP');
     await expect(items.nth(1).getByTestId('order-item-compare-at')).toHaveText('270 EGP');
-    await expect(items.first().getByRole('link')).toHaveAttribute('href', /^\/en\/p\/.+/);
+    await expect(items.first().getByRole('link')).toHaveAttribute('href', /^\/en\/.+/);
 
     const lines = page.getByTestId('order-total-line');
     await expect(lines).toHaveText([/Subtotal\s*403\.00 EGP/, /Promo code SAVE20\s*-20\.00 EGP/, /Delivery\s*25\.00 EGP/]);
@@ -215,7 +215,7 @@ test.describe('orders', () => {
   });
 
   test('a pickup order shows the branch and the text the API sent instead of an amount', async ({ page }) => {
-    await open(page, '/en/account/orders/mock-order-48199');
+    await open(page, '/en/account/order-history/mock-order-48199');
     await expect(page.getByTestId('order-fulfilment')).toContainText('Nasr City branch');
     await expect(page.getByTestId('order-fulfilment').getByRole('link', { name: 'Open in maps' })).toHaveAttribute('target', '_blank');
     await expect(page.getByTestId('order-total-line').last()).toHaveText(/Pickup from the branch\s*Free/);
@@ -223,7 +223,7 @@ test.describe('orders', () => {
   });
 
   test('cancels an order with a reason and a note', async ({ page, request }) => {
-    await open(page, '/en/account/orders/mock-order-48201');
+    await open(page, '/en/account/order-history/mock-order-48201');
     await page.getByRole('button', { name: 'Cancel order' }).click();
 
     const dialog = page.getByRole('dialog', { name: 'Cancel this order?' });
@@ -242,7 +242,7 @@ test.describe('orders', () => {
   });
 
   test("409 cannot_cancel: shows the backend's message and the order as it is now", async ({ page, request }) => {
-    await open(page, '/en/account/orders/mock-order-48201');
+    await open(page, '/en/account/order-history/mock-order-48201');
     // cancelled meanwhile (e.g. on another device)
     await request.post(`${MOCK_API}/api/customer/v3/orders/mock-order-48201/cancel`, { headers: AUTH, data: { reasonId: 1 } });
 
@@ -256,7 +256,7 @@ test.describe('orders', () => {
   });
 
   test('orders again: goes to the cart, says what was skipped, the header count is fresh', async ({ page, request }) => {
-    await open(page, '/en/account/orders/mock-order-48200');
+    await open(page, '/en/account/order-history/mock-order-48200');
     await expect(page.getByRole('link', { name: 'Cart, 2 items' })).toBeVisible();
     await page.getByRole('button', { name: 'Order again' }).click();
 
@@ -276,12 +276,12 @@ test.describe('orders', () => {
   });
 
   test("answers 404 for an order that isn't the shopper's", async ({ page }) => {
-    const response = await page.goto('/en/account/orders/mock-order-99999');
+    const response = await page.goto('/en/account/order-history/mock-order-99999');
     expect(response?.status()).toBe(404);
   });
 
   test('works in Arabic, right to left', async ({ page }) => {
-    await open(page, '/ar/account/orders/mock-order-48200');
+    await open(page, '/ar/account/order-history/mock-order-48200');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByRole('heading', { level: 1, name: 'طلب رقم 48200' })).toBeVisible();
     await expect(page.getByTestId('order-status')).toHaveText('تم التوصيل');
@@ -290,17 +290,17 @@ test.describe('orders', () => {
     await expect(page.getByRole('button', { name: 'اطلب مرة أخرى' })).toBeVisible();
     expect(await noHorizontalScroll(page)).toBe(true);
 
-    await open(page, '/ar/account/orders');
+    await open(page, '/ar/account/order-history');
     await expect(page.getByTestId('order-summary').first()).toContainText('٢٨ سبتمبر ٢٠٢٦');
   });
 });
 
 test.describe('without a session', () => {
   test('asks to sign in and come back, and never starts a guest session', async ({ page, context }) => {
-    for (const path of ['/en/account/orders', '/en/account/addresses', '/en/account/orders/mock-order-48201', '/en/account/addresses/new']) {
+    for (const path of ['/en/account/order-history', '/en/account/address', '/en/account/order-history/mock-order-48201', '/en/account/address/add']) {
       await open(page, path);
       await expect(page.getByTestId('account-sign-in')).toBeVisible();
-      await expect(page.getByTestId('account-sign-in').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', `/en/sign-in?next=${encodeURIComponent(path)}`);
+      await expect(page.getByTestId('account-sign-in').getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', `/en/session/signin?returnUrl=${encodeURIComponent(path)}`);
     }
     await expect(page.getByTestId('address-form')).toHaveCount(0);
     expect((await context.cookies()).some((cookie) => cookie.name === 'sc_guest')).toBe(false);
@@ -308,7 +308,7 @@ test.describe('without a session', () => {
 
   test('an unknown token is treated the same way', async ({ page, context }) => {
     await context.addCookies([{ name: 'sc_token', value: 'expired-token', domain: '127.0.0.1', path: '/', httpOnly: true, sameSite: 'Lax' }]);
-    await open(page, '/en/account/orders');
+    await open(page, '/en/account/order-history');
     await expect(page.getByTestId('account-sign-in')).toBeVisible();
   });
 });
@@ -318,12 +318,12 @@ test.describe('on a phone (360 px)', () => {
   test.beforeEach(async ({ context }) => signInAsCustomer(context));
 
   test('the pages fit the screen', async ({ page }) => {
-    for (const path of ['/en/account/orders', '/en/account/orders/mock-order-48201', '/ar/account/addresses', '/en/account/addresses/new']) {
+    for (const path of ['/en/account/order-history', '/en/account/order-history/mock-order-48201', '/ar/account/address', '/en/account/address/add']) {
       await open(page, path);
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
       expect(await noHorizontalScroll(page), path).toBe(true);
     }
-    await open(page, '/en/account/orders/mock-order-48201');
+    await open(page, '/en/account/order-history/mock-order-48201');
     await page.getByRole('button', { name: 'Cancel order' }).click();
     await expect(page.getByRole('dialog')).toBeInViewport();
     await page.keyboard.press('Escape');

@@ -34,14 +34,14 @@ describe('pageList', () => {
 
 describe('pageHref', () => {
   it('uses the bare URL for page 1 and ?page= for the others', () => {
-    expect(pageHref('/en/wishlist', 1)).toBe('/en/wishlist');
-    expect(pageHref('/en/wishlist', 3)).toBe('/en/wishlist?page=3');
+    expect(pageHref('/en/favorites', 1)).toBe('/en/favorites');
+    expect(pageHref('/en/favorites', 3)).toBe('/en/favorites?page=3');
   });
 
   it('keeps other query parameters and drops undefined ones', () => {
-    expect(pageHref('/en/wishlist', 2, { perPage: 24, sort: undefined })).toBe('/en/wishlist?page=2&perPage=24');
-    expect(pageHref('/en/wishlist', 1, { perPage: 24 })).toBe('/en/wishlist?perPage=24');
-    expect(pageHref('/en/wishlist', 2, { page: 9 })).toBe('/en/wishlist?page=2');
+    expect(pageHref('/en/favorites', 2, { perPage: 24, sort: undefined })).toBe('/en/favorites?page=2&perPage=24');
+    expect(pageHref('/en/favorites', 1, { perPage: 24 })).toBe('/en/favorites?perPage=24');
+    expect(pageHref('/en/favorites', 2, { page: 9 })).toBe('/en/favorites?page=2');
   });
 });
 
@@ -64,50 +64,50 @@ describe('positiveIntParam', () => {
 
 describe('Pagination', () => {
   it('renders nothing for a single page', () => {
-    const { container } = render(<Pagination pagination={{ page: 1, totalPages: 1 }} baseHref="/en/wishlist" locale="en" labels={labels} />);
+    const { container } = render(<Pagination pagination={{ page: 1, totalPages: 1 }} baseHref="/en/favorites" locale="en" labels={labels} />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('links to the previous, next and numbered pages', () => {
-    render(<Pagination pagination={{ page: 2, totalPages: 3 }} baseHref="/en/wishlist" query={{ perPage: 2 }} locale="en" labels={labels} />);
+    render(<Pagination pagination={{ page: 2, totalPages: 3 }} baseHref="/en/favorites" query={{ perPage: 2 }} locale="en" labels={labels} />);
     const nav = screen.getByRole('navigation', { name: 'Wishlist pages' });
 
-    expect(within(nav).getByRole('link', { name: 'Previous' })).toHaveAttribute('href', '/en/wishlist?perPage=2');
-    expect(within(nav).getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/wishlist?page=3&perPage=2');
-    expect(within(nav).getByRole('link', { name: 'Page 1' })).toHaveAttribute('href', '/en/wishlist?perPage=2');
+    expect(within(nav).getByRole('link', { name: 'Previous' })).toHaveAttribute('href', '/en/favorites?perPage=2');
+    expect(within(nav).getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/favorites?page=3&perPage=2');
+    expect(within(nav).getByRole('link', { name: 'Page 1' })).toHaveAttribute('href', '/en/favorites?perPage=2');
     expect(within(nav).getByRole('link', { name: 'Page 2' })).toHaveAttribute('aria-current', 'page');
     expect(within(nav).getByRole('link', { name: 'Page 3' })).not.toHaveAttribute('aria-current');
   });
 
   it('has no previous link on the first page and no next link on the last', () => {
-    const { rerender } = render(<Pagination pagination={{ page: 1, totalPages: 2 }} baseHref="/en/wishlist" locale="en" labels={labels} />);
+    const { rerender } = render(<Pagination pagination={{ page: 1, totalPages: 2 }} baseHref="/en/favorites" locale="en" labels={labels} />);
     expect(screen.queryByRole('link', { name: 'Previous' })).toBeNull();
-    expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/wishlist?page=2');
+    expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/favorites?page=2');
 
-    rerender(<Pagination pagination={{ page: 2, totalPages: 2 }} baseHref="/en/wishlist" locale="en" labels={labels} />);
-    expect(screen.getByRole('link', { name: 'Previous' })).toHaveAttribute('href', '/en/wishlist');
+    rerender(<Pagination pagination={{ page: 2, totalPages: 2 }} baseHref="/en/favorites" locale="en" labels={labels} />);
+    expect(screen.getByRole('link', { name: 'Previous' })).toHaveAttribute('href', '/en/favorites');
     expect(screen.queryByRole('link', { name: 'Next' })).toBeNull();
   });
 
   it('can bring the reader back to the list on the new page (fragment)', () => {
-    render(<Pagination pagination={{ page: 1, totalPages: 3 }} baseHref="/en/p/jj-bath" locale="en" labels={labels} fragment="reviews" />);
-    expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/p/jj-bath?page=2#reviews');
-    expect(screen.getByRole('link', { name: 'Page 1' })).toHaveAttribute('href', '/en/p/jj-bath#reviews');
+    render(<Pagination pagination={{ page: 1, totalPages: 3 }} baseHref="/en/jj-bath" locale="en" labels={labels} fragment="reviews" />);
+    expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/en/jj-bath?page=2#reviews');
+    expect(screen.getByRole('link', { name: 'Page 1' })).toHaveAttribute('href', '/en/jj-bath#reviews');
   });
 
   it('marks gaps and shows Arabic digits in Arabic', () => {
     render(
       <Pagination
         pagination={{ page: 5, totalPages: 10 }}
-        baseHref="/ar/wishlist"
+        baseHref="/ar/favorites"
         locale="ar"
         labels={{ nav: 'صفحات المفضلة', previous: 'السابق', next: 'التالي', page: 'صفحة' }}
       />,
     );
     const nav = screen.getByRole('navigation', { name: 'صفحات المفضلة' });
     expect(within(nav).getAllByText('…')).toHaveLength(2);
-    expect(within(nav).getByRole('link', { name: 'صفحة ١٠' })).toHaveAttribute('href', '/ar/wishlist?page=10');
+    expect(within(nav).getByRole('link', { name: 'صفحة ١٠' })).toHaveAttribute('href', '/ar/favorites?page=10');
     expect(within(nav).getByRole('link', { name: 'صفحة ٥' })).toHaveAttribute('aria-current', 'page');
-    expect(within(nav).getByRole('link', { name: 'السابق' })).toHaveAttribute('href', '/ar/wishlist?page=4');
+    expect(within(nav).getByRole('link', { name: 'السابق' })).toHaveAttribute('href', '/ar/favorites?page=4');
   });
 });
