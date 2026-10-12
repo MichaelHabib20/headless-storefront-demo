@@ -2,7 +2,7 @@ import 'server-only';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { getBrands, getCategories, getProducts, getVendors, isApiError, type BrandsPage, type CategoryTree, type ListingScope, type Locale, type ProductListing, type VendorsPage } from '@/sdk';
-import { toSearchParams, type PageParams } from './listing';
+import { toApiParams, toSearchParams, type PageParams } from './listing';
 import { seoMetadata } from './seo';
 import { shopperContext } from './shopper.server';
 import { storefrontClient } from './storefront.server';
@@ -40,8 +40,9 @@ const fetchListing = cache(async (locale: Locale, scopeKey: string, query: strin
   }
 });
 
+/** The page's parameters go to the API in its names (the page's links use the old storefront's names). */
 export function loadListing(locale: Locale, scope: ListingScope, params: PageParams | URLSearchParams): Promise<ListingResult> {
-  return fetchListing(locale, JSON.stringify(scope), toSearchParams(params).toString());
+  return fetchListing(locale, JSON.stringify(scope), toApiParams(toSearchParams(params)).toString());
 }
 
 /** Page meta of a listing, from the backend's `seo` block. */

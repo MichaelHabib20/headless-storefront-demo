@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { ListingFacet, ListingFacetValue, ListingRange, Locale } from '@/sdk';
 import { Money } from '@/money';
 import { translator } from '@/lib/i18n';
-import { formFields, listingHref, swatchColor } from '@/lib/listing';
+import { PRICE_FIELDS, formFields, listingHref, swatchColor } from '@/lib/listing';
 import { formatNumber } from '@/lib/numbers';
 import styles from './Listing.module.css';
 
@@ -87,8 +87,9 @@ function ValueMark({ hint, value }: { hint: string; value: ListingFacetValue }) 
 }
 
 /**
- * A from/to filter the shopper types. The form sends `priceMin` / `priceMax` (the contract's names)
- * next to the parameters of the facet's `query` and the page's own ones, as hidden fields.
+ * A from/to filter the shopper types. The form sends `price_from` / `price_to` (the old storefront's
+ * names; the page turns them into the contract's `priceMin` / `priceMax`) next to the parameters of
+ * the facet's `query` and the page's own ones, as hidden fields.
  * Works without JavaScript (a plain GET form); with it, next/form navigates in place.
  */
 function RangeForm({ facet, range, locale, links }: { facet: ListingFacet; range: ListingRange; locale: Locale; links: ListingLinks }) {
@@ -103,11 +104,11 @@ function RangeForm({ facet, range, locale, links }: { facet: ListingFacet; range
         <label htmlFor={`${id}-min`} className={styles.rangeLabel}>
           {t('catalogPriceFrom')}
         </label>
-        <input id={`${id}-min`} name="priceMin" type="number" min={0} step="any" inputMode="decimal" defaultValue={range.selectedMin ?? ''} className={styles.rangeInput} />
+        <input id={`${id}-min`} name={PRICE_FIELDS.min} type="number" min={0} step="any" inputMode="decimal" defaultValue={range.selectedMin ?? ''} className={styles.rangeInput} />
         <label htmlFor={`${id}-max`} className={styles.rangeLabel}>
           {t('catalogPriceTo')}
         </label>
-        <input id={`${id}-max`} name="priceMax" type="number" min={0} step="any" inputMode="decimal" defaultValue={range.selectedMax ?? ''} className={styles.rangeInput} />
+        <input id={`${id}-max`} name={PRICE_FIELDS.max} type="number" min={0} step="any" inputMode="decimal" defaultValue={range.selectedMax ?? ''} className={styles.rangeInput} />
       </div>
       {(range.min || range.max) && (
         <p className={styles.rangeBounds} data-testid="range-bounds">

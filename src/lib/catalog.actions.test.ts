@@ -57,6 +57,11 @@ describe('loadListing', () => {
     expect((await loadListing('en', { brand: 'x' }, { sort: 'price_asc', page: '2' })).status).toBe('ok');
     expect(calls()[0].url).toBe('products?sort=price_asc&page=2&brand=x');
 
+    // the old storefront's names of the page's links go to the API in its own names
+    env.fetch.mockResolvedValueOnce(reply(200, { data: { items: [] } }));
+    await loadListing('en', { category: ['skin-care'] }, { brand_id: ['bioderma', 'vichy'], in_stock: '1', price_from: '10', sort: 'low', page: '2' });
+    expect(calls()[1].url).toBe('products?brands=bioderma%2Cvichy&inStock=true&priceMin=10&sort=price_asc&page=2&category=skin-care');
+
     env.fetch.mockResolvedValueOnce(reply(404, { error: { code: 'not_found', message: 'No' } }));
     expect(await loadListing('en', { brand: 'nope' }, {})).toEqual({ status: 'not_found' });
     env.fetch.mockResolvedValueOnce(reply(422, { error: { code: 'validation_failed', message: 'Bad price' } }));

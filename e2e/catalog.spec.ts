@@ -53,13 +53,14 @@ test.describe('catalog', () => {
     expect(errors).toEqual([]);
   });
 
-  test('filters are links the backend wrote: select, chip, remove, clear all', async ({ page, request }) => {
+  test('filters are links the backend wrote, in the old storefront names: select, chip, remove, clear all', async ({ page, request }) => {
     const data = await listing(request, 'category=mom-baby');
     const lavender = data.facets.find((f) => f.key === 'color')!.values.find((v) => v.label === 'Lavender')!;
+    expect(lavender.query).toBe('options=color-lavender');
     await page.goto('/en/product/mom-baby');
 
     await page.getByTestId('facet-value').filter({ hasText: 'Lavender' }).click();
-    await expect(page).toHaveURL(`/en/product/mom-baby?${lavender.query}`);
+    await expect(page).toHaveURL('/en/product/mom-baby?options_values_ids=color-lavender');
     await expect(page.getByTestId('listing-count')).toHaveText(`Results: ${lavender.count}`);
     await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(lavender.count!);
     await expect(page.getByTestId('facet-value').filter({ hasText: 'Lavender' })).toHaveAttribute('data-selected', 'true');
@@ -69,7 +70,7 @@ test.describe('catalog', () => {
     await expect(page.getByTestId('applied-filter')).toHaveCount(2);
     await page.getByRole('link', { name: 'Remove filter: Lavender' }).click();
     await expect(page.getByTestId('applied-filter')).toHaveCount(1);
-    await expect(page).toHaveURL('/en/product/mom-baby?inStock=true');
+    await expect(page).toHaveURL('/en/product/mom-baby?in_stock=1');
 
     await page.getByRole('link', { name: 'Clear all', exact: true }).click();
     await expect(page).toHaveURL('/en/product/mom-baby');
@@ -85,23 +86,23 @@ test.describe('catalog', () => {
 
     await page.getByTestId('sort').locator('summary').click();
     await page.getByTestId('sort').getByRole('link', { name: byPrice.label }).click();
-    await expect(page).toHaveURL(`/en/products?${byPrice.query}`);
+    await expect(page).toHaveURL('/en/products?sort=high');
     await expect(page.getByTestId('listing-grid').getByTestId('product-card').first()).toContainText(sorted.items[0].name);
 
     const pages = page.getByRole('navigation', { name: 'Result pages' });
     await pages.getByRole('link', { name: 'Page 2' }).click();
-    await expect(page).toHaveURL(`/en/products?${byPrice.query}&page=2`);
+    await expect(page).toHaveURL('/en/products?sort=high&page=2');
     const second = await listing(request, `${byPrice.query}&page=2`);
     await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(second.items.length);
   });
 
-  test('the price range form sends priceMin/priceMax next to the other filters', async ({ page }) => {
-    await page.goto('/en/product/mom-baby?options=color-lavender');
+  test('the price range form sends price_from/price_to next to the other filters', async ({ page }) => {
+    await page.goto('/en/product/mom-baby?options_values_ids=color-lavender');
     const form = page.getByTestId('range-form');
     await form.getByRole('spinbutton', { name: 'From' }).fill('100');
     await form.getByRole('spinbutton', { name: 'To' }).fill('190');
     await form.getByRole('button', { name: 'Apply' }).click();
-    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?options=color-lavender&priceMin=100&priceMax=190$/);
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?options_values_ids=color-lavender&price_from=100&price_to=190$/);
     await expect(page.getByTestId('applied-filter').filter({ hasText: '100 EGP – 190 EGP' })).toBeVisible();
     await expect(page.getByTestId('range-form').getByRole('spinbutton', { name: 'From' })).toHaveValue('100');
   });
@@ -110,7 +111,7 @@ test.describe('catalog', () => {
     await page.goto('/en/products?search=cologne');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Search results for "cologne"');
     await page.getByTestId('facet-value').filter({ hasText: 'Pink' }).click();
-    await expect(page).toHaveURL(/\/en\/products\?search=cologne&options=color-pink$/);
+    await expect(page).toHaveURL(/\/en\/products\?search=cologne&options_values_ids=color-pink$/);
 
     await page.goto('/en/products?search=zzzz');
     await expect(page.getByTestId('listing-empty')).toContainText('No products found');
@@ -157,10 +158,29 @@ test.describe('catalog', () => {
   test('unknown scopes are 404, refused filters show the backend message', async ({ page }) => {
     expect((await page.goto('/en/product/no-such-category'))?.status()).toBe(404);
     expect((await page.goto('/en/product/brand/no-such-brand'))?.status()).toBe(404);
+    await page.goto('/en/product/mom-baby?price_from=abc');
+    await expect(page.getByTestId('listing-invalid')).toContainText('Some filters are not valid.');
     await page.goto('/en/product/mom-baby?priceMin=abc');
     await expect(page.getByTestId('listing-invalid')).toContainText('Some filters are not valid.');
     await page.getByRole('link', { name: 'Show everything' }).click();
     await expect(page).toHaveURL('/en/product/mom-baby');
+  });
+
+  test('old filter URLs and v3 filter URLs open the same listing; its links use the old names', async ({ page, request }) => {
+    const data = await listing(request, 'category=mom-baby&options=color-lavender&inStock=true&sort=price_desc');
+    for (const url of [
+      '/en/product/mom-baby?options_values_ids=color-lavender&in_stock=1&sort=high',
+      '/en/product/mom-baby?options=color-lavender&inStock=true&sort=price_desc',
+    ]) {
+      await page.goto(url);
+      await expect(page.getByTestId('listing-count')).toHaveText(`Results: ${data.pagination.total}`);
+      await expect(page.getByTestId('applied-filter')).toHaveCount(2);
+      await expect(page.getByTestId('facet-value').filter({ hasText: 'Lavender' })).toHaveAttribute('data-selected', 'true');
+      const hrefs = await page.locator('a[rel="nofollow"]').evaluateAll((links) => links.map((a) => a.getAttribute('href') ?? ''));
+      expect(hrefs.length).toBeGreaterThan(0);
+      for (const href of hrefs) expect(href).not.toMatch(/[?&](brands|categories|options|inStock|priceMin|priceMax)=|sort=(price|name|rating)_/);
+      await expect(page.getByRole('link', { name: 'Remove filter: Lavender' })).toHaveAttribute('href', '/en/product/mom-baby?in_stock=1&sort=high');
+    }
   });
 
   test('Arabic listing', async ({ page, request }) => {
@@ -296,7 +316,7 @@ test.describe('catalog on a phone', () => {
     const drawer = page.getByRole('dialog', { name: 'Filters' });
     await expect(drawer).toBeVisible();
     await drawer.getByTestId('facet-value').filter({ hasText: 'Blue' }).click();
-    await expect(page).toHaveURL(/options=color-blue/);
+    await expect(page).toHaveURL(/options_values_ids=color-blue/);
     await expect(drawer.getByTestId('facet-value').filter({ hasText: 'Blue' })).toHaveAttribute('data-selected', 'true');
     await drawer.getByRole('button', { name: 'Show results' }).click();
     await expect(drawer).toBeHidden();
@@ -322,7 +342,7 @@ test.describe('filters without JavaScript', () => {
     await expect(page.getByTestId('listing-filters')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Filters' })).toBeHidden();
     await page.getByTestId('facet-value').filter({ hasText: 'Lavender' }).click();
-    await expect(page).toHaveURL(/options=color-lavender/);
+    await expect(page).toHaveURL(/options_values_ids=color-lavender/);
     await expect(page.getByTestId('applied-filter')).toHaveCount(1);
   });
 });

@@ -36,7 +36,7 @@ describe('ListingPage', () => {
     vi.mocked(loadListing).mockResolvedValue({ status: 'error' });
     render(await ListingPage(props));
     expect(screen.getByTestId('listing-error')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/products?search=bath&priceMin=abc');
+    expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute('href', '/en/products?search=bath&price_from=abc');
   });
 
   it('an unknown scope is a 404', async () => {

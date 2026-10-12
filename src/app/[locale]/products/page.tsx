@@ -22,6 +22,12 @@ function first(value: string | string[] | undefined): string {
   return (Array.isArray(value) ? value[0] : value) ?? '';
 }
 
+/** The old storefront's numeric ids among the values (`5`, `5,6`, repeated), comma-joined; '' when none. */
+function oldIds(value: string | string[] | undefined): string {
+  const items = (Array.isArray(value) ? value : value === undefined ? [] : [value]).flatMap((item) => item.split(','));
+  return items.filter((item) => /^\d+$/.test(item.trim())).map((item) => item.trim()).join(',');
+}
+
 /** The search text of the page (`?search=`, the old storefront's name, or `?q=`); none = all products. */
 function searchText(params: PageParams): string {
   return first(params.search) || first(params.q);
@@ -33,7 +39,8 @@ function kept(params: PageParams): Record<string, string> {
   const q = searchText(params);
   if (q) keep.search = q;
   for (const name of SCOPE_PARAMS) {
-    const value = first(params[name]);
+    // a sub-category slug in `sub_category_id` is a filter of the backend's links, not the scope (an id)
+    const value = name === 'sub_category_id' ? oldIds(params[name]) : first(params[name]);
     if (value) keep[name] = value;
   }
   return keep;
