@@ -21,6 +21,8 @@ describe('resolveTarget', () => {
     [{ type: 'search', query: 'panadol extra' }, '/en/products?search=panadol%20extra'],
     [{ type: 'search', query: '' }, '/en/all-products'],
     [{ type: 'deals' }, '/en/products/deals'],
+    [{ type: 'deals', category: ['skin-care'] }, '/en/product/deals/skin-care'],
+    [{ type: 'deals', category: [] }, '/en/products/deals'],
     [{ type: 'home' }, '/en'],
   ];
 
@@ -34,6 +36,7 @@ describe('resolveTarget', () => {
 
   it('writes Arabic category and brand slugs as the API sends them, encoded', () => {
     expect(resolveTarget({ type: 'category', path: ['الادوية', 'مضادات'] }, 'ar')?.href).toBe(`/ar/product/${encodeURIComponent('الادوية')}/${encodeURIComponent('مضادات')}`);
+    expect(resolveTarget({ type: 'deals', category: ['الادوية'] }, 'ar')?.href).toBe(`/ar/product/deals/${encodeURIComponent('الادوية')}`);
     expect(resolveTarget({ type: 'brand', slug: 'بيوديرما--vichy' }, 'ar')?.href).toBe(`/ar/product/brand/${encodeURIComponent('بيوديرما')}--vichy`);
   });
 
@@ -59,7 +62,7 @@ describe('resolveTarget', () => {
 describe('isStorefrontPath', () => {
   it.each(Object.keys(routes))('knows the route %s as one of ours', (name) => {
     const route = routes[name as keyof typeof routes] as (locale: Locale, arg: never) => string;
-    const href = route('en', (name === 'category' || name === 'categoryView' ? ['x'] : 'x') as never);
+    const href = route('en', (name === 'category' || name === 'categoryView' || name === 'deals' ? ['x'] : 'x') as never);
     expect(isStorefrontPath(href), href).toBe(true);
   });
 

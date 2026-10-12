@@ -29,7 +29,10 @@ export const routes = {
   landingPage: (locale: Locale, slug: string) => `/${locale}/landing-page/${encode(slug)}`,
   form: (locale: Locale, slug: string) => `/${locale}/forms/${encode(slug)}`,
   tag: (locale: Locale, slug: string) => `/${locale}/products/tag/${encode(slug)}`,
-  deals: (locale: Locale) => `/${locale}/products/deals`,
+  /** The old /products/deals/{name}: the deals of the category `name` (only its own page links here). */
+  dealsByName: (locale: Locale, name: string) => `/${locale}/products/deals/${encode(name)}`,
+  /** All deals; with a category path the deals of that category: /product/deals/{cat} (the old category chips, Arabic slug on /ar). */
+  deals: (locale: Locale, category: readonly string[] = []) => (category.length ? `/${locale}/product/deals/${category.map(encode).join('/')}` : `/${locale}/products/deals`),
   /** Search results (`?search=`, the old storefront's name); without a query it lists all products. */
   search: (locale: Locale, query = '') => (query ? `/${locale}/products?search=${encode(query)}` : `/${locale}/products`),
   /** Every product (the old storefront's /all-products); the Target `{type: search, query: ""}` opens it. */
@@ -174,7 +177,7 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
     case 'search':
       return internal(target.query ? routes.search(locale, target.query) : routes.allProducts(locale));
     case 'deals':
-      return internal(routes.deals(locale));
+      return internal(routes.deals(locale, target.category ?? []));
     case 'home':
       return internal(routes.home(locale));
     case 'url':

@@ -155,6 +155,29 @@ test.describe('catalog', () => {
     await expect(page.getByTestId('listing-empty')).toBeVisible();
   });
 
+  test('deals of one category: /product/deals/{cat} and the old /products/deals/{name} send deals + category', async ({ page, request }) => {
+    const data = await listing(request, 'deals=true&category=mom-baby');
+    const all = await listing(request, 'deals=true');
+    expect(data.items.length).toBeLessThan(all.items.length);
+    for (const url of ['/en/product/deals/mom-baby', '/en/products/deals/mom-baby']) {
+      await page.goto(url);
+      await expect(page.getByRole('heading', { level: 1, name: data.context.title })).toBeVisible();
+      await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(data.items.length);
+      // canonical: the deals Target with its category, at the old chips' address
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/product\/deals\/mom-baby$/);
+      // the crumb back to all deals
+      await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Deals', exact: true })).toHaveAttribute('href', '/en/products/deals');
+    }
+    // filters stay on the page's own address
+    await page.getByTestId('facet-value').first().click();
+    await expect(page).toHaveURL(/\/en\/products\/deals\/mom-baby\?/);
+
+    // a category the backend does not know: all the deals (the old site never answered 404 there)
+    expect((await page.goto('/en/product/deals/no-such-category'))?.status()).toBe(200);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(all.items.length);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/products\/deals$/);
+  });
+
   test('unknown scopes are 404, refused filters show the backend message', async ({ page }) => {
     expect((await page.goto('/en/product/no-such-category'))?.status()).toBe(404);
     expect((await page.goto('/en/product/brand/no-such-brand'))?.status()).toBe(404);

@@ -363,6 +363,10 @@ paths:
       summary: One product listing for every listing page (category, brand, list, deals, tag, search, all products)
       description: |
         Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
+        One pair is allowed: `deals=true&category={path}` lists the deals of that category (the old storefront's
+        `/product/deals/{cat}`); its `seo.canonical` is `{type: deals, category: [...]}`.
+        `seo.index` is false when the request carries any query parameter other than `page`, `locale` and the
+        scope parameters (old names such as `list_ids` or `sort` included), as on the old storefront.
         Filter and sort parameters come from the `query` strings of a previous answer: pass them through
         as they are. Works without a token; with a token prices and limits are the shopper's.
         The old storefront's names are read too, so its listing URLs can be passed through unchanged:
@@ -375,7 +379,7 @@ paths:
         - { name: brand, in: query, required: false, description: BrandTarget.slug, schema: { type: string } }
         - { name: list, in: query, required: false, description: 'ListTarget.slug, or ListTarget.id when the slug is null', schema: { type: string } }
         - { name: tag, in: query, required: false, description: TagTarget.slug, schema: { type: string } }
-        - { name: deals, in: query, required: false, schema: { type: boolean } }
+        - { name: deals, in: query, required: false, description: 'May be sent with `category`: the deals of that category', schema: { type: boolean } }
         - { name: q, in: query, required: false, description: Search text, schema: { type: string, maxLength: 200 } }
         - { name: vendor, in: query, required: false, description: 'Phase B: VendorTarget.id (404 when the store has multi-vendor off)', schema: { type: integer, minimum: 1 } }
         - { name: brands, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
@@ -1952,6 +1956,12 @@ components:
       additionalProperties: false
       properties:
         type: { type: string, enum: [deals] }
+        category:
+          description: 'Optional: the deals of this category only (CategoryTarget.path; the old storefront''s `/product/deals/{cat}`)'
+          type: array
+          minItems: 1
+          maxItems: 3
+          items: { type: string, minLength: 1 }
     HomeTarget:
       type: object
       required: [type]
@@ -2780,7 +2790,7 @@ components:
             properties:
               locale: { $ref: '#/components/schemas/Locale' }
               target: { $ref: '#/components/schemas/Target' }
-        index: { type: boolean, description: False → tell search engines not to index this page }
+        index: { type: boolean, description: 'False → tell search engines not to index this page. Listings: also false when the request has any query parameter other than `page`, `locale` and the scope.' }
         # ---- added for the SEO phase (optional: absent = nothing to add)
         breadcrumbs:
           description: Home first, this page last (the last item's target may be null)

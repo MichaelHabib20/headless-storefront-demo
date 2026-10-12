@@ -45,6 +45,7 @@ describe('mock catalog module follows the contract', () => {
       'list=best-sellers&page=2',
       'tag=new-arrivals',
       'deals=true',
+      'deals=true&category=mom-baby',
       'q=cologne',
       'q=zzzz',
       'priceMax=100&brands=johnson-johnson&categories=hair-care',
@@ -55,7 +56,7 @@ describe('mock catalog module follows the contract', () => {
       expectValid('ProductListingResponse', answer.payload);
       // every link the backend writes leads to a valid listing again
       for (const link of queries(answer.data)) {
-        const scope = query.split('&').find((p) => /^(category|brand|list|tag|deals|q)=/.test(p)) ?? '';
+        const scope = query.split('&').filter((p) => /^(category|brand|list|tag|deals|q)=/.test(p)).join('&');
         const next = get('/products', [scope, link].filter(Boolean).join('&'));
         expect(next.status, `${query} → ${link}`).toBe(200);
       }
@@ -72,6 +73,8 @@ describe('mock catalog module follows the contract', () => {
       ['/products', 'priceMin=abc', 422],
       ['/products', 'page=0', 422],
       ['/products', 'brand=a&tag=b', 422],
+      ['/products', 'deals=true&brand=bioderma', 422],
+      ['/products', 'deals=true&category=nope', 404],
       ['/search/suggestions', 'q=', 422],
       ['/resolve', '', 422],
     ]) {
@@ -113,6 +116,28 @@ describe('mock catalog module follows the contract', () => {
     const deal = get('/products', 'deals=true').data.items[0];
     expect(deal.price.compareAtDisplay).not.toBeNull();
     expect(deal.price.amount).toBe(store.product(deal.id, 'en').price.amount);
+  });
+
+  it('deals of one category: only the deals of that category, canonical deals + category', () => {
+    for (const locale of ['en', 'ar']) {
+      const { get } = api(locale);
+      const listing = get('/products', 'deals=true&category=mom-baby').data;
+      const all = get('/products', 'deals=true').data;
+      expect(listing.items.length).toBeGreaterThan(0);
+      expect(listing.items.length).toBeLessThan(all.items.length);
+      expect(listing.seo.canonical).toEqual({ type: 'deals', category: ['mom-baby'] });
+      expect(listing.seo.index).toBe(true);
+      expect(listing.context.type).toBe('deals');
+      expect(listing.context.title).toMatch(locale === 'en' ? /^Deals: / : /^عروض /);
+      expect(listing.breadcrumbs.map((c) => c.target)).toEqual([{ type: 'home' }, { type: 'deals' }, { type: 'deals', category: ['mom-baby'] }]);
+    }
+  });
+
+  it('like the backend, any query but page, locale and the scope makes a listing noindex', () => {
+    const { get } = api();
+    expect(get('/products', 'list=best-sellers&locale=en').data.seo.index).toBe(true);
+    expect(get('/products', 'list=best-sellers&list_ids=7').data.seo.index).toBe(false);
+    expect(get('/products', 'category=mom-baby&utm_source=x').data.seo.index).toBe(false);
   });
 
   it('resolves old URLs and the redirect table', () => {

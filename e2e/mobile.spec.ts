@@ -33,6 +33,16 @@ test.describe('mobile', () => {
     }
   });
 
+  test('the deals of one category on a phone, both languages', async ({ page }) => {
+    test.skip(live, 'needs the mock API catalog');
+    for (const locale of ['en', 'ar']) {
+      expect((await page.goto(`/${locale}/product/deals/mom-baby`))?.status()).toBe(200);
+      await expect(page.getByTestId('listing-grid').getByTestId('product-card').first()).toBeVisible();
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/${locale}/product/deals/mom-baby$`));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+  });
+
   test('prescriptions on a phone: the bottom nav opens the page, both languages fit', async ({ page, context }) => {
     test.skip(live, 'needs the mock API');
     await page.request.post(`${MOCK_API}/__reset`);

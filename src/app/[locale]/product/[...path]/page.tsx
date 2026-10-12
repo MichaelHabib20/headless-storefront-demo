@@ -24,11 +24,15 @@ function decode(segment: string): string {
  * The old storefront's `/product/...` listings:
  * - `/product/{cat}[/{group}][/{sub}]` a category, group or sub-category (Arabic slugs on /ar);
  * - `/product/{cat}/brand/{brand}` a category with one brand picked;
- * - `/product/deals/{cat}` the deals (the old category chips on the deals page).
+ * - `/product/deals/{cat}` the deals of that category (the old category chips on the deals page);
+ *   `/product/deals` all deals.
  */
 function listing(locale: Locale, raw: string[], params: PageParams): { scope: ListingScope; params: PageParams; path: string } {
   const path = raw.map(decode);
-  if (path[0] === 'deals') return { scope: { deals: true }, params, path: routes.deals(locale) };
+  if (path[0] === 'deals') {
+    const category = path.slice(1);
+    return { scope: category.length ? { deals: true, category } : { deals: true }, params, path: routes.deals(locale, category) };
+  }
   if (path.length === 3 && path[1] === 'brand') {
     const withBrand = params.brands ? params : { ...params, brands: path[2] };
     return { scope: { category: [path[0]] }, params: withBrand, path: `/${locale}/product/${raw.join('/')}` };
