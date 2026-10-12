@@ -3,7 +3,8 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import type { Locale, ProductListing } from '@/sdk';
-import { emptyProductsFixture, productsFixture } from '@/test/fixtures';
+import { categoriesFixture, emptyProductsFixture, productsFixture } from '@/test/fixtures';
+import { categoryFilters, findCategoryChain } from '@/lib/category-filters';
 import { toOldQuery } from '@/lib/listing';
 import { ListingView } from './ListingView';
 
@@ -141,5 +142,58 @@ describe('ListingView', () => {
     await user.click(toggle);
     await user.click(screen.getByRole('button', { name: 'Show results' }));
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+describe('ListingView: the Categories / Sub category sections from the tree', () => {
+  const sectionsOf = (container: HTMLElement) => [...container.querySelectorAll('[data-testid="category-filter"]')].map((section) => [section.getAttribute('data-section'), section.querySelector('summary')?.textContent, section.hasAttribute('open')]);
+
+  it.each([
+    ['en', 'Categories', 'Sub category'],
+    ['ar', 'فئات', 'تصنيف فرعي للفئات'],
+  ] as const)('show as links to the tree nodes with no facets at all, the page’s category selected (%s)', (locale, categoriesTitle, subTitle) => {
+    const tree = categoriesFixture(locale);
+    const category = tree.items.find((node) => node.children.some((child) => child.children.length))!;
+    const group = category.children.find((child) => child.children.length)!;
+    const sub = group.children[0];
+    const filters = categoryFilters(tree, findCategoryChain(tree, sub.target.path));
+    const { container } = render(<ListingView listing={{ ...productsFixture(locale), facets: [] }} locale={locale} links={{ path: PATH[locale] }} categories={filters} />);
+
+    expect(screen.getByTestId('listing-filters')).toBeInTheDocument();
+    expect(sectionsOf(container)).toEqual([
+      ['categories', categoriesTitle, true],
+      ['sub-categories', subTitle, true],
+    ]);
+    const links = [...container.querySelectorAll<HTMLAnchorElement>('[data-section="categories"] a')];
+    expect(links).toHaveLength(tree.items.length);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(tree.items.map((node) => `/${locale}/product/${node.target.path.join('/')}`));
+    // real links search engines may follow (no rel=nofollow, unlike the filter values)
+    expect(links.every((link) => !link.hasAttribute('rel'))).toBe(true);
+    const current = container.querySelector('[data-section="categories"] [aria-current="page"]');
+    expect(current).toBeNull(); // the page is the sub-category, not the category
+    const subs = container.querySelector('[data-section="sub-categories"]')!;
+    const ticked = [...subs.querySelectorAll('[data-selected="true"]')].map((link) => link.getAttribute('href'));
+    // the group heading (its own page) and the ticked sub-category, which unticks back to the category
+    expect(ticked).toEqual([`/${locale}/product/${group.target.path.join('/')}`, `/${locale}/product/${category.target.path.join('/')}`]);
+  });
+
+  it('a category page has the Sub category section closed, its category current', () => {
+    const tree = categoriesFixture('en');
+    const category = tree.items.find((node) => node.children.length)!;
+    const { container } = render(<ListingView listing={{ ...productsFixture('en'), facets: [] }} locale="en" links={{ path: PATH.en }} categories={categoryFilters(tree, [category])} />);
+    expect(sectionsOf(container).map(([key, , open]) => [key, open])).toEqual([
+      ['categories', true],
+      ['sub-categories', false],
+    ]);
+    expect(container.querySelector('[data-section="categories"] [aria-current="page"]')).toHaveTextContent(category.name);
+  });
+
+  it('keeps the backend facets, and drops Sub category when the backend sends its own categories facet', () => {
+    const tree = categoriesFixture('en');
+    const listing = productsFixture('en');
+    expect(listing.facets.some((facet) => facet.key === 'category')).toBe(true);
+    const { container } = render(<ListingView listing={listing} locale="en" links={{ path: PATH.en }} categories={categoryFilters(tree, [tree.items[1]])} />);
+    expect(sectionsOf(container).map(([key]) => key)).toEqual(['categories']);
+    expect(screen.getAllByTestId('facet')).toHaveLength(listing.facets.length);
   });
 });

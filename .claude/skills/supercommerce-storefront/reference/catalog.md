@@ -61,6 +61,18 @@ Page links keep the current query and change only `page`: `listingPageHref()`.
 The price range is a GET form (`next/form`): `priceMin` / `priceMax` inputs plus the parameters
 of `range.query` as hidden fields (`formFields()`).
 
+## Categories / Sub category (from the tree)
+
+Like the old storefront, every listing but a custom list shows a **Categories** section (every top
+category, radio marks) and, on a category page, a **Sub category** section (that category's groups
+with their sub-categories, check marks; open on a sub-category page). They come from
+`GET /categories` (`loadCategoryTree`), not from the facets, so they show even when the store's
+side filters are off (`facets: []`). `src/lib/category-filters.ts` finds the page's nodes
+(`findCategoryChain`: every old path shape, English slugs on /ar via the other tree) and builds the
+sections (`categoryFilters`); `CategoryFilters.tsx` draws them as plain links to each node's Target
+(followable, no `nofollow`). A ticked sub-category links back to its category (unticks). When the
+backend sends its own category facet, "Sub category" is left out (`hasCategoryFacet`).
+
 ## What the storefront must not do
 
 - Build, merge, parse or reorder filter parameters (`brands=`, `options=`, `sort=`…). Use the `query` strings.
@@ -139,6 +151,7 @@ can never be a product slug).
 | Brands | `johnson-johnson` (10 products), `bioderma` and the other featured brands (empty) |
 | List / tag / deals | `/products/list/125`, `/products/list/best-sellers`, `/products/tag/new-arrivals`, `/products/deals` (3 products with an old price) |
 | Search | By name or brand; `q=zzzz` → no results |
+| Side filters off | `POST /__mode {"sideFilters": false}` → every listing sends `facets: []` (reset with `/__reset`) |
 | Pages | 8 per page (`perPage` up to 48) |
 | Invalid | `priceMin=abc`, `page=0` → 422 |
 | Resolve | `/en/product/36480/…` → target; `/en/summer-sale` → 302 deals; `/en/blog` → 301 external; `/en/discontinued-offer` → gone; `/en/self-redirect`, `/en/unsafe-redirect` → broken rows (404) |

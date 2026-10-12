@@ -5,6 +5,8 @@
  *   GET /categories          → CategoriesResponse (the tree of the recorded menu)
  *   GET /brands              → BrandsResponse (the recorded featured brands, paged)
  *   GET /resolve             → ResolutionResponse
+ * POST /__mode {"sideFilters": false} → listings send `facets: []`, like a store with the backend's
+ * ENABLE_SEARCH_SIDE_FILTERS off (the storefront still shows the category tree sections).
  *
  * The products are the shopper store's (same ids, names and prices as the cart and wishlist).
  * What a listing needs on top (categories, color, lists, tags, deals) is in FACTS below. Deals
@@ -235,6 +237,7 @@ function positiveInt(query, name, fallback, max, t, fields) {
 export function createCatalogModule(shopper) {
   const { nodes: categories, images: categoryImages } = loadCategories();
   const brands = loadBrands();
+  let sideFilters = true;
 
   /** A product card for listings: the shopper store's card, with the old price on deals. */
   function card(product, locale) {
@@ -515,7 +518,7 @@ export function createCatalogModule(shopper) {
 
     const { filters } = read;
     const matching = sorted(filtered(scope.items, filters), filters.sort, locale);
-    const facets = facetsOf(scope, filters, locale);
+    const facets = sideFilters ? facetsOf(scope, filters, locale) : [];
     const total = matching.length;
     const filteredOrSorted = hasFilters(filters) || filters.sort !== 'featured' || page > 1;
     // like the backend: any query parameter but page, locale and the scope makes the listing noindex
@@ -620,6 +623,14 @@ export function createCatalogModule(shopper) {
   }
 
   return {
+    /** POST /__mode {"sideFilters": false}: no facets on any listing (the backend's switch off). */
+    mode(body) {
+      if (body && 'sideFilters' in body) sideFilters = Boolean(body.sideFilters);
+      return { sideFilters };
+    },
+    reset() {
+      sideFilters = true;
+    },
     handle({ method, pathname, query, locale }) {
       if (method !== 'GET') return null;
       if (pathname === '/products') return listing(query, locale);

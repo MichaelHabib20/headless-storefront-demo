@@ -164,6 +164,20 @@ describe('mock catalog module follows the contract', () => {
     expect(only('/en/blog').result).toBe('none');
   });
 
+  it('sends no facets with side filters off (the backend switch), until reset', () => {
+    const catalog = createCatalogModule(createShopperStore());
+    const list = (query) => catalog.handle({ method: 'GET', pathname: '/products', query: new URLSearchParams(query), token: null, locale: 'en', body: null })[1];
+    expect(list('category=every-day-essentials').data.facets.length).toBeGreaterThan(0);
+    expect(catalog.mode({ sideFilters: false })).toEqual({ sideFilters: false });
+    expect(catalog.mode({ fail: true })).toEqual({ sideFilters: false });
+    const off = list('category=every-day-essentials');
+    expectValid('ProductListingResponse', off);
+    expect(off.data.facets).toEqual([]);
+    expect(off.data.items.length).toBeGreaterThan(0);
+    catalog.reset();
+    expect(list('category=every-day-essentials').data.facets.length).toBeGreaterThan(0);
+  });
+
   it('is part of the mock API', () => {
     const request = { method: 'GET', pathname: '/categories', locale: 'en', query: new URLSearchParams(), token: null, body: null };
     expect(createModules(createShopperStore()).some((part) => part.handle(request))).toBe(true);
