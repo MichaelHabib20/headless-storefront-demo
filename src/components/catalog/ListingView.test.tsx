@@ -3,10 +3,15 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import type { Locale, ProductListing } from '@/sdk';
-import { emptyProductsFixture, productsFixture } from '@/test/fixtures';
+import { categoriesFixture, emptyProductsFixture, productsFixture } from '@/test/fixtures';
+import { categoryFilters, findCategoryChain } from '@/lib/category-filters';
+import { toOldQuery } from '@/lib/listing';
 import { ListingView } from './ListingView';
 
 const PATH = { en: '/en/product/mom-baby', ar: '/ar/product/mom-baby' };
+
+/** This page + the backend's query in the old storefront's names (`brands` → `brand_id`, ...). */
+const href = (query: string) => (query ? `${PATH.en}?${toOldQuery(query)}` : PATH.en);
 
 function renderListing(listing: ProductListing, locale: Locale = 'en', extra: { keep?: Record<string, string>; current?: string } = {}) {
   return render(<ListingView listing={listing} locale={locale} links={{ path: PATH[locale], keep: extra.keep }} current={extra.current} />);
@@ -36,7 +41,7 @@ describe('ListingView', () => {
     expect(screen.getAllByTestId('listing-count')[1]).toHaveTextContent('النتائج: ١٢');
   });
 
-  it('every filter value, sort option, chip and "clear all" links to this page + the query the backend wrote', () => {
+  it('every filter value, sort option, chip and "clear all" links to this page + the query the backend wrote, in the old names', () => {
     const listing = productsFixture('en');
     renderListing(listing);
 
@@ -44,19 +49,21 @@ describe('ListingView', () => {
     const expected = listing.facets.filter((f) => f.kind === 'options').flatMap((f) => f.values);
     expect(values).toHaveLength(expected.length);
     values.forEach((link, i) => {
-      expect(link).toHaveAttribute('href', expected[i].query ? `${PATH.en}?${expected[i].query}` : PATH.en);
+      expect(link).toHaveAttribute('href', href(expected[i].query));
       expect(link).toHaveAttribute('data-selected', String(expected[i].selected));
     });
 
     const sort = screen.getByTestId('sort');
     listing.sort.forEach((option) => {
-      expect(within(sort).getByRole('link', { name: option.label })).toHaveAttribute('href', option.query ? `${PATH.en}?${option.query}` : PATH.en);
+      expect(within(sort).getByRole('link', { name: option.label })).toHaveAttribute('href', href(option.query));
     });
     expect(within(sort).getByRole('link', { name: listing.sort.find((s) => s.selected)!.label })).toHaveAttribute('aria-current', 'true');
 
     const chip = listing.appliedFilters[0];
-    expect(screen.getByRole('link', { name: `Remove filter: ${chip.label}` })).toHaveAttribute('href', chip.removeQuery ? `${PATH.en}?${chip.removeQuery}` : PATH.en);
-    expect(screen.getByRole('link', { name: 'Clear all' })).toHaveAttribute('href', listing.clearFiltersQuery ? `${PATH.en}?${listing.clearFiltersQuery}` : PATH.en);
+    expect(screen.getByRole('link', { name: `Remove filter: ${chip.label}` })).toHaveAttribute('href', href(chip.removeQuery));
+    expect(screen.getByRole('link', { name: 'Clear all' })).toHaveAttribute('href', href(listing.clearFiltersQuery ?? ''));
+    // e.g. the fixture's color + sort link
+    expect(screen.getByRole('link', { name: /Name: A/ }).getAttribute('href')).toBe(`${PATH.en}?options_values_ids=color-lavender&sort=a-z`);
   });
 
   it('draws facet values by their display hint and skips unknown kinds', () => {
@@ -81,15 +88,15 @@ describe('ListingView', () => {
 
     const form = screen.getByTestId('range-form') as HTMLFormElement;
     const hidden = [...form.querySelectorAll<HTMLInputElement>('input[type="hidden"]')].map((i) => [i.name, i.value]);
-    expect(hidden).toEqual([['q', 'bath'], ...new URLSearchParams(range.query)]);
-    expect(screen.getByLabelText('From')).toHaveAttribute('name', 'priceMin');
-    expect(screen.getByLabelText('To')).toHaveAttribute('name', 'priceMax');
+    expect(hidden).toEqual([['q', 'bath'], ...new URLSearchParams(toOldQuery(range.query))]);
+    expect(screen.getByLabelText('From')).toHaveAttribute('name', 'price_from');
+    expect(screen.getByLabelText('To')).toHaveAttribute('name', 'price_to');
     expect(screen.getByTestId('range-bounds')).toHaveTextContent(`${range.min!.display} – ${range.max!.display}`);
   });
 
   it('page links keep the current query and change only the page', () => {
     const listing = productsFixture('en');
-    const current = 'options=color-lavender&sort=price_asc&perPage=2';
+    const current = 'options_values_ids=color-lavender&sort=low&perPage=2';
     renderListing(listing, 'en', { current });
     const pages = screen.getByRole('navigation', { name: 'Result pages' });
     expect(within(pages).getByRole('link', { name: 'Page 2' })).toHaveAttribute('href', `${PATH.en}?${current}&page=2`);
@@ -113,7 +120,7 @@ describe('ListingView', () => {
 
   it('offers to clear the filters when filters emptied the list', () => {
     renderListing({ ...productsFixture('en'), items: [], clearFiltersQuery: 'sort=price_asc' });
-    expect(within(screen.getByTestId('listing-empty')).getByRole('link', { name: 'Clear all filters' })).toHaveAttribute('href', `${PATH.en}?sort=price_asc`);
+    expect(within(screen.getByTestId('listing-empty')).getByRole('link', { name: 'Clear all filters' })).toHaveAttribute('href', `${PATH.en}?sort=low`);
   });
 
   it('opens the filters as a dialog on phones and closes with Escape', async () => {
@@ -135,5 +142,58 @@ describe('ListingView', () => {
     await user.click(toggle);
     await user.click(screen.getByRole('button', { name: 'Show results' }));
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+describe('ListingView: the Categories / Sub category sections from the tree', () => {
+  const sectionsOf = (container: HTMLElement) => [...container.querySelectorAll('[data-testid="category-filter"]')].map((section) => [section.getAttribute('data-section'), section.querySelector('summary')?.textContent, section.hasAttribute('open')]);
+
+  it.each([
+    ['en', 'Categories', 'Sub category'],
+    ['ar', 'فئات', 'تصنيف فرعي للفئات'],
+  ] as const)('show as links to the tree nodes with no facets at all, the page’s category selected (%s)', (locale, categoriesTitle, subTitle) => {
+    const tree = categoriesFixture(locale);
+    const category = tree.items.find((node) => node.children.some((child) => child.children.length))!;
+    const group = category.children.find((child) => child.children.length)!;
+    const sub = group.children[0];
+    const filters = categoryFilters(tree, findCategoryChain(tree, sub.target.path));
+    const { container } = render(<ListingView listing={{ ...productsFixture(locale), facets: [] }} locale={locale} links={{ path: PATH[locale] }} categories={filters} />);
+
+    expect(screen.getByTestId('listing-filters')).toBeInTheDocument();
+    expect(sectionsOf(container)).toEqual([
+      ['categories', categoriesTitle, true],
+      ['sub-categories', subTitle, true],
+    ]);
+    const links = [...container.querySelectorAll<HTMLAnchorElement>('[data-section="categories"] a')];
+    expect(links).toHaveLength(tree.items.length);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(tree.items.map((node) => `/${locale}/product/${node.target.path.join('/')}`));
+    // real links search engines may follow (no rel=nofollow, unlike the filter values)
+    expect(links.every((link) => !link.hasAttribute('rel'))).toBe(true);
+    const current = container.querySelector('[data-section="categories"] [aria-current="page"]');
+    expect(current).toBeNull(); // the page is the sub-category, not the category
+    const subs = container.querySelector('[data-section="sub-categories"]')!;
+    const ticked = [...subs.querySelectorAll('[data-selected="true"]')].map((link) => link.getAttribute('href'));
+    // the group heading (its own page) and the ticked sub-category, which unticks back to the category
+    expect(ticked).toEqual([`/${locale}/product/${group.target.path.join('/')}`, `/${locale}/product/${category.target.path.join('/')}`]);
+  });
+
+  it('a category page has the Sub category section closed, its category current', () => {
+    const tree = categoriesFixture('en');
+    const category = tree.items.find((node) => node.children.length)!;
+    const { container } = render(<ListingView listing={{ ...productsFixture('en'), facets: [] }} locale="en" links={{ path: PATH.en }} categories={categoryFilters(tree, [category])} />);
+    expect(sectionsOf(container).map(([key, , open]) => [key, open])).toEqual([
+      ['categories', true],
+      ['sub-categories', false],
+    ]);
+    expect(container.querySelector('[data-section="categories"] [aria-current="page"]')).toHaveTextContent(category.name);
+  });
+
+  it('keeps the backend facets, and drops Sub category when the backend sends its own categories facet', () => {
+    const tree = categoriesFixture('en');
+    const listing = productsFixture('en');
+    expect(listing.facets.some((facet) => facet.key === 'category')).toBe(true);
+    const { container } = render(<ListingView listing={listing} locale="en" links={{ path: PATH.en }} categories={categoryFilters(tree, [tree.items[1]])} />);
+    expect(sectionsOf(container).map(([key]) => key)).toEqual(['categories']);
+    expect(screen.getAllByTestId('facet')).toHaveLength(listing.facets.length);
   });
 });

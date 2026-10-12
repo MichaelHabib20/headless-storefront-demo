@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { ListingScope, Locale } from '@/sdk';
-import { loadListing } from '@/lib/catalog.server';
+import { loadCategoryTree, loadListing } from '@/lib/catalog.server';
+import { categoryFilters, findCategoryChain, type CategoryFilters } from '@/lib/category-filters';
 import { translator } from '@/lib/i18n';
 import { JsonLd } from '@/lib/jsonld';
 import { listingHref, toSearchParams, type PageParams } from '@/lib/listing';
@@ -26,10 +27,11 @@ export async function ListingPage({ locale, scope, params, links }: ListingPageP
   const current = toSearchParams(params).toString();
   if (result.status === 'not_found') notFound();
   if (result.status === 'ok') {
+    const categories = await loadCategoryFilters(locale, scope);
     return (
       <>
         <JsonLd seo={result.listing.seo} locale={locale} />
-        <ListingView listing={result.listing} locale={locale} links={links} current={current} />
+        <ListingView listing={result.listing} locale={locale} links={links} current={current} categories={categories} />
       </>
     );
   }
@@ -47,4 +49,20 @@ export async function ListingPage({ locale, scope, params, links }: ListingPageP
       </div>
     </div>
   );
+}
+
+/**
+ * The "Categories" / "Sub category" sections, from the category tree like the old storefront
+ * (not from the backend's facets, which a store may switch off). Hidden on custom lists, as there;
+ * a category page has its category, group and sub-category selected. The tree failing to load
+ * only drops the sections.
+ */
+async function loadCategoryFilters(locale: Locale, scope: ListingScope): Promise<CategoryFilters | null> {
+  if ('list' in scope) return null;
+  const tree = await loadCategoryTree(locale);
+  if (!tree) return null;
+  const path = 'category' in scope && !('deals' in scope) ? scope.category : null;
+  if (!path?.length) return categoryFilters(tree, null);
+  const chain = findCategoryChain(tree, path) ?? findCategoryChain(tree, path, await loadCategoryTree(locale === 'en' ? 'ar' : 'en'));
+  return categoryFilters(tree, chain);
 }

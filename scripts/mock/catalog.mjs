@@ -5,6 +5,8 @@
  *   GET /categories          → CategoriesResponse (the tree of the recorded menu)
  *   GET /brands              → BrandsResponse (the recorded featured brands, paged)
  *   GET /resolve             → ResolutionResponse
+ * POST /__mode {"sideFilters": false} → listings send `facets: []`, like a store with the backend's
+ * ENABLE_SEARCH_SIDE_FILTERS off (the storefront still shows the category tree sections).
  *
  * The products are the shopper store's (same ids, names and prices as the cart and wishlist).
  * What a listing needs on top (categories, color, lists, tags, deals) is in FACTS below. Deals
@@ -25,6 +27,8 @@ const PER_PAGE = 8;
 const MAX_PER_PAGE = 48;
 const BRANDS_PER_PAGE = 48;
 const SUGGESTIONS = 6;
+/** Query names that never make a listing noindex (the backend's ListingPage::INDEXABLE_PARAMS). */
+const INDEXABLE_PARAMS = ['page', 'locale', 'category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor'];
 
 const TEXT = {
   en: {
@@ -33,6 +37,7 @@ const TEXT = {
     search: (q) => `Search results for "${q}"`,
     searchCrumb: 'Search',
     deals: 'Deals',
+    dealsIn: (name) => `Deals: ${name}`,
     dealsText: '<p>Limited-time offers on <strong>baby care</strong> favourites.</p>',
     category: 'Category',
     brand: 'Brand',
@@ -58,6 +63,7 @@ const TEXT = {
     search: (q) => `نتائج البحث عن "${q}"`,
     searchCrumb: 'البحث',
     deals: 'العروض',
+    dealsIn: (name) => `عروض ${name}`,
     dealsText: '<p>عروض لفترة محدودة على منتجات <strong>العناية بالطفل</strong>.</p>',
     category: 'الفئة',
     brand: 'الماركة',
@@ -231,6 +237,7 @@ function positiveInt(query, name, fallback, max, t, fields) {
 export function createCatalogModule(shopper) {
   const { nodes: categories, images: categoryImages } = loadCategories();
   const brands = loadBrands();
+  let sideFilters = true;
 
   /** A product card for listings: the shopper store's card, with the old price on deals. */
   function card(product, locale) {
@@ -260,8 +267,26 @@ export function createCatalogModule(shopper) {
       const value = query.get(key);
       return value !== null && value !== '' && !(key === 'deals' && (value === 'false' || value === '0'));
     });
-    if (given.length > 1) return { invalid: t.oneScope };
     const all = products(locale);
+    // the one pair allowed: the deals of one category (the old /product/deals/{cat})
+    if (given.length === 2 && given.includes('deals') && given.includes('category')) {
+      const key = query.get('category');
+      const node = categories.get(key);
+      if (!node) return null;
+      const name = node.name[locale];
+      const dealsTarget = { type: 'deals' };
+      const target = { type: 'deals', category: node.path };
+      return {
+        type: 'deals',
+        title: t.dealsIn(name),
+        items: all.filter((p) => facts(p).was && inCategory(p, key)),
+        target,
+        crumbs: [home, { label: t.deals, target: dealsTarget }, { label: name, target }],
+        category: key,
+        index: true,
+      };
+    }
+    if (given.length > 1) return { invalid: t.oneScope };
     const scope = given[0];
 
     if (!scope) {
@@ -493,9 +518,11 @@ export function createCatalogModule(shopper) {
 
     const { filters } = read;
     const matching = sorted(filtered(scope.items, filters), filters.sort, locale);
-    const facets = facetsOf(scope, filters, locale);
+    const facets = sideFilters ? facetsOf(scope, filters, locale) : [];
     const total = matching.length;
     const filteredOrSorted = hasFilters(filters) || filters.sort !== 'featured' || page > 1;
+    // like the backend: any query parameter but page, locale and the scope makes the listing noindex
+    const extraQuery = [...query.keys()].some((key) => !INDEXABLE_PARAMS.includes(key));
     const alternates = ['en', 'ar'].map((l) => ({ locale: l, target: scope.target }));
 
     return [
@@ -515,7 +542,7 @@ export function createCatalogModule(shopper) {
             description: scope.description ? `${scope.title} · ${t.storeName}` : null,
             canonical: scope.target,
             alternates,
-            index: scope.index && !filteredOrSorted,
+            index: scope.index && !filteredOrSorted && !extraQuery,
             // seo + marketing: breadcrumbs, structured data, rel=prev/next, preview (scripts/mock/seo-extras.mjs)
             ...listingSeoExtras(scope, matching.slice((page - 1) * perPage, page * perPage), page, Math.ceil(total / perPage)),
           },
@@ -596,6 +623,14 @@ export function createCatalogModule(shopper) {
   }
 
   return {
+    /** POST /__mode {"sideFilters": false}: no facets on any listing (the backend's switch off). */
+    mode(body) {
+      if (body && 'sideFilters' in body) sideFilters = Boolean(body.sideFilters);
+      return { sideFilters };
+    },
+    reset() {
+      sideFilters = true;
+    },
     handle({ method, pathname, query, locale }) {
       if (method !== 'GET') return null;
       if (pathname === '/products') return listing(query, locale);

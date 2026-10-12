@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Locale, ProductListing } from '@/sdk';
+import { hasCategoryFacet, type CategoryFilters as CategoryFiltersData } from '@/lib/category-filters';
 import { translator } from '@/lib/i18n';
 import { listingHref, listingPageHref } from '@/lib/listing';
 import { formatNumber } from '@/lib/numbers';
@@ -9,6 +10,7 @@ import { Breadcrumbs } from '../ui/Breadcrumbs';
 import { Pagination } from '../ui/Pagination';
 import { RichText } from '../ui/RichText';
 import { AppliedFilters } from './AppliedFilters';
+import { CategoryFilters } from './CategoryFilters';
 import { FilterDrawer, FilterPanel, FilterToggle } from './FilterDrawer';
 import { ListingFilters, type ListingLinks } from './ListingFilters';
 import { SortMenu } from './SortMenu';
@@ -20,6 +22,8 @@ interface ListingViewProps {
   links: ListingLinks;
   /** The page's current query string, kept as it is on the page links. */
   current?: string;
+  /** The "Categories" / "Sub category" sections from the category tree; null on pages without them (lists). */
+  categories?: CategoryFiltersData | null;
 }
 
 /**
@@ -27,13 +31,17 @@ interface ListingViewProps {
  * Heading, text, filters, sort, counts and pages are the backend's; every link is this page's
  * path + a `query` the backend wrote.
  */
-export function ListingView({ listing, locale, links, current = '' }: ListingViewProps) {
+export function ListingView({ listing, locale, links, current = '', categories = null }: ListingViewProps) {
   const t = translator(locale);
   const { context, pagination, facets } = listing;
-  const hasFilters = facets.length > 0;
+  const hasFilters = facets.length > 0 || Boolean(categories?.categories.length);
 
   const filters = (
     <FilterPanel labels={{ title: t('catalogFilters'), close: t('catalogCloseFilters'), done: t('catalogShowResults') }}>
+      {categories && (
+        // The backend's own category facet (sub-categories in the results) replaces "Sub category".
+        <CategoryFilters filters={categories} locale={locale} withoutSubCategories={hasCategoryFacet(facets)} />
+      )}
       <ListingFilters facets={facets} locale={locale} links={links} />
     </FilterPanel>
   );

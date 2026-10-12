@@ -15,6 +15,8 @@ interface Ctx {
  * What a listing page lists. One scope at most; `{}` = all products.
  * - `category`: `CategoryTarget.path` (sent joined with "/")
  * - `list`: `ListTarget.slug`, or its id when the slug is null
+ * - `deals`: all deals, or with `category` the deals of that category (the one pair the API allows,
+ *   the old storefront's `/product/deals/{cat}`)
  * - `q`: search text
  */
 export type ListingScope =
@@ -22,7 +24,7 @@ export type ListingScope =
   | { brand: string }
   | { list: string | number }
   | { tag: string }
-  | { deals: true }
+  | { deals: true; category?: readonly string[] }
   | { q: string }
   | { vendor: number }
   | Record<string, never>;
@@ -30,8 +32,23 @@ export type ListingScope =
 /** The page's own query parameters (Next.js `searchParams`, or a URLSearchParams). */
 export type ListingParams = URLSearchParams | Record<string, string | string[] | undefined>;
 
+/** The API's scope parameters: they come only from the route, never from the page's own URL. */
+const SCOPE_NAMES = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor'];
+
 /** Scope parameters come only from the route; `locale` only from the client. */
-const RESERVED = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor', 'locale'];
+const RESERVED = [...SCOPE_NAMES, 'locale'];
+
+const paramEntries = (params: ListingParams): Array<[string, string]> =>
+  params instanceof URLSearchParams ? [...params] : Object.entries(params).flatMap(([key, value]) => (Array.isArray(value) ? value.map((v): [string, string] => [key, v]) : value === undefined ? [] : [[key, value]]));
+
+/**
+ * True when the page's own URL carries a scope name (`/products/list/x?category=y`): listingQuery
+ * drops it, so the backend never sees it and cannot noindex the page for it. The old storefront
+ * noindexed every listing URL with a query except `?page=N`, so such a page must not be indexed.
+ */
+export function hasTypedScope(params: ListingParams = {}): boolean {
+  return paramEntries(params).some(([key]) => SCOPE_NAMES.includes(key));
+}
 
 /**
  * The request's query: every parameter of the page as it is (filters, sort and pages come from
@@ -40,14 +57,15 @@ const RESERVED = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor', 'l
  */
 export function listingQuery(scope: ListingScope, params: ListingParams = {}): string {
   const query = new URLSearchParams();
-  const entries = params instanceof URLSearchParams ? [...params] : Object.entries(params).flatMap(([key, value]) => (Array.isArray(value) ? value.map((v) => [key, v]) : value === undefined ? [] : [[key, value]]));
-  for (const [key, value] of entries) if (!RESERVED.includes(key)) query.append(key, value);
+  for (const [key, value] of paramEntries(params)) if (!RESERVED.includes(key)) query.append(key, value);
 
-  if ('category' in scope) query.set('category', scope.category.join('/'));
+  if ('deals' in scope) {
+    query.set('deals', 'true');
+    if (scope.category?.length) query.set('category', scope.category.join('/'));
+  } else if ('category' in scope) query.set('category', scope.category.join('/'));
   else if ('brand' in scope) query.set('brand', scope.brand);
   else if ('list' in scope) query.set('list', String(scope.list));
   else if ('tag' in scope) query.set('tag', scope.tag);
-  else if ('deals' in scope) query.set('deals', 'true');
   else if ('q' in scope && scope.q) query.set('q', scope.q);
   else if ('vendor' in scope) query.set('vendor', String(scope.vendor));
   return query.toString();

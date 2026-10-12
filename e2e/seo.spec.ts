@@ -110,6 +110,9 @@ test.describe('head tags', () => {
     await page.goto('/en/all-products?perPage=2');
     await expect(page.locator('head link[rel="next"]')).toHaveAttribute('href', '/en/all-products?page=2');
     await expect(page.locator('head link[rel="prev"]')).toHaveCount(0);
+    // any query but page (here perPage) is noindex, as on the old storefront
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    await page.goto('/en/all-products');
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 
     await page.goto('/en/all-products?perPage=2&page=2');
@@ -118,6 +121,22 @@ test.describe('head tags', () => {
 
     await page.goto('/ar/products?search=baby');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  });
+
+  test('listings: indexable without a query; noindex with any query but page, scope names typed into the URL included', async ({ page }) => {
+    for (const path of ['/en/products/list/best-sellers', '/en/product/deals/mom-baby', '/en/product/mom-baby']) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveCount(0);
+    }
+    // the backend sees these and says noindex
+    await page.goto('/en/product/mom-baby?utm_source=x');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    // the route gives the scope, so these never reach the backend: the storefront says noindex
+    for (const path of ['/en/products/list/best-sellers?category=mom-baby', '/en/product/mom-baby?brand=x', '/en/products/deals?q=baby']) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveAttribute('content', /noindex/);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveAttribute('content', /(^|,\s*)follow/);
+    }
   });
 
   test('Open Graph and Twitter cards, og:type product, absolute canonical, Google verification on home', async ({ page, request }) => {

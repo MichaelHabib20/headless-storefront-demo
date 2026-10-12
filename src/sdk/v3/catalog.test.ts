@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ApiError } from '../errors';
-import { getBrands, getCategories, getProducts, getSearchSuggestions, listingQuery, resolvePath } from './catalog';
+import { getBrands, getCategories, getProducts, getSearchSuggestions, hasTypedScope, listingQuery, resolvePath } from './catalog';
 import { createStorefrontClient } from './http';
 
 const ROOT = 'https://api.test/api/customer/v3/';
@@ -31,6 +31,21 @@ describe('listingQuery', () => {
     expect(listingQuery({ tag: 'new' }, { brand: 'x', category: 'y', locale: 'ar', q: 'z' })).toBe('tag=new');
     expect(listingQuery({ list: 125 }, {})).toBe('list=125');
     expect(listingQuery({ deals: true }, { deals: 'false' })).toBe('deals=true');
+  });
+
+  it('sends the deals of one category as deals + category (the one pair the API allows)', () => {
+    expect(listingQuery({ deals: true, category: ['skin-care'] }, { sort: 'low', category: 'x', deals: 'false' })).toBe('sort=low&deals=true&category=skin-care');
+    expect(listingQuery({ deals: true, category: ['الادوية', 'مسكنات'] })).toBe(`deals=true&category=${encodeURIComponent('الادوية/مسكنات')}`);
+    expect(listingQuery({ deals: true, category: [] })).toBe('deals=true');
+  });
+
+  it('hasTypedScope: a scope name in the page URL (dropped from the request) is noted', () => {
+    expect(hasTypedScope({ category: 'y' })).toBe(true);
+    expect(hasTypedScope(new URLSearchParams('page=2&brand=x'))).toBe(true);
+    expect(hasTypedScope({ q: ['a', 'b'] })).toBe(true);
+    expect(hasTypedScope({ page: '2', sort: 'low', search: 'x', locale: 'ar' })).toBe(false);
+    expect(hasTypedScope({ category: undefined })).toBe(false);
+    expect(hasTypedScope()).toBe(false);
   });
 
   it('searches for q, and lists everything without it', () => {

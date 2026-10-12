@@ -1,8 +1,8 @@
 import 'server-only';
 import type { Metadata } from 'next';
 import { cache } from 'react';
-import { getBrands, getCategories, getProducts, getVendors, isApiError, type BrandsPage, type CategoryTree, type ListingScope, type Locale, type ProductListing, type VendorsPage } from '@/sdk';
-import { toSearchParams, type PageParams } from './listing';
+import { getBrands, getCategories, getProducts, getVendors, hasTypedScope, isApiError, type BrandsPage, type CategoryTree, type ListingScope, type Locale, type ProductListing, type VendorsPage } from '@/sdk';
+import { toApiParams, toSearchParams, type PageParams } from './listing';
 import { seoMetadata } from './seo';
 import { shopperContext } from './shopper.server';
 import { storefrontClient } from './storefront.server';
@@ -40,14 +40,30 @@ const fetchListing = cache(async (locale: Locale, scopeKey: string, query: strin
   }
 });
 
-export function loadListing(locale: Locale, scope: ListingScope, params: PageParams | URLSearchParams): Promise<ListingResult> {
-  return fetchListing(locale, JSON.stringify(scope), toSearchParams(params).toString());
+/**
+ * The page's parameters go to the API in its names (the page's links use the old storefront's names).
+ * The deals of a category the backend does not know (`/product/deals/{x}`, `/products/deals/{name}`)
+ * are all the deals, as on the old storefront, which never answered 404 there; their canonical is
+ * then the deals page.
+ */
+export async function loadListing(locale: Locale, scope: ListingScope, params: PageParams | URLSearchParams): Promise<ListingResult> {
+  const query = toApiParams(toSearchParams(params)).toString();
+  const result = await fetchListing(locale, JSON.stringify(scope), query);
+  if (result.status === 'not_found' && 'deals' in scope && scope.category?.length) return fetchListing(locale, JSON.stringify({ deals: true }), query);
+  return result;
 }
 
-/** Page meta of a listing, from the backend's `seo` block. */
+/**
+ * Page meta of a listing, from the backend's `seo` block. A scope name typed into the page's URL
+ * (`?category=` on a list page) never reaches the backend (the route gives the scope), so the
+ * backend cannot see it: such a URL is noindex here, like every listing URL with a query on the
+ * old storefront.
+ */
 export async function listingMetadata(locale: Locale, scope: ListingScope, params: PageParams): Promise<Metadata> {
   const result = await loadListing(locale, scope, params);
-  return result.status === 'ok' ? seoMetadata(result.listing.seo, locale) : { robots: { index: false } };
+  if (result.status !== 'ok') return { robots: { index: false } };
+  const meta = seoMetadata(result.listing.seo, locale);
+  return hasTypedScope(params) ? { ...meta, robots: { index: false, follow: true } } : meta;
 }
 
 export async function loadCategoryTree(locale: Locale): Promise<CategoryTree | null> {

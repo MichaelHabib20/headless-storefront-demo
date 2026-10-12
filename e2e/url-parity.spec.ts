@@ -24,6 +24,9 @@ test.describe('the old storefront URLs', () => {
       '/en/products?search=cologne',
       '/en/products',
       '/en/products/deals',
+      '/en/product/deals/mom-baby',
+      '/ar/product/deals/mom-baby',
+      '/en/products/deals/mom-baby',
       '/en/products/list/125',
       '/en/all-products',
       '/en/categories',
@@ -57,6 +60,21 @@ test.describe('the old storefront URLs', () => {
     await page.goto('/en');
     const footer = page.locator('footer');
     await expect(footer.locator('a[href="/en/privacy-policy"]').first()).toBeVisible();
+  });
+
+  test('the old category view renders at its own address (/category/..., /category-view)', async ({ page, request }) => {
+    for (const path of ['/en/category', '/en/category/mom-baby', '/en/category/mom-baby/baby-care', '/en/category-view', '/ar/category/mom-baby']) {
+      expect((await get(request, path)).status(), path).toBe(200);
+    }
+    expect((await get(request, '/en/category/no-such-category')).status()).toBe(404);
+
+    await page.goto('/en/category/mom-baby');
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(page).toHaveURL(/\/en\/category\/mom-baby$/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/category\/mom-baby$/);
+    await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', /\/ar\/category\/mom-baby$/);
+    await expect(page.getByRole('link', { name: 'View all' })).toHaveAttribute('href', '/en/product/mom-baby');
+    await expect(page.locator('[data-testid="category-tree"] a[href="/en/product/mom-baby/baby-care"]').first()).toBeVisible();
   });
 
   test('the old server redirects: bare paths, old product links', async ({ request }) => {

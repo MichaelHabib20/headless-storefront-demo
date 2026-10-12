@@ -21,6 +21,8 @@ describe('resolveTarget', () => {
     [{ type: 'search', query: 'panadol extra' }, '/en/products?search=panadol%20extra'],
     [{ type: 'search', query: '' }, '/en/all-products'],
     [{ type: 'deals' }, '/en/products/deals'],
+    [{ type: 'deals', category: ['skin-care'] }, '/en/product/deals/skin-care'],
+    [{ type: 'deals', category: [] }, '/en/products/deals'],
     [{ type: 'home' }, '/en'],
   ];
 
@@ -34,6 +36,7 @@ describe('resolveTarget', () => {
 
   it('writes Arabic category and brand slugs as the API sends them, encoded', () => {
     expect(resolveTarget({ type: 'category', path: ['الادوية', 'مضادات'] }, 'ar')?.href).toBe(`/ar/product/${encodeURIComponent('الادوية')}/${encodeURIComponent('مضادات')}`);
+    expect(resolveTarget({ type: 'deals', category: ['الادوية'] }, 'ar')?.href).toBe(`/ar/product/deals/${encodeURIComponent('الادوية')}`);
     expect(resolveTarget({ type: 'brand', slug: 'بيوديرما--vichy' }, 'ar')?.href).toBe(`/ar/product/brand/${encodeURIComponent('بيوديرما')}--vichy`);
   });
 
@@ -59,7 +62,7 @@ describe('resolveTarget', () => {
 describe('isStorefrontPath', () => {
   it.each(Object.keys(routes))('knows the route %s as one of ours', (name) => {
     const route = routes[name as keyof typeof routes] as (locale: Locale, arg: never) => string;
-    const href = route('en', (name === 'category' ? ['x'] : 'x') as never);
+    const href = route('en', (name === 'category' || name === 'categoryView' || name === 'deals' ? ['x'] : 'x') as never);
     expect(isStorefrontPath(href), href).toBe(true);
   });
 
@@ -69,7 +72,8 @@ describe('isStorefrontPath', () => {
       '/en/product/deals/skin-care', '/en/products', '/en/products?search=x', '/en/products/deals', '/en/products/deals/summer',
       '/en/products/list/125', '/en/products/list/baby/skin-care', '/en/products/tag/new', '/en/landing-page/x', '/en/brand-page/x',
       '/en/pages/about-us', '/en/forms/x', '/en/privacy-policy', '/en/terms-and-conditions', '/en/cookie-policy', '/en/all-categories',
-      '/en/brands', '/en/vendors/3', '/en/session/signin', '/en/orders/order-history/abc', '/en/account/anything/deep',
+      '/en/brands', '/en/vendors/3', '/en/category', '/en/category/skin-care', '/en/category/skin-care/face-care', '/en/category-view',
+      '/en/session/signin', '/en/orders/order-history/abc', '/en/account/anything/deep',
     ]) {
       expect(isStorefrontPath(path), path).toBe(true);
     }
@@ -78,7 +82,7 @@ describe('isStorefrontPath', () => {
   it('leaves the old pages it does not render to the backend resolver', () => {
     for (const path of [
       '/en/products/some-product', '/en/products/name/1471', '/en/products/deals/name/1471', '/en/brands/bioderma', '/en/brand/758',
-      '/en/category/skin-care', '/en/category-view', '/en/blog', '/en/skin-care/face-care', '/en/a/b/c/d/e/f', '/en/p/x', '/en/c/x', '/en/deals',
+      '/en/category/skin-care/face-care/x', '/en/category-view/x', '/en/blog', '/en/skin-care/face-care', '/en/a/b/c/d/e/f', '/en/p/x', '/en/c/x', '/en/deals',
       '/fr/x', '/x',
     ]) {
       expect(isStorefrontPath(path), path).toBe(false);
@@ -126,6 +130,15 @@ describe('interim URLs (before the old URLs were taken over)', () => {
     expect(retiredAccountPage('/ar/account/cards')).toBe('/ar/account');
     expect(retiredAccountPage('/en/orders/link-builder')).toBe('/en/account');
     expect(retiredAccountPage('/en/account/profile')).toBeNull();
+  });
+});
+
+describe('the old category view', () => {
+  it('keeps the /category address (Arabic slugs encoded), and /category-view', () => {
+    expect(routes.categoryView('en')).toBe('/en/category');
+    expect(routes.categoryView('en', ['skin-care', 'face-care'])).toBe('/en/category/skin-care/face-care');
+    expect(routes.categoryView('ar', ['عناية'])).toBe(`/ar/category/${encodeURIComponent('عناية')}`);
+    expect(routes.categoryViewIndex('ar')).toBe('/ar/category-view');
   });
 });
 

@@ -276,6 +276,10 @@ export interface paths {
         /**
          * One product listing for every listing page (category, brand, list, deals, tag, search, all products)
          * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
+         *     One pair is allowed: `deals=true&category={path}` lists the deals of that category (the old storefront's
+         *     `/product/deals/{cat}`); its `seo.canonical` is `{type: deals, category: [...]}`.
+         *     `seo.index` is false when the request carries any query parameter other than `page`, `locale` and the
+         *     scope parameters (old names such as `list_ids` or `sort` included), as on the old storefront.
          *     Filter and sort parameters come from the `query` strings of a previous answer: pass them through
          *     as they are. Works without a token; with a token prices and limits are the shopper's.
          *     The old storefront's names are read too, so its listing URLs can be passed through unchanged:
@@ -1614,6 +1618,8 @@ export interface components {
              * @enum {string}
              */
             type: "deals";
+            /** @description Optional: the deals of this category only (CategoryTarget.path; the old storefront's `/product/deals/{cat}`) */
+            category?: string[];
         };
         HomeTarget: {
             /**
@@ -2154,7 +2160,7 @@ export interface components {
                 locale: components["schemas"]["Locale"];
                 target: components["schemas"]["Target"];
             }[];
-            /** @description False → tell search engines not to index this page */
+            /** @description False → tell search engines not to index this page. Listings: also false when the request has any query parameter other than `page`, `locale` and the scope. */
             index: boolean;
             /** @description Home first, this page last (the last item's target may be null) */
             breadcrumbs?: components["schemas"]["Breadcrumb"][];
@@ -4215,6 +4221,7 @@ export interface operations {
                 list?: string;
                 /** @description TagTarget.slug */
                 tag?: string;
+                /** @description May be sent with `category`: the deals of that category */
                 deals?: boolean;
                 /** @description Search text */
                 q?: string;

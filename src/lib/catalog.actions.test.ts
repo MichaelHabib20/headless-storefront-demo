@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { searchSuggestionsAction } from './catalog.actions';
-import { loadListing } from './catalog.server';
+import { listingMetadata, loadListing } from './catalog.server';
 import { ensureShopperContext } from './shopper.server';
 
 const env = vi.hoisted(() => ({ token: null as string | null, fetch: undefined as unknown as Mock<typeof fetch> }));
@@ -57,6 +57,11 @@ describe('loadListing', () => {
     expect((await loadListing('en', { brand: 'x' }, { sort: 'price_asc', page: '2' })).status).toBe('ok');
     expect(calls()[0].url).toBe('products?sort=price_asc&page=2&brand=x');
 
+    // the old storefront's names of the page's links go to the API in its own names
+    env.fetch.mockResolvedValueOnce(reply(200, { data: { items: [] } }));
+    await loadListing('en', { category: ['skin-care'] }, { brand_id: ['bioderma', 'vichy'], in_stock: '1', price_from: '10', sort: 'low', page: '2' });
+    expect(calls()[1].url).toBe('products?brands=bioderma%2Cvichy&inStock=true&priceMin=10&sort=price_asc&page=2&category=skin-care');
+
     env.fetch.mockResolvedValueOnce(reply(404, { error: { code: 'not_found', message: 'No' } }));
     expect(await loadListing('en', { brand: 'nope' }, {})).toEqual({ status: 'not_found' });
     env.fetch.mockResolvedValueOnce(reply(422, { error: { code: 'validation_failed', message: 'Bad price' } }));
@@ -71,5 +76,26 @@ describe('loadListing', () => {
     env.fetch.mockResolvedValueOnce(reply(401, { error: { code: 'unauthenticated', message: 'No' } })).mockResolvedValueOnce(reply(200, { data: { items: [] } }));
     expect((await loadListing('en', { deals: true }, {})).status).toBe('ok');
     expect(calls().map((c) => c.auth)).toEqual(['Bearer expired', undefined]);
+  });
+
+  it('sends the deals of a category as deals + category; a category the backend does not know is all the deals', async () => {
+    env.fetch.mockResolvedValueOnce(reply(200, { data: { items: [] } }));
+    expect((await loadListing('en', { deals: true, category: ['skin-care'] }, { sort: 'low' })).status).toBe('ok');
+    expect(calls()[0].url).toBe('products?sort=price_asc&deals=true&category=skin-care');
+
+    env.fetch.mockResolvedValueOnce(reply(404, { error: { code: 'not_found', message: 'No' } })).mockResolvedValueOnce(reply(200, { data: { items: [] } }));
+    expect((await loadListing('en', { deals: true, category: ['summer'] }, {})).status).toBe('ok');
+    expect(calls().slice(1).map((c) => c.url)).toEqual(['products?deals=true&category=summer', 'products?deals=true']);
+  });
+});
+
+describe('listingMetadata', () => {
+  const seo = { title: 'Best sellers', description: null, canonical: { type: 'list', slug: 'best-sellers', id: 7 }, alternates: [], index: true };
+
+  it('follows the backend, but a scope name typed into the page URL is noindex (the backend never sees it)', async () => {
+    env.fetch.mockImplementation(async () => reply(200, { data: { items: [], seo } }));
+    expect((await listingMetadata('en', { list: 'best-sellers' }, {})).robots).toBeUndefined();
+    expect((await listingMetadata('en', { list: 'best-sellers' }, { category: 'skin-care' })).robots).toEqual({ index: false, follow: true });
+    expect(calls().map((c) => c.url)).toEqual(['products?list=best-sellers', 'products?list=best-sellers']);
   });
 });

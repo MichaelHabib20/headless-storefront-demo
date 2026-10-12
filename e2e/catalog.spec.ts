@@ -27,6 +27,20 @@ function collectErrors(page: Page) {
   return errors;
 }
 
+type TreeNode = { id: string; name: string; target: { path: string[] }; children: TreeNode[] };
+
+async function categoryTree(request: APIRequestContext, locale = 'en'): Promise<TreeNode[]> {
+  const response = await request.get(`${MOCK_API}/api/customer/v3/categories`, { headers: { 'Accept-Language': locale } });
+  return (await response.json()).data.items;
+}
+
+/** The store's side filters off (the backend's ENABLE_SEARCH_SIDE_FILTERS): listings send `facets: []`. */
+async function sideFiltersOff(request: APIRequestContext) {
+  await request.post(`${MOCK_API}/__mode`, { data: { sideFilters: false } });
+}
+
+const COLOGNE = ['every-day-essentials', 'body-fresheners', 'body-cologne'];
+
 const fitsScreen = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 
 test.describe('catalog', () => {
@@ -53,13 +67,14 @@ test.describe('catalog', () => {
     expect(errors).toEqual([]);
   });
 
-  test('filters are links the backend wrote: select, chip, remove, clear all', async ({ page, request }) => {
+  test('filters are links the backend wrote, in the old storefront names: select, chip, remove, clear all', async ({ page, request }) => {
     const data = await listing(request, 'category=mom-baby');
     const lavender = data.facets.find((f) => f.key === 'color')!.values.find((v) => v.label === 'Lavender')!;
+    expect(lavender.query).toBe('options=color-lavender');
     await page.goto('/en/product/mom-baby');
 
     await page.getByTestId('facet-value').filter({ hasText: 'Lavender' }).click();
-    await expect(page).toHaveURL(`/en/product/mom-baby?${lavender.query}`);
+    await expect(page).toHaveURL('/en/product/mom-baby?options_values_ids=color-lavender');
     await expect(page.getByTestId('listing-count')).toHaveText(`Results: ${lavender.count}`);
     await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(lavender.count!);
     await expect(page.getByTestId('facet-value').filter({ hasText: 'Lavender' })).toHaveAttribute('data-selected', 'true');
@@ -69,7 +84,7 @@ test.describe('catalog', () => {
     await expect(page.getByTestId('applied-filter')).toHaveCount(2);
     await page.getByRole('link', { name: 'Remove filter: Lavender' }).click();
     await expect(page.getByTestId('applied-filter')).toHaveCount(1);
-    await expect(page).toHaveURL('/en/product/mom-baby?inStock=true');
+    await expect(page).toHaveURL('/en/product/mom-baby?in_stock=1');
 
     await page.getByRole('link', { name: 'Clear all', exact: true }).click();
     await expect(page).toHaveURL('/en/product/mom-baby');
@@ -85,23 +100,23 @@ test.describe('catalog', () => {
 
     await page.getByTestId('sort').locator('summary').click();
     await page.getByTestId('sort').getByRole('link', { name: byPrice.label }).click();
-    await expect(page).toHaveURL(`/en/products?${byPrice.query}`);
+    await expect(page).toHaveURL('/en/products?sort=high');
     await expect(page.getByTestId('listing-grid').getByTestId('product-card').first()).toContainText(sorted.items[0].name);
 
     const pages = page.getByRole('navigation', { name: 'Result pages' });
     await pages.getByRole('link', { name: 'Page 2' }).click();
-    await expect(page).toHaveURL(`/en/products?${byPrice.query}&page=2`);
+    await expect(page).toHaveURL('/en/products?sort=high&page=2');
     const second = await listing(request, `${byPrice.query}&page=2`);
     await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(second.items.length);
   });
 
-  test('the price range form sends priceMin/priceMax next to the other filters', async ({ page }) => {
-    await page.goto('/en/product/mom-baby?options=color-lavender');
+  test('the price range form sends price_from/price_to next to the other filters', async ({ page }) => {
+    await page.goto('/en/product/mom-baby?options_values_ids=color-lavender');
     const form = page.getByTestId('range-form');
     await form.getByRole('spinbutton', { name: 'From' }).fill('100');
     await form.getByRole('spinbutton', { name: 'To' }).fill('190');
     await form.getByRole('button', { name: 'Apply' }).click();
-    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?options=color-lavender&priceMin=100&priceMax=190$/);
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?options_values_ids=color-lavender&price_from=100&price_to=190$/);
     await expect(page.getByTestId('applied-filter').filter({ hasText: '100 EGP – 190 EGP' })).toBeVisible();
     await expect(page.getByTestId('range-form').getByRole('spinbutton', { name: 'From' })).toHaveValue('100');
   });
@@ -110,7 +125,7 @@ test.describe('catalog', () => {
     await page.goto('/en/products?search=cologne');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Search results for "cologne"');
     await page.getByTestId('facet-value').filter({ hasText: 'Pink' }).click();
-    await expect(page).toHaveURL(/\/en\/products\?search=cologne&options=color-pink$/);
+    await expect(page).toHaveURL(/\/en\/products\?search=cologne&options_values_ids=color-pink$/);
 
     await page.goto('/en/products?search=zzzz');
     await expect(page.getByTestId('listing-empty')).toContainText('No products found');
@@ -154,13 +169,131 @@ test.describe('catalog', () => {
     await expect(page.getByTestId('listing-empty')).toBeVisible();
   });
 
+  test('deals of one category: /product/deals/{cat} and the old /products/deals/{name} send deals + category', async ({ page, request }) => {
+    const data = await listing(request, 'deals=true&category=mom-baby');
+    const all = await listing(request, 'deals=true');
+    expect(data.items.length).toBeLessThan(all.items.length);
+    for (const url of ['/en/product/deals/mom-baby', '/en/products/deals/mom-baby']) {
+      await page.goto(url);
+      await expect(page.getByRole('heading', { level: 1, name: data.context.title })).toBeVisible();
+      await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(data.items.length);
+      // canonical: the deals Target with its category, at the old chips' address
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/product\/deals\/mom-baby$/);
+      // the crumb back to all deals
+      await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Deals', exact: true })).toHaveAttribute('href', '/en/products/deals');
+    }
+    // filters stay on the page's own address
+    await page.getByTestId('facet-value').first().click();
+    await expect(page).toHaveURL(/\/en\/products\/deals\/mom-baby\?/);
+
+    // a category the backend does not know: all the deals (the old site never answered 404 there)
+    expect((await page.goto('/en/product/deals/no-such-category'))?.status()).toBe(200);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(all.items.length);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/products\/deals$/);
+  });
+
   test('unknown scopes are 404, refused filters show the backend message', async ({ page }) => {
     expect((await page.goto('/en/product/no-such-category'))?.status()).toBe(404);
     expect((await page.goto('/en/product/brand/no-such-brand'))?.status()).toBe(404);
+    await page.goto('/en/product/mom-baby?price_from=abc');
+    await expect(page.getByTestId('listing-invalid')).toContainText('Some filters are not valid.');
     await page.goto('/en/product/mom-baby?priceMin=abc');
     await expect(page.getByTestId('listing-invalid')).toContainText('Some filters are not valid.');
     await page.getByRole('link', { name: 'Show everything' }).click();
     await expect(page).toHaveURL('/en/product/mom-baby');
+  });
+
+  test('old filter URLs and v3 filter URLs open the same listing; its links use the old names', async ({ page, request }) => {
+    const data = await listing(request, 'category=mom-baby&options=color-lavender&inStock=true&sort=price_desc');
+    for (const url of [
+      '/en/product/mom-baby?options_values_ids=color-lavender&in_stock=1&sort=high',
+      '/en/product/mom-baby?options=color-lavender&inStock=true&sort=price_desc',
+    ]) {
+      await page.goto(url);
+      await expect(page.getByTestId('listing-count')).toHaveText(`Results: ${data.pagination.total}`);
+      await expect(page.getByTestId('applied-filter')).toHaveCount(2);
+      await expect(page.getByTestId('facet-value').filter({ hasText: 'Lavender' })).toHaveAttribute('data-selected', 'true');
+      const hrefs = await page.locator('a[rel="nofollow"]').evaluateAll((links) => links.map((a) => a.getAttribute('href') ?? ''));
+      expect(hrefs.length).toBeGreaterThan(0);
+      for (const href of hrefs) expect(href).not.toMatch(/[?&](brands|categories|options|inStock|priceMin|priceMax)=|sort=(price|name|rating)_/);
+      await expect(page.getByRole('link', { name: 'Remove filter: Lavender' })).toHaveAttribute('href', '/en/product/mom-baby?in_stock=1&sort=high');
+    }
+  });
+
+  test('Categories and Sub category come from the category tree, even with no facets (side filters off)', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    expect((await listing(request, `category=${COLOGNE.join('/')}`)).facets).toEqual([]);
+    const tree = await categoryTree(request);
+    const category = tree.find((node) => node.target.path[0] === COLOGNE[0])!;
+    const group = category.children.find((node) => node.target.path[1] === COLOGNE[1])!;
+    const sub = group.children.find((node) => node.target.path[2] === COLOGNE[2])!;
+    const errors = collectErrors(page);
+    await page.goto(`/en/product/${COLOGNE.join('/')}`);
+
+    const filters = page.getByTestId('listing-filters');
+    await expect(filters).toBeVisible();
+    await expect(filters.getByTestId('facet')).toHaveCount(0);
+    const categories = filters.locator('[data-section="categories"]');
+    const subs = filters.locator('[data-section="sub-categories"]');
+    await expect(categories.locator('summary')).toHaveText('Categories');
+    await expect(categories.getByTestId('category-filter-value')).toHaveCount(tree.length);
+    await expect(categories.locator('[data-selected="true"]')).toHaveText(new RegExp(category.name));
+    // on a sub-category page the section is open with the group and the sub ticked
+    await expect(subs).toHaveAttribute('open', '');
+    await expect(subs.locator('summary')).toHaveText('Sub category');
+    await expect(subs.locator('[data-selected="true"]')).toHaveCount(2);
+    await expect(subs.getByRole('link', { name: sub.name })).toHaveAttribute('href', `/en/product/${category.target.path.join('/')}`);
+
+    // another sub-category: its own listing; another category: its listing, its own groups
+    const other = group.children.find((node) => node.id !== sub.id) ?? category.children.find((node) => node.id !== group.id)!;
+    await subs.getByRole('link', { name: other.name, exact: true }).click();
+    await expect(page).toHaveURL(`/en/product/${other.target.path.join('/')}`);
+    await expect(subs.locator('[data-selected="true"]').filter({ hasText: other.name })).toHaveCount(1);
+    const next = tree.find((node) => node.id !== category.id && node.children.length)!;
+    await categories.getByRole('link', { name: next.name, exact: true }).click();
+    await expect(page).toHaveURL(`/en/product/${next.target.path.join('/')}`);
+    await expect(categories.locator('[aria-current="page"]')).toHaveText(new RegExp(next.name));
+    await expect(subs).not.toHaveAttribute('open', '');
+    expect(errors).toEqual([]);
+  });
+
+  test('the tree sections on other listings: search, all products, deals, brand show Categories; a custom list none', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    const tree = await categoryTree(request);
+    for (const path of ['/en/products?search=cologne', '/en/all-products', '/en/products/deals', '/en/product/brand/johnson-johnson']) {
+      await page.goto(path);
+      const filters = page.getByTestId('listing-filters');
+      await expect(filters.locator('[data-section="categories"] [data-testid="category-filter-value"]'), path).toHaveCount(tree.length);
+      await expect(filters.locator('[data-section="categories"] [data-selected="true"]'), path).toHaveCount(0);
+      await expect(filters.locator('[data-section="sub-categories"]'), path).toHaveCount(0);
+    }
+    await page.goto('/en/products/list/best-sellers');
+    await expect(page.getByTestId('listing-grid')).toBeVisible();
+    await expect(page.getByTestId('category-filter')).toHaveCount(0);
+  });
+
+  test('with the backend facets on, they stay; its category facet replaces Sub category', async ({ page }) => {
+    await page.goto(`/en/product/${COLOGNE.slice(0, 2).join('/')}`);
+    const filters = page.getByTestId('listing-filters');
+    await expect(filters.locator('[data-section="categories"]')).toBeVisible();
+    await expect(filters.locator('[data-section="sub-categories"]')).toHaveCount(0);
+    await expect(filters.locator('[data-testid="facet"][data-facet="category"]')).toBeVisible();
+    await expect(filters.locator('[data-testid="facet"][data-facet="price"]')).toBeVisible();
+  });
+
+  test('Arabic: the tree sections in Arabic, right to left', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    const tree = await categoryTree(request, 'ar');
+    const category = tree.find((node) => node.target.path[0] === COLOGNE[0])!;
+    await page.goto(`/ar/product/${COLOGNE.join('/')}`);
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    const filters = page.getByTestId('listing-filters');
+    await expect(filters.locator('[data-section="categories"] summary')).toHaveText('فئات');
+    await expect(filters.locator('[data-section="sub-categories"] summary')).toHaveText('تصنيف فرعي للفئات');
+    await expect(filters.locator('[data-section="categories"] [data-selected="true"]')).toHaveText(new RegExp(category.name));
+    const filterBox = (await filters.boundingBox())!;
+    const resultsBox = (await page.getByTestId('listing-grid').boundingBox())!;
+    expect(filterBox.x).toBeGreaterThan(resultsBox.x); // the sidebar is on the right in RTL
   });
 
   test('Arabic listing', async ({ page, request }) => {
@@ -296,11 +429,25 @@ test.describe('catalog on a phone', () => {
     const drawer = page.getByRole('dialog', { name: 'Filters' });
     await expect(drawer).toBeVisible();
     await drawer.getByTestId('facet-value').filter({ hasText: 'Blue' }).click();
-    await expect(page).toHaveURL(/options=color-blue/);
+    await expect(page).toHaveURL(/options_values_ids=color-blue/);
     await expect(drawer.getByTestId('facet-value').filter({ hasText: 'Blue' })).toHaveAttribute('data-selected', 'true');
     await drawer.getByRole('button', { name: 'Show results' }).click();
     await expect(drawer).toBeHidden();
     await expect(page.getByTestId('applied-filter')).toHaveCount(1);
+  });
+
+  test('with no facets the drawer still opens with the category sections', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    await page.goto(`/en/product/${COLOGNE.join('/')}`);
+    expect(await fitsScreen(page)).toBe(true);
+    await page.getByRole('button', { name: 'Filters' }).click();
+    const drawer = page.getByRole('dialog', { name: 'Filters' });
+    await expect(drawer.locator('[data-section="categories"]')).toBeVisible();
+    await expect(drawer.locator('[data-section="sub-categories"]')).toBeVisible();
+    const tree = await categoryTree(request);
+    const next = tree.find((node) => node.target.path[0] !== COLOGNE[0])!;
+    await drawer.getByRole('link', { name: next.name, exact: true }).click();
+    await expect(page).toHaveURL(`/en/product/${next.target.path.join('/')}`);
   });
 
   test('the header search box is on screen and suggests', async ({ page }) => {
@@ -322,7 +469,19 @@ test.describe('filters without JavaScript', () => {
     await expect(page.getByTestId('listing-filters')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Filters' })).toBeHidden();
     await page.getByTestId('facet-value').filter({ hasText: 'Lavender' }).click();
-    await expect(page).toHaveURL(/options=color-lavender/);
+    await expect(page).toHaveURL(/options_values_ids=color-lavender/);
     await expect(page.getByTestId('applied-filter')).toHaveCount(1);
+  });
+
+  test('the category sections are plain links', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    await page.goto(`/en/product/${COLOGNE.join('/')}`);
+    const categories = page.locator('[data-section="categories"]');
+    await expect(categories).toBeVisible();
+    const tree = await categoryTree(request);
+    const next = tree.find((node) => node.target.path[0] !== COLOGNE[0])!;
+    await categories.getByRole('link', { name: next.name, exact: true }).click();
+    await expect(page).toHaveURL(`/en/product/${next.target.path.join('/')}`);
+    await resetMock(page);
   });
 });
