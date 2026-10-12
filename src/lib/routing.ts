@@ -39,6 +39,14 @@ export const routes = {
   /** The required address step before a prescription (the old /add-address); saves, then back to prescriptions. */
   addAddress: (locale: Locale) => `/${locale}/add-address`,
   categories: (locale: Locale) => `/${locale}/categories`,
+  /**
+   * The old storefront's category view (stores with ENABLE_CATEGORY_VIEW indexed it): a category's
+   * groups, or a group's sub-categories, at /category/{cat}[/{group}]; no path = every category.
+   * Only its own page links here (canonical, hreflang): Targets open the listing at /product/....
+   */
+  categoryView: (locale: Locale, path: readonly string[] = []) => `/${locale}/category${path.map((segment) => `/${encode(segment)}`).join('')}`,
+  /** The old /category-view: every category (the same page as /category). */
+  categoryViewIndex: (locale: Locale) => `/${locale}/category-view`,
   brands: (locale: Locale) => `/${locale}/brands`,
   cart: (locale: Locale) => `/${locale}/cart`,
   wishlist: (locale: Locale) => `/${locale}/favorites`,
@@ -180,16 +188,16 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
 
 /**
  * First path segments that are never a product slug: this storefront's own sections, the old
- * storefront's other pages (the backend resolves them: /brand/{id}, /category/..., /blog) and the
+ * storefront's other pages (the backend resolves them: /brand/{id}, /blog) and the
  * interim paths of INTERIM_REDIRECTS. A single segment outside this list is a product (/en/{slug}).
  */
 export const RESERVED_SEGMENTS = new Set([
   // own sections
   'product', 'products', 'pages', 'forms', 'landing-page', 'brand-page', 'all-products', 'categories', 'all-categories', 'brands', 'vendors',
-  'privacy-policy', 'terms-and-conditions', 'cookie-policy',
+  'category', 'category-view', 'privacy-policy', 'terms-and-conditions', 'cookie-policy',
   'cart', 'checkout', 'favorites', 'compare', 'notifications', 'prescriptions', 'add-address', 'verify-phone', 'session', 'account', 'orders',
   // old storefront pages the backend resolves
-  'brand', 'category', 'category-view', 'blog', 'under-construction', 'not-found',
+  'brand', 'blog', 'under-construction', 'not-found',
   // interim paths (INTERIM_REDIRECTS)
   'p', 'c', 'l', 'lists', 'tags', 'deals', 'search', 'wishlist', 'sign-in', 'sign-up', 'forgot-password', 'reset-password', 'verify-email', 'waiting-approval', 'track-order',
 ]);
@@ -205,15 +213,16 @@ const OWN_PATHS: RegExp[] = [
   /^product(\/[^/]+){0,4}$/,
   /^products(\/deals(\/[^/]+)?|\/list\/[^/]+(\/[^/]+)?|\/tag\/[^/]+)?$/,
   /^(pages|forms|landing-page|brand-page)\/[^/]+$/,
-  /^(all-products|categories|all-categories|brands|vendors|privacy-policy|terms-and-conditions|cookie-policy)$/,
+  /^(all-products|categories|all-categories|brands|vendors|category|category-view|privacy-policy|terms-and-conditions|cookie-policy)$/,
   /^vendors\/[^/]+$/,
+  /^category(\/[^/]+){1,2}$/,
 ];
 
 /** The shopper's own pages (no SEO, no merchant redirects): every path under these is ours. */
 const PRIVATE_PATHS = /^(cart|checkout|favorites|compare|notifications|prescriptions|add-address|verify-phone|session|account|orders)(\/.*)?$/;
 
 /** Single-segment pages of our own; any other reserved segment alone is not a product. */
-const OWN_SINGLE = new Set(['product', 'products', 'all-products', 'categories', 'all-categories', 'brands', 'vendors', 'privacy-policy', 'terms-and-conditions', 'cookie-policy']);
+const OWN_SINGLE = new Set(['product', 'products', 'all-products', 'categories', 'all-categories', 'brands', 'vendors', 'category', 'category-view', 'privacy-policy', 'terms-and-conditions', 'cookie-policy']);
 
 /** The path after the locale (`product/x`), '' for the home page; null without a locale. */
 function rest(pathname: string): string | null {

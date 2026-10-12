@@ -18,6 +18,7 @@ These are the old storefront's URLs (backend `docs/headless/url-parity-plan.md`)
 | `/{locale}/products?search=` (also `?q=`) | `products/page.tsx` (also `/product`) | `q=…` (search text); the old id parameters (`category_id`, `list_ids`, `brand_id`, `price_from`, …) pass through, the backend reads them, and filter links keep the scope ones |
 | `/{locale}/all-products` | `all-products/page.tsx` | no scope: every product (the old storefront's page; the Target `{type: search, query: ""}` and the bottom nav's "All products" open it). Link with `routes.allProducts(locale)`, never an empty search (rule `all-products-route`) |
 | `/{locale}/categories` | `categories/page.tsx` | `GET /categories` (the tree) |
+| `/{locale}/category[/{cat}[/{group}]]`, `/category-view` | `category/[[...path]]/page.tsx`, `category-view/page.tsx` | `GET /categories`: the old category view at its own address (canonical to itself): a category's groups, a group's sub-categories, or every category; "View all" opens the `/product/...` listing; a path not in the tree is a 404 |
 | `/{locale}/brands` | `brands/page.tsx` | `GET /brands?page=` (24 tiles a page) |
 | anything else | `src/middleware.ts` + `[...slug]/page.tsx` | `GET /resolve?path=` |
 
