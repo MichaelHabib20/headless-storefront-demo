@@ -215,8 +215,9 @@ export function createAccountModule(shopper) {
         target: card?.target ?? null,
         productId: card?.id ?? null,
         quantity,
-        lineTotal: shopper.money(paid, locale),
-        compareAt: discount ? shopper.money(full, locale) : null,
+        // order lines with 2 decimals, like the old order details (`| number:'1.2-2'`)
+        lineTotal: shopper.total(paid, locale),
+        compareAt: discount ? shopper.total(full, locale) : null,
       };
     });
     const lines = [{ kind: 'subtotal', label: t.lines.subtotal, amount: shopper.total(subtotal, locale), text: null }];

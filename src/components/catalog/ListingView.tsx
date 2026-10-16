@@ -61,7 +61,8 @@ export function ListingView({ listing, locale, links, current = '', categories =
         <div className={styles.headerText}>
           <h1 className={styles.title}>{context.title}</h1>
           <p className={styles.count} data-testid="listing-count">
-            {t('catalogResults').replace('{count}', formatNumber(pagination.total, locale))}
+            {/* what the pages can show: a listing capped at page 50 never promises more than its last page */}
+            {t('catalogResults').replace('{count}', formatNumber(pagination.reachable ?? pagination.total, locale))}
           </p>
         </div>
       </header>

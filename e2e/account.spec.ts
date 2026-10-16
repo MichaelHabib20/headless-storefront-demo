@@ -200,8 +200,8 @@ test.describe('orders', () => {
 
     const items = page.getByTestId('order-item');
     await expect(items).toHaveCount(2);
-    await expect(items.nth(1).getByTestId('order-item-total')).toHaveText('243 EGP');
-    await expect(items.nth(1).getByTestId('order-item-compare-at')).toHaveText('270 EGP');
+    await expect(items.nth(1).getByTestId('order-item-total')).toHaveText('243.00 EGP');
+    await expect(items.nth(1).getByTestId('order-item-compare-at')).toHaveText('270.00 EGP');
     await expect(items.first().getByRole('link')).toHaveAttribute('href', /^\/en\/.+/);
 
     const lines = page.getByTestId('order-total-line');

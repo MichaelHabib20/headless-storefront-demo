@@ -11,8 +11,10 @@ const BLOCKER = 'minimum_order';
  * storefront only picks one, it never compares amounts.
  *
  * - The checkout's `minimum_order` blocker → not reached (the checkout's own numbers).
+ *   Goods under the cart's minimum always get it, from the first render, even when the delivery
+ *   fee would reach the minimum (legacy `GET carts` can_checkout, like the old storefront).
  * - No address or branch chosen yet → the cart's verdict, the same one the cart page shows.
- *   A store whose minimum includes the delivery fee gives no checkout verdict before the
+ *   A store whose minimum includes the delivery fee gives no order-rule verdict before the
  *   address or branch is known, so a missing blocker there does not mean "reached".
  * - Otherwise → reached.
  *

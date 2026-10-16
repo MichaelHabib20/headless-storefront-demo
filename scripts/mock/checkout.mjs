@@ -403,27 +403,34 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
     if (paymentFee) lines.push({ kind: 'payment_fee', label: t.paymentFee(method.name[locale]), amount: total(paymentFee, locale), text: null });
     if (walletPaid) lines.push({ kind: 'wallet', label: t.walletLine, amount: negative(walletPaid, locale), text: null });
 
-    // the minimum order: the cart's (items only), or with the delivery fee and no verdict before the address / branch
+    // the minimum order: the cart's (items only). With the delivery fee counted (seif) the order rule
+    // (items − promo + fee, no verdict before the address / branch) is checked too, but goods under the
+    // cart's minimum stay refused from the first render, like legacy `GET carts` can_checkout and the old
+    // storefront; when both refuse, the one asking for more wins.
     let minimumOrder = cart.checkout.minimumOrder;
     let cartBlockers = cart.checkout.blockers;
     if (mode.minimumIncludesDelivery && cart.items.length && minimumOrder) {
+      const cartRefuses = cartBlockers.some((blocker) => blocker.code === 'minimum_order');
       cartBlockers = cartBlockers.filter((blocker) => blocker.code !== 'minimum_order');
       const minimum = minimumOrder.amount.amount;
       const basis = round2(subtotal - discount + deliveryFee);
       const remaining = Math.max(0, round2(minimum - basis));
-      minimumOrder = {
+      const orderRule = {
         amount: minimumOrder.amount,
         remaining: total(remaining, locale),
         progressPercent: remaining <= 0 ? 100 : Math.max(0, Math.min(99, Math.floor((basis / minimum) * 100))),
       };
-      if (remaining > 0 && (address || pickupBranch)) {
+      const orderRefuses = remaining > 0 && Boolean(address || pickupBranch);
+      if (!cartRefuses || (orderRefuses && remaining > minimumOrder.remaining.amount)) minimumOrder = orderRule;
+      if (cartRefuses || orderRefuses) {
         cartBlockers = [...cartBlockers, notice('minimum_order', t.minimumOrder(minimumOrder.amount.display, minimumOrder.remaining.display))];
       }
     }
     blockers.unshift(...cartBlockers.map((blocker) => notice(blocker.code, blocker.message)));
 
     return {
-      cart,
+      // the checkout shows its lines with 2 decimals ("690.00 EGP"), the cart page like prices ("690 EGP")
+      cart: { ...cart, items: cart.items.map((item) => ({ ...item, lineTotal: total(item.lineTotal.amount, locale) })) },
       contact,
       fulfilment: { options, selected, addresses, addressId: address?.id ?? null, branch: pickupBranch, delivery },
       payment: walletCovers ? { methods: [], selected: null } : { methods, selected: payment },
