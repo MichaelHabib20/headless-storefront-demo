@@ -112,6 +112,63 @@ describe('CheckoutView: drawing the API answer', () => {
     expect(placeButton()).toBeDisabled();
   });
 
+  describe('the minimum order', () => {
+    /** A store whose minimum counts delivery: no checkout verdict before the address / branch (seif). */
+    const noVerdictYet = (locale: Locale = 'en') =>
+      answer((c) => {
+        c.fulfilment.selected = null;
+        c.fulfilment.addressId = null;
+        c.fulfilment.delivery = null;
+        c.missing = [{ code: 'fulfilment', message: 'MISSING-FULFILMENT' }];
+        c.blockers = [];
+        c.canPlaceOrder = false;
+        c.minimumOrder = { amount: { amount: 50, currency: 'EGP', display: 'MIN-AMOUNT' }, remaining: { amount: 14, currency: 'EGP', display: 'CHECKOUT-REMAINING' }, progressPercent: 72 };
+        c.cart.checkout = {
+          allowed: false,
+          blockers: [{ code: 'minimum_order', message: 'CART-MINIMUM-TEXT' }],
+          minimumOrder: { amount: { amount: 50, currency: 'EGP', display: 'MIN-AMOUNT' }, remaining: { amount: 14, currency: 'EGP', display: 'CART-REMAINING' }, progressPercent: 72 },
+        };
+      }, checkoutFixture(locale));
+
+    it('before the address or branch is chosen, shows the cart verdict, never "reached"', () => {
+      setup(noVerdictYet());
+      expect(screen.getByTestId('cart-minimum-remaining').textContent).toBe('CART-REMAINING');
+      expect(screen.queryByText('Minimum order reached')).toBeNull();
+    });
+
+    it('the same in Arabic', () => {
+      setup(noVerdictYet('ar'), { locale: 'ar' });
+      expect(screen.getByTestId('cart-minimum-remaining').textContent).toBe('CART-REMAINING');
+    });
+
+    it('the checkout blocker wins, with the checkout numbers', () => {
+      const checkout = answer((c) => {
+        c.missing = [];
+        c.blockers = [{ code: 'minimum_order', message: 'CHECKOUT-MINIMUM-TEXT' }];
+      }, noVerdictYet());
+      setup(checkout);
+      expect(screen.getByTestId('cart-minimum-remaining').textContent).toBe('CHECKOUT-REMAINING');
+      expect(screen.getByTestId('checkout-blockers')).toHaveTextContent('CHECKOUT-MINIMUM-TEXT');
+    });
+
+    it('reached once the backend has a verdict without the blocker', () => {
+      const checkout = answer((c) => {
+        c.missing = [{ code: 'payment_method', message: 'MISSING-PAYMENT' }];
+      }, noVerdictYet());
+      setup(checkout);
+      expect(screen.queryByTestId('cart-minimum-remaining')).toBeNull();
+      expect(screen.getByTestId('cart-minimum-order')).toHaveTextContent('Minimum order reached');
+    });
+
+    it('reached before the choice when the cart has no minimum blocker either', () => {
+      const checkout = answer((c) => {
+        c.cart.checkout.blockers = [];
+      }, noVerdictYet());
+      setup(checkout);
+      expect(screen.queryByTestId('cart-minimum-remaining')).toBeNull();
+    });
+  });
+
   it('draws values it does not know the default way', () => {
     const checkout = answer((c) => {
       c.totals.lines.push({ kind: 'loyalty' as never, label: 'Points used', amount: null, text: 'POINTS-TEXT' });
@@ -273,11 +330,11 @@ describe('CheckoutView: changing a choice', () => {
     await waitFor(() => expect(computeAction).toHaveBeenLastCalledWith('en', expect.objectContaining({ paymentMethodId: 1, installmentPlanId: null })));
   });
 
-  it('sends a promo code and shows what the backend says about it', async () => {
+  it('a refused promo code shows the backend message, is not kept, and does not block the order', async () => {
     const checkout = checkoutFixture('en');
     const { user, computeAction } = setup(checkout);
     const refused = answer((c) => {
-      c.promo = { code: 'NOPE', applied: false, message: 'This promo code is not valid.' };
+      c.promo = { code: 'NOPE', applied: false, message: 'PROMO-REFUSED-TEXT' };
       c.blockers = [{ code: 'promo_invalid', message: 'Remove the promo code or enter a valid one.' }];
       c.canPlaceOrder = false;
     });
@@ -286,17 +343,85 @@ describe('CheckoutView: changing a choice', () => {
     await user.type(screen.getByRole('textbox', { name: 'Promo code' }), ' NOPE ');
     await user.click(screen.getByRole('button', { name: 'Apply' }));
 
-    expect(computeAction).toHaveBeenCalledWith('en', expect.objectContaining({ promoCode: 'NOPE' }));
-    expect(await screen.findByTestId('promo-message')).toHaveTextContent('This promo code is not valid.');
-    expect(screen.getByTestId('promo-message')).toHaveAttribute('data-applied', 'false');
-    expect(screen.getByTestId('checkout-blockers')).toHaveTextContent('Remove the promo code or enter a valid one.');
+    expect(await screen.findByTestId('promo-message')).toHaveTextContent('PROMO-REFUSED-TEXT');
+    // asked with the code, then again without it, on top of the refused answer's choices
+    expect(computeAction).toHaveBeenCalledTimes(2);
+    expect(computeAction.mock.calls[0][1]).toMatchObject({ promoCode: 'NOPE' });
+    expect(computeAction.mock.calls[1][1]).toMatchObject({ ...checkoutSelections(refused), promoCode: null });
+    const message = screen.getByTestId('promo-message');
+    expect(message).toHaveAttribute('data-applied', 'false');
+    expect(message).toHaveAttribute('role', 'alert');
+    // not applied: the field (with the typed code) instead of a "Remove code" button
+    const field = screen.getByRole('textbox', { name: 'Promo code' });
+    expect(field).toHaveValue(' NOPE ');
+    expect(field).toHaveAttribute('aria-invalid', 'true');
+    expect(field).toHaveAttribute('aria-describedby', message.id);
+    expect(screen.queryByRole('button', { name: 'Remove code' })).toBeNull();
+    expect(screen.queryByTestId('checkout-blockers')).toBeNull();
     await user.click(terms());
-    expect(placeButton()).toBeDisabled();
+    expect(placeButton()).toBeEnabled();
+
+    // a valid code afterwards: the refusal is gone and the backend's own message shows
+    const applied = answer((c) => {
+      c.promo = { code: 'SAVE10', applied: true, message: 'PROMO-APPLIED-TEXT' };
+    });
+    computeAction.mockResolvedValueOnce({ ok: true, checkout: applied });
+    await user.clear(field);
+    await user.type(field, 'SAVE10');
+    await user.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(await screen.findByTestId('promo-code')).toHaveTextContent('SAVE10');
+    expect(screen.getByTestId('promo-message')).toHaveTextContent('PROMO-APPLIED-TEXT');
+    expect(screen.getByTestId('promo-message')).toHaveAttribute('role', 'status');
+    expect(computeAction).toHaveBeenCalledTimes(3);
+  });
+
+  it('removing an applied code sends null and is asked only once', async () => {
+    const checkout = answer((c) => {
+      c.promo = { code: 'SAVE10', applied: true, message: 'PROMO-APPLIED-TEXT' };
+    });
+    const { user, computeAction } = setup(checkout);
+    computeAction.mockResolvedValueOnce({ ok: true, checkout: checkoutFixture('en') });
 
     await user.click(screen.getByRole('button', { name: 'Remove code' }));
-    await waitFor(() => expect(computeAction).toHaveBeenLastCalledWith('en', expect.objectContaining({ promoCode: null })));
     await waitFor(() => expect(screen.queryByTestId('promo-message')).toBeNull());
-    expect(placeButton()).toBeEnabled();
+    expect(computeAction).toHaveBeenCalledTimes(1);
+    expect(computeAction).toHaveBeenLastCalledWith('en', expect.objectContaining({ promoCode: null }));
+  });
+
+  it('keeps a refused code on screen (with "Remove code") when asking again without it fails', async () => {
+    const { user, computeAction } = setup(checkoutFixture('en'));
+    const refused = answer((c) => {
+      c.promo = { code: 'NOPE', applied: false, message: 'PROMO-REFUSED-TEXT' };
+      c.blockers = [{ code: 'promo_invalid', message: 'PROMO-BLOCKER-TEXT' }];
+      c.canPlaceOrder = false;
+    });
+    computeAction.mockResolvedValueOnce({ ok: true, checkout: refused }).mockResolvedValueOnce({ ok: false, message: 'ACTION-FAILED' });
+
+    await user.type(screen.getByRole('textbox', { name: 'Promo code' }), 'NOPE');
+    await user.click(screen.getByRole('button', { name: 'Apply' }));
+
+    expect(await screen.findByTestId('promo-code')).toHaveTextContent('NOPE');
+    expect(screen.getByRole('button', { name: 'Remove code' })).toBeVisible();
+    expect(screen.getByTestId('checkout-blockers')).toHaveTextContent('PROMO-BLOCKER-TEXT');
+  });
+
+  it('a refused code in Arabic: the backend message and the Arabic field', async () => {
+    const checkout = checkoutFixture('ar');
+    const { user, computeAction } = setup(checkout, { locale: 'ar' });
+    const refused = answer((c) => {
+      c.promo = { code: 'NOPE', applied: false, message: 'نص-رفض-الكود' };
+      c.blockers = [{ code: 'promo_invalid', message: 'نص-المانع' }];
+      c.canPlaceOrder = false;
+    }, checkout);
+    computeAction.mockResolvedValueOnce({ ok: true, checkout: refused }).mockResolvedValueOnce({ ok: true, checkout });
+
+    const field = screen.getByTestId('checkout-promo').querySelector('input[name="promoCode"]') as HTMLInputElement;
+    await user.type(field, 'NOPE');
+    await user.click(within(screen.getByTestId('checkout-promo')).getByRole('button'));
+
+    expect(await screen.findByTestId('promo-message')).toHaveTextContent('نص-رفض-الكود');
+    expect(computeAction).toHaveBeenCalledTimes(2);
+    expect(screen.queryByTestId('checkout-blockers')).toBeNull();
   });
 
   it('sends the order note with the choices', async () => {

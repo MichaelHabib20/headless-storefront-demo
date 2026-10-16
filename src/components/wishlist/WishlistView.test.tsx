@@ -50,12 +50,12 @@ describe('WishlistView', () => {
     render(<WishlistView state={ok('ar')} locale="ar" pageQuery={{ perPage: 2 }} onRemove={idle()} onMoveToCart={idle()} />);
 
     expect(screen.getByRole('heading', { level: 1, name: 'قائمة المفضلة' })).toBeInTheDocument();
-    expect(screen.getByText('المنتجات المحفوظة: ٣')).toBeInTheDocument();
+    expect(screen.getByText('المنتجات المحفوظة: 3')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /^نقل إلى السلة/ })).toHaveLength(2);
     expect(screen.getAllByRole('button', { name: /^إزالة/ })).toHaveLength(2);
 
     const nav = screen.getByRole('navigation', { name: 'صفحات المفضلة' });
-    expect(within(nav).getByRole('link', { name: 'صفحة ٢' })).toHaveAttribute('href', '/ar/favorites?page=2&perPage=2');
+    expect(within(nav).getByRole('link', { name: 'صفحة 2' })).toHaveAttribute('href', '/ar/favorites?page=2&perPage=2');
     expect(within(nav).getByRole('link', { name: 'التالي' })).toHaveAttribute('href', '/ar/favorites?page=2&perPage=2');
   });
 

@@ -16,7 +16,7 @@ import { StoreUnavailable } from './StoreUnavailable';
 import { UspStrip } from './UspStrip';
 
 const refresh = vi.fn();
-vi.mock('next/navigation', () => ({ usePathname: () => '/en/products/deals', useRouter: () => ({ refresh }) }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/en/products/deals', useSearchParams: () => new URLSearchParams('sort=low&page=2'), useRouter: () => ({ refresh }) }));
 
 // links are not followed in jsdom
 document.addEventListener('click', (event) => {
@@ -41,7 +41,7 @@ describe('mobile bottom nav', () => {
     const sheet = screen.getByTestId('more-sheet');
     expect(within(sheet).getByRole('heading', { name: 'More' })).toBeInTheDocument();
     expect(within(sheet).getByRole('link', { name: /Our Branches/ })).toHaveAttribute('href', '/en/pages/branches');
-    expect(within(sheet).getByRole('link', { name: /عربي/ })).toHaveAttribute('href', '/ar/products/deals');
+    expect(within(sheet).getByRole('link', { name: /عربي/ })).toHaveAttribute('href', '/ar/products/deals?sort=low&page=2'); // the query stays
     expect(within(sheet).queryByText('Welcome to Seif Pharmacies!')).toBeNull(); // signed in
 
     fireEvent.keyDown(document, { key: 'Escape' });

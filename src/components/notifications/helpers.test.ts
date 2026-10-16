@@ -22,21 +22,21 @@ describe('formatNotificationDate', () => {
 
   it('shows the date once it is a week old', () => {
     expect(en(ago(10 * DAY)).label).toBe('Sep 19, 2026');
-    expect(ar(ago(10 * DAY)).label).toBe('١٩ سبتمبر ٢٠٢٦');
+    expect(ar(ago(10 * DAY)).label).toBe('19 سبتمبر 2026');
   });
 
-  it('says how long ago in Arabic with Arabic digits', () => {
+  it('says how long ago in Arabic with Latin digits', () => {
     expect(ar(ago(0)).label).toBe('الآن');
     expect(ar(ago(DAY)).label).toBe('أمس');
-    expect(ar(ago(3 * DAY)).label).toContain('٣');
-    expect(ar(ago(5 * MINUTE)).label).toContain('٥');
+    expect(ar(ago(3 * DAY)).label).toContain('3');
+    expect(ar(ago(5 * MINUTE)).label).toContain('5');
   });
 
   it('gives the full date and time for the tooltip', () => {
     const { absolute } = en('2026-09-19T10:00:00Z');
     expect(absolute).toMatch(/September 19, 2026/);
     expect(absolute).toMatch(/10:00/);
-    expect(ar('2026-09-19T10:00:00Z').absolute).toMatch(/١٩ سبتمبر ٢٠٢٦/);
+    expect(ar('2026-09-19T10:00:00Z').absolute).toMatch(/19 سبتمبر 2026/);
   });
 
   it('treats small clock skew as now and far-future dates as a date', () => {
@@ -52,7 +52,7 @@ describe('formatNotificationDate', () => {
 describe('formatCount', () => {
   it('uses the digits of the language', () => {
     expect(formatCount(24, 'en')).toBe('24');
-    expect(formatCount(24, 'ar')).toBe('٢٤');
+    expect(formatCount(24, 'ar')).toBe('24');
   });
 });
 

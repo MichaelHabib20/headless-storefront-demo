@@ -4,6 +4,7 @@ import { RESOLUTION_HEADER } from '@/lib/resolve';
 import { answerPath } from '@/lib/resolve.server';
 import { interimRedirect, isPrivatePath, isStorefrontPath, PRIVATE_SECTIONS, retiredAccountPage } from '@/lib/routing';
 import { CLICK_IDS_COOKIE, CLICK_IDS_MAX_AGE, clickIdsCookie } from '@/lib/click-ids';
+import { isTestHost } from '@/lib/origin';
 
 const LOCALES = ['en', 'ar'];
 
@@ -24,7 +25,8 @@ export async function middleware(request: NextRequest) {
 /**
  * 6. Campaign click ids of the landing URL (fbclid, gclid, ttclid, sccid) are kept in an httpOnly
  *    cookie for 7 days, for the server-side marketing events (src/lib/click-ids.ts).
- * 7. The shopper's private pages (cart, checkout, account...) answer `X-Robots-Tag: noindex`.
+ * 7. The shopper's private pages (cart, checkout, account...) answer `X-Robots-Tag: noindex`, and so
+ *    does every page on a test host (a host other than `SC_SITE_URL`'s, see src/lib/origin.ts).
  */
 function marketingAndRobots(request: NextRequest, response: NextResponse): NextResponse {
   const clickIds = clickIdsCookie(request.nextUrl.searchParams, request.cookies.get(CLICK_IDS_COOKIE)?.value);
@@ -32,7 +34,7 @@ function marketingAndRobots(request: NextRequest, response: NextResponse): NextR
     response.cookies.set(CLICK_IDS_COOKIE, clickIds, { httpOnly: true, sameSite: 'lax', secure: request.nextUrl.protocol === 'https:', path: '/', maxAge: CLICK_IDS_MAX_AGE });
   }
   const section = request.nextUrl.pathname.split('/')[2] ?? '';
-  if ((PRIVATE_SECTIONS as readonly string[]).includes(section)) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  if ((PRIVATE_SECTIONS as readonly string[]).includes(section) || isTestHost(request.headers)) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   return response;
 }
 

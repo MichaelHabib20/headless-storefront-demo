@@ -1,14 +1,15 @@
 import { createElement, Fragment, type ReactElement } from 'react';
 import type { Breadcrumb, Locale, PostalAddress, Seo, SiteSeo, Target } from '@/sdk';
 import { resolveTarget, routes, searchUrlTemplate } from './routing';
+import { publicOrigin } from './origin';
 import { SeoLinks } from './seo';
 
 /**
  * JSON-LD (schema.org structured data). The ONLY file that writes `application/ld+json`.
  *
  * The facts come from the backend (`Seo.structuredData`, `Seo.breadcrumbs`, `GET /seo/site`); this
- * file only turns Targets into absolute URLs of this storefront (the origin of the request, never a
- * hardcoded host) and writes schema.org vocabulary around them. It never adds a fact: a member the
+ * file only turns Targets into absolute URLs of this storefront (`publicOrigin`: SC_SITE_URL, else the
+ * origin of the request; never a hardcoded host) and writes schema.org vocabulary around them. It never adds a fact: a member the
  * backend sent as null is left out, an unknown member is skipped.
  */
 
@@ -29,22 +30,8 @@ const AVAILABILITY: Record<string, string> = {
   discontinued: 'https://schema.org/Discontinued',
 };
 
-/** Headers of the request (next/headers or a plain Headers in tests). */
-interface HeaderReader {
-  get(name: string): string | null;
-}
-
-const HOST = /^[A-Za-z0-9.-]+(:\d{1,5})?$|^\[[0-9A-Fa-f:.]+\](:\d{1,5})?$/;
-
-/** The public origin the visitor used: `x-forwarded-host` / `host` and `x-forwarded-proto`. */
-export function requestOrigin(headers: HeaderReader): string {
-  const host = (headers.get('x-forwarded-host') ?? headers.get('host') ?? '').split(',')[0].trim();
-  if (!HOST.test(host)) return '';
-  const forwarded = (headers.get('x-forwarded-proto') ?? '').split(',')[0].trim().toLowerCase();
-  const local = /^(localhost|127\.\d+\.\d+\.\d+|\[::1\])(:\d+)?$/.test(host);
-  const proto = forwarded === 'http' || forwarded === 'https' ? forwarded : local ? 'http' : 'https';
-  return `${proto}://${host}`;
-}
+/** The origin of the request; URLs use `publicOrigin` (SC_SITE_URL first), see src/lib/origin.ts. */
+export { requestOrigin } from './origin';
 
 /** Absolute URL of a Target in this storefront; null when the Target is not a link here. */
 export function targetUrl(target: Target | null | undefined, ctx: JsonLdContext): string | null {
@@ -217,16 +204,16 @@ function scripts(graphs: Node[], testId: string): ReactElement | null {
   );
 }
 
-/** `metadataBase` for Next.js metadata (absolute canonical / og:url / hreflang), from the request origin. */
+/** `metadataBase` for Next.js metadata (absolute canonical / og:url / hreflang): the public origin. */
 export async function requestMetadataBase(): Promise<URL | undefined> {
   const { headers } = await import('next/headers');
-  const origin = requestOrigin(await headers());
+  const origin = publicOrigin(await headers());
   return origin ? new URL(origin) : undefined;
 }
 
 async function context(locale: Locale): Promise<JsonLdContext> {
   const { headers } = await import('next/headers');
-  return { locale, origin: requestOrigin(await headers()) };
+  return { locale, origin: publicOrigin(await headers()) };
 }
 
 /**
@@ -238,7 +225,7 @@ async function context(locale: Locale): Promise<JsonLdContext> {
 export async function JsonLd({ seo, locale }: { seo: Seo | null | undefined; locale: Locale }) {
   if (!seo) return null;
   const ctx = await context(locale);
-  return createElement(Fragment, null, scripts(seoGraphs(seo, ctx), 'jsonld'), createElement(SeoLinks, { seo, locale }));
+  return createElement(Fragment, null, scripts(seoGraphs(seo, ctx), 'jsonld'), createElement(SeoLinks, { seo, locale, origin: ctx.origin }));
 }
 
 /** The site-wide JSON-LD (WebSite + SearchAction, Organization, LocalBusiness), once per page. */

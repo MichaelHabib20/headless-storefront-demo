@@ -6,14 +6,18 @@ import styles from '@/components/catalog/Catalog.module.css';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { loadCategoryTree } from '@/lib/catalog.server';
 import { translator } from '@/lib/i18n';
+import { routes } from '@/lib/routing';
+import { ownPageAlternates } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
 type Params = Promise<{ locale: string }>;
 
+/** Itself as canonical, both languages, x-default (/all-categories has its own address: its page file). */
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? translator(locale)('catalogCategoriesTitle') : undefined };
+  if (!isLocale(locale)) return {};
+  return { title: translator(locale)('catalogCategoriesTitle'), alternates: ownPageAlternates(routes.categories, locale) };
 }
 
 /** Every category, group and sub-category of the store. */

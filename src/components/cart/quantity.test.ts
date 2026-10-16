@@ -45,6 +45,6 @@ describe('cart quantity stepper', () => {
 
   it('formats quantities per language', () => {
     expect(formatQuantity(2, 'en')).toBe('2');
-    expect(formatQuantity(2, 'ar')).toBe('٢');
+    expect(formatQuantity(2, 'ar')).toBe('2');
   });
 });

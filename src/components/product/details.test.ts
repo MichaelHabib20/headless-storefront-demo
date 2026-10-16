@@ -28,22 +28,22 @@ describe('product page helpers', () => {
     expect(ratingText(4.1, 'en')).toBe('4.1');
     expect(ratingText(4.13, 'en')).toBe('4.1');
     expect(ratingText(5, 'en')).toBe('5');
-    expect(ratingText(4.1, 'ar')).toBe('٤٫١');
+    expect(ratingText(4.1, 'ar')).toBe('4.1');
     expect(ratingFill(4)).toBe('80%');
     expect(ratingFill(7)).toBe('100%');
     expect(ratingLabel(4.1, 'en', translator('en'))).toBe('Rated 4.1 out of 5');
-    expect(ratingLabel(4.1, 'ar', translator('ar'))).toBe('التقييم ٤٫١ من ٥');
+    expect(ratingLabel(4.1, 'ar', translator('ar'))).toBe('التقييم 4.1 من 5');
   });
 
   it('names review counts', () => {
     expect(reviewCountLabel(1, 'en', translator('en'))).toBe('1 review');
     expect(reviewCountLabel(23, 'en', translator('en'))).toBe('23 reviews');
-    expect(reviewCountLabel(23, 'ar', translator('ar'))).toBe('٢٣ تقييم');
+    expect(reviewCountLabel(23, 'ar', translator('ar'))).toBe('23 تقييم');
   });
 
   it('writes review dates in the shopper language, and keeps unreadable dates as they are', () => {
     expect(reviewDate('2026-09-28T10:00:00Z', 'en', 'UTC')).toBe('Sep 28, 2026');
-    expect(reviewDate('2026-09-28T10:00:00Z', 'ar', 'UTC')).toContain('٢٠٢٦');
+    expect(reviewDate('2026-09-28T10:00:00Z', 'ar', 'UTC')).toContain('2026');
     expect(reviewDate('yesterday', 'en')).toBe('yesterday');
   });
 

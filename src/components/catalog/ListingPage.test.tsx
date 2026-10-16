@@ -27,6 +27,16 @@ describe('ListingPage', () => {
     expect(screen.getByTestId('listing')).toBeInTheDocument();
   });
 
+  it('a search inside a category: sort links and the Search box keep the text (search=)', async () => {
+    vi.mocked(loadListing).mockResolvedValue({ status: 'ok', listing: productsFixture('en') });
+    render(await ListingPage({ locale: 'en', scope: { category: ['mom-baby'] }, params: { search: 'bath', sort: 'low' }, links: { path: '/en/product/mom-baby' } }));
+    expect(loadListing).toHaveBeenCalledWith('en', { category: ['mom-baby'] }, { search: 'bath', sort: 'low' });
+    const sortLinks = [...document.querySelectorAll('a[href^="/en/product/mom-baby?"]')].map((a) => a.getAttribute('href'));
+    expect(sortLinks.length).toBeGreaterThan(0);
+    expect(sortLinks.every((href) => href!.startsWith('/en/product/mom-baby?search=bath'))).toBe(true);
+    expect(screen.getByRole('searchbox', { name: 'Search in the products' })).toHaveValue('bath');
+  });
+
   it('draws the Categories and Sub category sections from the tree, even when the backend sends no facets', async () => {
     const tree = categoriesFixture('en');
     const category = tree.items.find((node) => node.children.some((child) => child.children.length))!;
@@ -58,7 +68,10 @@ describe('ListingPage', () => {
     const { container } = render(await ListingPage({ locale: 'en', scope: { list: 'best-sellers' }, params: {}, links: { path: '/en/products/list/best-sellers' } }));
     expect(loadCategoryTree).not.toHaveBeenCalled();
     expect(container.querySelector('[data-testid="category-filter"]')).toBeNull();
-    expect(screen.queryByTestId('listing-filters')).toBeNull();
+    // Search and Price stay, as on the old storefront's lists
+    expect(screen.getByTestId('listing-filters')).toBeInTheDocument();
+    expect(screen.getByTestId('listing-search')).toBeInTheDocument();
+    expect(screen.getByTestId('price-filter')).toBeInTheDocument();
   });
 
   it('the sections go away quietly when the tree does not load', async () => {

@@ -5,6 +5,8 @@
  * (url-parity-plan §3.2, §7), so filter URLs look like the old site's, and back for the API.
  */
 
+import type { ListingScope } from '@/sdk';
+
 /** A page's own query parameters (Next.js `searchParams`). */
 export type PageParams = Record<string, string | string[] | undefined>;
 
@@ -100,6 +102,32 @@ export function toApiParams(params: URLSearchParams): URLSearchParams {
   return out;
 }
 
+/** The search text of a listing page: the old storefront's `?search=`, or `?q=` (trimmed; '' when none). */
+export function searchTextOf(params: URLSearchParams): string {
+  return (params.get(SEARCH_FIELD) || params.get('q') || '').trim();
+}
+
+/**
+ * A search inside the listing (the old storefront's listing "Search" box): the page's `?search=`
+ * goes to the API as `q` next to the route's scope (`category=…&q=…`); the backend answers the
+ * scope's page narrowed to the text (noindex). The search page itself (`{ q }` set) is unchanged.
+ */
+export function withListingSearch(scope: ListingScope, params: URLSearchParams): { scope: ListingScope; params: URLSearchParams } {
+  const text = searchTextOf(params);
+  if (!text || ('q' in scope && scope.q)) return { scope, params };
+  const rest = new URLSearchParams(params);
+  rest.delete(SEARCH_FIELD);
+  rest.delete('q');
+  return { scope: { ...scope, q: text } as ListingScope, params: rest };
+}
+
+/** The listing's links keep the search text (`search=`): the backend's sort / filter `query` strings never carry it. */
+export function linksWithSearch(links: { path: string; keep?: Record<string, string> }, params: URLSearchParams): { path: string; keep?: Record<string, string> } {
+  const text = searchTextOf(params);
+  if (!text || links.keep?.[SEARCH_FIELD]) return links;
+  return { ...links, keep: { ...links.keep, [SEARCH_FIELD]: text } };
+}
+
 /** The page's query parameters as they came, repeated parameters included. */
 export function toSearchParams(params: PageParams | URLSearchParams = {}): URLSearchParams {
   if (params instanceof URLSearchParams) return new URLSearchParams(params);
@@ -141,6 +169,41 @@ export function formFields(query: string, keep: Record<string, string> = {}): Ar
 
 /** Names of the price range form's two inputs: the old storefront's `price_from` / `price_to`. */
 export const PRICE_FIELDS = { min: OLD_NAMES.priceMin, max: OLD_NAMES.priceMax } as const;
+
+/** The old storefront's name of the search text inside a listing (`/products?search=`). */
+export const SEARCH_FIELD = 'search';
+
+/** Every name a form's own field replaces: its old and v3 names (`price_from` / `priceMin`), and `page` (a new filter starts at page 1). */
+const REPLACED: Record<'price' | 'search', string[]> = {
+  price: [OLD_NAMES.priceMin, OLD_NAMES.priceMax, 'priceMin', 'priceMax', 'page'],
+  search: [SEARCH_FIELD, 'q', 'page'],
+};
+
+/**
+ * The page's current query (in the old names) without what a side form sets itself: the hidden
+ * fields of the always-there Search and Price forms of the filter panel (the old storefront kept the
+ * other parameters too: sort, filters, the search text). Nothing is added, merged or reordered.
+ */
+export function keptFields(current: URLSearchParams | string, form: 'price' | 'search'): Array<[string, string]> {
+  const drop = new Set(REPLACED[form]);
+  return [...new URLSearchParams(toOldQuery(current))].filter(([name]) => !drop.has(name));
+}
+
+/** This page without the form's parameters: the "Clear" link of the Price form. */
+export function hrefWithout(path: string, current: URLSearchParams | string, form: 'price' | 'search'): string {
+  const search = new URLSearchParams(keptFields(current, form)).toString();
+  return search ? `${path}?${search}` : path;
+}
+
+/** A parameter of the page's current query under its old or its v3 name ('' when absent): the value a side form shows. */
+export function currentField(current: URLSearchParams | string, ...names: string[]): string {
+  const params = new URLSearchParams(current);
+  for (const name of names) {
+    const value = params.get(name);
+    if (value) return value;
+  }
+  return '';
+}
 
 /** A color from the API for a swatch, or null when it is not a plain CSS color (then no swatch is drawn). */
 export function swatchColor(value: string | null | undefined): string | null {

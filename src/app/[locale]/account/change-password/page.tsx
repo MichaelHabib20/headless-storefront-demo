@@ -26,7 +26,7 @@ export default async function ChangePasswordPage({ params }: Props) {
   return (
     <AuthPage title={t('passwordTitle')} lead={t('passwordLead')} footer={{ text: '', href: routes.profile(locale), label: t('accountProfileLink') }} testId="password-page">
       {signedIn ? (
-        <PasswordForm locale={locale} labels={{ current: t('passwordCurrent'), next: t('passwordNew'), hint: t('passwordHint'), confirm: t('passwordConfirm'), submit: t('passwordSave'), submitting: t('passwordSaving') }} />
+        <PasswordForm locale={locale} labels={{ current: t('passwordCurrent'), next: t('passwordNew'), hint: t('passwordHint'), confirm: t('passwordConfirm'), submit: t('passwordSave'), submitting: t('passwordSaving'), showPassword: t('authShowPassword') }} />
       ) : (
         <AccountSignIn locale={locale} returnTo={routes.changePassword(locale)} />
       )}

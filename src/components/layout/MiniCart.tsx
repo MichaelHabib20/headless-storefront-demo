@@ -8,6 +8,7 @@ import { routes } from '@/lib/routing';
 import type { MiniCartResult } from '@/lib/shell.actions';
 import { Money } from '@/money';
 import { CheckoutBlockers } from '../cart/CheckoutBlockers';
+import { ProductImage } from '../ui/ProductImage';
 import { formatQuantity } from '../cart/quantity';
 import { Icon } from '../ui/Icon';
 import styles from './MiniCart.module.css';
@@ -108,10 +109,7 @@ function MiniCartBody({ cart, locale, onNavigate }: { cart: Cart; locale: Locale
       <ul className={styles.lines} aria-label={t('miniCartItems')}>
         {cart.items.map((item) => (
           <li key={item.product.id} className={styles.line} data-testid="mini-cart-line">
-            {item.product.image && (
-              // eslint-disable-next-line @next/next/no-img-element -- product image from any CDN
-              <img src={item.product.image.url} alt={item.product.image.alt ?? ''} className={styles.image} />
-            )}
+            <ProductImage src={item.product.image?.url} alt={item.product.image?.alt ?? ''} className={styles.image} />
             <div className={styles.lineText}>
               <p className={styles.name}>{item.product.name}</p>
               <p className={styles.quantity}>{t('miniCartQuantity').replace('{count}', formatQuantity(item.quantity, locale))}</p>

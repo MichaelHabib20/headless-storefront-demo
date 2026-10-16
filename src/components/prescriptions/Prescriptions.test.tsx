@@ -62,10 +62,10 @@ describe('prescriptions list', () => {
     expect(within(items[0]).getByText('Files: 2')).toBeInTheDocument();
   });
 
-  it('Arabic, with Arabic digits for counts, and an empty state', () => {
+  it('Arabic, with Latin digits for counts, and an empty state', () => {
     const { unmount } = render(<PrescriptionsList locale="ar" page={prescriptionsFixture('ar')} reasons={[]} cancelAction={vi.fn()} />);
     expect(screen.getAllByTestId('prescription-status')[1]).toHaveTextContent('جاري التجهيز');
-    expect(screen.getByText('الملفات: ٢')).toBeInTheDocument();
+    expect(screen.getByText('الملفات: 2')).toBeInTheDocument();
     unmount();
     render(<PrescriptionsList locale="ar" page={{ items: [], pagination: { page: 1, perPage: 10, total: 0, totalPages: 0 } }} reasons={[]} cancelAction={vi.fn()} />);
     expect(screen.getByTestId('prescriptions-empty')).toHaveTextContent('لم ترسل أي روشتة بعد.');

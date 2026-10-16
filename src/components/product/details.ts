@@ -1,6 +1,6 @@
 import type { Locale, ProductCard, ProductDetails, ProductOption } from '@/sdk';
 import type { Translator } from '@/lib/i18n';
-import { formatNumber } from '@/lib/numbers';
+import { INTL_LOCALE, formatNumber } from '@/lib/numbers';
 import type { QuantityLimits } from '../cart/quantity';
 
 /**
@@ -25,7 +25,7 @@ export function quantityLimits({ product, quantityStep }: Pick<ProductDetails, '
 /** The five-star scale ratings are given on. */
 export const RATING_SCALE = 5;
 
-/** A star rating (not money) with one decimal, in the shopper's digits: 4.1 → "4.1" / "٤٫١". */
+/** A star rating (not money) with one decimal, in the shopper's digits: 4.1 → "4.1" in both languages. */
 export function ratingText(average: number, locale: Locale): string {
   return formatNumber(Math.round(average * 10) / 10, locale);
 }
@@ -45,11 +45,11 @@ export function reviewCountLabel(count: number, locale: Locale, t: Translator): 
   return count === 1 ? t('productReviewCountOne') : fillTemplate(t('productReviewCount'), { count: formatNumber(count, locale) });
 }
 
-/** The date a review was written, e.g. "Sep 28, 2026" / "٢٨ سبتمبر ٢٠٢٦". `timeZone` is for tests. */
+/** The date a review was written, e.g. "Sep 28, 2026" / "28 سبتمبر 2026". `timeZone` is for tests. */
 export function reviewDate(iso: string, locale: Locale, timeZone?: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en', { dateStyle: 'medium', timeZone }).format(date);
+  return new Intl.DateTimeFormat(locale === 'ar' ? INTL_LOCALE.ar : 'en', { dateStyle: 'medium', timeZone }).format(date);
 }
 
 /** The video link is opened in a new tab; only web addresses are followed. */

@@ -362,9 +362,13 @@ paths:
       operationId: getProducts
       summary: One product listing for every listing page (category, brand, list, deals, tag, search, all products)
       description: |
-        Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
+        Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `vendor`); none = all products.
         One pair is allowed: `deals=true&category={path}` lists the deals of that category (the old storefront's
         `/product/deals/{cat}`); its `seo.canonical` is `{type: deals, category: [...]}`.
+        `q` alone is the search page (`context.type: search`). `q` with a scope searches inside that listing (the
+        old storefront's listing "Search" box): same `context.type`, title, breadcrumbs and `seo.canonical` as the
+        scope page, `context.query` = the text, `seo.index` false. An empty `q` is ignored. `query` strings never
+        carry `q`: keep it next to them while the shopper sorts or filters.
         `seo.index` is false when the request carries any query parameter other than `page`, `locale` and the
         scope parameters (old names such as `list_ids` or `sort` included), as on the old storefront.
         Filter and sort parameters come from the `query` strings of a previous answer: pass them through
@@ -373,6 +377,10 @@ paths:
         `search`, `category_id`, `group_id`, `sub_category_id`, `list_ids`, `vendor_ids`, `promotions`, `brand_id`,
         `options_values_ids` / `attribute_id`, `in_stock`, `price_from`, `price_to` and the old `sort` keys
         (`low`, `high`, `a-z`, `z-a`, `popular`, `recent`, `high-discount`, `low-rate`, `high-rate`).
+        `sub_category_id` (`12`, `12,13` or repeated) and `sub_category_name` (an id or a sub-category slug) next to
+        a scope (e.g. `category=skin-care&sub_category_id=12`, the old `/product/skin-care?sub_category_id=12`) or
+        several of them become the `categories` filter, as the old page sent them; one alone is the category scope.
+        Pages run from 1 to `pagination.totalPages`, which the store may cap (SEARCH_MAX_PAGE): any page above it is 404.
       parameters:
         - $ref: '#/components/parameters/Locale'
         - { name: category, in: query, required: false, description: 'CategoryTarget.path joined with "/"', schema: { type: string } }
@@ -380,7 +388,7 @@ paths:
         - { name: list, in: query, required: false, description: 'ListTarget.slug, or ListTarget.id when the slug is null', schema: { type: string } }
         - { name: tag, in: query, required: false, description: TagTarget.slug, schema: { type: string } }
         - { name: deals, in: query, required: false, description: 'May be sent with `category`: the deals of that category', schema: { type: boolean } }
-        - { name: q, in: query, required: false, description: Search text, schema: { type: string, maxLength: 200 } }
+        - { name: q, in: query, required: false, description: 'Search text. Alone: the search page; with a scope: a search inside that listing (noindex, canonical = the scope page)', schema: { type: string, maxLength: 200 } }
         - { name: vendor, in: query, required: false, description: 'Phase B: VendorTarget.id (404 when the store has multi-vendor off)', schema: { type: integer, minimum: 1 } }
         - { name: brands, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
         - { name: categories, in: query, required: false, description: 'Filter. Only from a `query` string.', schema: { type: string } }
@@ -1243,7 +1251,11 @@ paths:
         - name: type
           in: query
           required: true
-          schema: { type: string, enum: [products, categories, brands, pages, landing_pages, tags] }
+          description: >-
+            The old storefront's sitemap files. static_pages = home (ENABLE_LOCALIZED_HOME_IN_SITEMAP),
+            contact, branches, all deals; categories = top-level categories only, groups and
+            subcategories the rest of the tree; brands is empty unless ENABLE_BRANDS_IN_SITEMAPS.
+          schema: { type: string, enum: [static_pages, pages, products, categories, subcategories, groups, brands, landing_pages, tags] }
         - $ref: '#/components/parameters/Page'
         - name: perPage
           in: query
@@ -2495,6 +2507,10 @@ components:
         perPage: { type: integer, minimum: 1 }
         total: { type: integer, minimum: 0 }
         totalPages: { type: integer, minimum: 0 }
+        reachable:
+          type: integer
+          minimum: 0
+          description: 'Product listings only (optional): how many products the pages 1..totalPages can show. Less than `total` when the store caps listings at a page count (SEARCH_MAX_PAGE, 50 by default; a page past it is a 404), e.g. total 2217, totalPages 50, perPage 24 → reachable 1200. Show `total` as the count; never offer a page above `totalPages`.'
 
     GuestSessionResponse:
       type: object
@@ -2597,7 +2613,7 @@ components:
         quantityStep: { type: number, description: 'Allowed increment (1, or e.g. 0.5 for weighed products)' }
         unitPrice: { $ref: '#/components/schemas/Price' }
         lineTotal:
-          description: What this line costs after item promotions
+          description: 'What this line costs after item promotions; `display` always has 2 decimals, like the totals ("690.00 EGP")'
           allOf: [{ $ref: '#/components/schemas/Money' }]
         availability: { $ref: '#/components/schemas/CartItemAvailability' }
 
@@ -3067,7 +3083,7 @@ components:
             image:
               nullable: true
               allOf: [{ $ref: '#/components/schemas/Image' }]
-            query: { type: string, nullable: true, description: The search text (search only) }
+            query: { type: string, nullable: true, description: 'The search text: the search page, or a search inside this listing (`q` sent with a scope)' }
         breadcrumbs:
           type: array
           items: { $ref: '#/components/schemas/Link' }
@@ -3609,10 +3625,13 @@ components:
         acceptTerms: { type: boolean, enum: [true] }
         returnUrl:
           description: |
-            A page of this storefront (absolute https URL on an origin the store allows). Needed for online
-            payment methods: after paying, the shopper lands there with `?checkout=<reference>` added.
+            A page of this storefront (absolute https URL of at most 2,000 characters on an origin the store
+            allows, `STOREFRONT_RETURN_ORIGINS` or the origin of `WEBSITE_URL`). Only used when the order is
+            paid online: after paying, the shopper lands there with `?checkout=<reference>` added. For an online
+            payment a missing or not allowed value is 422 `validation_failed` on `returnUrl`. For an offline
+            order (cash on delivery, or a wallet that pays everything) it is ignored: never checked, stored or
+            used, so it can never block that order. It is safe to always send it.
           type: string
-          maxLength: 2000
           nullable: true
     PlaceOrderResponse:
       type: object
@@ -4358,6 +4377,11 @@ components:
                 properties:
                   target: { $ref: '#/components/schemas/Target' }
                   updatedAt: { type: string, format: date-time, nullable: true }
+                  categoryView:
+                    type: boolean
+                    description: >-
+                      Only on category entries, only when true: the store lists this category (ENABLE_SUBCATEGORY_VIEW)
+                      or group (ENABLE_CATEGORY_VIEW) at the old category view address (/{l}/category/...), not at its listing.
                   alternates:
                     type: array
                     items:

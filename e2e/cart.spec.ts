@@ -122,6 +122,21 @@ test.describe('cart page', () => {
     await expect(page.getByRole('link', { name: 'إتمام الطلب' })).toHaveAttribute('href', '/ar/checkout');
   });
 
+  test('a missing product picture shows the store placeholder, not the broken-image icon; quantities in Latin digits (ar)', async ({ page, context }) => {
+    await signIn(context);
+    await page.route(/\.(webp|jpe?g|png)(\?|$)/i, (route) => route.fulfill({ status: 404, body: '' }));
+    await openCart(page, 'ar');
+    const images = page.getByTestId('cart-line').locator('img');
+    await expect(images).toHaveCount(2);
+    for (const img of await images.all()) {
+      await expect(img).toHaveAttribute('data-placeholder', 'true');
+      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+    }
+    // the quantity uses the same digits as the money texts ("196.00 جنية")
+    await expect(page.getByTestId('cart-quantity').first()).toHaveText(/^[0-9.]+$/);
+    expect(await page.getByTestId('cart-line').first().innerText()).not.toMatch(/[٠-٩]/);
+  });
+
   test('says so when the store API is down', async ({ page, context, request }) => {
     await signIn(context);
     await request.post(`${MOCK_API}/__mode`, { data: { fail: true } });

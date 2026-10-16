@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { FormField } from '@/sdk';
+import { PasswordInput } from './PasswordInput';
 
 /** A FormField, optionally with the customer's current value and whether it may be changed (ProfileField). */
 export type DrawnField = FormField & { value?: string | null; editable?: boolean };
@@ -11,7 +12,8 @@ interface AuthFieldsProps {
   values?: Record<string, string | undefined>;
   /** The API's per-field messages, keyed by `field.name`. */
   errors?: Record<string, string | undefined>;
-  labels: { optional: string; choose: string; notEditable: string };
+  /** `showPassword`: the name of the show / hide toggle on password fields (no toggle without it). */
+  labels: { optional: string; choose: string; notEditable: string; showPassword?: string };
   /** Something to draw right after a field (e.g. the password confirmation after `password`). */
   after?: (field: DrawnField) => ReactNode;
 }
@@ -71,6 +73,15 @@ export function AuthFields({ fields, values = {}, errors = {}, labels, after }: 
               <textarea {...common} defaultValue={value} maxLength={field.maxLength ?? undefined} placeholder={field.placeholder ?? undefined} />
             ) : field.kind === 'checkbox' ? (
               <input {...common} type="checkbox" value="1" defaultChecked={value === '1' || value === 'true'} />
+            ) : field.kind === 'password' && labels.showPassword ? (
+              <PasswordInput
+                {...common}
+                toggleLabel={labels.showPassword}
+                autoComplete={AUTOCOMPLETE[field.name] ?? 'new-password'}
+                maxLength={field.maxLength ?? undefined}
+                placeholder={field.placeholder ?? undefined}
+                minLength={8}
+              />
             ) : (
               <input
                 {...common}

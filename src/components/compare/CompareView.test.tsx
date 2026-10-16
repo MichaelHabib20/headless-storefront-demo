@@ -55,7 +55,7 @@ describe('CompareView', () => {
     expect(within(material).getByRole('rowheader')).toHaveTextContent('الخامة');
     expect(cells(material)[1]).toContain('—');
     expect(within(material).getByText('لا توجد قيمة')).toBeInTheDocument();
-    expect(screen.getByTestId('compare-note')).toHaveTextContent('مقارنة ٢ من ٤ منتجات');
+    expect(screen.getByTestId('compare-note')).toHaveTextContent('مقارنة 2 من 4 منتجات');
     expect(screen.getAllByRole('button', { name: /^إزالة/ })).toHaveLength(2);
   });
 

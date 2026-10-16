@@ -9,6 +9,14 @@ export const live = process.env.E2E_LIVE === '1';
 /** Ports come from the environment so several checkouts of this repo can run e2e at the same time. */
 export const MOCK_API = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4010}`;
 export const APP_URL = `http://127.0.0.1:${process.env.E2E_PORT ?? 3200}`;
+/**
+ * The second server of the same build, started with SC_SITE_URL = SITE_URL (playwright.config.ts):
+ * asked with `x-forwarded-host` = SITE_HOST it is the store's production host; asked as 127.0.0.1 it
+ * is a test host of that deployment.
+ */
+export const SITE_APP_URL = `http://127.0.0.1:${process.env.E2E_SITE_PORT ?? Number(process.env.E2E_PORT ?? 3200) + 1}`;
+export const SITE_URL = 'https://shop.example.test';
+export const SITE_HOST = new URL(SITE_URL).host;
 const API = process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com';
 
 const cachedTokens = new Map<string, string>();

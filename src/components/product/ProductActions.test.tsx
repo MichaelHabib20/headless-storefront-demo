@@ -193,7 +193,7 @@ describe('ProductActions', () => {
 
   it('speaks Arabic', () => {
     const { group } = renderCard(product(36480, 'ar'), { me: meFixture('ar'), locale: 'ar' });
-    expect(within(group).getByRole('link', { name: 'في السلة (٢)' })).toHaveAttribute('href', '/ar/cart');
+    expect(within(group).getByRole('link', { name: 'في السلة (2)' })).toHaveAttribute('href', '/ar/cart');
     expect(within(group).getByRole('button', { name: 'حفظ في المفضلة' })).toHaveAttribute('aria-pressed', 'false');
     expect(within(group).getByRole('button', { name: 'قارن' })).toHaveAttribute('aria-pressed', 'true');
   });

@@ -26,6 +26,7 @@ function signInLabels(locale: Locale): SignInLabels {
     submit: t('authSignInButton'),
     submitting: t('authSigningIn'),
     forgot: t('authForgotPassword'),
+    showPassword: t('authShowPassword'),
     tabPassword: t('authTabPassword'),
     tabOtp: t('authTabOtp'),
     otpSend: t('authOtpSend'),

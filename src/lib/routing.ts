@@ -42,6 +42,8 @@ export const routes = {
   /** The required address step before a prescription (the old /add-address); saves, then back to prescriptions. */
   addAddress: (locale: Locale) => `/${locale}/add-address`,
   categories: (locale: Locale) => `/${locale}/categories`,
+  /** The old storefront's categories index (the same page as /categories, at its own address). */
+  allCategories: (locale: Locale) => `/${locale}/all-categories`,
   /**
    * The old storefront's category view (stores with ENABLE_CATEGORY_VIEW indexed it): a category's
    * groups, or a group's sub-categories, at /category/{cat}[/{group}]; no path = every category.
@@ -187,6 +189,15 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
     default:
       return null;
   }
+}
+
+/**
+ * A category Target at the old storefront's category view (/category/{cat}[/{group}]) instead of its
+ * listing: for sitemap entries the backend marks `categoryView` (stores with ENABLE_CATEGORY_VIEW /
+ * ENABLE_SUBCATEGORY_VIEW listed them there). Null for any other Target.
+ */
+export function resolveCategoryView(target: Target | null | undefined, locale: Locale): ResolvedLink | null {
+  return target?.type === 'category' && target.path.length ? internal(routes.categoryView(locale, target.path)) : null;
 }
 
 /**
@@ -354,10 +365,15 @@ export function externalHref(url: string | null | undefined): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
 }
 
-/** Same path in the other language: /en/x → /ar/x (a product page then moves to its Arabic slug). */
-export function switchLocalePath(pathname: string, to: Locale): string {
+/**
+ * Same page in the other language: /en/x?sort=low → /ar/x?sort=low (a product page then moves to
+ * its Arabic slug). The query (sort, page, filters, search) stays as it is, like the old storefront.
+ */
+export function switchLocalePath(pathname: string, to: Locale, search: string | URLSearchParams = ''): string {
   const [, , ...rest] = pathname.split('/');
-  return `/${[to, ...rest].filter(Boolean).join('/')}`;
+  const path = `/${[to, ...rest].filter(Boolean).join('/')}`;
+  const query = (typeof search === 'string' ? search : search.toString()).replace(/^\?/, '');
+  return query ? `${path}?${query}` : path;
 }
 
 function internal(href: string): ResolvedLink {

@@ -56,7 +56,7 @@ interface ProductListing {
 
 Every sort option, filter value, chip and "clear all" carries a `query` string **written by the
 backend**. The link is this page's path + that query: `listingHref(path, query, keep)` in
-`src/lib/listing.ts`. On the search page `keep` is `{ q }`, so the search text stays.
+`src/lib/listing.ts`. On the search page `keep` is `{ search }`, and any listing with `?search=` keeps it the same way, so the search text stays.
 Page links keep the current query and change only `page`: `listingPageHref()`.
 The price range is a GET form (`next/form`): `priceMin` / `priceMax` inputs plus the parameters
 of `range.query` as hidden fields (`formFields()`).
@@ -72,6 +72,20 @@ side filters are off (`facets: []`). `src/lib/category-filters.ts` finds the pag
 sections (`categoryFilters`); `CategoryFilters.tsx` draws them as plain links to each node's Target
 (followable, no `nofollow`). A ticked sub-category links back to its category (unticks). When the
 backend sends its own category facet, "Sub category" is left out (`hasCategoryFacet`).
+
+## Search and Price (always there)
+
+Like the old storefront, the panel always starts with **Search** and **Price** (`ListingTools.tsx`),
+also when the store's side filters are off (`facets: []`) and on custom lists. Both are GET forms
+with the old names (`search`, `price_from`, `price_to`); the page's other parameters go along as
+hidden fields (`keptFields()`, which only drops the form's own fields and `page`). Price has Apply
+and a Clear link (`hrefWithout()`); when the backend sends its own `range` facet, that one is drawn
+instead. Search searches inside the current listing, like the old site: the shopper stays on the
+same URL with `search=<text>`; `withListingSearch()` sends it to the API as `q` next to the route's
+scope (`category=…&q=…`: same page, `context.query` set, noindex), and `linksWithSearch()` adds
+`search` to `links.keep`, because the backend's sort / filter `query` strings never carry `q`.
+With side filters off the old site shows
+no Brands section (the legacy API sends no brands then), so neither do we.
 
 ## What the storefront must not do
 

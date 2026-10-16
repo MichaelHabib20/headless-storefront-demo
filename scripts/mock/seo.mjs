@@ -1,15 +1,19 @@
 /**
  * Mock module: SEO + marketing.
  *   GET  /seo/site      → SiteSeoResponse (every fact set, LocalBusiness included: staging has none)
- *   GET  /sitemap       → SitemapResponse (?type=products|categories|brands|pages|landing_pages|tags, ?page, ?perPage);
+ *   GET  /sitemap       → SitemapResponse (?type=static_pages|pages|products|categories|subcategories|groups|brands|landing_pages|tags,
+ *                          ?page, ?perPage; categories = the top level, groups = second-level nodes with children,
+ *                          subcategories = the rest, like the backend's split of the tree);
  *                          422 validation_failed for a missing / unknown type or a bad page
  *   POST /events        → 202 EventAcceptedResponse; 422 for a body outside EventRequest. Every accepted
  *                          event is kept (with the token it came with); a repeated eventId → accepted: false
  *
  * Test controls (outside /api, like /__reset):
  *   GET  /__events                       → { events: [...] } what POST /events received, oldest first
- *   POST /__seo { marketing, robotsIndex } → Layout.marketing ids on / off (default off, so other specs never
- *                                           load third-party tags), the site's robots policy (default true)
+ *   POST /__seo { marketing, robotsIndex, brands, localizedHome, categoryView }
+ *        → Layout.marketing ids on / off (default off, so other specs never load third-party tags), the site's robots
+ *          policy (default true), and the store's sitemap settings: ENABLE_BRANDS_IN_SITEMAPS (default true),
+ *          ENABLE_LOCALIZED_HOME_IN_SITEMAP and ENABLE_CATEGORY_VIEW (groups listed at /category/..., default false)
  *
  * Decorations of the recorded answers: `Layout.marketing` (ids only while switched on) and `Home.seo`.
  * Product and listing `Seo` members come from productSeoExtras / listingSeoExtras (used by product.mjs
@@ -40,7 +44,8 @@ export const NO_MARKETING = { gtmId: null, googleAnalyticsIds: [], googleAds: nu
 
 const EVENT_NAMES = ['page_view', 'view_item', 'view_item_list', 'search', 'add_to_cart', 'remove_from_cart', 'view_cart', 'begin_checkout', 'add_shipping_info', 'add_payment_info', 'purchase', 'sign_up', 'login', 'add_to_wishlist', 'select_promotion'];
 const EVENT_KEYS = { '': ['name', 'eventId', 'page', 'clickIds', 'browser', 'productIds', 'orderId', 'searchTerm'], page: ['path', 'referrer'], clickIds: ['fbclid', 'gclid', 'ttclid', 'sccid'], browser: ['fbp', 'fbc'] };
-const SITEMAP_TYPES = ['products', 'categories', 'brands', 'pages', 'landing_pages', 'tags'];
+const SITEMAP_TYPES = ['static_pages', 'pages', 'products', 'categories', 'subcategories', 'groups', 'brands', 'landing_pages', 'tags'];
+const SITEMAP_DEFAULTS = { brands: true, localizedHome: false, categoryView: false };
 
 /** `Home.seo` (the recorded home predates it). */
 export function homeSeo(locale) {
@@ -112,6 +117,7 @@ export function createSeoModule(shopper) {
   let seen = new Set();
   let marketingOn = false;
   let robotsIndex = true;
+  let sitemapSettings = { ...SITEMAP_DEFAULTS };
 
   function entries(type, locale) {
     const both = (target) => ({ target, updatedAt: null, alternates: [{ locale: 'en', target }, { locale: 'ar', target }] });
@@ -122,17 +128,28 @@ export function createSeoModule(shopper) {
         return { target: locale === 'ar' ? ar : en, updatedAt: '2026-09-01T10:00:00+03:00', alternates: [{ locale: 'en', target: en }, { locale: 'ar', target: ar }] };
       });
     }
-    if (type === 'categories') {
+    if (type === 'static_pages') {
+      const pages = [both({ type: 'page', slug: 'contact' }), both({ type: 'page', slug: 'branches' }), both({ type: 'deals' })];
+      return sitemapSettings.localizedHome ? [both({ type: 'home' }), ...pages] : pages;
+    }
+    if (type === 'categories' || type === 'groups' || type === 'subcategories') {
       const out = [];
-      const walk = (nodes) => nodes.forEach((node) => (out.push(both(node.target)), walk(node.children ?? [])));
-      walk(catalog.handle({ method: 'GET', pathname: '/categories', query: new URLSearchParams(), token: null, locale, body: null })[1].data.items);
+      const kind = (node, depth) => (depth === 0 ? 'categories' : depth === 1 && node.children?.length ? 'groups' : 'subcategories');
+      const walk = (nodes, depth) =>
+        nodes.forEach((node) => {
+          if (kind(node, depth) === type) out.push(type === 'groups' && sitemapSettings.categoryView ? { ...both(node.target), categoryView: true } : both(node.target));
+          walk(node.children ?? [], depth + 1);
+        });
+      walk(catalog.handle({ method: 'GET', pathname: '/categories', query: new URLSearchParams(), token: null, locale, body: null })[1].data.items, 0);
       return out;
     }
     if (type === 'brands') {
+      if (!sitemapSettings.brands) return [];
       const slugs = [...new Set(shopper.products('en').map((card) => card.brand?.slug).filter(Boolean))];
       return slugs.map((slug) => both({ type: 'brand', slug }));
     }
-    if (type === 'pages') return ['about-us', 'privacy-policy'].map((slug) => both({ type: 'page', slug }));
+    // a legal page lives at the root (/privacy-policy), like the old pages file
+    if (type === 'pages') return [both({ type: 'page', slug: 'about-us' }), both({ type: 'page', slug: 'privacy-policy', legal: 'privacy' })];
     if (type === 'landing_pages') return [both({ type: 'landing_page', slug: 'ramadan' })];
     return [both({ type: 'tag', slug: 'new-arrivals' })];
   }
@@ -170,7 +187,8 @@ export function createSeoModule(shopper) {
       if (method === 'POST' && pathname === '/__seo') {
         if (typeof body?.marketing === 'boolean') marketingOn = body.marketing;
         if (typeof body?.robotsIndex === 'boolean') robotsIndex = body.robotsIndex;
-        return [200, { marketing: marketingOn, robotsIndex }];
+        for (const key of Object.keys(SITEMAP_DEFAULTS)) if (typeof body?.[key] === 'boolean') sitemapSettings[key] = body[key];
+        return [200, { marketing: marketingOn, robotsIndex, ...sitemapSettings }];
       }
       return null;
     },
@@ -185,6 +203,7 @@ export function createSeoModule(shopper) {
       seen = new Set();
       marketingOn = false;
       robotsIndex = true;
+      sitemapSettings = { ...SITEMAP_DEFAULTS };
     },
   };
 }

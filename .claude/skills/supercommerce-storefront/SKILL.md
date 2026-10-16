@@ -25,7 +25,7 @@ them and **blocks the deploy** when one is broken.
    `discountLabel` yourself, never format money (`Intl.NumberFormat`, `toFixed`, `toLocaleString`,
    `` `${currency} ${amount}` ``), never do math or comparisons on `amount` / `compareAt` /
    `discountPercent` / `progressPercent`. Counts and quantities (not money): `formatNumber()` from
-   `src/lib/numbers.ts`. **`src/money` belongs to SuperCommerce and is locked**: never edit it and
+   `src/lib/numbers.ts` (Latin digits in Arabic too, like the money texts; dates use its `INTL_LOCALE`). **`src/money` belongs to SuperCommerce and is locked**: never edit it and
    never run `npm run money:lock` — change how money looks with `className` / `classNames` / `as`.
 3. **Every link to backend content goes through the Target.** Render
    `<TargetLink target={x.target}>`. Never branch on `target.type`, never build URLs from
@@ -57,7 +57,7 @@ them and **blocks the deploy** when one is broken.
 | `src/sdk/` | SDK: the only code that calls the API. `generated/api.ts` is generated — never edit it. |
 | `src/money/` | **Locked, SuperCommerce's.** `Money`, `Price`, `DiscountLabel`: the only code that shows money. Style them from your components; never edit this folder (see its `README.md`) |
 | `src/lib/` | Logic layer: `routing.ts` (Target → URL), `i18n.ts` + `messages/<area>.ts` (UI strings), `numbers.ts` (counts and quantities — never money), `home.ts`, `popup.ts`, `storefront.server.ts` (server data loading), `shopper.server.ts` (shopper session) |
-| `src/components/ui/` | Building blocks: `TargetLink`, `ResponsiveImage`, `Rail`, `SectionHeading`, `Icon` |
+| `src/components/ui/` | Building blocks: `TargetLink`, `ResponsiveImage`, `ProductImage` (product pictures; the store placeholder when missing or broken), `Rail`, `SectionHeading`, `Icon` |
 | `src/components/layout/` | Site chrome: `AnnouncementBar`, `TopBar`, `SiteHeader`, `DesktopNav`, `MobileMenu`, `SiteFooter`, `CookieConsent`, `WhatsAppButton`; shell: `MiniCart`, `MobileBottomNav`, `AppBanner`, `Banners`, `AreaChooser`, `StoreClosedNotice`, `LegalLinks`, `UspStrip` |
 | `src/components/content/` + `src/app/[locale]/{pages,l,forms}/` | CMS pages, contact, branches, landing pages, merchant forms (`FormFields` draws any `FormField[]`) |
 | `src/components/home/` | Home blocks: `PromoStrip`, `CategoryTiles`, `BrandRail`, `PopupHost`, `sections/HomeSection` + `sections/BannerLayouts` |

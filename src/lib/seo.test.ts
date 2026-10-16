@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import type { Seo } from '@/sdk';
 import { productsFixture } from '@/test/fixtures';
 import { productFixture } from '@/test/product-fixtures';
-import { paginationHrefs, SeoLinks, seoMetadata } from './seo';
+import { routes } from './routing';
+import { ownPageAlternates, paginationHrefs, SeoLinks, seoMetadata } from './seo';
 
 const seo: Seo = {
   title: 'Controloc 40 mg',
@@ -62,5 +63,17 @@ describe('rel=prev/next and og:type=product', () => {
   it('renders the links and the product preview type', () => {
     const html = renderToStaticMarkup(SeoLinks({ seo: { ...seo, canonical: { type: 'brand', slug: 'bioderma' }, pagination: { prev: null, next: 2 }, openGraph: { title: null, description: null, image: null, type: 'product' } }, locale: 'en' }));
     expect(html).toBe('<link rel="next" href="/en/product/brand/bioderma?page=2"/><meta property="og:type" content="product"/>');
+    const absolute = renderToStaticMarkup(SeoLinks({ seo: { ...seo, canonical: { type: 'category', path: ['skin-care'] }, pagination: { prev: 1, next: 3 } }, locale: 'ar', origin: 'https://seif-online.com' }));
+    expect(absolute).toBe('<link rel="prev" href="https://seif-online.com/ar/product/skin-care"/><link rel="next" href="https://seif-online.com/ar/product/skin-care?page=3"/>');
+  });
+});
+
+describe('ownPageAlternates (our pages without a backend Seo: brands, categories indexes)', () => {
+  it('itself as canonical, every language, x-default the Arabic page', () => {
+    expect(ownPageAlternates(routes.brands, 'en')).toEqual({ canonical: '/en/brands', languages: { en: '/en/brands', ar: '/ar/brands', 'x-default': '/ar/brands' } });
+    expect(ownPageAlternates(routes.allCategories, 'ar')).toEqual({
+      canonical: '/ar/all-categories',
+      languages: { en: '/en/all-categories', ar: '/ar/all-categories', 'x-default': '/ar/all-categories' },
+    });
   });
 });

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import type { AuthSettings, Locale } from '@/sdk';
+import { PasswordInput } from '@/components/auth/PasswordInput';
 import { SocialButtons } from '@/components/auth/SocialButtons';
 import type { FormState } from '@/lib/form';
 import { sendOtpAction, signInAction, signInWithOtpAction, socialSignInAction, type OtpState } from './actions';
@@ -14,6 +15,7 @@ export interface SignInLabels {
   submit: string;
   submitting: string;
   forgot: string;
+  showPassword: string;
   tabPassword: string;
   tabOtp: string;
   otpSend: string;
@@ -94,12 +96,15 @@ function PasswordForm({ settings, locale, next, forgotHref, labels, isPhone }: S
 
       <label>
         {labels.password}
-        <input name="password" type="password" autoComplete="current-password" aria-invalid={Boolean(errors.password)} required />
+        <PasswordInput name="password" autoComplete="current-password" aria-invalid={Boolean(errors.password)} required toggleLabel={labels.showPassword} />
         {errors.password && <span className="field-error">{errors.password}</span>}
       </label>
 
       <div className="links">
-        {settings.passwordReset.method !== 'none' && <Link href={forgotHref}>{labels.forgot}</Link>}
+        {/* Always, like the old storefront: the page itself sends the reset, or says to contact the store when it has no reset method. */}
+        <Link href={forgotHref} data-testid="forgot-password-link">
+          {labels.forgot}
+        </Link>
       </div>
 
       <button type="submit" disabled={pending}>

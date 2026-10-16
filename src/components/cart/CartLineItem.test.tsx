@@ -29,14 +29,14 @@ describe('CartLineItem', () => {
     expect(within(line).queryByTestId('cart-line-availability')).toBeNull();
   });
 
-  it('renders in Arabic: the API texts, Arabic digits for the quantity', () => {
+  it('renders in Arabic: the API texts, Latin digits for the quantity', () => {
     const item = firstLine('ar');
     render(<CartLineItem item={item} locale="ar" onQuantityChange={vi.fn()} onRemove={vi.fn()} />);
     const line = screen.getByTestId('cart-line');
 
     expect(within(line).getByRole('link', { name: item.product.name })).toHaveAttribute('href', `/ar/${item.product.slug}`);
     expect(within(line).getByTestId('cart-line-total')).toHaveTextContent(item.lineTotal.display);
-    expect(within(line).getByTestId('cart-quantity')).toHaveTextContent('٢');
+    expect(within(line).getByTestId('cart-quantity')).toHaveTextContent('2');
     expect(within(line).getByRole('button', { name: 'زيادة الكمية' })).toBeEnabled();
     expect(within(line).getByRole('button', { name: 'حذف' })).toBeEnabled();
   });

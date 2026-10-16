@@ -54,14 +54,14 @@ describe('vouchers page (as the backend wrote it)', () => {
 describe('checkout: the customer vouchers as codes', () => {
   it('draws the backend suggestions; a tap sends the code like a typed one', async () => {
     const checkout = voucherSuggestionsCheckoutFixture('en');
-    const onChange = vi.fn();
+    const onApply = vi.fn();
     const user = userEvent.setup();
-    render(<PromoSection promo={checkout.promo} locale="en" busy={false} onChange={onChange} />);
+    render(<PromoSection promo={checkout.promo} locale="en" busy={false} onApply={onApply} />);
 
     const suggestions = screen.getAllByTestId('promo-suggestion');
     expect(suggestions.map((s) => s.textContent)).toEqual(checkout.promo.suggestions!.map((s) => `${s.code} ${s.benefit}`));
     await user.click(suggestions[1]);
-    expect(onChange).toHaveBeenCalledWith({ promoCode: 'SAVE10' });
+    expect(onApply).toHaveBeenCalledWith('SAVE10');
     // the suggestions are not choices: the echo has no trace of them
     expect(Object.keys(checkoutSelections(checkout))).not.toContain('suggestions');
   });
@@ -69,7 +69,7 @@ describe('checkout: the customer vouchers as codes', () => {
   it('no suggestions → nothing drawn', () => {
     const checkout = voucherSuggestionsCheckoutFixture('en');
     delete checkout.promo.suggestions;
-    render(<PromoSection promo={checkout.promo} locale="en" busy={false} onChange={vi.fn()} />);
+    render(<PromoSection promo={checkout.promo} locale="en" busy={false} onApply={vi.fn()} />);
     expect(screen.queryByTestId('promo-suggestions')).toBeNull();
   });
 });

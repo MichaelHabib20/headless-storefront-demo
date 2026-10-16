@@ -38,7 +38,7 @@ describe('ListingView', () => {
     renderListing(productsFixture('en'));
     expect(screen.getByTestId('listing-count')).toHaveTextContent(`Results: ${productsFixture('en').pagination.total}`);
     renderListing({ ...productsFixture('ar'), pagination: { page: 1, perPage: 2, total: 12, totalPages: 6 } }, 'ar');
-    expect(screen.getAllByTestId('listing-count')[1]).toHaveTextContent('النتائج: ١٢');
+    expect(screen.getAllByTestId('listing-count')[1]).toHaveTextContent('النتائج: 12');
   });
 
   it('every filter value, sort option, chip and "clear all" links to this page + the query the backend wrote, in the old names', () => {
@@ -115,7 +115,9 @@ describe('ListingView', () => {
     const empty = screen.getByTestId('listing-empty');
     expect(within(empty).getByRole('heading', { name: locale === 'en' ? 'No products found' : 'لا توجد منتجات' })).toBeInTheDocument();
     expect(within(empty).getByRole('link')).toHaveAttribute('href', `/${locale}/all-products`);
-    expect(screen.queryByTestId('listing-filters')).toBeNull();
+    // no facets: still Search and Price, like the old storefront
+    expect(screen.getByTestId('listing-search')).toBeInTheDocument();
+    expect(screen.getByTestId('price-filter')).toBeInTheDocument();
   });
 
   it('offers to clear the filters when filters emptied the list', () => {

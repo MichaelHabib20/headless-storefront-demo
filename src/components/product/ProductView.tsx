@@ -65,7 +65,9 @@ export function ProductView({ details, locale, notifyMeAction, recommendations, 
                 {product.brand.name}
               </TargetLink>
             )}
-            <h1 className={styles.name}>{product.name}</h1>
+            <h1 className={styles.name} data-floating-clear>
+              {product.name}
+            </h1>
             {share}
             {product.rating && (
               <a href={`#${REVIEWS_ID}`} className={styles.rating} data-testid="product-rating">
