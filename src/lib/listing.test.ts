@@ -1,5 +1,33 @@
 import { describe, expect, it } from 'vitest';
-import { PRICE_FIELDS, currentField, formFields, hrefWithout, keptFields, listingHref, listingPageHref, swatchColor, toApiParams, toOldQuery, toSearchParams } from './listing';
+import { PRICE_FIELDS, currentField, formFields, hrefWithout, keptFields, linksWithSearch, listingHref, listingPageHref, searchTextOf, swatchColor, toApiParams, toOldQuery, toSearchParams, withListingSearch } from './listing';
+
+describe('search inside a listing', () => {
+  it('the page text (`search`, or `q`) goes to the API as q next to the route scope', () => {
+    const { scope, params } = withListingSearch({ category: ['mom-baby'] }, new URLSearchParams('search=%20bath%20&sort=low&page=2'));
+    expect(scope).toEqual({ category: ['mom-baby'], q: 'bath' });
+    expect(params.toString()).toBe('sort=low&page=2');
+    expect(withListingSearch({ deals: true, category: ['x'] }, new URLSearchParams('q=بيبي')).scope).toEqual({ deals: true, category: ['x'], q: 'بيبي' });
+    expect(withListingSearch({ q: '' }, new URLSearchParams('search=bath')).scope).toEqual({ q: 'bath' });
+  });
+
+  it('nothing changes without a text, or on the search page', () => {
+    const empty = new URLSearchParams('search=%20%20&sort=low');
+    expect(withListingSearch({ brand: 'b' }, empty)).toEqual({ scope: { brand: 'b' }, params: empty });
+    const search = new URLSearchParams('search=bath');
+    expect(withListingSearch({ q: 'bath' }, search)).toEqual({ scope: { q: 'bath' }, params: search });
+    expect(searchTextOf(new URLSearchParams('q=x'))).toBe('x');
+  });
+
+  it('the links keep the text in the old name (`search`): sort, filter and clear links', () => {
+    expect(linksWithSearch({ path: '/en/product/mom-baby' }, new URLSearchParams('search=bath&sort=low'))).toEqual({ path: '/en/product/mom-baby', keep: { search: 'bath' } });
+    expect(linksWithSearch({ path: '/ar/brand', keep: { a: '1' } }, new URLSearchParams('q=بيبي')).keep).toEqual({ a: '1', search: 'بيبي' });
+    const own = { path: '/en/products', keep: { search: 'bath' } };
+    expect(linksWithSearch(own, new URLSearchParams('search=bath'))).toBe(own);
+    expect(linksWithSearch({ path: '/en/x' }, new URLSearchParams('sort=low'))).toEqual({ path: '/en/x' });
+    const keep = linksWithSearch({ path: '/en/product/mom-baby' }, new URLSearchParams('search=bath')).keep;
+    expect(listingHref('/en/product/mom-baby', 'sort=price_asc', keep)).toBe('/en/product/mom-baby?search=bath&sort=low');
+  });
+});
 
 describe('listing links', () => {
   it('puts the backend query after the page path, in the old storefront names', () => {

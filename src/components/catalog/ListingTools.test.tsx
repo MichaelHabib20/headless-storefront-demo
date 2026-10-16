@@ -11,15 +11,21 @@ function fields(form: HTMLElement) {
 }
 
 describe('Search and Price (always there, like the old storefront)', () => {
-  it('a category without side filters: Search opens the search page, Price keeps sort and filters', () => {
+  it('a category without side filters: Search stays on the category, Price keeps sort and filters', () => {
     const current = 'sort=high&brand_id=jj&price_from=100&page=3';
     render(<ListingView listing={noFacets('en')} locale="en" links={{ path: '/en/product/mom-baby' }} current={current} />);
 
     const search = screen.getByTestId('listing-search');
     expect(within(search).getByRole('heading', { name: 'Search' })).toBeInTheDocument();
     const searchForm = within(search).getByRole('search');
-    expect(searchForm).toHaveAttribute('action', '/en/products');
-    expect(fields(searchForm)).toEqual([['search', 'search', '']]);
+    // search inside the category, like the old storefront: same URL + search=, sort and filters kept, page 1
+    expect(searchForm).toHaveAttribute('action', '/en/product/mom-baby');
+    expect(fields(searchForm)).toEqual([
+      ['sort', 'hidden', 'high'],
+      ['brand_id', 'hidden', 'jj'],
+      ['price_from', 'hidden', '100'],
+      ['search', 'search', ''],
+    ]);
     expect(within(search).getByRole('searchbox', { name: 'Search in the products' })).toBeInTheDocument();
 
     const price = screen.getByTestId('price-filter');
@@ -55,6 +61,17 @@ describe('Search and Price (always there, like the old storefront)', () => {
     expect(screen.getByTestId('price-clear')).toHaveAttribute('href', '/en/products?search=baby&sort=low');
   });
 
+  it('a search inside a brand: the text shows in the box, Price keeps it', () => {
+    render(<ListingView listing={noFacets('en')} locale="en" links={{ path: '/en/product/brand/bioderma', keep: { search: 'serum' } }} current="search=serum&sort=low" />);
+    const searchForm = within(screen.getByTestId('listing-search')).getByRole('search');
+    expect(searchForm).toHaveAttribute('action', '/en/product/brand/bioderma');
+    expect(fields(searchForm)).toEqual([
+      ['sort', 'hidden', 'low'],
+      ['search', 'search', 'serum'],
+    ]);
+    expect(screen.getByTestId('price-clear')).toHaveAttribute('href', '/en/product/brand/bioderma?search=serum&sort=low');
+  });
+
   it('the order of the panel: Search, Price, then the tree sections and facets', () => {
     const { container } = render(<ListingView listing={noFacets('en')} locale="en" links={{ path: '/en/all-products' }} />);
     const panel = screen.getByTestId('listing-filters');
@@ -75,7 +92,7 @@ describe('Search and Price (always there, like the old storefront)', () => {
   it('Arabic', () => {
     render(<ListingView listing={noFacets('ar')} locale="ar" links={{ path: '/ar/product/mom-baby' }} />);
     expect(within(screen.getByTestId('listing-search')).getByRole('heading', { name: 'بحث' })).toBeInTheDocument();
-    expect(within(screen.getByTestId('listing-search')).getByRole('search')).toHaveAttribute('action', '/ar/products');
+    expect(within(screen.getByTestId('listing-search')).getByRole('search')).toHaveAttribute('action', '/ar/product/mom-baby');
     const price = screen.getByTestId('price-filter');
     expect(within(price).getByRole('heading', { name: 'السعر' })).toBeInTheDocument();
     expect(within(price).getByRole('spinbutton', { name: 'من' })).toBeInTheDocument();

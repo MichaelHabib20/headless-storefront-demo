@@ -5,7 +5,7 @@ import { loadCategoryTree, loadListing } from '@/lib/catalog.server';
 import { categoryFilters, findCategoryChain, type CategoryFilters } from '@/lib/category-filters';
 import { translator } from '@/lib/i18n';
 import { JsonLd } from '@/lib/jsonld';
-import { listingHref, toSearchParams, type PageParams } from '@/lib/listing';
+import { linksWithSearch, listingHref, toSearchParams, type PageParams } from '@/lib/listing';
 import { ListingView } from './ListingView';
 import type { ListingLinks } from './ListingFilters';
 import styles from './Listing.module.css';
@@ -22,9 +22,12 @@ interface ListingPageProps {
  * Loads one listing and draws it, for every listing route. Unknown scope → 404; parameters
  * the backend refuses → its message and a way back; the API down → a retry.
  */
-export async function ListingPage({ locale, scope, params, links }: ListingPageProps) {
+export async function ListingPage({ locale, scope, params, links: routeLinks }: ListingPageProps) {
   const result = await loadListing(locale, scope, params);
-  const current = toSearchParams(params).toString();
+  const own = toSearchParams(params);
+  const current = own.toString();
+  // a search inside the listing stays on its sort, filter and "clear" links
+  const links = linksWithSearch(routeLinks, own);
   if (result.status === 'not_found') notFound();
   if (result.status === 'ok') {
     const categories = await loadCategoryFilters(locale, scope);

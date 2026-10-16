@@ -48,6 +48,9 @@ describe('mock catalog module follows the contract', () => {
       'deals=true&category=mom-baby',
       'q=cologne',
       'q=zzzz',
+      'category=mom-baby&q=bath',
+      'brand=johnson-johnson&q=bath&sort=price_asc',
+      'deals=true&category=mom-baby&q=bath',
       'priceMax=100&brands=johnson-johnson&categories=hair-care',
     ];
     for (const query of listings) {
@@ -56,6 +59,8 @@ describe('mock catalog module follows the contract', () => {
       expectValid('ProductListingResponse', answer.payload);
       // every link the backend writes leads to a valid listing again
       for (const link of queries(answer.data)) {
+        // `query` strings never carry q: the page keeps it next to them (a search inside the listing)
+        expect(link, link).not.toMatch(/(^|&)q=/);
         const scope = query.split('&').filter((p) => /^(category|brand|list|tag|deals|q)=/.test(p)).join('&');
         const next = get('/products', [scope, link].filter(Boolean).join('&'));
         expect(next.status, `${query} → ${link}`).toBe(200);
@@ -109,6 +114,24 @@ describe('mock catalog module follows the contract', () => {
 
     expect(get('/products', 'q=zzzz').data.items).toEqual([]);
     expect(get('/products', 'q=zzzz').data.context).toMatchObject({ type: 'search', query: 'zzzz' });
+  });
+
+  it('searches inside a listing: q with a scope keeps the scope page, noindex', () => {
+    const { get } = api();
+    const category = get('/products', 'category=mom-baby').data;
+    const inside = get('/products', 'category=mom-baby&q=bath').data;
+    expect(inside.context).toMatchObject({ type: 'category', title: category.context.title, query: 'bath' });
+    expect(inside.breadcrumbs).toEqual(category.breadcrumbs);
+    expect(inside.seo).toMatchObject({ canonical: category.seo.canonical, index: false });
+    expect(inside.pagination.total).toBeLessThan(category.pagination.total);
+    expect(inside.items.every((p) => /bath/i.test(p.name))).toBe(true);
+    expect(get('/products', 'category=mom-baby&q=').data).toMatchObject({ context: { query: null }, seo: { index: true } });
+    expect(get('/products', 'deals=true&category=mom-baby&q=bath').data.context).toMatchObject({ type: 'deals', query: 'bath' });
+    expect(get('/products', 'brand=a&tag=b&q=x').status).toBe(422);
+
+    const arabic = api('ar').get('/products', `category=mom-baby&q=${encodeURIComponent('شامبو')}`).data;
+    expect(arabic.context).toMatchObject({ type: 'category', query: 'شامبو' });
+    expect(arabic.items.map((p) => p.name)).toEqual([expect.stringContaining('شامبو')]);
   });
 
   it('deals show an old price next to the price shoppers pay everywhere', () => {

@@ -323,13 +323,50 @@ test.describe('catalog', () => {
     await expect(page.getByTestId('price-filter').getByRole('spinbutton', { name: 'From' })).toHaveValue('');
   });
 
-  test('the Search box: on a category it opens the search page; on the search page it keeps the sort', async ({ page }) => {
-    await page.goto('/en/product/mom-baby');
+  test('the Search box searches inside the category (old storefront): same URL + search=, kept by sort and pages', async ({ page, request }) => {
+    const category = await listing(request, 'category=mom-baby');
+    const inside = await listing(request, 'category=mom-baby&q=bath');
+    expect(inside.pagination.total).toBeLessThan(category.pagination.total);
+    await page.goto('/en/product/mom-baby?sort=high');
     const box = page.getByTestId('listing-search').getByRole('searchbox', { name: 'Search in the products' });
-    await box.fill('cologne');
+    await box.fill('bath');
     await box.press('Enter');
-    await expect(page).toHaveURL(/\/en\/products\?search=cologne$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Search results for "cologne"');
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high&search=bath$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(category.context.title);
+    await expect(page.getByTestId('listing-count')).toHaveText(`Results: ${inside.pagination.total}`);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(inside.items.length);
+    await expect(page.getByTestId('listing-search').getByRole('searchbox')).toHaveValue('bath');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+
+    // the backend's sort links carry no q: the page keeps search= on them
+    await page.getByTestId('sort').locator('summary').click();
+    await page.getByTestId('sort').getByRole('link', { name: inside.sort.find((s) => s.query === 'sort=price_asc')!.label }).click();
+    await expect(page).toHaveURL('/en/product/mom-baby?search=bath&sort=low');
+    await expect(page.getByTestId('listing-count')).toHaveText(`Results: ${inside.pagination.total}`);
+
+    // pages keep it too
+    await page.goto('/en/product/mom-baby?search=bath&perPage=2');
+    await page.getByRole('navigation', { name: 'Result pages' }).getByRole('link', { name: 'Page 2' }).click();
+    await expect(page).toHaveURL('/en/product/mom-baby?search=bath&perPage=2&page=2');
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(Math.min(2, inside.pagination.total - 2));
+  });
+
+  test('searching inside a brand and the deals keeps their page', async ({ page, request }) => {
+    const brand = await listing(request, 'brand=johnson-johnson&q=bath');
+    await page.goto('/en/product/brand/johnson-johnson');
+    await page.getByTestId('listing-search').getByRole('searchbox').fill('bath');
+    await page.getByTestId('listing-search').getByRole('button', { name: 'Go' }).click();
+    await expect(page).toHaveURL('/en/product/brand/johnson-johnson?search=bath');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(brand.context.title);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(brand.items.length);
+
+    const deals = await listing(request, 'deals=true&q=bath');
+    await page.goto('/en/products/deals?search=bath');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(deals.context.title);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(deals.items.length);
+  });
+
+  test('the search page: the Search box changes the text and keeps the sort', async ({ page }) => {
 
     await page.goto('/en/products?search=cologne&sort=low&page=2');
     const again = page.getByTestId('listing-search').getByRole('searchbox', { name: 'Search in the products' });
@@ -378,6 +415,18 @@ test.describe('catalog', () => {
     await expect(page.getByTestId('listing-count')).toHaveText(/^النتائج: [0-9,]+$/);
     const filterBox = (await page.getByTestId('listing-filters').boundingBox())!;
     expect(filterBox.x).toBeGreaterThan((await page.getByTestId('listing-grid').boundingBox())!.x);
+  });
+
+  test('Arabic: search inside a category', async ({ page, request }) => {
+    const text = 'شامبو';
+    const inside = await listing(request, `category=mom-baby&q=${encodeURIComponent(text)}`, 'ar');
+    await page.goto('/ar/product/mom-baby');
+    await page.getByTestId('listing-search').getByRole('searchbox').fill(text);
+    await page.getByTestId('listing-search').getByRole('button', { name: 'بحث' }).click();
+    await expect(page).toHaveURL(`/ar/product/mom-baby?search=${encodeURIComponent(text)}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(inside.context.title);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(inside.items.length);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card').first()).toContainText(text);
   });
 
   test('Arabic listing', async ({ page, request }) => {
@@ -548,6 +597,22 @@ test.describe('catalog on a phone', () => {
     expect(await fitsScreen(page)).toBe(true);
   });
 
+  test('searching inside a category from the phone drawer (Arabic) keeps the sort', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    const text = 'شامبو';
+    const inside = await listing(request, `category=mom-baby&q=${encodeURIComponent(text)}&sort=price_asc`, 'ar');
+    await page.goto('/ar/product/mom-baby?sort=low');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('button', { name: 'الفلاتر' }).click();
+    const drawer = page.getByRole('dialog', { name: 'الفلاتر' });
+    await drawer.getByTestId('listing-search').getByRole('searchbox').fill(text);
+    await drawer.getByTestId('listing-search').getByRole('searchbox').press('Enter');
+    await expect(page).toHaveURL(`/ar/product/mom-baby?sort=low&search=${encodeURIComponent(text)}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(inside.context.title);
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(inside.items.length);
+    expect(await fitsScreen(page)).toBe(true);
+  });
+
   test('the header search box is on screen and suggests', async ({ page }) => {
     await page.goto('/ar');
     const box = page.getByRole('combobox', { name: 'بحث' });
@@ -581,9 +646,9 @@ test.describe('filters without JavaScript', () => {
     await page.getByTestId('price-filter').getByRole('link', { name: 'Clear' }).click();
     await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high$/);
 
-    await page.getByTestId('listing-search').getByRole('searchbox').fill('cologne');
+    await page.getByTestId('listing-search').getByRole('searchbox').fill('bath');
     await page.getByTestId('listing-search').getByRole('button', { name: 'Go' }).click();
-    await expect(page).toHaveURL(/\/en\/products\?search=cologne$/);
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high&search=bath$/);
     await expect(page.getByTestId('listing-grid')).toBeVisible();
     await resetMock(page);
   });

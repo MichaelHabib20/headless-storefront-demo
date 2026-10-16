@@ -17,16 +17,17 @@ interface Ctx {
  * - `list`: `ListTarget.slug`, or its id when the slug is null
  * - `deals`: all deals, or with `category` the deals of that category (the one pair the API allows,
  *   the old storefront's `/product/deals/{cat}`)
- * - `q`: search text
+ * - `q`: search text. Alone: the search page; next to another scope: a search inside that listing
+ *   (the old storefront's listing "Search" box; same page, noindex)
  */
 export type ListingScope =
-  | { category: readonly string[] }
-  | { brand: string }
-  | { list: string | number }
-  | { tag: string }
-  | { deals: true; category?: readonly string[] }
+  | { category: readonly string[]; q?: string }
+  | { brand: string; q?: string }
+  | { list: string | number; q?: string }
+  | { tag: string; q?: string }
+  | { deals: true; category?: readonly string[]; q?: string }
   | { q: string }
-  | { vendor: number }
+  | { vendor: number; q?: string }
   | Record<string, never>;
 
 /** The page's own query parameters (Next.js `searchParams`, or a URLSearchParams). */
@@ -66,8 +67,8 @@ export function listingQuery(scope: ListingScope, params: ListingParams = {}): s
   else if ('brand' in scope) query.set('brand', scope.brand);
   else if ('list' in scope) query.set('list', String(scope.list));
   else if ('tag' in scope) query.set('tag', scope.tag);
-  else if ('q' in scope && scope.q) query.set('q', scope.q);
   else if ('vendor' in scope) query.set('vendor', String(scope.vendor));
+  if ('q' in scope && scope.q) query.set('q', scope.q);
   return query.toString();
 }
 

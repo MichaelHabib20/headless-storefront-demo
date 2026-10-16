@@ -33,6 +33,14 @@ describe('listingQuery', () => {
     expect(listingQuery({ deals: true }, { deals: 'false' })).toBe('deals=true');
   });
 
+  it('a search inside a listing: q from the scope next to it, never from the page URL', () => {
+    expect(listingQuery({ category: ['mom-baby'], q: 'bath' }, { sort: 'price_asc', q: 'other' })).toBe('sort=price_asc&category=mom-baby&q=bath');
+    expect(listingQuery({ brand: 'bioderma', q: 'شامبو' })).toBe(`brand=bioderma&q=${encodeURIComponent('شامبو')}`);
+    expect(listingQuery({ deals: true, category: ['skin-care'], q: 'x' })).toBe('deals=true&category=skin-care&q=x');
+    expect(listingQuery({ list: 'best-sellers', q: '' })).toBe('list=best-sellers');
+    expect(listingQuery({ vendor: 3, q: 'x' })).toBe('vendor=3&q=x');
+  });
+
   it('sends the deals of one category as deals + category (the one pair the API allows)', () => {
     expect(listingQuery({ deals: true, category: ['skin-care'] }, { sort: 'low', category: 'x', deals: 'false' })).toBe('sort=low&deals=true&category=skin-care');
     expect(listingQuery({ deals: true, category: ['الادوية', 'مسكنات'] })).toBe(`deals=true&category=${encodeURIComponent('الادوية/مسكنات')}`);

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import type { Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { PRICE_FIELDS, SEARCH_FIELD, currentField, hrefWithout, keptFields } from '@/lib/listing';
-import { routes } from '@/lib/routing';
 import type { ListingLinks } from './ListingFilters';
 import styles from './Listing.module.css';
 
@@ -32,36 +31,28 @@ export function ListingTools({ locale, links, current, withoutPrice = false }: L
 }
 
 /**
- * Search inside the listing. On the search page it changes the search text and keeps the other
- * parameters. The API takes one scope per listing (a search text cannot narrow a category, brand
- * or list: 422 `one_scope`), so elsewhere it opens the search page with the text.
+ * Search inside the listing, like the old storefront: the shopper stays on the same listing URL
+ * with `search=<text>` (the page sends it to the API as `q` next to its scope); the page's other
+ * parameters (sort, filters) ride along, a new search starts at page 1.
  */
 function ListingSearch({ locale, links, current }: Omit<ListingToolsProps, 'withoutPrice'>) {
   const t = translator(locale);
-  const searchPage = routes.search(locale);
-  const here = links.path === searchPage;
   const id = `listing-search-${locale}`;
+  const text = currentField(current, SEARCH_FIELD, 'q');
   return (
     <section className={styles.facet} data-testid="listing-search" aria-labelledby={`${id}-title`}>
       <h3 id={`${id}-title`} className={styles.toolTitle}>
         {t('catalogSearch')}
       </h3>
-      <Form action={here ? links.path : searchPage} className={styles.toolForm} role="search" aria-labelledby={`${id}-title`}>
-        {here && keptFields(current, 'search').map(([name, value], index) => <input key={`${name}-${index}`} type="hidden" name={name} value={value} />)}
+      <Form action={links.path} className={styles.toolForm} role="search" aria-labelledby={`${id}-title`}>
+        {keptFields(current, 'search').map(([name, value], index) => (
+          <input key={`${name}-${index}`} type="hidden" name={name} value={value} />
+        ))}
         <label htmlFor={id} className="visually-hidden">
           {t('catalogSearchLabel')}
         </label>
         <div className={styles.searchRow}>
-          <input
-            id={id}
-            name={SEARCH_FIELD}
-            type="search"
-            enterKeyHint="search"
-            autoComplete="off"
-            defaultValue={here ? currentField(current, SEARCH_FIELD, 'q') : ''}
-            className={styles.rangeInput}
-            key={here ? currentField(current, SEARCH_FIELD, 'q') : 'search'}
-          />
+          <input id={id} name={SEARCH_FIELD} type="search" enterKeyHint="search" autoComplete="off" defaultValue={text} className={styles.rangeInput} key={text} />
           <button type="submit" className={styles.rangeApply}>
             {t('catalogSearchGo')}
           </button>

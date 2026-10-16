@@ -51,7 +51,7 @@ const TEXT = {
     invalid: 'Some filters are not valid.',
     number: 'Must be a number of 0 or more.',
     page: 'Must be a whole number of 1 or more.',
-    oneScope: 'Send at most one of category, brand, list, tag, deals, q or vendor.',
+    oneScope: 'Send at most one of category, brand, list, tag, deals or vendor.',
     qRequired: 'Type something to search for.',
     pathRequired: 'The path is required.',
     notFound: 'This page could not be found.',
@@ -77,7 +77,7 @@ const TEXT = {
     invalid: 'بعض الفلاتر غير صحيحة.',
     number: 'يجب أن يكون رقماً 0 أو أكثر.',
     page: 'يجب أن يكون رقماً صحيحاً 1 أو أكثر.',
-    oneScope: 'أرسل واحداً فقط من category أو brand أو list أو tag أو deals أو q أو vendor.',
+    oneScope: 'أرسل واحداً فقط من category أو brand أو list أو tag أو deals أو vendor.',
     qRequired: 'اكتب كلمة للبحث عنها.',
     pathRequired: 'المسار مطلوب.',
     notFound: 'هذه الصفحة غير موجودة.',
@@ -259,14 +259,32 @@ export function createCatalogModule(shopper) {
     return { type: 'category', path: categories.get(key).path };
   }
 
-  /** Which products a scope covers, and how it presents itself. null = unknown scope (404). */
+  /** Products whose name or brand holds the search text. */
+  function matchesText(product, q) {
+    const needle = q.toLocaleLowerCase();
+    return product.name.toLocaleLowerCase().includes(needle) || (product.brand?.name ?? '').toLocaleLowerCase().includes(needle);
+  }
+
+  /**
+   * Which products a scope covers, and how it presents itself. null = unknown scope (404).
+   * `q` alone is the search page; `q` with a scope searches inside that listing, like the backend:
+   * same type, title, breadcrumbs and canonical, `context.query` = the text, never indexed. An empty `q` is ignored.
+   */
   function scopeOf(query, locale) {
+    const q = (query.get('q') ?? '').trim();
+    const scope = listingScopeOf(query, locale, q);
+    if (!q || !scope || scope.invalid || scope.type === 'search') return scope;
+    return { ...scope, items: scope.items.filter((p) => matchesText(p, q)), query: q, index: false };
+  }
+
+  function listingScopeOf(query, locale, q) {
     const t = TEXT[locale];
     const home = { label: t.home, target: { type: 'home' } };
-    const given = ['category', 'brand', 'list', 'tag', 'deals', 'q', 'vendor'].filter((key) => {
+    const given = ['category', 'brand', 'list', 'tag', 'deals', 'vendor'].filter((key) => {
       const value = query.get(key);
       return value !== null && value !== '' && !(key === 'deals' && (value === 'false' || value === '0'));
     });
+    if (q && !given.length) given.push('q');
     const all = products(locale);
     // the one pair allowed: the deals of one category (the old /product/deals/{cat})
     if (given.length === 2 && given.includes('deals') && given.includes('category')) {
@@ -293,9 +311,7 @@ export function createCatalogModule(shopper) {
       return { type: 'all', title: t.all, items: all, target: { type: 'search', query: '' }, crumbs: [home, { label: t.all, target: { type: 'search', query: '' } }], index: true };
     }
     if (scope === 'q') {
-      const q = query.get('q').trim();
-      const needle = q.toLocaleLowerCase();
-      const items = all.filter((p) => p.name.toLocaleLowerCase().includes(needle) || (p.brand?.name ?? '').toLocaleLowerCase().includes(needle));
+      const items = all.filter((p) => matchesText(p, q));
       const target = { type: 'search', query: q };
       return { type: 'search', title: t.search(q), query: q, items, target, crumbs: [home, { label: t.searchCrumb, target }], index: false };
     }

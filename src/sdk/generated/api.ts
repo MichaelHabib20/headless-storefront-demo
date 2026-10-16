@@ -275,9 +275,13 @@ export interface paths {
         };
         /**
          * One product listing for every listing page (category, brand, list, deals, tag, search, all products)
-         * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `q`, `vendor`); none = all products.
+         * @description Send at most one scope (`category`, `brand`, `list`, `tag`, `deals`, `vendor`); none = all products.
          *     One pair is allowed: `deals=true&category={path}` lists the deals of that category (the old storefront's
          *     `/product/deals/{cat}`); its `seo.canonical` is `{type: deals, category: [...]}`.
+         *     `q` alone is the search page (`context.type: search`). `q` with a scope searches inside that listing (the
+         *     old storefront's listing "Search" box): same `context.type`, title, breadcrumbs and `seo.canonical` as the
+         *     scope page, `context.query` = the text, `seo.index` false. An empty `q` is ignored. `query` strings never
+         *     carry `q`: keep it next to them while the shopper sorts or filters.
          *     `seo.index` is false when the request carries any query parameter other than `page`, `locale` and the
          *     scope parameters (old names such as `list_ids` or `sort` included), as on the old storefront.
          *     Filter and sort parameters come from the `query` strings of a previous answer: pass them through
@@ -286,6 +290,10 @@ export interface paths {
          *     `search`, `category_id`, `group_id`, `sub_category_id`, `list_ids`, `vendor_ids`, `promotions`, `brand_id`,
          *     `options_values_ids` / `attribute_id`, `in_stock`, `price_from`, `price_to` and the old `sort` keys
          *     (`low`, `high`, `a-z`, `z-a`, `popular`, `recent`, `high-discount`, `low-rate`, `high-rate`).
+         *     `sub_category_id` (`12`, `12,13` or repeated) and `sub_category_name` (an id or a sub-category slug) next to
+         *     a scope (e.g. `category=skin-care&sub_category_id=12`, the old `/product/skin-care?sub_category_id=12`) or
+         *     several of them become the `categories` filter, as the old page sent them; one alone is the category scope.
+         *     Pages run from 1 to `pagination.totalPages`, which the store may cap (SEARCH_MAX_PAGE): any page above it is 404.
          */
         get: operations["getProducts"];
         put?: never;
@@ -1987,6 +1995,8 @@ export interface components {
             perPage: number;
             total: number;
             totalPages: number;
+            /** @description Product listings only (optional): how many products the pages 1..totalPages can show. Less than `total` when the store caps listings at a page count (SEARCH_MAX_PAGE, 50 by default; a page past it is a 404), e.g. total 2217, totalPages 50, perPage 24 → reachable 1200. Show `total` as the count; never offer a page above `totalPages`. */
+            reachable?: number;
         };
         GuestSessionResponse: {
             data: {
@@ -2054,7 +2064,7 @@ export interface components {
             /** @description Allowed increment (1, or e.g. 0.5 for weighed products) */
             quantityStep: number;
             unitPrice: components["schemas"]["Price"];
-            /** @description What this line costs after item promotions */
+            /** @description What this line costs after item promotions; `display` always has 2 decimals, like the totals ("690.00 EGP") */
             lineTotal: components["schemas"]["Money"];
             availability: components["schemas"]["CartItemAvailability"];
         };
@@ -2338,7 +2348,7 @@ export interface components {
                 title: string;
                 description: components["schemas"]["RichText"] | null;
                 image: components["schemas"]["Image"] | null;
-                /** @description The search text (search only) */
+                /** @description The search text: the search page, or a search inside this listing (`q` sent with a scope) */
                 query: string | null;
             };
             breadcrumbs: components["schemas"]["Link"][];
@@ -2673,8 +2683,12 @@ export interface components {
             /** @enum {boolean} */
             acceptTerms: true;
             /**
-             * @description A page of this storefront (absolute https URL on an origin the store allows). Needed for online
-             *     payment methods: after paying, the shopper lands there with `?checkout=<reference>` added.
+             * @description A page of this storefront (absolute https URL of at most 2,000 characters on an origin the store
+             *     allows, `STOREFRONT_RETURN_ORIGINS` or the origin of `WEBSITE_URL`). Only used when the order is
+             *     paid online: after paying, the shopper lands there with `?checkout=<reference>` added. For an online
+             *     payment a missing or not allowed value is 422 `validation_failed` on `returnUrl`. For an offline
+             *     order (cash on delivery, or a wallet that pays everything) it is ignored: never checked, stored or
+             *     used, so it can never block that order. It is safe to always send it.
              */
             returnUrl?: string | null;
         };
@@ -4225,7 +4239,7 @@ export interface operations {
                 tag?: string;
                 /** @description May be sent with `category`: the deals of that category */
                 deals?: boolean;
-                /** @description Search text */
+                /** @description Search text. Alone: the search page; with a scope: a search inside that listing (noindex, canonical = the scope page) */
                 q?: string;
                 /** @description Phase B: VendorTarget.id (404 when the store has multi-vendor off) */
                 vendor?: number;

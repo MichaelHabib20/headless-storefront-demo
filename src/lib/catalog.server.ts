@@ -2,7 +2,7 @@ import 'server-only';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { getBrands, getCategories, getProducts, getVendors, hasTypedScope, isApiError, type BrandsPage, type CategoryTree, type ListingScope, type Locale, type ProductListing, type VendorsPage } from '@/sdk';
-import { toApiParams, toSearchParams, type PageParams } from './listing';
+import { toApiParams, toSearchParams, withListingSearch, type PageParams } from './listing';
 import { seoMetadata } from './seo';
 import { shopperContext } from './shopper.server';
 import { storefrontClient } from './storefront.server';
@@ -41,15 +41,19 @@ const fetchListing = cache(async (locale: Locale, scopeKey: string, query: strin
 });
 
 /**
- * The page's parameters go to the API in its names (the page's links use the old storefront's names).
+ * The page's parameters go to the API in its names (the page's links use the old storefront's names);
+ * a search text on a scoped page goes as `q` next to the scope (a search inside the listing).
  * The deals of a category the backend does not know (`/product/deals/{x}`, `/products/deals/{name}`)
  * are all the deals, as on the old storefront, which never answered 404 there; their canonical is
  * then the deals page.
  */
-export async function loadListing(locale: Locale, scope: ListingScope, params: PageParams | URLSearchParams): Promise<ListingResult> {
-  const query = toApiParams(toSearchParams(params)).toString();
+export async function loadListing(locale: Locale, routeScope: ListingScope, params: PageParams | URLSearchParams): Promise<ListingResult> {
+  const { scope, params: rest } = withListingSearch(routeScope, toSearchParams(params));
+  const query = toApiParams(rest).toString();
   const result = await fetchListing(locale, JSON.stringify(scope), query);
-  if (result.status === 'not_found' && 'deals' in scope && scope.category?.length) return fetchListing(locale, JSON.stringify({ deals: true }), query);
+  if (result.status === 'not_found' && 'deals' in scope && scope.category?.length) {
+    return fetchListing(locale, JSON.stringify(scope.q ? { deals: true, q: scope.q } : { deals: true }), query);
+  }
   return result;
 }
 

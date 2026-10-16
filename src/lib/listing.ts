@@ -5,6 +5,8 @@
  * (url-parity-plan §3.2, §7), so filter URLs look like the old site's, and back for the API.
  */
 
+import type { ListingScope } from '@/sdk';
+
 /** A page's own query parameters (Next.js `searchParams`). */
 export type PageParams = Record<string, string | string[] | undefined>;
 
@@ -98,6 +100,32 @@ export function toApiParams(params: URLSearchParams): URLSearchParams {
     else out.append(key, value);
   }
   return out;
+}
+
+/** The search text of a listing page: the old storefront's `?search=`, or `?q=` (trimmed; '' when none). */
+export function searchTextOf(params: URLSearchParams): string {
+  return (params.get(SEARCH_FIELD) || params.get('q') || '').trim();
+}
+
+/**
+ * A search inside the listing (the old storefront's listing "Search" box): the page's `?search=`
+ * goes to the API as `q` next to the route's scope (`category=…&q=…`); the backend answers the
+ * scope's page narrowed to the text (noindex). The search page itself (`{ q }` set) is unchanged.
+ */
+export function withListingSearch(scope: ListingScope, params: URLSearchParams): { scope: ListingScope; params: URLSearchParams } {
+  const text = searchTextOf(params);
+  if (!text || ('q' in scope && scope.q)) return { scope, params };
+  const rest = new URLSearchParams(params);
+  rest.delete(SEARCH_FIELD);
+  rest.delete('q');
+  return { scope: { ...scope, q: text } as ListingScope, params: rest };
+}
+
+/** The listing's links keep the search text (`search=`): the backend's sort / filter `query` strings never carry it. */
+export function linksWithSearch(links: { path: string; keep?: Record<string, string> }, params: URLSearchParams): { path: string; keep?: Record<string, string> } {
+  const text = searchTextOf(params);
+  if (!text || links.keep?.[SEARCH_FIELD]) return links;
+  return { ...links, keep: { ...links.keep, [SEARCH_FIELD]: text } };
 }
 
 /** The page's query parameters as they came, repeated parameters included. */
