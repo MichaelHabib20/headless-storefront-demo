@@ -19,7 +19,7 @@ describe('mock seo module follows the contract', () => {
     expect(body.data.localBusiness.openingHours.length).toBeGreaterThan(0);
   });
 
-  it.each(['products', 'categories', 'brands', 'pages', 'landing_pages', 'tags'])('GET /sitemap?type=%s in both languages', (type) => {
+  it.each(['static_pages', 'pages', 'products', 'categories', 'subcategories', 'groups', 'brands', 'landing_pages', 'tags'])('GET /sitemap?type=%s in both languages', (type) => {
     const seo = createSeoModule(createShopperStore());
     for (const locale of ['en', 'ar']) {
       const [status, body] = seo.handle(request(locale, '/sitemap', { query: `type=${type}&perPage=3` }));
@@ -28,6 +28,26 @@ describe('mock seo module follows the contract', () => {
       expect(body.data.items.length).toBeGreaterThan(0);
       for (const item of body.data.items) expect(item.alternates.map((a) => a.locale)).toEqual(['en', 'ar']);
     }
+  });
+
+  it('splits the category tree like the backend and follows the sitemap settings', () => {
+    const seo = createSeoModule(createShopperStore());
+    const items = (type) => seo.handle(request('en', '/sitemap', { query: `type=${type}&perPage=5000` }))[1].data.items;
+    const depths = (type) => [...new Set(items(type).map((item) => item.target.path.length))];
+    expect(depths('categories')).toEqual([1]);
+    expect(depths('groups')).toEqual([2]);
+    expect(depths('subcategories').every((depth) => depth >= 2)).toBe(true);
+    expect(items('groups').some((item) => 'categoryView' in item)).toBe(false);
+    expect(items('static_pages').map((item) => item.target)).toEqual([{ type: 'page', slug: 'contact' }, { type: 'page', slug: 'branches' }, { type: 'deals' }]);
+
+    expect(seo.control('POST', '/__seo', { brands: false, localizedHome: true, categoryView: true })[1]).toMatchObject({ brands: false, localizedHome: true, categoryView: true });
+    expect(items('brands')).toEqual([]);
+    expect(items('static_pages')[0].target).toEqual({ type: 'home' });
+    expect(items('groups').every((item) => item.categoryView === true)).toBe(true);
+    const [, body] = seo.handle(request('ar', '/sitemap', { query: 'type=groups' }));
+    expect(validate('SitemapResponse', body)).toEqual([]);
+    seo.reset();
+    expect(items('brands').length).toBeGreaterThan(0);
   });
 
   it('pages the sitemap and refuses bad parameters', () => {

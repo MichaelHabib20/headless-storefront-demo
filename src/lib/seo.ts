@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { createElement, Fragment } from 'react';
-import type { Locale, Seo } from '@/sdk';
+import { LOCALES, type Locale, type Seo } from '@/sdk';
 import { listingPageHref } from './listing';
 import { resolveTarget } from './routing';
 
@@ -41,6 +41,17 @@ export function seoMetadata(seo: Seo, locale: Locale): Metadata {
   return meta;
 }
 
+/**
+ * Canonical and hreflang of a page of ours that has no backend `Seo` and the same address in every
+ * language (the brands and categories indexes): itself, each language, x-default the Arabic page
+ * (like the old storefront and `seoMetadata`). `href` builds the page's URL in a language.
+ */
+export function ownPageAlternates(href: (locale: Locale) => string, locale: Locale): NonNullable<Metadata['alternates']> {
+  const languages: Record<string, string> = Object.fromEntries(LOCALES.map((each) => [each, href(each)]));
+  languages['x-default'] = href('ar');
+  return { canonical: href(locale), languages };
+}
+
 /** rel=prev / rel=next of a paginated page: the canonical page with `page` (page 1 has none). */
 export function paginationHrefs(seo: Seo, locale: Locale): { prev: string | null; next: string | null } {
   const canonical = resolveTarget(seo.canonical, locale);
@@ -54,8 +65,10 @@ export function paginationHrefs(seo: Seo, locale: Locale): { prev: string | null
  * Head tags Next.js metadata cannot write: `<link rel="prev|next">` and `og:type=product`.
  * React hoists them into <head>. Rendered by <JsonLd> (src/lib/jsonld.ts).
  */
-export function SeoLinks({ seo, locale }: { seo: Seo; locale: Locale }) {
-  const { prev, next } = paginationHrefs(seo, locale);
+export function SeoLinks({ seo, locale, origin = '' }: { seo: Seo; locale: Locale; /** the public origin: absolute links like the canonical's */ origin?: string }) {
+  const hrefs = paginationHrefs(seo, locale);
+  const prev = hrefs.prev && origin + hrefs.prev;
+  const next = hrefs.next && origin + hrefs.next;
   // og:type of the preview (not a Target type)
   const previewType = seo.openGraph ? seo.openGraph['type'] : null;
   return createElement(

@@ -6,6 +6,8 @@ import styles from '@/components/catalog/Catalog.module.css';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { loadVendorsPage } from '@/lib/catalog.server';
 import { translator } from '@/lib/i18n';
+import { routes } from '@/lib/routing';
+import { ownPageAlternates } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +15,8 @@ type Params = Promise<{ locale: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? translator(locale)('vendorsTitle') : undefined };
+  if (!isLocale(locale)) return {};
+  return { title: translator(locale)('vendorsTitle'), alternates: ownPageAlternates(routes.vendors, locale) };
 }
 
 /** The old storefront's /vendors: every seller as the backend lists them, each opening its products. */

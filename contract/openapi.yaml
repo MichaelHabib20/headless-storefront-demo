@@ -1243,7 +1243,11 @@ paths:
         - name: type
           in: query
           required: true
-          schema: { type: string, enum: [products, categories, brands, pages, landing_pages, tags] }
+          description: >-
+            The old storefront's sitemap files. static_pages = home (ENABLE_LOCALIZED_HOME_IN_SITEMAP),
+            contact, branches, all deals; categories = top-level categories only, groups and
+            subcategories the rest of the tree; brands is empty unless ENABLE_BRANDS_IN_SITEMAPS.
+          schema: { type: string, enum: [static_pages, pages, products, categories, subcategories, groups, brands, landing_pages, tags] }
         - $ref: '#/components/parameters/Page'
         - name: perPage
           in: query
@@ -4358,6 +4362,11 @@ components:
                 properties:
                   target: { $ref: '#/components/schemas/Target' }
                   updatedAt: { type: string, format: date-time, nullable: true }
+                  categoryView:
+                    type: boolean
+                    description: >-
+                      Only on category entries, only when true: the store lists this category (ENABLE_SUBCATEGORY_VIEW)
+                      or group (ENABLE_CATEGORY_VIEW) at the old category view address (/{l}/category/...), not at its listing.
                   alternates:
                     type: array
                     items:

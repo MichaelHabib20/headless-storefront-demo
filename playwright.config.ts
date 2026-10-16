@@ -1,5 +1,6 @@
 import { loadEnvConfig } from '@next/env';
 import { defineConfig, devices } from '@playwright/test';
+import { SITE_URL } from './e2e/support';
 
 // Same env files as Next (.env.local holds the staging test account for live runs; never committed).
 loadEnvConfig(process.cwd());
@@ -12,6 +13,12 @@ const live = process.env.E2E_LIVE === '1';
 const mockPort = Number(process.env.MOCK_API_PORT ?? 4010);
 const apiUrl = live ? (process.env.SC_API_URL ?? 'https://staging-seif.witheldokan.com') : `http://127.0.0.1:${mockPort}`;
 const port = Number(process.env.E2E_PORT ?? 3200);
+/**
+ * A second server of the same build with SC_SITE_URL set (e2e/seo.spec.ts "canonical host"): the
+ * store's production address. Requests to it with that host (x-forwarded-host) are the production
+ * host; requests on 127.0.0.1 are a test host of the same deployment.
+ */
+const sitePort = Number(process.env.E2E_SITE_PORT ?? port + 1);
 
 export default defineConfig({
   testDir: './e2e',
@@ -40,5 +47,16 @@ export default defineConfig({
       timeout: 120_000,
       env: { SC_API_URL: apiUrl, SC_API_KEY: '', SC_REVALIDATE_SECONDS: '0' },
     },
+    ...(live
+      ? []
+      : [
+          {
+            command: `npx next start -p ${sitePort}`,
+            url: `http://127.0.0.1:${sitePort}/en`,
+            reuseExistingServer: false,
+            timeout: 120_000,
+            env: { SC_API_URL: apiUrl, SC_API_KEY: '', SC_REVALIDATE_SECONDS: '0', SC_SITE_URL: SITE_URL },
+          },
+        ]),
   ],
 });

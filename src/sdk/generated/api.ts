@@ -3159,6 +3159,8 @@ export interface components {
                     target: components["schemas"]["Target"];
                     /** Format: date-time */
                     updatedAt: string | null;
+                    /** @description Only on category entries, only when true: the store lists this category (ENABLE_SUBCATEGORY_VIEW) or group (ENABLE_CATEGORY_VIEW) at the old category view address (/{l}/category/...), not at its listing. */
+                    categoryView?: boolean;
                     alternates: {
                         locale: components["schemas"]["Locale"];
                         target: components["schemas"]["Target"];
@@ -5446,7 +5448,8 @@ export interface operations {
         parameters: {
             query: {
                 locale?: components["parameters"]["Locale"];
-                type: "products" | "categories" | "brands" | "pages" | "landing_pages" | "tags";
+                /** @description The old storefront's sitemap files. static_pages = home (ENABLE_LOCALIZED_HOME_IN_SITEMAP), contact, branches, all deals; categories = top-level categories only, groups and subcategories the rest of the tree; brands is empty unless ENABLE_BRANDS_IN_SITEMAPS. */
+                type: "static_pages" | "pages" | "products" | "categories" | "subcategories" | "groups" | "brands" | "landing_pages" | "tags";
                 page?: components["parameters"]["Page"];
                 perPage?: number;
             };

@@ -83,7 +83,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: { default: layout?.store.name ?? 'Store', template: `%s | ${layout?.store.name ?? 'Store'}` },
     description: layout?.store.slogan ?? undefined,
     icons: layout?.store.favicon ? [{ url: layout.store.favicon }] : undefined,
-    alternates: { languages: { en: routes.home('en'), ar: routes.home('ar') } },
+    // No `alternates` here: every page inherits them, so a page without its own would claim the home
+    // page as its other language. Each page sets its canonical + hreflang (seoMetadata / ownPageAlternates).
   };
 }
 

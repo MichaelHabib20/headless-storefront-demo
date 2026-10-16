@@ -42,6 +42,8 @@ export const routes = {
   /** The required address step before a prescription (the old /add-address); saves, then back to prescriptions. */
   addAddress: (locale: Locale) => `/${locale}/add-address`,
   categories: (locale: Locale) => `/${locale}/categories`,
+  /** The old storefront's categories index (the same page as /categories, at its own address). */
+  allCategories: (locale: Locale) => `/${locale}/all-categories`,
   /**
    * The old storefront's category view (stores with ENABLE_CATEGORY_VIEW indexed it): a category's
    * groups, or a group's sub-categories, at /category/{cat}[/{group}]; no path = every category.
@@ -187,6 +189,15 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
     default:
       return null;
   }
+}
+
+/**
+ * A category Target at the old storefront's category view (/category/{cat}[/{group}]) instead of its
+ * listing: for sitemap entries the backend marks `categoryView` (stores with ENABLE_CATEGORY_VIEW /
+ * ENABLE_SUBCATEGORY_VIEW listed them there). Null for any other Target.
+ */
+export function resolveCategoryView(target: Target | null | undefined, locale: Locale): ResolvedLink | null {
+  return target?.type === 'category' && target.path.length ? internal(routes.categoryView(locale, target.path)) : null;
 }
 
 /**

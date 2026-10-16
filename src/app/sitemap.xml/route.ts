@@ -1,28 +1,28 @@
 import { headers } from 'next/headers';
-import { LOCALES } from '@/sdk';
-import { requestOrigin } from '@/lib/jsonld';
-import { loadSiteSeo, loadSitemapPage } from '@/lib/seo.server';
-import { SITEMAP_PAGE_SIZE, SITEMAP_TYPES, sitemapIndexXml, xmlResponse, type ChildSitemap } from '@/lib/sitemap';
+import { publicOrigin } from '@/lib/origin';
+import { loadSitemapPage } from '@/lib/seo.server';
+import { SITEMAP_LOCALES, SITEMAP_TYPES, sitemapFileCount, sitemapIndexXml, xmlResponse, type ChildSitemap } from '@/lib/sitemap';
 
 export const dynamic = 'force-dynamic';
 
 /**
- * GET /sitemap_index.xml (the old storefront's name, rewritten here) and /sitemap.xml: the sitemap index. One child sitemap per type, language and page of
- * `GET /sitemap` (its `pagination.totalPages`). A store the backend hides from search engines
- * (`SiteSeo.robots.index` false) lists nothing.
+ * GET /sitemap_index.xml (the old storefront's name, rewritten here) and /sitemap.xml: the sitemap
+ * index, under the canonical origin. One child per type, language and file of 50,000 URLs, in the
+ * old index's order; a type without entries (or whose count failed to load) is left out.
+ *
+ * It always lists what exists, also for a store or host that may not be indexed: robots.txt keeps
+ * crawlers out there (src/app/robots.txt/route.ts), and the files can still be checked before a
+ * domain switch.
  */
 export async function GET(): Promise<Response> {
-  const origin = requestOrigin(await headers());
-  const site = await loadSiteSeo('en');
-  if (site && !site.robots.index) return xmlResponse(sitemapIndexXml(origin, []));
-
-  const children: ChildSitemap[] = [];
-  const firstPages = await Promise.all(
-    SITEMAP_TYPES.flatMap((type) => LOCALES.map(async (locale) => ({ type, locale, first: await loadSitemapPage(locale, type, 1, SITEMAP_PAGE_SIZE) }))),
+  const origin = publicOrigin(await headers());
+  const counts = await Promise.all(
+    SITEMAP_TYPES.flatMap((type) => SITEMAP_LOCALES.map(async (locale) => ({ type, locale, first: await loadSitemapPage(locale, type, 1, 1) }))),
   );
-  for (const { type, locale, first } of firstPages) {
-    if (!first || first.pagination.total === 0) continue;
-    for (let page = 1; page <= first.pagination.totalPages; page++) children.push({ type, locale, page });
+  const children: ChildSitemap[] = [];
+  for (const { type, locale, first } of counts) {
+    const files = first ? sitemapFileCount(first.pagination.total) : 0;
+    for (let page = 1; page <= files; page++) children.push({ type, locale, page });
   }
   return xmlResponse(sitemapIndexXml(origin, children));
 }
