@@ -8,6 +8,7 @@ import { routes } from '@/lib/routing';
 import { ProductCard } from '../product/ProductCard';
 import { Breadcrumbs } from '../ui/Breadcrumbs';
 import { Pagination } from '../ui/Pagination';
+import { ProductImage } from '../ui/ProductImage';
 import { RichText } from '../ui/RichText';
 import { AppliedFilters } from './AppliedFilters';
 import { CategoryFilters } from './CategoryFilters';
@@ -55,8 +56,8 @@ export function ListingView({ listing, locale, links, current = '', categories =
 
       <header className={styles.header}>
         {context.image && (
-          // eslint-disable-next-line @next/next/no-img-element -- merchant images come from any CDN per store
-          <img src={context.image.url} alt={context.image.alt ?? ''} className={styles.headerImage} />
+          // a missing file shows the store's placeholder, like the old storefront (never a broken icon)
+          <ProductImage src={context.image.url} alt={context.image.alt ?? ''} className={styles.headerImage} loading="eager" data-testid="listing-image" />
         )}
         <div className={styles.headerText}>
           <h1 className={styles.title}>{context.title}</h1>

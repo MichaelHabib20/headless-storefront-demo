@@ -9,6 +9,7 @@ import { AccountMenu } from './AccountMenu';
 import { DesktopNav } from './DesktopNav';
 import { MobileMenu } from './MobileMenu';
 import { SearchBox } from './SearchBox';
+import { StoreLogo } from './StoreLogo';
 import styles from './SiteHeader.module.css';
 
 interface SiteHeaderProps {
@@ -28,12 +29,7 @@ export function SiteHeader({ layout, locale, me = null }: SiteHeaderProps) {
         <MobileMenu layout={layout} locale={locale} labels={{ open: t('menu'), close: t('closeMenu'), language: t('language'), languageLabel: t('languageLabel') }} />
 
         <Link href={routes.home(locale)} className={styles.logo} aria-label={store.name ?? 'Home'}>
-          {store.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element -- merchant logo from any CDN
-            <img src={store.logo} alt={store.name ?? ''} className={styles.logoImage} />
-          ) : (
-            <span className={styles.logoText}>{store.name}</span>
-          )}
+          <StoreLogo src={store.logo} name={store.name} imageClassName={styles.logoImage} textClassName={styles.logoText} />
         </Link>
 
         <SearchBox

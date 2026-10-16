@@ -208,3 +208,59 @@ describe('mini cart', () => {
     await waitFor(() => expect(screen.getByText('تعذر تحميل السلة.')).toBeInTheDocument());
   });
 });
+
+describe('after add to cart (like the old storefront: a toast, no drawer)', () => {
+  function Adder({ message, onShown }: { message: string; onShown: (shown: boolean) => void }) {
+    const { added } = useMiniCart();
+    return (
+      <button type="button" onClick={() => onShown(added(message))}>
+        add
+      </button>
+    );
+  }
+
+  it('default: a toast with the action message (en + ar) that goes away by itself; the cart is not read', async () => {
+    vi.useFakeTimers();
+    try {
+      for (const [locale, message] of [['en', 'Added to cart.'], ['ar', 'تمت الإضافة إلى السلة.']] as const) {
+        const readCart = vi.fn();
+        const onShown = vi.fn();
+        const { unmount } = render(
+          <MiniCartProvider locale={locale} readCart={readCart}>
+            <Adder message={message} onShown={onShown} />
+          </MiniCartProvider>,
+        );
+        fireEvent.click(screen.getByRole('button', { name: 'add' }));
+        expect(onShown).toHaveBeenCalledWith(true);
+        expect(screen.getByTestId('cart-toast')).toHaveTextContent(message);
+        expect(screen.getByTestId('cart-toast').closest('[role="status"]')).not.toBeNull();
+        expect(screen.queryByTestId('mini-cart')).toBeNull();
+        expect(readCart).not.toHaveBeenCalled();
+        act(() => vi.advanceTimersByTime(4100));
+        expect(screen.queryByTestId('cart-toast')).toBeNull();
+        unmount();
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("'drawer': opens the mini cart instead", async () => {
+    const cart = cartFixture('en');
+    render(
+      <MiniCartProvider locale="en" readCart={vi.fn(async () => ({ status: 'ok' as const, cart }))} afterAdd="drawer">
+        <Adder message="Added to cart." onShown={() => undefined} />
+      </MiniCartProvider>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'add' }));
+    expect(await screen.findByTestId('mini-cart')).toBeInTheDocument();
+    expect(screen.queryByTestId('cart-toast')).toBeNull();
+  });
+
+  it('without the shell (no provider) the button keeps its own message', () => {
+    const onShown = vi.fn();
+    render(<Adder message="Added to cart." onShown={onShown} />);
+    fireEvent.click(screen.getByRole('button', { name: 'add' }));
+    expect(onShown).toHaveBeenCalledWith(false);
+  });
+});

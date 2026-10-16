@@ -147,7 +147,7 @@ them and **blocks the deploy** when one is broken.
 | "Add a bottom nav item" | It's `Layout.mobileNav` (the store's bottom-sheet config) → "needs backend / admin support"; restyle in `MobileBottomNav.module.css` | An own items array with `icon` + `href`, `label_en` / `fixed_items` |
 | "Show a maintenance page" | Nothing to build: the API answers 503 `store_unavailable`; the layout shows `StoreUnavailable` with the merchant's message | A flag or a hardcoded "we'll be back" page |
 | "Add a legal page" / "write our privacy policy" | The merchant adds it in the CMS; it appears in `Layout.legal` (footer, cookie notice) | Legal text in components or messages |
-| "Open the cart drawer after adding" | Already: `useMiniCart().open()`; the drawer shows `GET /cart` as it is | Adding up line totals in the drawer |
+| "Open the cart drawer after adding" | Set `AFTER_ADD_TO_CART = 'drawer'` in `src/lib/shell.ts` (default `toast`, like the old storefront); the drawer shows `GET /cart` as it is | Adding up line totals in the drawer |
 | "Let customers cancel a prescription that is being prepared" / "require photos" | Backend rules (`actions.canCancel`, `form.fields[].required`) → "needs backend support" | `status.code === 'received'`, own `required` |
 | "Link 'all products'" | `routes.allProducts(locale)` or the API's Target `{type: search, query: ""}` | `routes.search(locale)` with no text |
 | "Make it look like brand X" | Tokens in `globals.css`, component CSS modules | Change what data is shown |

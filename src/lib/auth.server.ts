@@ -1,9 +1,9 @@
 import 'server-only';
-import { getAuthSettings, getProfile, isApiError, type AuthSettings, type Locale, type Profile } from '@/sdk';
+import { getAuthSettings, getProfile, isApiError, type AuthSettings, type Layout, type Locale, type Profile } from '@/sdk';
 import type { AccountResult } from './account.server';
 import { translator, type MessageKey } from './i18n';
 import { customerToken } from './session';
-import { storefrontClient } from './storefront.server';
+import { loadLayout, storefrontClient } from './storefront.server';
 
 export type AuthSettingsResult = { ok: true; settings: AuthSettings } | { ok: false; message: string };
 
@@ -14,6 +14,15 @@ export async function loadAuthSettings(locale: Locale): Promise<AuthSettingsResu
   } catch (error) {
     if (!isApiError(error)) console.error('auth settings failed to load', error);
     return { ok: false, message: translator(locale)('authStoreUnreachable') };
+  }
+}
+
+/** The store's WhatsApp chat (`Layout.whatsapp`) for "contact us" notes; null when it has none or the layout failed. */
+export async function loadStoreWhatsapp(locale: Locale): Promise<Layout['whatsapp'] | null> {
+  try {
+    return (await loadLayout(locale)).whatsapp ?? null;
+  } catch {
+    return null;
   }
 }
 

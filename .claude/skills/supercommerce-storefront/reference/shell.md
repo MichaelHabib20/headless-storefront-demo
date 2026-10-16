@@ -8,7 +8,7 @@ field is null or missing.
 
 | API | Component | Notes |
 |---|---|---|
-| `GET /cart` (server action `readMiniCart`) | `MiniCartProvider` / drawer (`MiniCart.tsx`) | Opened by `useMiniCart().open()` after a successful add to cart (`ProductActions`). Shows lines, `summary`, `checkout.blockers`; the checkout button is a link only when `checkout.allowed`. Reading never creates a guest (no token → "empty") |
+| `GET /cart` (server action `readMiniCart`) | `MiniCartProvider` / drawer (`MiniCart.tsx`) | After a successful add to cart `ProductActions` calls `useMiniCart().added(message)`: a toast at the bottom (default, like the old storefront) or the drawer, per `AFTER_ADD_TO_CART` in `src/lib/shell.ts`. `open()` opens the drawer. Shows lines, `summary`, `checkout.blockers`; the checkout button is a link only when `checkout.allowed`. Reading never creates a guest (no token → "empty") |
 | `Layout.mobileNav` | `MobileBottomNav` + "more" sheet | Items, order, labels, icons, badges are the API's. `navAction()` (`src/lib/mobile-nav.ts`): the item's Target, else our own page by id (`cart`, `categories`, `wishlist`, `compare`, `orders`, `notifications`, `account`), or an action (`more`, `area`, `language`); unknown ids are skipped. Badges: `navBadge()` from `Me.counts`. Phones only (CSS, < 768 px) |
 | `Layout.appBanner` | `AppBanner` | Merchant title / text + store links; dismissal → cookie `sc_app_banner` (the server leaves it out next time) |
 | `Layout.topBanner` | `TopBanner` | Above everything; `TargetLink` |
