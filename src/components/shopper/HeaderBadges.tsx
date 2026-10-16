@@ -26,7 +26,6 @@ export function HeaderBadges({ locale, me, features }: HeaderBadgesProps) {
         <BadgeLink
           href={routes.notifications(locale)}
           locale={locale}
-          plain={true}
           count={counts?.unreadNotifications}
           label={countLabel(locale, counts?.unreadNotifications, {
             none: t('headerNotifications'),
@@ -74,14 +73,12 @@ interface BadgeLinkProps {
   label: string;
   count: number | undefined;
   locale: Locale;
-  /** Icon without the coloured circle. */
-  plain?: boolean;
   children: ReactNode;
 }
 
-function BadgeLink({ href, label, count, locale, plain, children }: BadgeLinkProps) {
+function BadgeLink({ href, label, count, locale, children }: BadgeLinkProps) {
   return (
-    <Link href={href} className={plain ? `${styles.link} ${styles.plain}` : styles.link} aria-label={label}>
+    <Link href={href} className={styles.link} aria-label={label}>
       {children}
       {count ? (
         <span className={styles.badge} aria-hidden="true">

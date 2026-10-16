@@ -5,18 +5,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-}
-
-.plain {
   background: none;
   color: var(--color-text);
-}
-
-.plain .badge {
-  background: var(--color-inverse-bg);
-  color: var(--color-inverse-text);
 }
 
 @media (max-width: 479px) {
@@ -34,8 +24,8 @@
   height: 18px;
   padding-inline: 4px;
   border-radius: 9px;
-  background: var(--color-on-primary);
-  color: var(--color-primary);
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
   font-size: 0.6875rem;
   font-weight: 700;
   line-height: 18px;
