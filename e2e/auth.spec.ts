@@ -276,7 +276,26 @@ test.describe('password reset', () => {
     // like the old storefront the link is always there; the page says what to do
     await page.getByRole('link', { name: 'نسيت كلمة المرور؟' }).click();
     await expect(page).toHaveURL(/\/ar\/session\/forgot-password$/);
-    await expect(page.getByTestId('reset-unavailable')).toContainText('تواصل معنا');
+    const note = page.getByTestId('reset-unavailable');
+    await expect(note).toContainText('تواصل معنا');
+    await expect(note.getByRole('link', { name: 'اتصل بنا' })).toHaveAttribute('href', '/ar/pages/contact');
+    await expect(note.getByRole('link', { name: 'تواصل عبر واتساب' })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
+    await expect(page.locator('form input[name="identifier"]')).toHaveCount(0);
+
+    // the reset page (and English) say the same, never an empty card
+    await open(page, '/en/session/change-password');
+    const reset = page.getByTestId('reset-link-invalid');
+    await expect(reset).toContainText('This store does not reset passwords online. Please contact us');
+    await expect(reset.getByRole('link', { name: 'Contact us' })).toHaveAttribute('href', '/en/pages/contact');
+    await expect(reset.getByRole('link', { name: 'Chat on WhatsApp' })).toBeVisible();
+  });
+
+  test('an e-mail store shows the full form on the forgot page (Arabic)', async ({ page, request }) => {
+    await mode(request, { passwordReset: 'email' });
+    await open(page, '/ar/session/forgot-password');
+    await expect(page.getByTestId('reset-unavailable')).toHaveCount(0);
+    await expect(page.locator('input[name="identifier"]')).toHaveAttribute('type', 'email');
+    await expect(page.getByTestId('forgot-password-page').getByRole('button')).toBeEnabled();
   });
 });
 

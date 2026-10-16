@@ -34,6 +34,12 @@ hardcoded host. With `SC_SITE_URL` set, any other host of the deployment (`*.ver
 **robots.txt** in order: test host → `Disallow: /`; backend `robots.index` false → `Disallow: /`;
 `ROBOTS_TXT` (the deployment's own file, as it is); else the old storefront's rules (`defaultRobotsTxt`).
 
+**`X-Robots-Tag: noindex, nofollow`** (`shouldNoindex` in `src/lib/indexing.server.ts`, from the
+middleware) follows the same policy: private pages; every page of a test host; every page when the
+backend's `robots.index` is false — with or without `SC_SITE_URL` (the seif test host on Vercel has
+none). Production host + backend allows indexing → no header. The backend's answer is reused for
+`SC_REVALIDATE_SECONDS`; when it cannot be reached pages stay indexable (like robots.txt).
+
 **Canonical + hreflang on every page:** pages with a backend `Seo` use `seoMetadata`; our own indexes
 (brands, categories, all-categories, vendors) use `ownPageAlternates(routes.x, locale)`: itself, both
 languages, x-default Arabic. The layout sets **no** `alternates` (pages would inherit the home page's).

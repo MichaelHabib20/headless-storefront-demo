@@ -202,6 +202,33 @@ test.describe('robots.txt and sitemaps', () => {
     expect(await (await request.get(`${SITE_APP_URL}/robots.txt`, { headers: asProduction })).text()).toBe('User-agent: *\nDisallow: /\n');
   });
 
+  test('X-Robots-Tag on public pages: every combination of SC_SITE_URL, host and the backend', async ({ request }) => {
+    const PUBLIC = ['/en', '/ar', '/en/brands', '/ar/product/mom-baby'];
+    const tag = async (origin: string, path: string, headers: Record<string, string> = {}) => (await request.get(`${origin}${path}`, { headers, maxRedirects: 0 })).headers()['x-robots-tag'];
+
+    // backend allows indexing: indexable without SC_SITE_URL and on the production host; the test host is not
+    for (const path of PUBLIC) {
+      expect(await tag(APP_URL, path), `no SC_SITE_URL ${path}`).toBeUndefined();
+      expect(await tag(SITE_APP_URL, path, asProduction), `production ${path}`).toBeUndefined();
+      expect(await tag(SITE_APP_URL, path), `test host ${path}`).toContain('noindex');
+    }
+
+    // backend says no indexing (staging, DISABLE_SEARCH_ENGINE_INDEXING): noindex everywhere, also
+    // without SC_SITE_URL (the seif test host on Vercel) — the same answer as robots.txt
+    await request.post(`${MOCK_API}/__seo`, { data: { robotsIndex: false } });
+    for (const path of PUBLIC) {
+      expect(await tag(APP_URL, path), `no SC_SITE_URL ${path}`).toContain('noindex');
+      expect(await tag(SITE_APP_URL, path, asProduction), `production ${path}`).toContain('noindex');
+      expect(await tag(SITE_APP_URL, path), `test host ${path}`).toContain('noindex');
+    }
+    expect(await (await request.get(`${APP_URL}/robots.txt`)).text()).toBe('User-agent: *\nDisallow: /\n');
+
+    // indexing back on: a real store is indexable again (no stale noindex)
+    await request.post(`${MOCK_API}/__seo`, { data: { robotsIndex: true } });
+    expect(await tag(SITE_APP_URL, '/en', asProduction)).toBeUndefined();
+    expect(await tag(APP_URL, '/ar')).toBeUndefined();
+  });
+
   test("sitemap index: the old storefront's files in its order, Arabic first, under this origin", async ({ request }) => {
     const index = await request.get(`${APP_URL}/sitemap_index.xml`);
     expect(index.headers()['content-type']).toContain('application/xml');
@@ -382,7 +409,7 @@ test.describe('server-side events (POST /events)', () => {
 
     const buy = page.getByTestId('product-info').getByRole('group', { name: details.product.name, exact: true });
     await buy.getByRole('button', { name: 'Add to cart' }).click();
-    await expect(buy.getByText('Added to cart.')).toBeVisible();
+    await expect(page.getByTestId('cart-toast')).toHaveText('Added to cart.');
     await expect.poll(async () => (await events(request)).filter((e) => e.name === 'add_to_cart')).toHaveLength(1);
     const [added] = (await events(request)).filter((e) => e.name === 'add_to_cart');
     expect(added.productIds).toEqual([productId]);

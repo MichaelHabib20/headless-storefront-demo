@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { Cart, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
+import { AFTER_ADD_TO_CART, TOAST_MS } from '@/lib/shell';
 import type { MiniCartResult } from '@/lib/shell.actions';
 import { Money } from '@/money';
 import { CheckoutBlockers } from '../cart/CheckoutBlockers';
@@ -16,12 +17,17 @@ import styles from './MiniCart.module.css';
 type ReadCart = (locale: Locale) => Promise<MiniCartResult>;
 
 interface MiniCartValue {
-  /** Opens the drawer and reads the cart again (after an add to cart). */
+  /** Opens the drawer and reads the cart again. */
   open: () => void;
+  /**
+   * After a successful add to cart: the shell's feedback (`AFTER_ADD_TO_CART`: a toast with the
+   * action's message, or the drawer). True when the shell showed it, so the button doesn't repeat it.
+   */
+  added: (message: string) => boolean;
 }
 
-// Without a provider (tests, pages outside the layout) opening does nothing.
-const MiniCartContext = createContext<MiniCartValue>({ open: () => undefined });
+// Without a provider (tests, pages outside the layout) nothing opens: the button shows its own message.
+const MiniCartContext = createContext<MiniCartValue>({ open: () => undefined, added: () => false });
 
 export function useMiniCart(): MiniCartValue {
   return useContext(MiniCartContext);
@@ -30,13 +36,31 @@ export function useMiniCart(): MiniCartValue {
 type View = { status: 'closed' } | { status: 'loading' } | MiniCartResult;
 
 /**
- * The mini cart drawer. Product buttons open it after a successful add to cart; it then reads
+ * The add-to-cart feedback and the mini cart drawer. After a successful add to cart product buttons
+ * call `added()`: a toast (like the old storefront) or the drawer (`AFTER_ADD_TO_CART`). The drawer reads
  * `GET /cart` through a server action and shows the API's answer as it is: lines, totals, the
  * blockers and a checkout button enabled only by `checkout.allowed`. Nothing is computed here.
  */
-export function MiniCartProvider({ locale, readCart, children }: { locale: Locale; readCart: ReadCart; children: ReactNode }) {
+interface MiniCartProviderProps {
+  locale: Locale;
+  readCart: ReadCart;
+  /** What a successful add to cart shows (src/lib/shell.ts). */
+  afterAdd?: 'toast' | 'drawer';
+  children: ReactNode;
+}
+
+export function MiniCartProvider({ locale, readCart, afterAdd = AFTER_ADD_TO_CART, children }: MiniCartProviderProps) {
   const [view, setView] = useState<View>({ status: 'closed' });
+  const [toast, setToast] = useState<{ id: number; text: string } | null>(null);
   const request = useRef(0);
+  const toastId = useRef(0);
+
+  // The message goes away by itself; a newer one restarts the timer.
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast((current) => (current?.id === toast.id ? null : current)), TOAST_MS);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const open = useCallback(() => {
     const id = ++request.current;
@@ -51,12 +75,32 @@ export function MiniCartProvider({ locale, readCart, children }: { locale: Local
     request.current++;
     setView({ status: 'closed' });
   }, []);
-  const value = useMemo(() => ({ open }), [open]);
+  const added = useCallback(
+    (message: string) => {
+      if (afterAdd === 'drawer') {
+        open();
+        return true;
+      }
+      if (!message) return false;
+      setToast({ id: ++toastId.current, text: message });
+      return true;
+    },
+    [afterAdd, open],
+  );
+  const value = useMemo(() => ({ open, added }), [open, added]);
 
   return (
     <MiniCartContext.Provider value={value}>
       {children}
       {view.status !== 'closed' && <MiniCartDrawer locale={locale} view={view} onClose={close} />}
+      {/* Always in the page so screen readers announce the message when it appears. */}
+      <div className={styles.toastRegion} role="status" aria-live="polite">
+        {toast && (
+          <p key={toast.id} className={styles.toast} data-testid="cart-toast">
+            {toast.text}
+          </p>
+        )}
+      </div>
     </MiniCartContext.Provider>
   );
 }

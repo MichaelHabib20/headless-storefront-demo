@@ -119,7 +119,7 @@ test.describe('product page', () => {
     await expect(buy.getByTestId('product-quantity')).toHaveText('2');
     await buy.getByRole('button', { name: 'Add to cart' }).click();
 
-    await expect(buy.getByText('Added to cart.')).toBeVisible();
+    await expect(page.getByTestId('cart-toast')).toHaveText('Added to cart.');
     await expect(buy.getByRole('link', { name: 'In cart (2)' })).toHaveAttribute('href', '/en/cart');
     await expect(header(page).getByRole('link', { name: 'Cart, 1 item' })).toBeVisible();
 
