@@ -28,4 +28,9 @@
   :global(body):has(.whatsapp) {
     padding-block-end: calc(var(--bottom-nav-space, 0px) + 48px + 2 * var(--space-3));
   }
+  /* Text that can sit at the bottom of the first screen (the product title under the gallery) keeps its
+     end clear of the button, so the button never covers its last words. Opt in with data-floating-clear. */
+  :global(body):has(.whatsapp) :global([data-floating-clear]) {
+    padding-inline-end: calc(48px + var(--space-2));
+  }
 }

@@ -29,7 +29,7 @@ afterEach(() => document.removeEventListener('click', stopNavigation));
 describe('NotificationsView', () => {
   it.each([
     ['en', 'Notifications', '24 unread', 'Mark all as read', 'Mark as read'],
-    ['ar', 'الإشعارات', '٢٤ غير مقروءة', 'تحديد الكل كمقروء', 'تحديد كمقروء'],
+    ['ar', 'الإشعارات', '24 غير مقروءة', 'تحديد الكل كمقروء', 'تحديد كمقروء'],
   ] as const)('lists the notifications with their read state (%s)', (locale, heading, unread, markAll, markOne) => {
     const data = notificationsFixture(locale);
     setup(ok(data), locale);
@@ -171,7 +171,7 @@ describe('NotificationsView pagination', () => {
 
   it('is translated in Arabic', () => {
     onPage(1, 'ar');
-    expect(nav()).toHaveTextContent('صفحة ١ من ٣');
+    expect(nav()).toHaveTextContent('صفحة 1 من 3');
     expect(within(nav()).getByRole('link', { name: /التالي/ })).toHaveAttribute('href', '/ar/notifications?page=2');
   });
 

@@ -291,7 +291,7 @@ test.describe('orders', () => {
     expect(await noHorizontalScroll(page)).toBe(true);
 
     await open(page, '/ar/account/order-history');
-    await expect(page.getByTestId('order-summary').first()).toContainText('٢٨ سبتمبر ٢٠٢٦');
+    await expect(page.getByTestId('order-summary').first()).toContainText('28 سبتمبر 2026');
   });
 });
 

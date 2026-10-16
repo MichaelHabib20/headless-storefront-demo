@@ -7,9 +7,10 @@ import type { Locale, Me, MobileNav, MobileNavItem } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { navAction, navBadge } from '@/lib/mobile-nav';
 import { formatNumber } from '@/lib/numbers';
-import { routes, switchLocalePath } from '@/lib/routing';
+import { routes } from '@/lib/routing';
 import { OPEN_AREA_EVENT } from '@/lib/shell';
 import { Icon } from '../ui/Icon';
+import { LocaleLink } from './LanguageSwitch';
 import { NavIcon } from './NavIcon';
 import styles from './MobileBottomNav.module.css';
 
@@ -111,9 +112,9 @@ function NavEntry({ item, locale, me, pathname, onMore, className, onNavigate }:
       );
     case 'language':
       return (
-        <Link href={switchLocalePath(pathname, locale === 'ar' ? 'en' : 'ar')} className={className} hrefLang={locale === 'ar' ? 'en' : 'ar'} onClick={onNavigate} data-nav={item.id}>
+        <LocaleLink locale={locale} className={className} onClick={onNavigate} data-nav={item.id}>
           {content}
-        </Link>
+        </LocaleLink>
       );
     default:
       return null;

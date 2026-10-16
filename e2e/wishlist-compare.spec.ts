@@ -174,7 +174,7 @@ test.describe('wishlist and compare', () => {
 
       await page.goto('/ar/compare');
       await expect(page.getByRole('heading', { level: 1, name: 'مقارنة المنتجات' })).toBeVisible();
-      await expect(page.getByTestId('compare-note')).toHaveText('مقارنة ٢ من ٤ منتجات');
+      await expect(page.getByTestId('compare-note')).toHaveText('مقارنة 2 من 4 منتجات');
       const brand = page.getByTestId('compare-row').first();
       await expect(brand.getByRole('rowheader')).toHaveText('الماركة');
       // attribute names are on the right, values to their left

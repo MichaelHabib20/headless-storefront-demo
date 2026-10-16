@@ -73,6 +73,18 @@ sections (`categoryFilters`); `CategoryFilters.tsx` draws them as plain links to
 (followable, no `nofollow`). A ticked sub-category links back to its category (unticks). When the
 backend sends its own category facet, "Sub category" is left out (`hasCategoryFacet`).
 
+## Search and Price (always there)
+
+Like the old storefront, the panel always starts with **Search** and **Price** (`ListingTools.tsx`),
+also when the store's side filters are off (`facets: []`) and on custom lists. Both are GET forms
+with the old names (`search`, `price_from`, `price_to`); the page's other parameters go along as
+hidden fields (`keptFields()`, which only drops the form's own fields and `page`). Price has Apply
+and a Clear link (`hrefWithout()`); when the backend sends its own `range` facet, that one is drawn
+instead. Search changes the text in place on the search page; elsewhere it opens the search page,
+because the API takes one scope per listing (`q` + `category` → 422 `one_scope`): searching
+inside a category, brand or list needs backend support. With side filters off the old site shows
+no Brands section (the legacy API sends no brands then), so neither do we.
+
 ## What the storefront must not do
 
 - Build, merge, parse or reorder filter parameters (`brands=`, `options=`, `sort=`…). Use the `query` strings.

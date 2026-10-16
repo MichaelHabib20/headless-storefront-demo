@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PRICE_FIELDS, formFields, listingHref, listingPageHref, swatchColor, toApiParams, toOldQuery, toSearchParams } from './listing';
+import { PRICE_FIELDS, currentField, formFields, hrefWithout, keptFields, listingHref, listingPageHref, swatchColor, toApiParams, toOldQuery, toSearchParams } from './listing';
 
 describe('listing links', () => {
   it('puts the backend query after the page path, in the old storefront names', () => {
@@ -77,5 +77,25 @@ describe('listing links', () => {
     expect(swatchColor('url(https://x.test/a.png)')).toBeNull();
     expect(swatchColor('red;background:url(x)')).toBeNull();
     expect(swatchColor(null)).toBeNull();
+  });
+});
+
+describe('the side forms (Search, Price)', () => {
+  it('keep every other parameter, in the old names and order, without their own fields and the page', () => {
+    expect(keptFields('sort=price_asc&brands=a,b&priceMin=1&price_to=9&page=4&search=x', 'price')).toEqual([
+      ['sort', 'low'],
+      ['brand_id', 'a'],
+      ['brand_id', 'b'],
+      ['search', 'x'],
+    ]);
+    expect(keptFields('search=x&q=y&sort=high&page=2', 'search')).toEqual([['sort', 'high']]);
+  });
+
+  it('clear links and current values', () => {
+    expect(hrefWithout('/en/product/a', 'price_from=1&price_to=2', 'price')).toBe('/en/product/a');
+    expect(hrefWithout('/en/product/a', 'in_stock=1&price_from=1', 'price')).toBe('/en/product/a?in_stock=1');
+    expect(currentField('priceMin=5', 'price_from', 'priceMin')).toBe('5');
+    expect(currentField('price_from=3&priceMin=5', 'price_from', 'priceMin')).toBe('3');
+    expect(currentField('', 'search', 'q')).toBe('');
   });
 });

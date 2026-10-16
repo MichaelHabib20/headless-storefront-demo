@@ -4,6 +4,7 @@ import { useRef, useState, type KeyboardEvent } from 'react';
 import type { Image, Locale, ProductVideo } from '@/sdk';
 import { formatNumber } from '@/lib/numbers';
 import { Icon } from '../ui/Icon';
+import { ProductImage } from '../ui/ProductImage';
 import { fillTemplate, safeVideoUrl } from './details';
 import styles from './ProductGallery.module.css';
 
@@ -77,10 +78,9 @@ export function ProductGallery({ images, video, name, labels, locale }: ProductG
     <div className={styles.gallery} data-testid="product-gallery">
       <div className={styles.stage}>
         {!current ? (
-          <div className={styles.placeholder} aria-hidden="true" />
+          <ProductImage src={null} alt="" className={styles.image} loading="eager" />
         ) : current.kind === 'image' ? (
-          // eslint-disable-next-line @next/next/no-img-element -- merchant images come from any CDN per store
-          <img src={current.image.url} alt={current.image.alt ?? name} className={styles.image} data-testid="product-gallery-image" />
+          <ProductImage key={current.image.url} src={current.image.url} alt={current.image.alt ?? name} className={styles.image} loading="eager" data-testid="product-gallery-image" />
         ) : (
           <VideoStage video={current.video} labels={labels} />
         )}
@@ -114,8 +114,7 @@ export function ProductGallery({ images, video, name, labels, locale }: ProductG
                 onKeyDown={onKeyDown}
               >
                 {slide.kind === 'image' ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- merchant images come from any CDN per store
-                  <img src={slide.image.url} alt="" loading="lazy" decoding="async" className={styles.thumbImage} />
+                  <ProductImage src={slide.image.url} alt="" className={styles.thumbImage} />
                 ) : (
                   <span className={styles.videoThumb}>
                     {slide.video.thumbnail && (

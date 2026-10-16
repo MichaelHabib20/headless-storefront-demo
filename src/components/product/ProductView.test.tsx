@@ -179,7 +179,7 @@ describe('ProductView', () => {
     expect(screen.getByRole('navigation', { name: 'مسار التنقل' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'المواصفات' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'أضف إلى السلة' })).toBeEnabled();
-    expect(screen.getByRole('img', { name: 'التقييم ٤٫١ من ٥' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'التقييم 4.1 من 5' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: `${details.options[1].values[1].label}, غير متوفر` })).toHaveAttribute(
       'href',
       productHref('ar', details.options[1].values[1].target!.slug),

@@ -250,6 +250,16 @@ test.describe('product page', () => {
     await expect(page.getByRole('region', { name: 'Reviews' })).toHaveCount(0);
   });
 
+  test('pictures that do not load show the store placeholder, not the broken-image icon', async ({ page }) => {
+    await page.route(/\.(webp|jpe?g|png)(\?|$)/i, (route) => route.fulfill({ status: 404, body: '' }));
+    await open(page, path(36480));
+    const main = page.getByTestId('product-gallery-image');
+    await expect(main).toHaveAttribute('data-placeholder', 'true');
+    expect(await main.evaluate((el: HTMLImageElement) => el.naturalWidth > 0)).toBe(true);
+    const thumbs = page.getByTestId('product-gallery').getByRole('listitem').locator('img');
+    await expect(thumbs.first()).toHaveAttribute('data-placeholder', 'true');
+  });
+
   test('an unknown product is a 404', async ({ page }) => {
     const response = await page.goto('/en/definitely-not-a-product');
     expect(response?.status()).toBe(404);

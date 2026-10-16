@@ -61,13 +61,13 @@ describe('ProductReviews', () => {
     expect(screen.getByRole('region', { name: 'التقييمات' })).toHaveTextContent('تعذر تحميل التقييمات الآن.');
   });
 
-  it('speaks Arabic with Arabic digits', () => {
+  it('speaks Arabic with Latin digits', () => {
     const reviews = reviewsFixture('ar');
     render(<ProductReviews reviews={reviews} locale="ar" baseHref="/ar/x" />);
 
     expect(screen.getByRole('heading', { name: 'التقييمات' })).toBeInTheDocument();
-    expect(screen.getByTestId('reviews-average')).toHaveTextContent('٤٫١');
-    expect(screen.getByText('بناءً على ٢٣ تقييم')).toBeInTheDocument();
+    expect(screen.getByTestId('reviews-average')).toHaveTextContent('4.1');
+    expect(screen.getByText('بناءً على 23 تقييم')).toBeInTheDocument();
     expect(screen.getAllByTestId('review')[0]).toHaveTextContent(reviews.items[0].comment!);
     expect(screen.getByRole('navigation', { name: 'صفحات التقييمات' })).toBeInTheDocument();
   });
