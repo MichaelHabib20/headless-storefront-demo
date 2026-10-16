@@ -224,4 +224,13 @@ describe('switchLocalePath', () => {
     expect(switchLocalePath('/en/jj-bath', 'ar')).toBe('/ar/jj-bath');
     expect(switchLocalePath('/ar', 'en')).toBe('/en');
   });
+
+  it('keeps the query: sort, page and filters (QA: the switch dropped them)', () => {
+    expect(switchLocalePath('/en/product/skin-care/face-care', 'ar', 'sort=high&page=2&brand_id=a&brand_id=b')).toBe(
+      '/ar/product/skin-care/face-care?sort=high&page=2&brand_id=a&brand_id=b',
+    );
+    expect(switchLocalePath('/ar/products', 'en', '?search=%D8%A8')).toBe('/en/products?search=%D8%A8');
+    expect(switchLocalePath('/en/x', 'ar', new URLSearchParams({ price_from: '10' }))).toBe('/ar/x?price_from=10');
+    expect(switchLocalePath('/en/x', 'ar', '')).toBe('/ar/x');
+  });
 });

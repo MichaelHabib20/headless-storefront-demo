@@ -2,6 +2,7 @@ import { useId } from 'react';
 import type { CartItem, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { Money, Price } from '@/money';
+import { ProductImage } from '../ui/ProductImage';
 import { TargetLink } from '../ui/TargetLink';
 import { canChangeQuantity, formatQuantity, limitsFor, stepDown, stepUp } from './quantity';
 import styles from './CartLineItem.module.css';
@@ -38,12 +39,7 @@ export function CartLineItem({ item, locale, quantity = item.quantity, pending =
   return (
     <article className={classes} data-testid="cart-line" data-status={availability.status} aria-busy={pending || undefined} aria-labelledby={nameId}>
       <div className={styles.media}>
-        {product.image ? (
-          // eslint-disable-next-line @next/next/no-img-element -- merchant images come from any CDN per store
-          <img src={product.image.url} alt={product.image.alt ?? product.name} loading="lazy" decoding="async" className={styles.image} />
-        ) : (
-          <div className={styles.placeholder} aria-hidden="true" />
-        )}
+        <ProductImage src={product.image?.url} alt={product.image?.alt ?? product.name} className={styles.image} />
       </div>
 
       <div className={styles.details}>

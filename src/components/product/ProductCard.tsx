@@ -1,6 +1,7 @@
 import type { Locale, ProductCard as ProductCardData } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { DiscountLabel, Price } from '@/money';
+import { ProductImage } from '../ui/ProductImage';
 import { TargetLink } from '../ui/TargetLink';
 import { ProductActions } from './ProductActions';
 import styles from './ProductCard.module.css';
@@ -24,12 +25,7 @@ export function ProductCard({ product, locale, showActions = true }: ProductCard
     <article className={styles.card} data-testid="product-card">
       <TargetLink target={product.target} locale={locale} className={styles.link}>
         <div className={styles.media}>
-          {product.image ? (
-            // eslint-disable-next-line @next/next/no-img-element -- merchant images come from any CDN per store
-            <img src={product.image.url} alt={product.image.alt ?? product.name} loading="lazy" decoding="async" className={styles.image} />
-          ) : (
-            <div className={styles.placeholder} aria-hidden="true" />
-          )}
+          <ProductImage src={product.image?.url} alt={product.image?.alt ?? product.name} className={styles.image} />
           <DiscountLabel price={product.price} className={styles.discount} />
           {!product.inStock && <span className={styles.soldOut}>{t('outOfStock')}</span>}
         </div>

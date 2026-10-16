@@ -354,10 +354,15 @@ export function externalHref(url: string | null | undefined): string | null {
   return url && /^https?:\/\//i.test(url) ? url : null;
 }
 
-/** Same path in the other language: /en/x → /ar/x (a product page then moves to its Arabic slug). */
-export function switchLocalePath(pathname: string, to: Locale): string {
+/**
+ * Same page in the other language: /en/x?sort=low → /ar/x?sort=low (a product page then moves to
+ * its Arabic slug). The query (sort, page, filters, search) stays as it is, like the old storefront.
+ */
+export function switchLocalePath(pathname: string, to: Locale, search: string | URLSearchParams = ''): string {
   const [, , ...rest] = pathname.split('/');
-  return `/${[to, ...rest].filter(Boolean).join('/')}`;
+  const path = `/${[to, ...rest].filter(Boolean).join('/')}`;
+  const query = (typeof search === 'string' ? search : search.toString()).replace(/^\?/, '');
+  return query ? `${path}?${query}` : path;
 }
 
 function internal(href: string): ResolvedLink {

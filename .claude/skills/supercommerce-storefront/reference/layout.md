@@ -55,4 +55,6 @@ icons, pages). Never re-implement the rule behind them.
 - **Add a footer column of fixed links** (e.g. "Help") → use `routes.*` from `src/lib/routing.ts`
   and i18n labels; gate by `features.*` where one exists.
 - **Hide the WhatsApp button on mobile** → CSS in `FloatingActions.module.css`.
+- **Text the WhatsApp button covers on phones** → add `data-floating-clear` to it (the product title has
+  it): while the button is on the page, phones keep its inline end clear (`FloatingActions.module.css`).
 - **Tests to update**: `SiteChrome.test.tsx`, `e2e/home.spec.ts`, `e2e/mobile.spec.ts`.

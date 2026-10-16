@@ -95,7 +95,7 @@ describe('Pagination', () => {
     expect(screen.getByRole('link', { name: 'Page 1' })).toHaveAttribute('href', '/en/jj-bath#reviews');
   });
 
-  it('marks gaps and shows Arabic digits in Arabic', () => {
+  it('marks gaps and shows Latin digits in Arabic', () => {
     render(
       <Pagination
         pagination={{ page: 5, totalPages: 10 }}
@@ -106,8 +106,8 @@ describe('Pagination', () => {
     );
     const nav = screen.getByRole('navigation', { name: 'صفحات المفضلة' });
     expect(within(nav).getAllByText('…')).toHaveLength(2);
-    expect(within(nav).getByRole('link', { name: 'صفحة ١٠' })).toHaveAttribute('href', '/ar/favorites?page=10');
-    expect(within(nav).getByRole('link', { name: 'صفحة ٥' })).toHaveAttribute('aria-current', 'page');
+    expect(within(nav).getByRole('link', { name: 'صفحة 10' })).toHaveAttribute('href', '/ar/favorites?page=10');
+    expect(within(nav).getByRole('link', { name: 'صفحة 5' })).toHaveAttribute('aria-current', 'page');
     expect(within(nav).getByRole('link', { name: 'السابق' })).toHaveAttribute('href', '/ar/favorites?page=4');
   });
 });

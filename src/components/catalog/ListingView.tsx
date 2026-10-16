@@ -13,6 +13,7 @@ import { AppliedFilters } from './AppliedFilters';
 import { CategoryFilters } from './CategoryFilters';
 import { FilterDrawer, FilterPanel, FilterToggle } from './FilterDrawer';
 import { ListingFilters, type ListingLinks } from './ListingFilters';
+import { ListingTools } from './ListingTools';
 import { SortMenu } from './SortMenu';
 import styles from './Listing.module.css';
 
@@ -34,10 +35,12 @@ interface ListingViewProps {
 export function ListingView({ listing, locale, links, current = '', categories = null }: ListingViewProps) {
   const t = translator(locale);
   const { context, pagination, facets } = listing;
-  const hasFilters = facets.length > 0 || Boolean(categories?.categories.length);
+  // Search and Price are always there (as on the old storefront), so every listing has the panel.
+  const hasRange = facets.some((facet) => facet.kind === 'range');
 
   const filters = (
     <FilterPanel labels={{ title: t('catalogFilters'), close: t('catalogCloseFilters'), done: t('catalogShowResults') }}>
+      <ListingTools locale={locale} links={links} current={current} withoutPrice={hasRange} />
       {categories && (
         // The backend's own category facet (sub-categories in the results) replaces "Sub category".
         <CategoryFilters filters={categories} locale={locale} withoutSubCategories={hasCategoryFacet(facets)} />
@@ -65,12 +68,12 @@ export function ListingView({ listing, locale, links, current = '', categories =
       <RichText value={context.description} className={styles.description} data-testid="listing-description" />
 
       <FilterDrawer>
-        <div className={`${styles.layout} ${hasFilters ? '' : styles.layoutWide}`}>
-          {hasFilters && filters}
+        <div className={styles.layout}>
+          {filters}
 
           <section className={styles.results} aria-label={t('catalogProducts')}>
             <div className={styles.toolbar}>
-              {hasFilters && <FilterToggle label={t('catalogFilters')} />}
+              <FilterToggle label={t('catalogFilters')} />
               <SortMenu options={listing.sort} links={links} label={t('catalogSortBy')} />
             </div>
 

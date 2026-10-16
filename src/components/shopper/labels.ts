@@ -1,7 +1,7 @@
 import type { Locale } from '@/sdk';
 import { formatNumber } from '@/lib/numbers';
 
-/** A count as the page shows numbers (Arabic uses Arabic-Indic digits). */
+/** A count as the page shows numbers (Arabic uses Latin digits). */
 export function formatCount(count: number, locale: Locale): string {
   return formatNumber(count, locale);
 }

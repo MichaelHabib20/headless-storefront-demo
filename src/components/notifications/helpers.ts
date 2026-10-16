@@ -1,5 +1,5 @@
 import type { Locale } from '@/sdk';
-import { formatNumber } from '@/lib/numbers';
+import { INTL_LOCALE, formatNumber } from '@/lib/numbers';
 import { routes } from '@/lib/routing';
 
 /**
@@ -13,7 +13,6 @@ export type MarkAllReadAction = (locale: Locale) => Promise<void>;
 /** A MarkReadAction already bound to one notification (form action / on-open callback). */
 export type BoundAction = () => Promise<void>;
 
-const INTL_LOCALE: Record<Locale, string> = { en: 'en', ar: 'ar-EG' };
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
@@ -39,7 +38,7 @@ export function formatNotificationDate(
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return { label: iso, absolute: iso };
 
-  const intl = INTL_LOCALE[locale];
+  const intl = locale === 'ar' ? INTL_LOCALE.ar : 'en';
   const absolute = new Intl.DateTimeFormat(intl, { dateStyle: 'long', timeStyle: 'short', timeZone }).format(date);
   const shortDate = new Intl.DateTimeFormat(intl, { day: 'numeric', month: 'short', year: 'numeric', timeZone }).format(date);
 

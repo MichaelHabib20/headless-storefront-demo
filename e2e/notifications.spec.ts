@@ -105,7 +105,7 @@ test.describe('notifications (signed in)', () => {
 
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByRole('heading', { level: 1, name: 'الإشعارات' })).toBeVisible();
-    await expect(page.getByTestId('notifications-unread')).toHaveText('٢٤ غير مقروءة');
+    await expect(page.getByTestId('notifications-unread')).toHaveText('24 غير مقروءة');
     await expect(notification(page, 'أسبوع العناية بالطفل').getByRole('link')).toHaveAttribute('href', '/ar/products/list/125');
 
     await page.getByRole('button', { name: 'تحديد الكل كمقروء' }).click();

@@ -111,9 +111,9 @@ describe('ProductGallery', () => {
     expect(screen.queryByTestId('product-gallery-image')).toBeNull();
   });
 
-  it('speaks Arabic with Arabic digits', () => {
+  it('speaks Arabic with Latin digits', () => {
     renderGallery(galleryProductFixture('ar'), 'ar');
-    expect(screen.getByRole('button', { name: 'صورة ٢ من ٥' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'صورة 2 من 5' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'فيديو المنتج' })).toBeInTheDocument();
   });
 });

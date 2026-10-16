@@ -120,8 +120,8 @@ describe('ProductActions with a quantity picker (product page)', () => {
     expect(within(group).getByRole('button', { name: 'Decrease quantity' })).toBeDisabled();
   });
 
-  it('shows the quantity in Arabic digits', () => {
+  it('shows the quantity in Latin digits', () => {
     const { group } = renderActions({ locale: 'ar', me: { ...anonymousMeFixture(), cartQuantities: { '9822': 2 } } });
-    expect(within(group).getByTestId('product-quantity')).toHaveTextContent('٢');
+    expect(within(group).getByTestId('product-quantity')).toHaveTextContent('2');
   });
 });

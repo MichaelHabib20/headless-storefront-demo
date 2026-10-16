@@ -119,7 +119,7 @@ test.describe('write a review', () => {
     await open(page, productPath(9822, 'ar'));
     await page.getByTestId('write-review').click();
     const dialog = page.getByRole('dialog');
-    await dialog.getByLabel('٣ نجوم').check();
+    await dialog.getByLabel('3 نجوم').check();
     await dialog.getByLabel('رأيك').fill('منتج جيد');
     await dialog.getByRole('button', { name: 'إرسال التقييم' }).click();
     await expect(page.getByTestId('write-review-done')).toHaveText('شكراً لك! سيظهر تقييمك بعد الموافقة عليه.');

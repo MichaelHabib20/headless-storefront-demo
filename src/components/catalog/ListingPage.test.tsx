@@ -58,7 +58,10 @@ describe('ListingPage', () => {
     const { container } = render(await ListingPage({ locale: 'en', scope: { list: 'best-sellers' }, params: {}, links: { path: '/en/products/list/best-sellers' } }));
     expect(loadCategoryTree).not.toHaveBeenCalled();
     expect(container.querySelector('[data-testid="category-filter"]')).toBeNull();
-    expect(screen.queryByTestId('listing-filters')).toBeNull();
+    // Search and Price stay, as on the old storefront's lists
+    expect(screen.getByTestId('listing-filters')).toBeInTheDocument();
+    expect(screen.getByTestId('listing-search')).toBeInTheDocument();
+    expect(screen.getByTestId('price-filter')).toBeInTheDocument();
   });
 
   it('the sections go away quietly when the tree does not load', async () => {

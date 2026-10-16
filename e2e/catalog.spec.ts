@@ -296,6 +296,90 @@ test.describe('catalog', () => {
     expect(filterBox.x).toBeGreaterThan(resultsBox.x); // the sidebar is on the right in RTL
   });
 
+  test('side filters off: Search and Price are there like the old storefront; Price applies and clears, the sort stays', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    await page.goto('/en/product/mom-baby?sort=high');
+    const filters = page.getByTestId('listing-filters');
+    const search = filters.getByTestId('listing-search');
+    const price = filters.getByTestId('price-filter');
+    await expect(search.getByRole('heading', { name: 'Search' })).toBeVisible();
+    await expect(price.getByRole('heading', { name: 'Price' })).toBeVisible();
+    // the old order: Search, Price, Categories, Sub category
+    const y = async (locator: ReturnType<Page['locator']>) => (await locator.boundingBox())!.y;
+    expect(await y(search)).toBeLessThan(await y(price));
+    expect(await y(price)).toBeLessThan(await y(filters.locator('[data-section="categories"]')));
+    await expect(filters.getByTestId('facet')).toHaveCount(0); // the API sent no facets: no Brands either, like the old site
+
+    await price.getByRole('spinbutton', { name: 'From' }).fill('100');
+    await price.getByRole('spinbutton', { name: 'To' }).fill('190');
+    await price.getByRole('button', { name: 'Apply' }).click();
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high&price_from=100&price_to=190$/);
+    const data = await listing(request, 'category=mom-baby&sort=price_desc&priceMin=100&priceMax=190');
+    await expect(page.getByTestId('listing-grid').getByTestId('product-card')).toHaveCount(data.items.length);
+    await expect(page.getByTestId('price-filter').getByRole('spinbutton', { name: 'From' })).toHaveValue('100');
+
+    await page.getByTestId('price-filter').getByRole('link', { name: 'Clear' }).click();
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high$/);
+    await expect(page.getByTestId('price-filter').getByRole('spinbutton', { name: 'From' })).toHaveValue('');
+  });
+
+  test('the Search box: on a category it opens the search page; on the search page it keeps the sort', async ({ page }) => {
+    await page.goto('/en/product/mom-baby');
+    const box = page.getByTestId('listing-search').getByRole('searchbox', { name: 'Search in the products' });
+    await box.fill('cologne');
+    await box.press('Enter');
+    await expect(page).toHaveURL(/\/en\/products\?search=cologne$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Search results for "cologne"');
+
+    await page.goto('/en/products?search=cologne&sort=low&page=2');
+    const again = page.getByTestId('listing-search').getByRole('searchbox', { name: 'Search in the products' });
+    await expect(again).toHaveValue('cologne');
+    await again.fill('johnson');
+    await page.getByTestId('listing-search').getByRole('button', { name: 'Go' }).click();
+    await expect(page).toHaveURL(/\/en\/products\?sort=low&search=johnson$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Search results for "johnson"');
+  });
+
+  test('switching the language keeps the sort, the page and the filters', async ({ page, request }) => {
+    const data = await listing(request, 'category=mom-baby');
+    const query = `sort=high&price_from=10${data.pagination.totalPages > 1 ? '&page=2' : ''}`;
+    await page.goto(`/en/product/mom-baby?${query}`);
+    await page.waitForLoadState('networkidle');
+    const toArabic = page.getByRole('link', { name: 'Switch language' }).first();
+    await expect(toArabic).toHaveAttribute('href', `/ar/product/mom-baby?${query}`);
+    await toArabic.click();
+    await expect(page).toHaveURL(`/ar/product/mom-baby?${query}`);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+    await expect(page.getByRole('link', { name: 'تغيير اللغة' }).first()).toHaveAttribute('href', `/en/product/mom-baby?${query}`);
+  });
+
+  test('a product picture that does not load shows the store placeholder on the cards', async ({ page }) => {
+    await page.route(/\.(webp|jpe?g|png)(\?|$)/i, (route) => route.fulfill({ status: 404, body: '' }));
+    await page.goto('/en/product/mom-baby');
+    await page.waitForLoadState('networkidle');
+    const images = page.getByTestId('listing-grid').getByTestId('product-card').locator('img');
+    expect(await images.count()).toBeGreaterThan(0);
+    for (const img of await images.all()) {
+      await expect(img).toHaveAttribute('data-placeholder', 'true');
+      expect(await img.evaluate((el: HTMLImageElement) => el.naturalWidth > 0)).toBe(true); // no broken-image icon
+    }
+  });
+
+  test('Arabic: Search and Price in Arabic, right to left, Latin digits like the prices', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    await page.goto('/ar/product/mom-baby');
+    const price = page.getByTestId('price-filter');
+    await expect(page.getByTestId('listing-search').getByRole('heading', { name: 'بحث' })).toBeVisible();
+    await expect(price.getByRole('heading', { name: 'السعر' })).toBeVisible();
+    await price.getByRole('spinbutton', { name: 'من' }).fill('50');
+    await price.getByRole('button', { name: 'تطبيق' }).click();
+    await expect(page).toHaveURL(/\/ar\/product\/mom-baby\?price_from=50&price_to=$/);
+    await expect(page.getByTestId('price-filter').getByRole('link', { name: 'إزالة' })).toHaveAttribute('href', '/ar/product/mom-baby');
+    await expect(page.getByTestId('listing-count')).toHaveText(/^النتائج: [0-9,]+$/);
+    const filterBox = (await page.getByTestId('listing-filters').boundingBox())!;
+    expect(filterBox.x).toBeGreaterThan((await page.getByTestId('listing-grid').boundingBox())!.x);
+  });
+
   test('Arabic listing', async ({ page, request }) => {
     const data = await listing(request, 'category=mom-baby', 'ar');
     await page.goto('/ar/product/mom-baby');
@@ -450,6 +534,20 @@ test.describe('catalog on a phone', () => {
     await expect(page).toHaveURL(`/en/product/${next.target.path.join('/')}`);
   });
 
+  test('Search and Price in the phone drawer (Arabic, no facets)', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    await page.goto('/ar/product/mom-baby?sort=low');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('button', { name: 'الفلاتر' }).click();
+    const drawer = page.getByRole('dialog', { name: 'الفلاتر' });
+    await expect(drawer.getByTestId('listing-search')).toBeVisible();
+    await drawer.getByRole('spinbutton', { name: 'إلى' }).fill('190');
+    await drawer.getByRole('button', { name: 'تطبيق' }).click();
+    await expect(page).toHaveURL(/\/ar\/product\/mom-baby\?sort=low&price_from=&price_to=190$/);
+    await expect(page.getByTestId('price-filter').getByRole('spinbutton', { name: 'إلى' })).toHaveValue('190');
+    expect(await fitsScreen(page)).toBe(true);
+  });
+
   test('the header search box is on screen and suggests', async ({ page }) => {
     await page.goto('/ar');
     const box = page.getByRole('combobox', { name: 'بحث' });
@@ -471,6 +569,23 @@ test.describe('filters without JavaScript', () => {
     await page.getByTestId('facet-value').filter({ hasText: 'Lavender' }).click();
     await expect(page).toHaveURL(/options_values_ids=color-lavender/);
     await expect(page.getByTestId('applied-filter')).toHaveCount(1);
+  });
+
+  test('Search and Price are GET forms', async ({ page, request }) => {
+    await sideFiltersOff(request);
+    await page.goto('/en/product/mom-baby?sort=high');
+    const price = page.getByTestId('price-filter');
+    await price.getByRole('spinbutton', { name: 'From' }).fill('100');
+    await price.getByRole('button', { name: 'Apply' }).click();
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high&price_from=100&price_to=$/);
+    await page.getByTestId('price-filter').getByRole('link', { name: 'Clear' }).click();
+    await expect(page).toHaveURL(/\/en\/product\/mom-baby\?sort=high$/);
+
+    await page.getByTestId('listing-search').getByRole('searchbox').fill('cologne');
+    await page.getByTestId('listing-search').getByRole('button', { name: 'Go' }).click();
+    await expect(page).toHaveURL(/\/en\/products\?search=cologne$/);
+    await expect(page.getByTestId('listing-grid')).toBeVisible();
+    await resetMock(page);
   });
 
   test('the category sections are plain links', async ({ page, request }) => {

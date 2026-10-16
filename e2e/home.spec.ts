@@ -105,7 +105,17 @@ test.describe('home page', () => {
   test('unknown pages are 404', async ({ page }) => {
     const response = await page.goto('/en/definitely-not-a-page/x');
     expect(response?.status()).toBe(404);
-    await expect(page.getByText('Page not found')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found');
+    await expect(page.getByText('الصفحة غير موجودة')).toHaveCount(0);
+    await expect(page.getByRole('main').getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/en');
+  });
+
+  test('the Arabic 404 is in Arabic only', async ({ page }) => {
+    const response = await page.goto('/ar/definitely-not-a-page/x');
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('الصفحة غير موجودة');
+    await expect(page.getByText('Page not found')).toHaveCount(0);
+    await expect(page.getByRole('main').getByRole('link', { name: 'العودة للرئيسية' })).toHaveAttribute('href', '/ar');
   });
 
   test('shows the cookie notice until accepted', async ({ page }) => {

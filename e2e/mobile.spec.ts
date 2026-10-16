@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { MOCK_API, live, signInAsCustomer } from './support';
 
@@ -80,6 +81,34 @@ test.describe('mobile', () => {
       }
     }
   });
+
+  for (const locale of ['en', 'ar'] as const) {
+    test(`390 px product page: the WhatsApp button never covers the title (${locale})`, async ({ page }) => {
+      test.skip(live, 'needs the mock API');
+      await page.setViewportSize({ width: 390, height: 844 });
+      const home = JSON.parse(fs.readFileSync(`src/test/fixtures/v3/home.${locale}.json`, 'utf8')).data.sections as { products: { id: number; slug: string }[] }[];
+      const slug = home.flatMap((s) => s.products).find((p) => p.id === 36480)!.slug;
+      await page.goto(`/${locale}/${encodeURIComponent(slug)}`);
+      const button = page.getByTestId('whatsapp');
+      await expect(button).toBeVisible();
+      const title = page.getByRole('heading', { level: 1 });
+      // Put the title's last line where the button is (the first view of a long gallery), then look for an overlap.
+      const clash = await title.evaluate((h1) => {
+        const lines = () => {
+          const range = document.createRange();
+          range.selectNodeContents(h1);
+          return [...range.getClientRects()].filter((r) => r.width > 0);
+        };
+        const fab = document.querySelector('[data-testid="whatsapp"]')!.getBoundingClientRect();
+        const last = lines().at(-1)!;
+        window.scrollBy(0, last.top + last.height / 2 - (fab.top + fab.height / 2));
+        const now = document.querySelector('[data-testid="whatsapp"]')!.getBoundingClientRect();
+        return lines().some((r) => r.left < now.right && r.right > now.left && r.top < now.bottom && r.bottom > now.top);
+      });
+      expect(clash).toBe(false);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    });
+  }
 
   test('Arabic fits the screen too', async ({ page }) => {
     await page.goto('/ar');

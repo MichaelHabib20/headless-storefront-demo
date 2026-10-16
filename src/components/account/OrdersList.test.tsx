@@ -7,7 +7,7 @@ import { OrdersList } from './OrdersList';
 describe('OrdersList', () => {
   it.each([
     ['en', 'Order #48201', 'September 28, 2026', 'Order pages'],
-    ['ar', 'طلب رقم 48201', '٢٨ سبتمبر ٢٠٢٦', 'صفحات الطلبات'],
+    ['ar', 'طلب رقم 48201', '28 سبتمبر 2026', 'صفحات الطلبات'],
   ] as const)('shows each order as the API sent it (%s)', (locale, number, date, pages) => {
     const orders = ordersFixture(locale);
     render(<OrdersList orders={orders} locale={locale} timeZone="UTC" />);
@@ -26,7 +26,7 @@ describe('OrdersList', () => {
 
   it('counts items in the page digits', () => {
     render(<OrdersList orders={ordersFixture('ar')} locale="ar" timeZone="UTC" />);
-    expect(within(screen.getAllByTestId('order-summary')[0]).getByTestId('order-item-count')).toHaveTextContent('٣');
+    expect(within(screen.getAllByTestId('order-summary')[0]).getByTestId('order-item-count')).toHaveTextContent('3');
   });
 
   it('styles statuses by code and draws unknown codes the default way', () => {

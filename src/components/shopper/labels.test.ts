@@ -6,9 +6,9 @@ const forms = { none: 'Cart', one: 'Cart, 1 item', other: 'Cart, {count} items' 
 describe('shopper labels', () => {
   it('formats counts per locale', () => {
     expect(formatCount(24, 'en')).toBe('24');
-    expect(formatCount(24, 'ar')).toBe('٢٤');
+    expect(formatCount(24, 'ar')).toBe('24');
     expect(withCount('In cart ({count})', 2, 'en')).toBe('In cart (2)');
-    expect(withCount('في السلة ({count})', 2, 'ar')).toBe('في السلة (٢)');
+    expect(withCount('في السلة ({count})', 2, 'ar')).toBe('في السلة (2)');
   });
 
   it('builds accessible names with the count', () => {
@@ -24,6 +24,6 @@ describe('shopper labels', () => {
     expect(badgeText(7, 'en')).toBe('7');
     expect(badgeText(99, 'en')).toBe('99');
     expect(badgeText(100, 'en')).toBe('99+');
-    expect(badgeText(250, 'ar')).toBe('٩٩+');
+    expect(badgeText(250, 'ar')).toBe('99+');
   });
 });

@@ -64,10 +64,10 @@ describe('header badges', () => {
 
   it('labels the icons in Arabic', () => {
     render(<HeaderBadges locale="ar" me={meFixture('ar')} features={allOn} />);
-    expect(screen.getByRole('link', { name: 'السلة، عدد المنتجات: ٢' })).toHaveAttribute('href', '/ar/cart');
-    expect(screen.getByRole('link', { name: 'المفضلة، عدد المنتجات: ٣' })).toHaveAttribute('href', '/ar/favorites');
-    expect(screen.getByRole('link', { name: 'المقارنة، عدد المنتجات: ٢' })).toHaveAttribute('href', '/ar/compare');
-    expect(screen.getByRole('link', { name: 'الإشعارات، غير المقروءة: ٢٤' })).toHaveAttribute('href', '/ar/notifications');
+    expect(screen.getByRole('link', { name: 'السلة، عدد المنتجات: 2' })).toHaveAttribute('href', '/ar/cart');
+    expect(screen.getByRole('link', { name: 'المفضلة، عدد المنتجات: 3' })).toHaveAttribute('href', '/ar/favorites');
+    expect(screen.getByRole('link', { name: 'المقارنة، عدد المنتجات: 2' })).toHaveAttribute('href', '/ar/compare');
+    expect(screen.getByRole('link', { name: 'الإشعارات، غير المقروءة: 24' })).toHaveAttribute('href', '/ar/notifications');
   });
 
   it('is part of the site header, gated by layout.features', () => {
