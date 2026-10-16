@@ -56,7 +56,7 @@ export default async function ResetPasswordPage({ params, searchParams }: Props)
         token={token}
         phoneRules={result.settings.phone}
         locale={locale}
-        labels={{ phone: t('authCompletePhone'), code: t('authResetCode'), password: t('authResetNewPassword'), passwordHint: t('passwordHint'), confirm: t('authConfirmPassword'), submit: t('authResetSubmit'), submitting: t('authResetSaving') }}
+        labels={{ phone: t('authCompletePhone'), code: t('authResetCode'), password: t('authResetNewPassword'), passwordHint: t('passwordHint'), confirm: t('authConfirmPassword'), submit: t('authResetSubmit'), submitting: t('authResetSaving'), showPassword: t('authShowPassword') }}
       />
     );
   }

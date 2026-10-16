@@ -45,6 +45,11 @@ selected {methodId, planId} }`, `promo {code, applied, message}`, `requirements.
   20 times, then a calm "still confirming" message. Unknown status or reference → neutral message + orders link.
 - **Addresses:** "Add a new address" links to `routes.addresses(locale) + '?next=checkout'`. The addresses
   page sends the shopper back to `routes.checkout(locale)` (optionally `?address=<id>`, sent as the first choice).
+- **Minimum order:** `checkoutMinimumOrder()` (`components/checkout/minimumOrder.ts`) picks the backend verdict:
+  the checkout's `minimum_order` blocker; before an address / branch is chosen, the cart's verdict
+  (`cart.checkout`, like the cart page); else reached. A missing blocker alone never means "reached".
+- **Promo codes:** a refused code (`promo.code` set, `applied: false`) is not kept: `CheckoutView` asks
+  again without it and shows the refusal message under the field (old storefront behaviour).
 - **Sign in:** `missing: sign_in` shows its message and a link to `/{locale}/session/signin?returnUrl=checkout`;
   sign-in comes back to checkout.
 
@@ -109,5 +114,6 @@ invalid. Product 14482 needs a prescription. Guest phone `01000000001` → `phon
 | `{"cardDown": true}` | Card online not offered → placing with it → `payment_change_needs_consent` |
 | `{"nextOrderError": "order_in_progress" \| "payment_provider_error"}` | The next `POST /orders` answers that error once |
 | `{"guestCheckout": false}`, `{"pickup": false}` | Guests must sign in; pickup not available |
+| `{"minimumIncludesDelivery": true}` | The minimum counts delivery: no `minimum_order` blocker before an address / branch (seif) |
 | `GET /api/customer/v3/__checkout` (with a token) | Switches, every order request received, that shopper's order numbers |
 | `GET /api/customer/v3/__pay?ref=` | Mock bank: Pay, Card declined, Cancel, Pay (confirmed 4 s later), Pay (never confirmed) |
