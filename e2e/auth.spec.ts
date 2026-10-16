@@ -33,7 +33,7 @@ async function signIn(page: Page, locale = 'en', phone = PHONE, password = PASSW
   await open(page, `/${locale}/session/signin`);
   await page.getByTestId('sign-in-form').getByRole('textbox').first().fill(phone);
   await page.getByTestId('sign-in-form').locator('input[name="password"]').fill(password);
-  await page.getByTestId('sign-in-form').getByRole('button').click();
+  await page.getByTestId('sign-in-form').locator('button[type="submit"]').click();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -82,7 +82,7 @@ test.describe('sign in', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByTestId('sign-in-form').getByRole('alert')).toHaveText('البيانات التي أدخلتها غير صحيحة.');
     await page.locator('input[name="password"]').fill(PASSWORD);
-    await page.getByTestId('sign-in-form').getByRole('button').click();
+    await page.getByTestId('sign-in-form').locator('button[type="submit"]').click();
     await expect(page).toHaveURL(/\/ar\/account$/);
     await expect(page.getByTestId('account-page')).toContainText('Test Customer');
   });
@@ -93,7 +93,7 @@ test.describe('sign in', () => {
     await expect(page).toHaveURL(/\/en\/session\/signin\?returnUrl=/);
     await page.locator('input[name="identifier"]').fill(PHONE);
     await page.locator('input[name="password"]').fill(PASSWORD);
-    await page.getByTestId('sign-in-form').getByRole('button').click();
+    await page.getByTestId('sign-in-form').locator('button[type="submit"]').click();
     await expect(page).toHaveURL(/\/en\/account\/order-history$/);
   });
 
@@ -189,7 +189,7 @@ test.describe('sign up', () => {
     await form.locator('input[name="phone"]').fill('01555555556');
     await form.locator('input[name="password"]').fill('longenough');
     await form.locator('input[name="passwordConfirmation"]').fill('longenough');
-    await form.getByRole('button').click();
+    await form.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/ar\/verify-phone$/);
     await expect(page.getByTestId('verify-phone-page')).toContainText('01555555556');
@@ -273,9 +273,91 @@ test.describe('password reset', () => {
   test('says to contact the store when no reset method is configured', async ({ page, request }) => {
     await mode(request, { passwordReset: 'none' });
     await open(page, '/ar/session/signin');
-    await expect(page.getByRole('link', { name: 'نسيت كلمة المرور؟' })).toHaveCount(0);
-    await open(page, '/ar/session/forgot-password');
+    // like the old storefront the link is always there; the page says what to do
+    await page.getByRole('link', { name: 'نسيت كلمة المرور؟' }).click();
+    await expect(page).toHaveURL(/\/ar\/session\/forgot-password$/);
     await expect(page.getByTestId('reset-unavailable')).toContainText('تواصل معنا');
+  });
+});
+
+test.describe('show / hide password and the forgot link (old storefront parity)', () => {
+  /** Checks one password input and its eye toggle: off, typed, shown, hidden again. */
+  async function checkToggle(page: Page, scope: string, name: string, toggleName: string) {
+    const input = page.getByTestId(scope).locator(`input[name="${name}"]`);
+    const toggle = page.getByTestId(scope).getByRole('button', { name: toggleName }).and(page.locator(`[aria-controls="${await input.getAttribute('id')}"]`));
+    await expect(input).toHaveAttribute('type', 'password');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await input.fill('secret-typed');
+    await toggle.click();
+    await expect(input).toHaveAttribute('type', 'text');
+    await expect(input).toHaveValue('secret-typed');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    await toggle.press('Enter');
+    await expect(input).toHaveAttribute('type', 'password');
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  }
+
+  test('sign in (en): the forgot link and the toggle; the toggle does not submit and signing in still works', async ({ page }) => {
+    await open(page, '/en/session/signin');
+    await expect(page.getByTestId('forgot-password-link')).toHaveAttribute('href', '/en/session/forgot-password');
+    await checkToggle(page, 'sign-in-form', 'password', 'Show password');
+    await expect(page.getByTestId('sign-in-form').getByRole('alert')).toHaveCount(0); // nothing was submitted
+
+    await page.locator('input[name="identifier"]').fill(PHONE);
+    const password = page.locator('input[name="password"]');
+    await password.fill(PASSWORD);
+    await page.getByTestId('sign-in-form').getByRole('button', { name: 'Show password' }).click();
+    await page.getByTestId('sign-in-form').getByRole('button', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL(/\/en\/account$/); // sent while shown as text
+  });
+
+  test('sign in (ar): Arabic link and toggle name, toggle at the start side in RTL', async ({ page }) => {
+    await open(page, '/ar/session/signin');
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.getByRole('link', { name: 'نسيت كلمة المرور؟' })).toHaveAttribute('href', '/ar/session/forgot-password');
+    await checkToggle(page, 'sign-in-form', 'password', 'إظهار كلمة المرور');
+    const input = await page.locator('input[name="password"]').boundingBox();
+    const toggle = await page.getByRole('button', { name: 'إظهار كلمة المرور' }).boundingBox();
+    // inside the input, at its left edge (the end side in Arabic)
+    expect(toggle!.x).toBeGreaterThanOrEqual(input!.x - 1);
+    expect(toggle!.x + toggle!.width).toBeLessThan(input!.x + input!.width / 2);
+  });
+
+  test('sign up: the password and its confirmation each have a toggle', async ({ page }) => {
+    await open(page, '/en/session/signup');
+    await checkToggle(page, 'sign-up-form', 'password', 'Show password');
+    await checkToggle(page, 'sign-up-form', 'passwordConfirmation', 'Show password');
+  });
+
+  test('reset (Arabic): both new password fields have a toggle', async ({ page }) => {
+    await open(page, '/ar/session/change-password?phone=01222353123');
+    await checkToggle(page, 'reset-password-form', 'password', 'إظهار كلمة المرور');
+    await checkToggle(page, 'reset-password-form', 'passwordConfirmation', 'إظهار كلمة المرور');
+  });
+
+  test('account change password: every password field has a toggle', async ({ page }) => {
+    await signIn(page);
+    await expect(page).toHaveURL(/\/en\/account$/);
+    await open(page, '/en/account/change-password');
+    for (const name of ['currentPassword', 'newPassword', 'passwordConfirmation']) await checkToggle(page, 'password-form', name, 'Show password');
+  });
+
+  test.describe('on a phone', () => {
+    test.use({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+
+    test('the toggle is tappable, fits, and the forgot link is there (en and ar)', async ({ page }) => {
+      for (const [locale, name] of [['en', 'Show password'], ['ar', 'إظهار كلمة المرور']] as const) {
+        await open(page, `/${locale}/session/signin`);
+        await expect(page.getByTestId('forgot-password-link')).toBeVisible();
+        const toggle = page.getByRole('button', { name });
+        const box = await toggle.boundingBox();
+        expect(box!.width).toBeGreaterThanOrEqual(44);
+        expect(box!.height).toBeGreaterThanOrEqual(44);
+        await toggle.tap();
+        await expect(page.locator('input[name="password"]')).toHaveAttribute('type', 'text');
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      }
+    });
   });
 });
 

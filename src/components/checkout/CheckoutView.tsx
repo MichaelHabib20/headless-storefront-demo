@@ -12,9 +12,10 @@ import { FulfilmentSection } from './FulfilmentSection';
 import { PaymentSection } from './PaymentSection';
 import { PlaceOrder } from './PlaceOrder';
 import { PrescriptionSection } from './PrescriptionSection';
-import { PromoSection } from './PromoSection';
+import { PromoSection, type PromoRefusal } from './PromoSection';
 import { TotalLines } from './TotalLines';
 import { WalletSection } from './WalletSection';
+import { checkoutMinimumOrder } from './minimumOrder';
 import type { ComputeCheckoutAction, ComputeResult, ContactResult, PlaceOrderAction, PlaceOrderOutcome, SaveContactAction, UploadPrescriptionAction } from './types';
 import styles from './Checkout.module.css';
 
@@ -74,6 +75,8 @@ export function CheckoutView({ checkout: first, settings, branches, locale, atte
   const [consent, setConsent] = useState(false);
   const [placing, setPlacing] = useState(false);
   const [attemptKey, setAttemptKey] = useState(firstKey);
+  /** The last promo code the backend refused (and that was taken off again), with its message. */
+  const [promoRefusal, setPromoRefusal] = useState<PromoRefusal | null>(null);
   const alert = useRef<HTMLParagraphElement>(null);
   const focusAlert = useRef(false);
 
@@ -133,6 +136,25 @@ export function CheckoutView({ checkout: first, settings, branches, locale, atte
     void enqueue(patch, (selections) => computeAction(locale, { ...selections, ...patch }));
   }
 
+  /**
+   * Applies (or removes, with null) a promo code. Like the old storefront, a code the backend
+   * refuses is not kept: its message is shown and the checkout is computed again without it, so a
+   * wrong code never blocks the order. The refusal text is the backend's `promo.message`.
+   */
+  function applyPromo(code: string | null) {
+    setPromoRefusal(null);
+    void enqueue({ promoCode: code }, async (selections) => {
+      const result = await computeAction(locale, { ...selections, promoCode: code });
+      const promo = result.ok ? result.checkout.promo : null;
+      if (!result.ok || code === null || !promo?.code || promo.applied) return result;
+      const without = await computeAction(locale, { ...selections, ...checkoutSelections(result.checkout), promoCode: null });
+      // When dropping it fails, the refused code stays on screen with its "Remove" button.
+      if (!without.ok) return result;
+      setPromoRefusal({ code: promo.code, message: promo.message });
+      return without;
+    });
+  }
+
   function saveContact(contact: CheckoutContactInput): Promise<ContactResult> {
     return enqueue({}, (selections) => saveContactAction(locale, contact, selections));
   }
@@ -189,6 +211,7 @@ export function CheckoutView({ checkout: first, settings, branches, locale, atte
   const shown = pending ? { ...echo, ...requested } : echo;
   const busy = pending || placing;
   const hasReasons = checkout.missing.length > 0 || checkout.blockers.length > 0;
+  const minimum = checkoutMinimumOrder(checkout);
 
   return (
     <div data-testid="checkout" aria-busy={busy || undefined}>
@@ -209,7 +232,7 @@ export function CheckoutView({ checkout: first, settings, branches, locale, atte
           {checkout.wallet && <WalletSection wallet={checkout.wallet} shown={shown} pending={pending} locale={locale} onChange={change} />}
           {!checkout.wallet?.coversTotal && <PaymentSection checkout={checkout} shown={shown} pending={pending} locale={locale} onChange={change} />}
           <PrescriptionSection prescription={checkout.requirements.prescription} locale={locale} busy={busy} onUpload={uploadPrescription} onRemove={removePrescription} />
-          {settings.promoCode && <PromoSection promo={checkout.promo} locale={locale} busy={busy} onChange={change} />}
+          {settings.promoCode && <PromoSection promo={checkout.promo} refusal={promoRefusal} locale={locale} busy={busy} onApply={applyPromo} />}
           {settings.orderNote && (
             <section className={styles.section} aria-labelledby="checkout-note-title">
               <div className={styles.sectionHead}>
@@ -246,9 +269,7 @@ export function CheckoutView({ checkout: first, settings, branches, locale, atte
           ) : (
             <>
               <TotalLines lines={checkout.totals.lines} total={checkout.totals.total} locale={locale} />
-              {checkout.minimumOrder && (
-                <MinimumOrderProgress minimumOrder={checkout.minimumOrder} reached={!checkout.blockers.some((blocker) => blocker.code === 'minimum_order')} locale={locale} />
-              )}
+              {minimum && <MinimumOrderProgress minimumOrder={minimum.minimumOrder} reached={minimum.reached} locale={locale} />}
             </>
           )}
 

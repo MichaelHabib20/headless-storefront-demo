@@ -102,6 +102,7 @@ const TEXT = {
     },
     guest_checkout_disabled: 'This store needs an account to place an order.',
     promo_invalid: 'Remove the promo code or enter a valid one.',
+    minimumOrder: (amount, remaining) => `The minimum order is ${amount}. Add ${remaining} more to place your order.`,
     total_changed: (total) => `Your order total changed to ${total}. Please review it and confirm again.`,
     checkout_incomplete: 'Your order is not ready to be placed yet. Please review it.',
     payment_change_needs_consent: 'The payment method of your order changed. Please accept the change to continue.',
@@ -161,6 +162,7 @@ const TEXT = {
     },
     guest_checkout_disabled: 'يتطلب هذا المتجر حساباً لإتمام الطلب.',
     promo_invalid: 'احذف كود الخصم أو أدخل كوداً صالحاً.',
+    minimumOrder: (amount, remaining) => `الحد الأدنى للطلب ${amount}. أضف ${remaining} لإتمام الطلب.`,
     total_changed: (total) => `تغيّر إجمالي طلبك إلى ${total}. يرجى مراجعته والتأكيد مرة أخرى.`,
     checkout_incomplete: 'طلبك غير جاهز للإتمام بعد. يرجى مراجعته.',
     payment_change_needs_consent: 'تغيّرت طريقة دفع طلبك. يرجى الموافقة على التغيير للمتابعة.',
@@ -198,6 +200,12 @@ function freshMode() {
     cardDown: false,
     /** 'order_in_progress' | 'payment_provider_error' → the next POST /orders answers that error, once. */
     nextOrderError: null,
+    /**
+     * True → the minimum counts the delivery fee (the backend's `minimum_includes_delivery`): the
+     * minimum is checked on items − promo + delivery, and there is no `minimum_order` verdict
+     * before an address or a branch is chosen (seif).
+     */
+    minimumIncludesDelivery: false,
   };
 }
 
@@ -395,7 +403,24 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
     if (paymentFee) lines.push({ kind: 'payment_fee', label: t.paymentFee(method.name[locale]), amount: total(paymentFee, locale), text: null });
     if (walletPaid) lines.push({ kind: 'wallet', label: t.walletLine, amount: negative(walletPaid, locale), text: null });
 
-    blockers.unshift(...cart.checkout.blockers.map((blocker) => notice(blocker.code, blocker.message)));
+    // the minimum order: the cart's (items only), or with the delivery fee and no verdict before the address / branch
+    let minimumOrder = cart.checkout.minimumOrder;
+    let cartBlockers = cart.checkout.blockers;
+    if (mode.minimumIncludesDelivery && cart.items.length && minimumOrder) {
+      cartBlockers = cartBlockers.filter((blocker) => blocker.code !== 'minimum_order');
+      const minimum = minimumOrder.amount.amount;
+      const basis = round2(subtotal - discount + deliveryFee);
+      const remaining = Math.max(0, round2(minimum - basis));
+      minimumOrder = {
+        amount: minimumOrder.amount,
+        remaining: total(remaining, locale),
+        progressPercent: remaining <= 0 ? 100 : Math.max(0, Math.min(99, Math.floor((basis / minimum) * 100))),
+      };
+      if (remaining > 0 && (address || pickupBranch)) {
+        cartBlockers = [...cartBlockers, notice('minimum_order', t.minimumOrder(minimumOrder.amount.display, minimumOrder.remaining.display))];
+      }
+    }
+    blockers.unshift(...cartBlockers.map((blocker) => notice(blocker.code, blocker.message)));
 
     return {
       cart,
@@ -415,7 +440,7 @@ export function createCheckoutModule(shopper, { now = () => Date.now(), pendingM
       promo,
       requirements: { prescription: { required, files } },
       totals: { lines, total: total(grand - walletPaid + paymentFee, locale) },
-      minimumOrder: cart.checkout.minimumOrder,
+      minimumOrder,
       missing,
       blockers,
       messages,

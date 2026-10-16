@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import type { FormField, Locale } from '@/sdk';
 import { AuthFields } from '@/components/auth/AuthFields';
+import { PasswordInput } from '@/components/auth/PasswordInput';
 import type { FormState } from '@/lib/form';
 import { signUpAction } from './actions';
 
@@ -13,6 +14,7 @@ export interface SignUpLabels {
   optional: string;
   choose: string;
   notEditable: string;
+  showPassword: string;
 }
 
 interface SignUpFormProps {
@@ -44,7 +46,7 @@ export function SignUpForm({ fields, locale, labels }: SignUpFormProps) {
           field.kind === 'password' ? (
             <label className="field">
               {labels.confirmPassword}
-              <input name="passwordConfirmation" type="password" autoComplete="new-password" aria-invalid={Boolean(errors.passwordConfirmation)} required />
+              <PasswordInput name="passwordConfirmation" autoComplete="new-password" aria-invalid={Boolean(errors.passwordConfirmation)} required toggleLabel={labels.showPassword} />
               {errors.passwordConfirmation && (
                 <span className="field-error" role="alert">
                   {errors.passwordConfirmation}

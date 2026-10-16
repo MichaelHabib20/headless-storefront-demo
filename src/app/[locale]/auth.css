@@ -55,6 +55,35 @@
 .auth-page input[aria-invalid='true'] {
   border-color: var(--color-sale);
 }
+.auth-page .password-input {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+.auth-page .password-input input {
+  padding-inline-end: 48px;
+}
+.auth-page .password-toggle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-muted);
+}
+.auth-page .password-toggle[aria-pressed='true'],
+.auth-page .password-toggle:hover {
+  color: var(--color-text);
+}
+.auth-page .password-toggle:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: -4px;
+}
 .auth-page .field-error {
   color: var(--color-sale);
   font-size: 0.8125rem;

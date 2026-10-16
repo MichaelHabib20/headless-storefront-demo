@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import type { AuthSettings, Locale } from '@/sdk';
+import { PasswordInput } from '@/components/auth/PasswordInput';
 import type { FormState } from '@/lib/form';
 import { resetPasswordAction } from './actions';
 
@@ -12,7 +13,7 @@ interface ResetPasswordFormProps {
   token: string;
   phoneRules: AuthSettings['phone'];
   locale: Locale;
-  labels: { phone: string; code: string; password: string; passwordHint: string; confirm: string; submit: string; submitting: string };
+  labels: { phone: string; code: string; password: string; passwordHint: string; confirm: string; submit: string; submitting: string; showPassword: string };
 }
 
 export function ResetPasswordForm({ method, phone, token, phoneRules, locale, labels }: ResetPasswordFormProps) {
@@ -53,12 +54,12 @@ export function ResetPasswordForm({ method, phone, token, phoneRules, locale, la
       )}
       <label>
         {labels.password} <span className="hint">{labels.passwordHint}</span>
-        <input name="password" type="password" autoComplete="new-password" minLength={8} aria-invalid={Boolean(errors.password)} required />
+        <PasswordInput name="password" autoComplete="new-password" minLength={8} aria-invalid={Boolean(errors.password)} required toggleLabel={labels.showPassword} />
         {errors.password && <span className="field-error">{errors.password}</span>}
       </label>
       <label>
         {labels.confirm}
-        <input name="passwordConfirmation" type="password" autoComplete="new-password" aria-invalid={Boolean(errors.passwordConfirmation)} required />
+        <PasswordInput name="passwordConfirmation" autoComplete="new-password" aria-invalid={Boolean(errors.passwordConfirmation)} required toggleLabel={labels.showPassword} />
         {errors.passwordConfirmation && <span className="field-error">{errors.passwordConfirmation}</span>}
       </label>
       {errors.token && (

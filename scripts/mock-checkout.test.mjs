@@ -103,6 +103,24 @@ describe.each(['en', 'ar'])('mock checkout API follows the contract (%s)', (loca
     expect(mock.compute()).toEqual(first);
   });
 
+  it('a minimum that counts delivery: no verdict before the address or branch, then one with the fee', () => {
+    const mock = api(locale);
+    mock.call('POST', '/__checkout', { minimumIncludesDelivery: true });
+    mock.guest();
+    mock.call('PUT', '/cart/items/36480', { quantity: 2 });
+
+    const first = mock.compute();
+    expect(first.fulfilment.selected).toBeNull();
+    expect(first.missing.map((item) => item.code)).toContain('fulfilment');
+    expect(first.blockers).toEqual([]);
+    expect(first.minimumOrder.remaining.amount).toBe(264);
+    expect(first.cart.checkout.blockers.map((item) => item.code)).toEqual(['minimum_order']);
+
+    const pickup = mock.compute({ fulfilment: 'pickup', branchId: 71 });
+    expect(pickup.blockers.map((item) => item.code)).toEqual(['minimum_order']);
+    expect(pickup.minimumOrder.remaining.amount).toBe(264);
+  });
+
   it('delivery has a fee, pickup is free text and needs a branch', () => {
     const mock = api(locale);
     mock.fillCart();
@@ -474,6 +492,6 @@ describe('mock checkout module', () => {
     store.reset();
     checkout.reset();
     expect(checkout.handle(request('POST', '/checkout'))[1].data.totals.total).toEqual(before);
-    expect(checkout.handle(request('GET', '/__checkout'))[1].mode).toEqual({ guestCheckout: true, pickup: true, cardDown: false, nextOrderError: null });
+    expect(checkout.handle(request('GET', '/__checkout'))[1].mode).toEqual({ guestCheckout: true, pickup: true, cardDown: false, nextOrderError: null, minimumIncludesDelivery: false });
   });
 });

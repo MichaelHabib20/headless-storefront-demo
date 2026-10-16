@@ -3,23 +3,34 @@
 import { useState, type FormEvent } from 'react';
 import type { Checkout, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
-import type { ChangeSelections } from './types';
 import styles from './Checkout.module.css';
+
+/** A code the backend refused, with its message (the code itself is no longer applied). */
+export interface PromoRefusal {
+  code: string;
+  message: string | null;
+}
 
 interface PromoSectionProps {
   /** `checkout.promo`: the code the backend used, whether it applied, and its message. */
   promo: Checkout['promo'];
+  /** The last code the backend refused; the checkout was computed again without it. */
+  refusal?: PromoRefusal | null;
   locale: Locale;
   busy: boolean;
-  onChange: ChangeSelections;
+  /** Sends a code (or null to remove it); the checkout decides whether it applies. */
+  onApply: (code: string | null) => void;
 }
+
+const MESSAGE_ID = 'checkout-promo-message';
 
 /**
  * Promo code field. The storefront never judges a code: it sends it, and shows the backend's
  * `promo.message` (why it was refused, or what it changed). The discount itself is a line of
- * the totals.
+ * the totals. A refused code is not kept (see `CheckoutView`): its message stays under the field,
+ * with the typed code, so the shopper can correct it.
  */
-export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProps) {
+export function PromoSection({ promo, refusal = null, locale, busy, onApply }: PromoSectionProps) {
   const t = translator(locale);
   const [code, setCode] = useState('');
 
@@ -27,9 +38,11 @@ export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProp
     event.preventDefault();
     const value = code.trim();
     if (!value) return;
-    onChange({ promoCode: value });
-    setCode('');
+    onApply(value);
   }
+
+  const refused = !promo.code && refusal ? refusal : null;
+  const message = promo.message ?? refused?.message ?? null;
 
   return (
     <section className={styles.section} aria-labelledby="checkout-promo-title" data-testid="checkout-promo">
@@ -44,7 +57,7 @@ export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProp
           <span className={styles.promoCode} data-testid="promo-code">
             {promo.code}
           </span>
-          <button type="button" className={styles.textLink} disabled={busy} onClick={() => onChange({ promoCode: null })}>
+          <button type="button" className={styles.textLink} disabled={busy} onClick={() => onApply(null)}>
             {t('checkoutPromoRemove')}
           </button>
         </div>
@@ -57,6 +70,8 @@ export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProp
             maxLength={100}
             autoComplete="off"
             aria-labelledby="checkout-promo-title"
+            aria-invalid={refused ? true : undefined}
+            aria-describedby={refused && message ? MESSAGE_ID : undefined}
             onChange={(event) => setCode(event.target.value)}
           />
           <button type="submit" className={`${styles.button} ${styles.buttonQuiet}`} disabled={busy}>
@@ -65,9 +80,15 @@ export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProp
         </form>
       )}
 
-      {promo.message && (
-        <p className={styles.promoMessage} role="status" data-applied={promo.applied} data-testid="promo-message">
-          {promo.message}
+      {message && (
+        <p
+          id={MESSAGE_ID}
+          className={styles.promoMessage}
+          role={refused ? 'alert' : 'status'}
+          data-applied={refused ? false : promo.applied}
+          data-testid="promo-message"
+        >
+          {message}
         </p>
       )}
 
@@ -78,7 +99,7 @@ export function PromoSection({ promo, locale, busy, onChange }: PromoSectionProp
           <ul>
             {promo.suggestions.map((suggestion) => (
               <li key={suggestion.code}>
-                <button type="button" className={styles.suggestion} disabled={busy} onClick={() => onChange({ promoCode: suggestion.code })} data-testid="promo-suggestion">
+                <button type="button" className={styles.suggestion} disabled={busy} onClick={() => onApply(suggestion.code)} data-testid="promo-suggestion">
                   <strong>{suggestion.code}</strong> <span>{suggestion.benefit}</span>
                 </button>
               </li>

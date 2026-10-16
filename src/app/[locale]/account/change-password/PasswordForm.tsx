@@ -2,11 +2,12 @@
 
 import { useActionState } from 'react';
 import type { Locale } from '@/sdk';
+import { PasswordInput } from '@/components/auth/PasswordInput';
 import { changePasswordAction, type PasswordState } from './actions';
 
 interface PasswordFormProps {
   locale: Locale;
-  labels: { current: string; next: string; hint: string; confirm: string; submit: string; submitting: string };
+  labels: { current: string; next: string; hint: string; confirm: string; submit: string; submitting: string; showPassword: string };
 }
 
 export function PasswordForm({ locale, labels }: PasswordFormProps) {
@@ -28,17 +29,17 @@ export function PasswordForm({ locale, labels }: PasswordFormProps) {
       )}
       <label>
         {labels.current}
-        <input name="currentPassword" type="password" autoComplete="current-password" aria-invalid={Boolean(errors.currentPassword)} required />
+        <PasswordInput name="currentPassword" autoComplete="current-password" aria-invalid={Boolean(errors.currentPassword)} required toggleLabel={labels.showPassword} />
         {errors.currentPassword && <span className="field-error">{errors.currentPassword}</span>}
       </label>
       <label>
         {labels.next} <span className="hint">{labels.hint}</span>
-        <input name="newPassword" type="password" autoComplete="new-password" minLength={8} aria-invalid={Boolean(errors.newPassword)} required />
+        <PasswordInput name="newPassword" autoComplete="new-password" minLength={8} aria-invalid={Boolean(errors.newPassword)} required toggleLabel={labels.showPassword} />
         {errors.newPassword && <span className="field-error">{errors.newPassword}</span>}
       </label>
       <label>
         {labels.confirm}
-        <input name="passwordConfirmation" type="password" autoComplete="new-password" aria-invalid={Boolean(errors.passwordConfirmation)} required />
+        <PasswordInput name="passwordConfirmation" autoComplete="new-password" aria-invalid={Boolean(errors.passwordConfirmation)} required toggleLabel={labels.showPassword} />
         {errors.passwordConfirmation && <span className="field-error">{errors.passwordConfirmation}</span>}
       </label>
       <button type="submit" disabled={pending}>

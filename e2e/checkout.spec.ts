@@ -214,7 +214,7 @@ test.describe('checkout', () => {
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'unknown');
   });
 
-  test('promo codes: a discount line, an invalid code that blocks, and removing it', async ({ page, context, request }) => {
+  test('promo codes: a discount line, removing it, an invalid code that is not kept, a free delivery', async ({ page, context, request }) => {
     await signIn(context);
     await fillCart(request);
     await openCheckout(page);
@@ -231,16 +231,65 @@ test.describe('checkout', () => {
     await expect(total(page)).toHaveText('381.00 EGP');
     await field.fill('NOPE');
     await page.getByRole('button', { name: 'Apply' }).click();
-    await expect(page.getByTestId('promo-message')).toHaveText('This promo code is not valid.');
-    await expect(page.getByTestId('checkout-blockers')).toContainText('Remove the promo code or enter a valid one.');
+    // like the old storefront: the message, the code is not applied and does not block the order
+    await expect(page.getByRole('alert').filter({ hasText: 'This promo code is not valid.' })).toBeVisible();
+    await expect(page.getByTestId('checkout-updating')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Remove code' })).toHaveCount(0);
+    await expect(field).toHaveValue('NOPE');
+    await expect(field).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
+    await expect(total(page)).toHaveText('381.00 EGP');
     await page.getByTestId('checkout-terms').check();
-    await expect(placeButton(page)).toBeDisabled();
+    await expect(placeButton(page)).toBeEnabled();
 
-    await page.getByRole('button', { name: 'Remove code' }).click();
-    await page.getByRole('textbox', { name: 'Promo code' }).fill('FREEDEL');
+    await field.fill('FREEDEL');
     await page.getByRole('button', { name: 'Apply' }).click();
     await expect(page.getByTestId('checkout-delivery')).toContainText('Free');
     await expect(total(page)).toHaveText('356.00 EGP');
+  });
+
+  test('Arabic: an invalid code shows the message and never reaches the order', async ({ page, context, request }) => {
+    await signIn(context);
+    await fillCart(request);
+    await openCheckout(page, 'ar');
+    await choosePayment(page, 'الدفع عند الاستلام');
+
+    const promo = page.getByTestId('checkout-promo');
+    await promo.locator('input[name="promoCode"]').fill('NOPE');
+    await promo.getByRole('button', { name: 'تطبيق' }).click();
+    await expect(promo.getByRole('alert')).toHaveText('كود الخصم غير صالح.');
+    await expect(page.getByTestId('checkout-updating')).toHaveCount(0);
+    await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
+    await place(page);
+
+    await expect(page).toHaveURL(/\/ar\/checkout\/final-receipt\?checkout=/);
+    const state = await mockState(request);
+    expect(state.orderRequests).toHaveLength(1);
+    expect(state.orderRequests[0].body.selections.promoCode ?? null).toBeNull();
+  });
+
+  test('a minimum that counts delivery: below it from the first render, like the cart page (seif)', async ({ page, context, request }) => {
+    await control(request, { minimumIncludesDelivery: true });
+    const guest = (await (await request.post(`${API}/session/guest`)).json()).data.token as string;
+    // 2 × 18 EGP = 36 EGP, the minimum is 300 EGP
+    await request.put(`${API}/cart/items/36480`, { headers: { Authorization: `Bearer ${guest}` }, data: { quantity: 2 } });
+    await signIn(context, guest, 'sc_guest');
+
+    await page.goto('/en/cart');
+    await expect(page.getByTestId('cart-minimum-remaining')).toHaveText('264.00 EGP');
+
+    await openCheckout(page);
+    await expect(page.getByTestId('fulfilment-delivery').getByRole('radio')).not.toBeChecked();
+    const summary = page.getByTestId('checkout-summary');
+    await expect(summary.getByTestId('cart-minimum-remaining')).toHaveText('264.00 EGP');
+    await expect(summary).not.toContainText('Minimum order reached');
+
+    await page.getByRole('radio', { name: 'Click & Collect' }).check();
+    await page.getByRole('radio', { name: /Dokki branch/ }).check();
+    await expect(page.getByTestId('checkout-updating')).toHaveCount(0);
+    await expect(page.getByTestId('checkout-blockers')).toContainText('The minimum order is 300.00 EGP. Add 264.00 EGP more to place your order.');
+    await expect(summary.getByTestId('cart-minimum-remaining')).toHaveText('264.00 EGP');
+    await expect(summary).not.toContainText('Minimum order reached');
   });
 
   test('pickup: pick a branch, delivery is free text, and the order is placed for pickup', async ({ page, context, request }) => {
@@ -437,6 +486,25 @@ test.describe('checkout on a phone', () => {
     await placeButton(page).tap();
 
     await expect(page.getByTestId('checkout-result')).toHaveAttribute('data-status', 'placed');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+
+  test('Arabic, below a minimum that counts delivery: never "reached"; an invalid code does not block', async ({ page, context, request }) => {
+    await control(request, { minimumIncludesDelivery: true });
+    const guest = (await (await request.post(`${API}/session/guest`)).json()).data.token as string;
+    await request.put(`${API}/cart/items/36480`, { headers: { Authorization: `Bearer ${guest}` }, data: { quantity: 2 } });
+    await signIn(context, guest, 'sc_guest');
+    await openCheckout(page, 'ar');
+
+    const summary = page.getByTestId('checkout-summary');
+    await expect(summary.getByTestId('cart-minimum-remaining')).toHaveText('264.00 جنية');
+    await expect(summary).not.toContainText('تم الوصول للحد الأدنى للطلب');
+
+    const promo = page.getByTestId('checkout-promo');
+    await promo.locator('input[name="promoCode"]').fill('NOPE');
+    await promo.getByRole('button', { name: 'تطبيق' }).tap();
+    await expect(promo.getByRole('alert')).toHaveText('كود الخصم غير صالح.');
+    await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 });
