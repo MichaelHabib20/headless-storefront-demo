@@ -9,6 +9,16 @@
   color: var(--color-on-primary);
 }
 
+.plain {
+  background: none;
+  color: var(--color-text);
+}
+
+.plain .badge {
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+}
+
 @media (max-width: 479px) {
   .link {
     width: 34px;
