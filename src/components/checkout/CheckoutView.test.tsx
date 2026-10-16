@@ -160,6 +160,27 @@ describe('CheckoutView: drawing the API answer', () => {
       expect(screen.getByTestId('cart-minimum-order')).toHaveTextContent('Minimum order reached');
     });
 
+    // seif (QA report 2, item 1): 40 EGP of goods + 15 EGP delivery, minimum 50. The backend refuses it
+    // like the old storefront: "add 10.00 more", never "reached", Place order off even with COD + terms.
+    for (const [locale, reached] of [['en', 'Minimum order reached'], ['ar', 'تم الوصول للحد الأدنى للطلب']] as const) {
+      it(`delivery chosen, goods under the minimum: "add X more" and Place order stays off (${locale})`, async () => {
+        const checkout = answer((c) => {
+          c.missing = [];
+          c.blockers = [{ code: 'minimum_order', message: 'ADD-10-MORE-TEXT' }];
+          c.canPlaceOrder = false;
+          c.minimumOrder = { amount: { amount: 50, currency: 'EGP', display: 'MIN-50' }, remaining: { amount: 10, currency: 'EGP', display: 'REMAINING-10' }, progressPercent: 80 };
+        }, checkoutFixture(locale));
+        const { user } = setup(checkout, { locale });
+
+        expect(radio('fulfilment-delivery')).toBeChecked();
+        expect(screen.getByTestId('cart-minimum-remaining').textContent).toBe('REMAINING-10');
+        expect(screen.getByTestId('checkout-blockers')).toHaveTextContent('ADD-10-MORE-TEXT');
+        expect(screen.queryByText(reached)).toBeNull();
+        await user.click(terms());
+        expect(placeButton()).toBeDisabled();
+      });
+    }
+
     it('reached before the choice when the cart has no minimum blocker either', () => {
       const checkout = answer((c) => {
         c.cart.checkout.blockers = [];

@@ -33,7 +33,9 @@ test.describe('shopper actions', () => {
     const first = card(page, 0);
     await first.getByRole('button', { name: 'Add to cart' }).click();
 
-    await expect(first.getByRole('status')).toHaveText('Added to cart.');
+    // like the old storefront: a toast, no drawer
+    await expect(page.getByTestId('cart-toast')).toHaveText('Added to cart.');
+    await expect(page.getByTestId('mini-cart')).toHaveCount(0);
     await expect(header(page).getByRole('link', { name: 'Cart, 1 item' })).toBeVisible();
     await expect(first.getByRole('link', { name: 'In cart (1)' })).toHaveAttribute('href', '/en/cart');
 
@@ -137,7 +139,7 @@ test.describe('shopper actions', () => {
     await page.goto('/ar');
     const first = card(page, 0);
     await first.getByRole('button', { name: 'أضف إلى السلة' }).click();
-    await expect(first.getByRole('status')).toHaveText('تمت الإضافة إلى السلة.');
+    await expect(page.getByTestId('cart-toast')).toHaveText('تمت الإضافة إلى السلة.');
     await expect(header(page).getByRole('link', { name: 'السلة، منتج واحد' })).toHaveAttribute('href', '/ar/cart');
   });
 });

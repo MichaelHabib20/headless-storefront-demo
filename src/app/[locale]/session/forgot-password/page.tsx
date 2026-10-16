@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/sdk';
 import { AuthPage } from '@/components/auth/AuthPage';
-import { loadAuthSettings } from '@/lib/auth.server';
+import { ResetUnavailable } from '@/components/auth/ResetUnavailable';
+import { loadAuthSettings, loadStoreWhatsapp } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { ForgotPasswordForm } from './ForgotPasswordForm';
@@ -37,12 +37,7 @@ export default async function ForgotPasswordPage({ params }: Props) {
           {result.message}
         </div>
       ) : method === 'none' ? (
-        <div data-testid="reset-unavailable">
-          <p className="muted">{t('authForgotNone')}</p>
-          <p className="switch">
-            <Link href={routes.contact(locale)}>{t('authForgotContact')}</Link>
-          </p>
-        </div>
+        <ResetUnavailable locale={locale} whatsapp={await loadStoreWhatsapp(locale)} testId="reset-unavailable" />
       ) : (
         <ForgotPasswordForm
           method={method as 'sms' | 'email'}

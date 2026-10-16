@@ -283,6 +283,7 @@ test.describe('checkout', () => {
     const summary = page.getByTestId('checkout-summary');
     await expect(summary.getByTestId('cart-minimum-remaining')).toHaveText('264.00 EGP');
     await expect(summary).not.toContainText('Minimum order reached');
+    await expect(page.getByTestId('checkout-blockers')).toContainText('The minimum order is 300.00 EGP. Add 264.00 EGP more to place your order.');
 
     await page.getByRole('radio', { name: 'Click & Collect' }).check();
     await page.getByRole('radio', { name: /Dokki branch/ }).check();
@@ -504,7 +505,41 @@ test.describe('checkout on a phone', () => {
     await promo.locator('input[name="promoCode"]').fill('NOPE');
     await promo.getByRole('button', { name: 'تطبيق' }).tap();
     await expect(promo.getByRole('alert')).toHaveText('كود الخصم غير صالح.');
-    await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
+    // only the minimum blocks the order, never the invalid code
+    await expect(page.getByTestId('checkout-blockers').getByRole('listitem')).toHaveText(['الحد الأدنى للطلب 300.00 جنية. أضف 264.00 جنية لإتمام الطلب.']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
+
+  // QA report 2, item 1 (seif: 40 EGP of goods, 15 EGP delivery, minimum 50): goods + delivery reach the
+  // minimum but legacy's cart gate and the old storefront refuse the order. Here: 290 + 25 = 315, minimum 300.
+  for (const [locale, texts] of [
+    ['en', { add: 'The minimum order is 300.00 EGP. Add 10.00 EGP more to place your order.', remaining: '10.00 EGP', reached: 'Minimum order reached', total: '315.00 EGP', cod: 'Cash on delivery', line: '200.00 EGP' }],
+    ['ar', { add: 'الحد الأدنى للطلب 300.00 جنية. أضف 10.00 جنية لإتمام الطلب.', remaining: '10.00 جنية', reached: 'تم الوصول للحد الأدنى للطلب', total: '315.00 جنية', cod: 'الدفع عند الاستلام', line: '200.00 جنية' }],
+  ] as const) {
+    test(`goods under the minimum stay refused with delivery although the fee reaches it (${locale})`, async ({ page, context, request }) => {
+      await control(request, { minimumIncludesDelivery: true });
+      await request.delete(`${API}/cart`, { headers: CUSTOMER });
+      await request.put(`${API}/cart/items/8658`, { headers: CUSTOMER, data: { quantity: 1 } });
+      await request.put(`${API}/cart/items/36480`, { headers: CUSTOMER, data: { quantity: 5 } });
+      await signIn(context);
+      await openCheckout(page, locale);
+
+      // first render: delivery to the default address is preselected, already refused
+      await expect(page.getByTestId('fulfilment-delivery').getByRole('radio')).toBeChecked();
+      await expect(page.getByTestId('checkout-blockers')).toContainText(texts.add);
+      const summary = page.getByTestId('checkout-summary');
+      await expect(summary.getByTestId('cart-minimum-remaining')).toHaveText(texts.remaining);
+      await expect(summary).not.toContainText(texts.reached);
+      // checkout lines with 2 decimals, like the old checkout
+      await expect(page.getByTestId('checkout-item-total').first()).toHaveText(texts.line);
+
+      await choosePayment(page, texts.cod);
+      await expect(total(page)).toHaveText(texts.total);
+      await page.getByTestId('checkout-terms').check();
+      await expect(placeButton(page)).toBeDisabled();
+      await expect(page.getByTestId('checkout-blockers')).toContainText(texts.add);
+      await expect(summary).not.toContainText(texts.reached);
+      expect((await mockState(request)).orderRequests).toHaveLength(0);
+    });
+  }
 });

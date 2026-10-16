@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/sdk';
 import { AuthPage } from '@/components/auth/AuthPage';
-import { loadAuthSettings } from '@/lib/auth.server';
+import { ResetUnavailable } from '@/components/auth/ResetUnavailable';
+import { loadAuthSettings, loadStoreWhatsapp } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { ResetPasswordForm } from './ResetPasswordForm';
@@ -39,12 +40,14 @@ export default async function ResetPasswordPage({ params, searchParams }: Props)
         {result.message}
       </div>
     );
-  } else if (method === 'none' || (method === 'email' && !token)) {
+  } else if (method === 'none') {
+    body = <ResetUnavailable locale={locale} whatsapp={await loadStoreWhatsapp(locale)} testId="reset-link-invalid" />;
+  } else if (method === 'email' && !token) {
     body = (
       <div data-testid="reset-link-invalid">
-        <p className="muted">{method === 'none' ? t('authForgotNone') : t('authResetMissingToken')}</p>
+        <p className="muted">{t('authResetMissingToken')}</p>
         <p className="switch">
-          <Link href={method === 'none' ? routes.contact(locale) : routes.forgotPassword(locale)}>{method === 'none' ? t('authForgotContact') : t('authResetAgain')}</Link>
+          <Link href={routes.forgotPassword(locale)}>{t('authResetAgain')}</Link>
         </p>
       </div>
     );

@@ -1995,7 +1995,7 @@ export interface components {
             perPage: number;
             total: number;
             totalPages: number;
-            /** @description Product listings only (optional): how many products the pages 1..totalPages can show. Less than `total` when the store caps listings at a page count (SEARCH_MAX_PAGE, 50 by default; a page past it is a 404), e.g. total 2217, totalPages 50, perPage 24 → reachable 1200. Show `total` as the count; never offer a page above `totalPages`. */
+            /** @description Product listings only (optional): how many products the pages 1..totalPages can show. Less than `total` when the store caps listings at a page count (SEARCH_MAX_PAGE, 50 by default; a page past it is a 404), e.g. total 2217, totalPages 50, perPage 24 → reachable 1200. Show `reachable` (when present) as the count, so the count and the last page agree (the old storefront shows no count and also stops at page 50); never offer a page above `totalPages`. */
             reachable?: number;
         };
         GuestSessionResponse: {
@@ -2064,7 +2064,7 @@ export interface components {
             /** @description Allowed increment (1, or e.g. 0.5 for weighed products) */
             quantityStep: number;
             unitPrice: components["schemas"]["Price"];
-            /** @description What this line costs after item promotions; `display` always has 2 decimals, like the totals ("690.00 EGP") */
+            /** @description What this line costs after item promotions. `display` reads like a price in a cart ("690 EGP", as the old cart page and mini cart) and has 2 decimals in a checkout's `cart` ("690.00 EGP", as the old checkout) */
             lineTotal: components["schemas"]["Money"];
             availability: components["schemas"]["CartItemAvailability"];
         };

@@ -41,6 +41,14 @@ describe('ListingView', () => {
     expect(screen.getAllByTestId('listing-count')[1]).toHaveTextContent('النتائج: 12');
   });
 
+  it('a listing capped at page 50 counts what its pages can show (reachable), not the full total', () => {
+    const capped = { page: 1, perPage: 24, total: 2217, totalPages: 50, reachable: 1200 };
+    renderListing({ ...productsFixture('en'), pagination: capped });
+    expect(screen.getByTestId('listing-count')).toHaveTextContent('Results: 1,200');
+    renderListing({ ...productsFixture('ar'), pagination: capped }, 'ar');
+    expect(screen.getAllByTestId('listing-count')[1]).toHaveTextContent('النتائج: 1,200');
+  });
+
   it('every filter value, sort option, chip and "clear all" links to this page + the query the backend wrote, in the old names', () => {
     const listing = productsFixture('en');
     renderListing(listing);

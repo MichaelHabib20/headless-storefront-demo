@@ -175,7 +175,7 @@ describe('mock orders', () => {
     expect(inProgress.totals.lines.map((line) => line.kind)).toEqual(['subtotal', 'promo_code', 'delivery']);
     expect(inProgress.totals.lines[1].amount.display).toBe('-20.00 EGP');
     expect(inProgress.totals.total.display).toBe('408.00 EGP');
-    expect(inProgress.items[1]).toMatchObject({ lineTotal: { display: '243 EGP' }, compareAt: { display: '270 EGP' } });
+    expect(inProgress.items[1]).toMatchObject({ lineTotal: { display: '243.00 EGP' }, compareAt: { display: '270.00 EGP' } });
 
     const pickup = call('GET', '/orders/mock-order-48199').payload.data;
     expect(pickup.fulfilment).toMatchObject({ type: 'pickup', address: null, branch: { name: 'Nasr City branch' } });

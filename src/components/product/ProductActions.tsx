@@ -98,16 +98,18 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     // Writes from every card run one at a time, so two quick first clicks share one guest session.
     const result = await runInOrder(call).catch((): ShopperActionResult => ({ ok: false }));
 
+    // Added to cart: the shell shows it (a toast like the old storefront, or the mini cart drawer).
+    let shownByShell = false;
     if (result.ok) {
       setState((current) => ({ ...current, ...change }));
       if (!optimistic) {
         focusCartLink.current = true;
-        miniCart.open(); // shell: show the cart as the API now has it
+        shownByShell = miniCart.added(result.message ?? '');
       }
     } else if (optimistic) {
       setState((current) => ({ ...current, ...undo }));
     }
-    setStatus({ text: result.message ?? labels.failed, error: !result.ok });
+    setStatus(shownByShell ? null : { text: result.message ?? labels.failed, error: !result.ok });
     track(field, -1);
   }
 

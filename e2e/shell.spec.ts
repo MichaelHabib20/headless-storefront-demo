@@ -17,19 +17,18 @@ test.beforeEach(async ({ request }) => {
 test.describe('desktop', () => {
   test.beforeEach(async ({ page }) => acceptCookies(page));
 
-  test('mini cart opens after add to cart with the API lines, total and blockers', async ({ page }) => {
+  test('add to cart shows a short message, not the drawer, like the old storefront; the header count follows', async ({ page }) => {
     await page.goto('/en');
     await page.getByTestId('product-card').first().getByRole('button', { name: 'Add to cart' }).click();
-    const drawer = page.getByTestId('mini-cart');
-    await expect(drawer).toBeVisible();
-    await expect(drawer.getByTestId('mini-cart-line')).toHaveCount(1);
-    await expect(drawer.getByTestId('mini-cart-total')).toHaveText(/EGP/);
-    // one cheap line is below the store minimum: the API blocks checkout and says why
-    await expect(drawer.getByTestId('checkout-blockers')).toBeVisible();
-    await expect(drawer.getByTestId('mini-cart-checkout')).toBeDisabled();
-    await expect(drawer.getByRole('link', { name: 'View cart' })).toHaveAttribute('href', '/en/cart');
-    await page.keyboard.press('Escape');
-    await expect(drawer).toBeHidden();
+    const toast = page.getByTestId('cart-toast');
+    await expect(toast).toHaveText('Added to cart.');
+    await expect(page.getByTestId('mini-cart')).toHaveCount(0);
+    await expect(page.getByRole('banner').getByRole('link', { name: 'Cart, 1 item' })).toBeVisible();
+    // bottom inline end (right in English), then it goes away by itself
+    const box = (await toast.boundingBox())!;
+    expect(box.x + box.width).toBeGreaterThan(1440 - 40);
+    expect(box.y + box.height).toBeGreaterThan(900 - 80);
+    await expect(toast).toHaveCount(0, { timeout: 8000 });
   });
 
   test('bottom nav is for phones only; legal links and the app banner are in the page', async ({ page }) => {
@@ -170,16 +169,18 @@ test.describe('phone (360 px)', () => {
     await expect(page).toHaveURL(/\/en$/);
   });
 
-  test('mini cart fits the phone above everything', async ({ page }) => {
+  test('the add-to-cart message fits the phone above the bottom nav (Arabic: bottom left)', async ({ page }) => {
     await acceptCookies(page);
-    await page.goto('/en');
-    await page.getByTestId('product-card').first().getByRole('button', { name: 'Add to cart' }).click();
-    const drawer = page.getByTestId('mini-cart');
-    await expect(drawer.getByTestId('mini-cart-line')).toHaveCount(1);
-    const box = (await drawer.boundingBox())!;
+    await page.goto('/ar');
+    await page.getByTestId('product-card').first().getByRole('button', { name: 'أضف إلى السلة' }).click();
+    const toast = page.getByTestId('cart-toast');
+    await expect(toast).toHaveText('تمت الإضافة إلى السلة.');
+    await expect(page.getByTestId('mini-cart')).toHaveCount(0);
+    await expect(toast).toBeInViewport();
+    const box = (await toast.boundingBox())!;
+    const nav = (await page.getByTestId('mobile-bottom-nav').boundingBox())!;
+    expect(box.y + box.height).toBeLessThanOrEqual(nav.y);
+    expect(box.x).toBeLessThan(40);
     expect(box.width).toBeLessThanOrEqual(360);
-    await expect(drawer.getByRole('link', { name: 'View cart' })).toBeInViewport();
-    await drawer.getByRole('link', { name: 'View cart' }).click();
-    await expect(page).toHaveURL(/\/en\/cart$/);
   });
 });

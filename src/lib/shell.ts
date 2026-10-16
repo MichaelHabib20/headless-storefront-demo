@@ -8,6 +8,19 @@ export const FLOATING_BANNER_COOKIE = 'sc_floating_banner';
 /** The area chooser opens on this window event (the bottom nav's `area` item sends it). */
 export const OPEN_AREA_EVENT = 'sc:open-area-chooser';
 
+/**
+ * What the shopper sees after a successful add to cart (`useMiniCart().added`):
+ * - 'toast': a short message at the bottom of the screen; the header count updates. The old storefront
+ *   does this (seif-online.com, desktop and phone: "Product added to cart successfully"), as long as
+ *   its ENABLE_NEW_ADD_TO_CART_ANIMATION switch is off.
+ * - 'drawer': the mini cart drawer opens with the cart as the API now has it (that switch on).
+ * The old switch is not in the v3 API: a store that wants the drawer changes this value.
+ */
+export const AFTER_ADD_TO_CART: 'toast' | 'drawer' = 'toast';
+
+/** How long the add-to-cart message stays on screen. */
+export const TOAST_MS = 4000;
+
 /** Days a dismissal is remembered. */
 export const DISMISS_DAYS = { appBanner: 30, floatingBanner: 1 } as const;
 

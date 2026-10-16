@@ -2,9 +2,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 import type { Locale } from '@/sdk';
 import { RESOLUTION_HEADER } from '@/lib/resolve';
 import { answerPath } from '@/lib/resolve.server';
-import { interimRedirect, isPrivatePath, isStorefrontPath, PRIVATE_SECTIONS, retiredAccountPage } from '@/lib/routing';
+import { interimRedirect, isPrivatePath, isStorefrontPath, retiredAccountPage } from '@/lib/routing';
 import { CLICK_IDS_COOKIE, CLICK_IDS_MAX_AGE, clickIdsCookie } from '@/lib/click-ids';
-import { isTestHost } from '@/lib/origin';
+import { shouldNoindex } from '@/lib/indexing.server';
 
 const LOCALES = ['en', 'ar'];
 
@@ -25,16 +25,18 @@ export async function middleware(request: NextRequest) {
 /**
  * 6. Campaign click ids of the landing URL (fbclid, gclid, ttclid, sccid) are kept in an httpOnly
  *    cookie for 7 days, for the server-side marketing events (src/lib/click-ids.ts).
- * 7. The shopper's private pages (cart, checkout, account...) answer `X-Robots-Tag: noindex`, and so
- *    does every page on a test host (a host other than `SC_SITE_URL`'s, see src/lib/origin.ts).
+ * 7. `X-Robots-Tag: noindex` on the shopper's private pages (cart, checkout, account...), on every page
+ *    of a test host (a host other than `SC_SITE_URL`'s, see src/lib/origin.ts) and on every page when
+ *    the backend says the store may not be indexed (src/lib/indexing.server.ts).
  */
-function marketingAndRobots(request: NextRequest, response: NextResponse): NextResponse {
+async function marketingAndRobots(request: NextRequest, response: NextResponse): Promise<NextResponse> {
   const clickIds = clickIdsCookie(request.nextUrl.searchParams, request.cookies.get(CLICK_IDS_COOKIE)?.value);
   if (clickIds) {
     response.cookies.set(CLICK_IDS_COOKIE, clickIds, { httpOnly: true, sameSite: 'lax', secure: request.nextUrl.protocol === 'https:', path: '/', maxAge: CLICK_IDS_MAX_AGE });
   }
-  const section = request.nextUrl.pathname.split('/')[2] ?? '';
-  if ((PRIVATE_SECTIONS as readonly string[]).includes(section) || isTestHost(request.headers)) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  // A redirect has no page to index: no need to ask the backend.
+  const redirect = response.status >= 300 && response.status < 400;
+  if (!redirect && (await shouldNoindex(request.nextUrl.pathname, request.headers))) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   return response;
 }
 

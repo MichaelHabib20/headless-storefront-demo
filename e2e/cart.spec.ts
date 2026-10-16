@@ -59,7 +59,7 @@ test.describe('cart page', () => {
 
     await expect(second.getByTestId('cart-quantity')).toHaveText('2');
     await expect(page.getByTestId('cart-total')).toHaveText('356.00 EGP');
-    await expect(second.getByTestId('cart-line-total')).toContainText('320 EGP');
+    await expect(second.getByTestId('cart-line-total')).toHaveText(/^Item total\s*320 EGP$/);
     await expect(page.getByTestId('checkout-blockers')).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Checkout' })).toHaveAttribute('href', '/en/checkout');
 

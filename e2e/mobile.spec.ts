@@ -110,6 +110,44 @@ test.describe('mobile', () => {
     });
   }
 
+  for (const locale of ['en', 'ar'] as const) {
+    test(`broken logo and category banner: the store name and the placeholder, never the broken-image icon (${locale})`, async ({ page }) => {
+      test.skip(live, 'needs the mock API');
+      // every picture file is missing (404)
+      await page.route(/\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i, (route) => route.fulfill({ status: 404, body: '' }));
+      await page.goto(`/${locale}/product/mom-baby`);
+      const header = page.getByRole('banner');
+      const store = JSON.parse(fs.readFileSync(`src/test/fixtures/v3/layout.${locale}.json`, 'utf8')).data.store as { name: string };
+      await expect(header.getByTestId('store-logo-text')).toHaveText(store.name);
+      await expect(header.getByTestId('store-logo')).toHaveCount(0);
+      await expect(page.getByTestId('listing-image')).toHaveAttribute('data-placeholder', 'true');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    });
+
+    test(`add to cart on a phone: the message, no drawer (${locale})`, async ({ page }) => {
+      test.skip(live, 'needs the mock API');
+      await page.request.post(`${MOCK_API}/__reset`);
+      await page.goto(`/${locale}`);
+      await page.getByTestId('product-card').first().getByRole('button', { name: locale === 'en' ? 'Add to cart' : 'أضف إلى السلة' }).click();
+      const toast = page.getByTestId('cart-toast');
+      await expect(toast).toHaveText(locale === 'en' ? 'Added to cart.' : 'تمت الإضافة إلى السلة.');
+      await expect(page.getByTestId('mini-cart')).toHaveCount(0);
+      await expect(toast).toBeInViewport();
+    });
+
+    test(`password reset without an online method: the contact note on a phone (${locale})`, async ({ page }) => {
+      test.skip(live, 'needs the mock API');
+      await page.request.post(`${MOCK_API}/__reset`);
+      await page.request.post(`${MOCK_API}/__mode`, { data: { auth: { passwordReset: 'none' } } });
+      await page.goto(`/${locale}/session/forgot-password`);
+      const note = page.getByTestId('reset-unavailable');
+      await expect(note.getByRole('link', { name: locale === 'en' ? 'Contact us' : 'اتصل بنا' })).toBeInViewport();
+      await expect(note.getByRole('link', { name: locale === 'en' ? 'Chat on WhatsApp' : 'تواصل عبر واتساب' })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await page.request.post(`${MOCK_API}/__reset`);
+    });
+  }
+
   test('Arabic fits the screen too', async ({ page }) => {
     await page.goto('/ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

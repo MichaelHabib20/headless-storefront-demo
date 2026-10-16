@@ -103,7 +103,7 @@ describe.each(['en', 'ar'])('mock checkout API follows the contract (%s)', (loca
     expect(mock.compute()).toEqual(first);
   });
 
-  it('a minimum that counts delivery: no verdict before the address or branch, then one with the fee', () => {
+  it('a minimum that counts delivery: goods under the cart minimum are refused from the first render', () => {
     const mock = api(locale);
     mock.call('POST', '/__checkout', { minimumIncludesDelivery: true });
     mock.guest();
@@ -112,13 +112,43 @@ describe.each(['en', 'ar'])('mock checkout API follows the contract (%s)', (loca
     const first = mock.compute();
     expect(first.fulfilment.selected).toBeNull();
     expect(first.missing.map((item) => item.code)).toContain('fulfilment');
-    expect(first.blockers).toEqual([]);
+    expect(first.blockers.map((item) => item.code)).toEqual(['minimum_order']);
     expect(first.minimumOrder.remaining.amount).toBe(264);
     expect(first.cart.checkout.blockers.map((item) => item.code)).toEqual(['minimum_order']);
 
     const pickup = mock.compute({ fulfilment: 'pickup', branchId: 71 });
     expect(pickup.blockers.map((item) => item.code)).toEqual(['minimum_order']);
     expect(pickup.minimumOrder.remaining.amount).toBe(264);
+  });
+
+  it('seif: goods 290 + delivery 25 = 315 is over the 300 minimum, yet the order is refused like the old storefront', () => {
+    const mock = api(locale);
+    mock.call('POST', '/__checkout', { minimumIncludesDelivery: true });
+    mock.call('DELETE', '/cart');
+    mock.call('PUT', '/cart/items/8658', { quantity: 1 });
+    mock.call('PUT', '/cart/items/36480', { quantity: 5 });
+
+    const delivery = mock.compute({ fulfilment: 'delivery', addressId: 501, paymentMethodId: 1 });
+    expect(delivery.totals.total.amount).toBe(315);
+    expect(delivery.blockers.map((item) => item.code)).toEqual(['minimum_order']);
+    expect(delivery.blockers[0].message).toBe(
+      locale === 'en' ? 'The minimum order is 300.00 EGP. Add 10.00 EGP more to place your order.' : 'الحد الأدنى للطلب 300.00 جنية. أضف 10.00 جنية لإتمام الطلب.'
+    );
+    expect(delivery.minimumOrder.remaining.amount).toBe(10);
+    expect(delivery.canPlaceOrder).toBe(false);
+  });
+
+  it('checkout lines have 2 decimals, the cart lines read like prices', () => {
+    const mock = api(locale);
+    mock.fillCart();
+    const cart = mock.call('GET', '/cart').payload.data;
+    const checkout = mock.compute();
+    const label = locale === 'en' ? 'EGP' : 'جنية';
+    checkout.cart.items.forEach((item, i) => {
+      expect(item.lineTotal.amount).toBe(cart.items[i].lineTotal.amount);
+      expect(item.lineTotal.display).toMatch(new RegExp(`^[0-9,]+\\.[0-9]{2} ${label}$`));
+    });
+    expect(cart.items.some((item) => !/\.[0-9]{2} /.test(item.lineTotal.display))).toBe(true);
   });
 
   it('delivery has a fee, pickup is free text and needs a branch', () => {
