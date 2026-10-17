@@ -56,7 +56,7 @@ const TEXT = {
   ar: {
     labels: { firstName: 'الاسم الأول', lastName: 'اسم العائلة', phone: 'رقم الهاتف', email: 'البريد الإلكتروني', password: 'كلمة المرور', birthdate: 'تاريخ الميلاد', referralCode: 'كود الإحالة', customerGroup: 'مجموعة العملاء', country: 'الدولة' },
     passwordHint: '8 أحرف على الأقل',
-    phoneHint: '11 أرقام',
+    phoneHint: '11 رقمًا',
     waiting: 'حسابك قيد المراجعة. سنخبرك فور الموافقة عليه.',
     required: (label) => `${label} مطلوب.`,
     phoneFormat: 'أدخل رقم موبايل من 11 رقماً.',

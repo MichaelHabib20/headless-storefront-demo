@@ -178,7 +178,7 @@ export const authMessages = defineMessages({
     authCheckRequired: 'هذا الحقل مطلوب.',
     authCheckTooShort: 'استخدم {count} أحرف على الأقل.',
     authCheckEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.',
-    authCheckPhone: 'أدخل رقم هاتف مكوّنًا من {count} رقمًا.',
+    authCheckPhone: 'أدخل رقم هاتف مكوّنًا من {digits}.',
     authCreateButton: 'إنشاء الحساب',
     authCreating: 'جارٍ إنشاء حسابك…',
     authOptional: '(اختياري)',

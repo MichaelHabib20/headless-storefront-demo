@@ -4,10 +4,12 @@ import { isLocale } from '@/sdk';
 import { PromoStrip } from '@/components/home/PromoStrip';
 import { HomeSection } from '@/components/home/sections/HomeSection';
 import { MessageBlock } from '@/components/layout/StoreUnavailable';
+import { withBannerNames } from '@/lib/banner-names.server';
 import { loadLandingPage, slugParam } from '@/lib/content.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { seoMetadata } from '@/lib/seo';
+import { alternateHrefs, seoMetadata } from '@/lib/seo';
+import { PageAlternates } from '@/components/layout/PageAlternates';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,14 +37,20 @@ export default async function LandingPageRoute({ params }: { params: Params }) {
   }
 
   const page = result.data;
+  // image-only links without a name from the API are named after the page they open
+  const [promoBanners, sections] = await Promise.all([
+    withBannerNames(page.promoBanners, locale),
+    Promise.all(page.sections.map(async (section) => ({ ...section, banners: await withBannerNames(section.banners, locale) }))),
+  ]);
   return (
     <div data-testid="landing-page">
+      <PageAlternates hrefs={alternateHrefs(page.seo)} />
       <h1 className="visually-hidden">{page.title ?? page.seo.title}</h1>
-      {page.promoBanners.map((banner, index) => (
+      {promoBanners.map((banner, index) => (
         <PromoStrip key={banner.id} banner={banner} locale={locale} priority={index === 0} />
       ))}
-      {page.sections.map((section, index) => (
-        <HomeSection key={section.id} section={section} locale={locale} priority={index === 0 && page.promoBanners.length === 0} />
+      {sections.map((section, index) => (
+        <HomeSection key={section.id} section={section} locale={locale} priority={index === 0 && promoBanners.length === 0} />
       ))}
     </div>
   );

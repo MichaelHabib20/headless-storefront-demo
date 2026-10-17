@@ -229,3 +229,27 @@ test.describe('phone (360 px)', () => {
     await expectClearOfWhatsApp(page);
   });
 });
+
+test.describe('language switch on pages with their own slug in each language (round 5, N1)', () => {
+  test.skip(live, 'mock pages');
+
+  test('the switch opens the hreflang alternate of every page type, after hydration and after a client-side navigation', async ({ page }) => {
+    await acceptCookies(page);
+    const pathOf = (url: string) => decodeURIComponent(new URL(url, 'http://x').pathname);
+    const switchHref = async () => pathOf((await page.getByRole('link', { name: /^(Switch language|تغيير اللغة)$/ }).first().getAttribute('href'))!);
+    const alternate = async (locale: string) => pathOf((await page.locator(`head link[rel="alternate"][hreflang="${locale}"]`).getAttribute('href'))!);
+    const pages = ['/ar/product/mom-baby', '/en/product/brand/johnson-johnson', '/ar/pages/about-us', '/ar/forms/prescriptions', '/en/landing-page/summer-sale', '/ar/category'];
+    for (const url of pages) {
+      await page.goto(url);
+      await page.waitForLoadState('networkidle');
+      const other = url.startsWith('/ar') ? 'en' : 'ar';
+      await expect.poll(switchHref, url).toBe(await alternate(other));
+    }
+    // client-side: from the listing to a product (soft navigation), the switch follows the new page
+    await page.goto('/ar/product/mom-baby');
+    await page.waitForLoadState('networkidle');
+    await page.getByTestId('product-card').first().getByRole('link').first().click();
+    await expect(page.getByTestId('product-info')).toBeVisible();
+    await expect.poll(switchHref).toBe(await alternate('en'));
+  });
+});

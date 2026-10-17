@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkFields, checkMessages, formTexts, unplacedErrors, type FieldCheck } from './form-checks';
+import { arabicDigits, checkFields, checkMessages, formTexts, unplacedErrors, type FieldCheck } from './form-checks';
 
 const en = checkMessages('en');
 
@@ -35,6 +35,13 @@ describe('checkFields', () => {
       password: 'استخدم 8 أحرف على الأقل.',
       passwordConfirmation: 'هذا الحقل مطلوب.',
     });
+  });
+
+  it('counts the phone digits the Arabic way: «11 رقمًا», «10 أرقام»', () => {
+    const ar = checkMessages('ar');
+    expect(checkFields({ phone: '12' }, [checks[2]], ar)).toEqual({ phone: 'أدخل رقم هاتف مكوّنًا من 11 رقمًا.' });
+    expect(checkFields({ phone: '12' }, [{ ...checks[2], phoneLength: 10 }], ar)).toEqual({ phone: 'أدخل رقم هاتف مكوّنًا من 10 أرقام.' });
+    expect([1, 2, 9, 11, 13, 100].map(arabicDigits)).toEqual(['رقم واحد', 'رقمان', '9 أرقام', '11 رقمًا', '13 رقمًا', '100 رقم']);
   });
 });
 

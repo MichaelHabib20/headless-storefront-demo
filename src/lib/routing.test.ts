@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Locale, Target } from '@/sdk';
-import { addressReturn, addressReturnHref, externalHref, interimRedirect, isPrivatePath, isStorefrontPath, loyaltyStepHref, resolveTarget, retiredAccountPage, routes, safeReturnPath, signInReturn, switchLocalePath } from './routing';
+import { addressReturn, addressReturnHref, externalHref, interimRedirect, isPrivatePath, isStorefrontPath, loyaltyStepHref, resolveTarget, retiredAccountPage, routes, safeReturnPath, signInReturn, switchLocalePath, targetPage } from './routing';
 
 /** The old storefront's URLs (url-parity-plan §1 in the backend repo): every link builds one of them. */
 describe('resolveTarget', () => {
@@ -232,5 +232,22 @@ describe('switchLocalePath', () => {
     expect(switchLocalePath('/ar/products', 'en', '?search=%D8%A8')).toBe('/en/products?search=%D8%A8');
     expect(switchLocalePath('/en/x', 'ar', new URLSearchParams({ price_from: '10' }))).toBe('/ar/x?price_from=10');
     expect(switchLocalePath('/en/x', 'ar', '')).toBe('/ar/x');
+    // the page's own address in that language (its hreflang alternate): localized slugs
+    expect(switchLocalePath('/ar/%D8%B4%D8%A7%D9%86', 'en', '', '/en/shaan')).toBe('/en/shaan');
+    expect(switchLocalePath('/ar/%D8%B4%D8%A7%D9%86', 'en', 'page=2', '/en/shaan')).toBe('/en/shaan?page=2');
+    expect(switchLocalePath('/ar/brands', 'en', '', '/en/brands?page=3')).toBe('/en/brands?page=3');
+    expect(switchLocalePath('/en/x', 'ar', '', 'https://elsewhere.test/ar/x')).toBe('/ar/x');
+    expect(switchLocalePath('/en/x', 'ar', '', null)).toBe('/ar/x');
+  });
+});
+
+describe('targetPage', () => {
+  it('says which page a Target opens, as the data it is read from', () => {
+    expect(targetPage({ type: 'form', slug: 'prescriptions' })).toEqual({ kind: 'form', slug: 'prescriptions' });
+    expect(targetPage({ type: 'list', slug: null, id: 176 })).toEqual({ kind: 'listing', scope: { list: 176 } });
+    expect(targetPage({ type: 'category', path: ['skin-care', 'face-care'] })).toEqual({ kind: 'listing', scope: { category: ['skin-care', 'face-care'] } });
+    expect(targetPage({ type: 'deals' })).toEqual({ kind: 'listing', scope: { deals: true } });
+    expect(targetPage({ type: 'home' })).toBeNull();
+    expect(targetPage(null)).toBeNull();
   });
 });

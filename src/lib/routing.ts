@@ -1,4 +1,4 @@
-import type { Locale, Target } from '@/sdk';
+import type { ListingScope, Locale, Target } from '@/sdk';
 
 /** Legal pages: the old storefront served them at the root, not under /pages (PageTarget.legal). */
 export const LEGAL_PATHS = { privacy: 'privacy-policy', terms: 'terms-and-conditions', cookies: 'cookie-policy' } as const;
@@ -192,6 +192,43 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
 }
 
 /**
+ * Which page of ours a Target opens, as the data that page is read from: a content page, form or
+ * landing page by slug, a product by slug, or a listing scope (category, brand, list, tag, deals,
+ * vendor). Null for the home page, a search, an external URL. Used to name a banner after the page
+ * it opens (src/lib/banner-names.server.ts).
+ */
+export type TargetPage =
+  | { kind: 'form' | 'page' | 'landing_page' | 'product'; slug: string }
+  | { kind: 'listing'; scope: ListingScope };
+
+export function targetPage(target: Target | null | undefined): TargetPage | null {
+  if (!target) return null;
+  switch (target.type) {
+    case 'form':
+    case 'page':
+    case 'landing_page':
+    case 'product':
+      return target.slug ? { kind: target.type, slug: target.slug } : null;
+    case 'category':
+      return target.path.length ? { kind: 'listing', scope: { category: target.path } } : null;
+    case 'brand':
+      return { kind: 'listing', scope: { brand: target.slug } };
+    case 'list': {
+      const key = target.slug || target.id;
+      return key ? { kind: 'listing', scope: { list: key } } : null;
+    }
+    case 'tag':
+      return { kind: 'listing', scope: { tag: target.slug } };
+    case 'deals':
+      return { kind: 'listing', scope: target.category?.length ? { deals: true, category: target.category } : { deals: true } };
+    case 'vendor':
+      return target.id > 0 ? { kind: 'listing', scope: { vendor: target.id } } : null;
+    default:
+      return null;
+  }
+}
+
+/**
  * A category Target at the old storefront's category view (/category/{cat}[/{group}]) instead of its
  * listing: for sitemap entries the backend marks `categoryView` (stores with ENABLE_CATEGORY_VIEW /
  * ENABLE_SUBCATEGORY_VIEW listed them there). Null for any other Target.
@@ -369,10 +406,17 @@ export function externalHref(url: string | null | undefined): string | null {
  * Same page in the other language: /en/x?sort=low → /ar/x?sort=low (a product page then moves to
  * its Arabic slug). The query (sort, page, filters, search) stays as it is, like the old storefront.
  */
-export function switchLocalePath(pathname: string, to: Locale, search: string | URLSearchParams = ''): string {
+export function switchLocalePath(pathname: string, to: Locale, search: string | URLSearchParams = '', alternate?: string | null): string {
+  const query = (typeof search === 'string' ? search : search.toString()).replace(/^\?/, '');
+  // The page's own address in that language (its hreflang alternate, e.g. /en/shaan-… for
+  // /ar/شان-…): its path, with the current query when there is one (else the alternate's own).
+  if (alternate && alternate.startsWith('/')) {
+    const [path, own = ''] = alternate.split('?');
+    const kept = query || own;
+    return kept ? `${path}?${kept}` : path;
+  }
   const [, , ...rest] = pathname.split('/');
   const path = `/${[to, ...rest].filter(Boolean).join('/')}`;
-  const query = (typeof search === 'string' ? search : search.toString()).replace(/^\?/, '');
   return query ? `${path}?${query}` : path;
 }
 

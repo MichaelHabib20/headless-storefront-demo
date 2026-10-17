@@ -27,7 +27,7 @@ export interface CheckMessages {
   /** With `{count}`. */
   tooShort: string;
   email: string;
-  /** With `{count}`. */
+  /** With `{count}` (the number) or `{digits}` (the number and its noun, for Arabic: «11 رقمًا»). */
   phone: string;
   mismatch: string;
 }
@@ -36,6 +36,18 @@ export interface CheckMessages {
 export function checkMessages(locale: Locale): CheckMessages {
   const t = translator(locale);
   return { required: t('authCheckRequired'), tooShort: t('authCheckTooShort'), email: t('authCheckEmail'), phone: t('authCheckPhone'), mismatch: t('authPasswordsMismatch') };
+}
+
+/**
+ * "N digits" in Arabic, whose noun follows the number: 3–10 أرقام, 11–99 رقمًا, 1 and 2 their own
+ * words (the backend's phone hint uses the same rule, AuthTexts::phoneHint).
+ */
+export function arabicDigits(count: number): string {
+  if (count === 1) return 'رقم واحد';
+  if (count === 2) return 'رقمان';
+  const tens = count % 100;
+  if (tens >= 3 && tens <= 10) return `${count} أرقام`;
+  return tens >= 11 ? `${count} رقمًا` : `${count} رقم`;
 }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,7 +66,7 @@ export function checkFields(values: Record<string, string>, checks: readonly Fie
     } else if (check.kind === 'email' && !EMAIL.test(trimmed)) {
       error = messages.email;
     } else if (check.kind === 'phone' && check.phoneLength && !new RegExp(`^[0-9٠-٩۰-۹]{${check.phoneLength}}$`).test(trimmed)) {
-      error = messages.phone.replace('{count}', String(check.phoneLength));
+      error = messages.phone.replace('{count}', String(check.phoneLength)).replace('{digits}', arabicDigits(check.phoneLength));
     } else if (check.sameAs && trimmed !== (values[check.sameAs] ?? '')) {
       error = messages.mismatch;
     }
