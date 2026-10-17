@@ -9,6 +9,8 @@ const env = vi.hoisted(() => ({
   customer: null as string | null,
   guest: null as string | null,
   guests: 0,
+  /** Whether the SDK's onTokenRefused may drop the customer cookie (false: rendering, read-only cookies). */
+  canDrop: true,
   fetch: undefined as unknown as Mock<typeof fetch>,
 }));
 
@@ -30,7 +32,17 @@ vi.mock('./shopper.server', () => ({
 
 vi.mock('./storefront.server', async () => {
   const { createStorefrontClient } = await import('@/sdk');
-  return { storefrontClient: () => createStorefrontClient({ baseUrl: 'https://api.test', fetch: (input, init) => env.fetch(input, init) }) };
+  return {
+    storefrontClient: () =>
+      createStorefrontClient({
+        baseUrl: 'https://api.test',
+        fetch: (input, init) => env.fetch(input, init),
+        // like storefront.server.ts forgetRefusedToken: the refused customer cookie goes
+        onTokenRefused: (token) => {
+          if (env.canDrop && token === env.customer) env.customer = null;
+        },
+      }),
+  };
 });
 
 const listState = { data: { count: 1, productIds: [8412], maxItems: 4 } };
@@ -53,6 +65,7 @@ beforeEach(() => {
   env.customer = null;
   env.guest = null;
   env.guests = 0;
+  env.canDrop = true;
   env.fetch = vi.fn<typeof fetch>(async () => reply(200, listState));
 });
 
@@ -124,8 +137,22 @@ describe('shopper server actions', () => {
     expect(calls().map((c) => c.auth)).toEqual(['Bearer guest-expired', 'Bearer guest-1']);
   });
 
-  it('does not retry for a signed-in customer', async () => {
+  it('a customer token the backend refused (signed out elsewhere, expired): the cookie goes and the write is done as a guest', async () => {
+    env.customer = 'revoked-customer';
+    env.fetch = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(reply(401, { error: { code: 'unauthenticated', message: 'Please start a session first.' } }))
+      .mockResolvedValueOnce(reply(200, listState));
+
+    await expect(toggleWishlistAction('en', 8412, true)).resolves.toMatchObject({ ok: true });
+    expect(env.customer).toBeNull();
+    expect(forgetGuest).not.toHaveBeenCalled();
+    expect(calls().map((c) => c.auth)).toEqual(['Bearer revoked-customer', 'Bearer guest-1']);
+  });
+
+  it('does not retry a customer token that is still there (nothing was dropped)', async () => {
     env.customer = 'stale-customer';
+    env.canDrop = false;
     env.fetch = vi.fn<typeof fetch>(async () => reply(401, { error: { code: 'unauthenticated', message: 'Please sign in again.' } }));
 
     await expect(addToCartAction('en', 7346, 1)).resolves.toEqual({ ok: false, message: 'Please sign in again.' });

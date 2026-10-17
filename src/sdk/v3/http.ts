@@ -10,6 +10,12 @@ export interface StorefrontClientOptions {
   /** Seconds a GET response may be reused by the framework cache (Next.js `revalidate`). Ignored for personal data. */
   revalidate?: number;
   timeoutMs?: number;
+  /**
+   * Called when the backend refuses the shopper token a request carried (401 `unauthenticated`:
+   * expired, revoked by a sign-out, or unknown), before the ApiError is thrown. The app drops its
+   * session cookie here. Its own failures are ignored.
+   */
+  onTokenRefused?: (token: string) => void | Promise<void>;
 }
 
 export interface RequestOptions {
@@ -155,6 +161,13 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
     if (!res.ok) {
       const { error, ...details } = (payload ?? {}) as { error?: { code?: string; message?: string; fields?: Record<string, string[]> } } & Record<string, unknown>;
       const kind = kindFor(res.status, error?.code);
+      if (kind === 'unauthenticated' && token && options.onTokenRefused) {
+        try {
+          await options.onTokenRefused(token);
+        } catch {
+          // the caller still gets the 401 below
+        }
+      }
       throw new ApiError(kind, res.status, error?.message || MESSAGES[kind === 'not_found' ? 'not_found' : 'server'], error?.fields ?? {}, undefined, details);
     }
     if (!payload || typeof payload !== 'object' || !('data' in payload)) {

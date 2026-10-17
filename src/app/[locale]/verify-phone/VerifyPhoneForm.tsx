@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+
 import type { Locale } from '@/sdk';
 import { sendPhoneCodeAction, verifyPhoneAction, type VerifyState } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface VerifyPhoneFormProps {
   locale: Locale;
@@ -13,8 +14,8 @@ interface VerifyPhoneFormProps {
 }
 
 export function VerifyPhoneForm({ locale, next, laterHref, labels }: VerifyPhoneFormProps) {
-  const [state, action, pending] = useActionState<VerifyState, FormData>(verifyPhoneAction, {});
-  const [resendState, resendAction, resending] = useActionState<VerifyState, FormData>(sendPhoneCodeAction, {});
+  const [state, action, pending] = useSafeActionState<VerifyState>(verifyPhoneAction, {}, locale);
+  const [resendState, resendAction, resending] = useSafeActionState<VerifyState>(sendPhoneCodeAction, {}, locale);
   const errors = state.fieldErrors ?? {};
   const notice = resendState.sent;
 

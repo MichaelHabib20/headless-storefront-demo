@@ -38,6 +38,8 @@ test.describe('home page', () => {
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Skin Care', exact: true })).toHaveAttribute('href', '/en/product/skin-care');
     await expect(page.getByRole('heading', { name: 'Shop by category' })).toBeVisible();
     await expect(page.getByTestId('promo-top-ad')).toBeVisible();
+    // the image link is named: the ad's name from the API when the merchant wrote no alt text (old site: "Top AD")
+    await expect(page.getByTestId('promo-top-ad').getByRole('link', { name: 'Top AD' })).toHaveAttribute('href', '/en/forms/prescriptions');
 
     const sections = page.getByTestId('home-section');
     await expect(sections.first()).toBeVisible();
@@ -60,6 +62,7 @@ test.describe('home page', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
     await expect(page.getByRole('heading', { name: 'تسوق حسب الفئة' })).toBeVisible();
     await expect(page.getByTestId('promo-top-ad')).toBeVisible();
+    await expect(page.getByTestId('promo-top-ad').getByRole('link', { name: 'الاعلان العلوي' })).toBeVisible();
     await expect(page.getByTestId('product-card').first().getByTestId('product-price')).toHaveText(await firstPriceText(request, 'ar'));
     expect(errors).toEqual([]);
   });

@@ -20,6 +20,8 @@ const dir = path.resolve('src/test/fixtures/v3');
 const store = createShopperStore();
 const modules = createModules(store);
 let fail = false;
+/** Path prefixes (after /api/customer/v3) that answer 500, e.g. ["/me", "/account/"]: the backend down for some calls only. */
+let failPaths = [];
 let delayMs = 0; // simulate a slow backend (races only show up when writes overlap)
 /** [`METHOD /path-prefix`, ms] pairs: the first that matches a request (after /api/customer/v3) sets its latency. */
 let delays = [];
@@ -61,15 +63,17 @@ http
         delayMs = Math.max(0, Number(mode.delayMs ?? 0));
       }
       // per-endpoint latency, e.g. {"delays": {"PUT /cart": 370, "GET /me": 250}} (performance runs); {} clears it
+      if ('failPaths' in mode) failPaths = Array.isArray(mode.failPaths) ? mode.failPaths.map(String) : [];
       if ('delays' in mode) delays = Object.entries(mode.delays ?? {}).map(([key, ms]) => [key, Math.max(0, Number(ms) || 0)]);
       // module switches, e.g. {"auth": {"otpLogin": true}} (auth.mjs), {"banners": true} (shell.mjs)
       const switches = Object.assign({}, ...modules.map((part) => part.mode?.(mode) ?? {}));
-      return send(200, { fail, delayMs, ...switches });
+      return send(200, { fail, failPaths, delayMs, ...switches });
     }
     if (url.pathname === '/__reset' && req.method === 'POST') {
       store.reset();
       for (const part of modules) part.reset?.();
       fail = false;
+      failPaths = [];
       delayMs = 0;
       delays = [];
       return send(200, { reset: true });
@@ -89,7 +93,7 @@ http
 
     const prefix = '/api/customer/v3';
     if (!url.pathname.startsWith(prefix)) return send(404, { error: { code: 'not_found', message: 'Not found' } });
-    if (fail) return send(500, { error: { code: 'server_error', message: 'Something went wrong.' } });
+    if (fail || failPaths.some((path) => url.pathname.startsWith(`${prefix}${path}`))) return send(500, { error: { code: 'server_error', message: 'Something went wrong.' } });
 
     const pathname = url.pathname.slice(prefix.length) || '/';
     const locale = String(url.searchParams.get('locale') ?? req.headers['accept-language'] ?? 'en').startsWith('ar') ? 'ar' : 'en';

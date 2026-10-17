@@ -76,6 +76,35 @@ test.describe('contact', () => {
     expect((await page.context().cookies()).find((cookie) => cookie.name === 'sc_guest')).toBeUndefined();
   });
 
+  for (const [locale, message, viewport] of [
+    ['en', 'We could not send this. Check your connection and try again.', { width: 1440, height: 900 }],
+    ['ar', 'تعذر الإرسال. تحقق من اتصالك وحاول مرة أخرى.', { width: 390, height: 844 }],
+  ] as const) {
+    test(`a send that fails on the way (network dropped) shows a message and keeps the text, no crash (${locale})`, async ({ page, request }) => {
+      await page.setViewportSize(viewport);
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await page.goto(`/${locale}/pages/contact`);
+      const form = page.getByTestId('contact-form');
+      await form.locator('#contact-name').fill('Mona');
+      await form.locator('#contact-phone').fill('01000000001');
+      await form.locator('#contact-message').fill('Do you deliver to Aswan?');
+      // the server action's POST is aborted, like a phone losing its network
+      await page.route(`**/${locale}/pages/contact`, (route) => (route.request().method() === 'POST' ? route.abort('internetdisconnected') : route.continue()));
+      await form.locator('button[type="submit"]').click();
+      await expect(page.getByTestId('contact-form-message')).toHaveText(message);
+      await expect(page.getByText('Application error')).toHaveCount(0);
+      await expect(form.locator('#contact-message')).toHaveValue('Do you deliver to Aswan?');
+      expect(errors).toEqual([]);
+      expect((await (await request.get(`${API}/__content`)).json()).contact).toEqual([]);
+
+      // back online: the same form sends
+      await page.unroute(`**/${locale}/pages/contact`);
+      await form.locator('button[type="submit"]').click();
+      await expect(page.getByTestId('contact-form-message')).not.toHaveText(message);
+    });
+  }
+
   test('Arabic contact page', async ({ page }) => {
     await page.goto('/ar/pages/contact');
     await expect(page.getByRole('heading', { level: 1, name: 'تواصل معنا' })).toBeVisible();
@@ -140,6 +169,9 @@ test.describe('merchant forms', () => {
     await (await chooser).setFiles({ name: 'rx.png', mimeType: 'image/png', buffer: Buffer.from('png') });
     await expect(form.getByText('Uploaded: rx.png')).toBeVisible();
     await expect(form.getByTestId('file-preview')).toBeVisible();
+    // the "attach an image" message goes once a file is attached
+    await expect(form.getByTestId('field-error')).toHaveCount(0);
+    await expect(form.getByTestId('file-field1')).not.toHaveAttribute('aria-invalid', 'true');
     expect((await page.context().cookies()).filter((cookie) => cookie.name === 'sc_guest')).toHaveLength(1);
 
     await form.locator('button[type="submit"]').click();
@@ -157,7 +189,14 @@ test.describe('merchant forms', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'الوصفات الطبية' })).toBeVisible();
     const form = page.getByTestId('merchant-form');
     const send = form.locator('button[type="submit"]');
+    // like the old storefront: the merchant's label as written (not upper-cased), the store's primary
+    // colour (the theme's --color-primary; black without one), rounded
     await expect(send).toHaveText('الوصفات الطبية');
+    await expect(send).toHaveCSS('text-transform', 'none');
+    await expect(send).toHaveCSS('border-radius', '8px');
+    await page.addStyleTag({ content: ':root { --color-primary: #ef6b01; --color-on-primary: #ffffff; }' });
+    await expect(send).toHaveCSS('background-color', 'rgb(239, 107, 1)');
+    await expect(send).toHaveCSS('color', 'rgb(255, 255, 255)');
     await send.click();
     await expect(form.getByTestId('field-error')).toHaveText('يرجى إرفاق صورة واحدة على الأقل.');
     // full-width send button, nothing wider than the screen
@@ -167,6 +206,7 @@ test.describe('merchant forms', () => {
 
     await form.getByTestId('file-field1').setInputFiles({ name: 'rx.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF') });
     await expect(form.getByTestId('file-tile')).toContainText('rx.pdf');
+    await expect(form.getByTestId('field-error')).toHaveCount(0);
     await send.click();
     await expect(page.getByTestId('merchant-form-message')).toHaveText('شكرًا لك، لقد استلمنا إجاباتك.');
   });

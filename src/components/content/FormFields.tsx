@@ -23,27 +23,35 @@ interface FormFieldsProps {
   idPrefix: string;
 }
 
+const NO_ERRORS: Record<string, string> = {};
+
 /**
  * Inputs drawn from a backend form description (`FormField[]`): text, email, phone, password,
  * date, textarea, select (single / multiple), file and checkbox. Unknown kinds are text inputs.
  * Values are sent back under `v.<name>`; the backend validates them and its messages show here.
+ * A field's message goes away once the shopper changes that field (types, picks, attaches a file),
+ * until the next answer brings new messages.
  */
-export function FormFields({ locale, fields, errors = {}, values = {}, upload, idPrefix }: FormFieldsProps) {
+export function FormFields({ locale, fields, errors = NO_ERRORS, values = {}, upload, idPrefix }: FormFieldsProps) {
   // phase B: fields with `showWhen` follow the current value of the fields they name
   const [current, setCurrent] = useState(() => watchedValues(fields, values));
   const watched = Object.keys(current);
+  // the fields changed since these messages came (a new `errors` object starts over)
+  const [edited, setEdited] = useState<{ errors: Record<string, string>; names: readonly string[] }>({ errors, names: [] });
+  const editedNames = edited.errors === errors ? edited.names : [];
 
   function changed(event: ChangeEvent<HTMLDivElement>) {
-    const target = event.target as unknown as { name?: string; value?: string };
-    const name = typeof target.name === 'string' && target.name.startsWith(VALUE_PREFIX) ? target.name.slice(VALUE_PREFIX.length) : null;
+    const target = event.target as unknown as { name?: string; value?: string; dataset?: DOMStringMap };
+    const name = typeof target.name === 'string' && target.name.startsWith(VALUE_PREFIX) ? target.name.slice(VALUE_PREFIX.length) : (target.dataset?.field ?? null);
     if (name && watched.includes(name)) setCurrent((before) => ({ ...before, [name]: String(target.value ?? '') }));
+    if (name && errors[name] && !editedNames.includes(name)) setEdited({ errors, names: [...editedNames, name] });
   }
 
   const shown = fields.filter((field) => fieldShown(field, current));
   return (
-    <div className={styles.fields} onChange={watched.length ? changed : undefined}>
+    <div className={styles.fields} onChange={changed}>
       {shown.map((field) => (
-        <Field key={field.name} locale={locale} field={field} toFill={mustFill(field, shown)} error={errors[field.name]} value={values[field.name]} upload={upload} id={`${idPrefix}-${field.name}`} />
+        <Field key={field.name} locale={locale} field={field} toFill={mustFill(field, shown)} error={editedNames.includes(field.name) ? undefined : errors[field.name]} value={values[field.name]} upload={upload} id={`${idPrefix}-${field.name}`} />
       ))}
     </div>
   );
@@ -226,6 +234,7 @@ function FileInput({ locale, field, upload, id, required, describedBy, invalid }
           event.currentTarget.value = '';
         }}
         data-testid={`file-${field.name}`}
+        data-field={field.name}
       />
       <PickerTile
         inputId={id}
@@ -291,6 +300,7 @@ function FilesInput({ locale, field, upload, id, required, describedBy, invalid 
           event.currentTarget.value = '';
         }}
         data-testid={`file-${field.name}`}
+        data-field={field.name}
       />
       <PickerTile inputId={id} title={t('contentFormPickFile')} preview={null} fileName={null} busy={status.uploading} invalid={invalid || Boolean(status.message)} />
       {files.length > 0 && (

@@ -1,9 +1,9 @@
 'use client';
 
-import { useActionState } from 'react';
 import type { AuthSettings, Customer, Locale } from '@/sdk';
 import type { FormState } from '@/lib/form';
 import { completeProfileAction } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface CompleteProfileFormProps {
   customer: Customer;
@@ -14,7 +14,7 @@ interface CompleteProfileFormProps {
 
 /** `CompleteProfileRequest`: first name, last name, phone (required by the contract) and an optional e-mail. */
 export function CompleteProfileForm({ customer, phone, locale, labels }: CompleteProfileFormProps) {
-  const [state, action, pending] = useActionState<FormState, FormData>(completeProfileAction, {});
+  const [state, action, pending] = useSafeActionState<FormState>(completeProfileAction, {}, locale);
   const errors = state.fieldErrors ?? {};
   const values = state.values ?? {};
 

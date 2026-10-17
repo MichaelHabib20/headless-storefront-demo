@@ -1,8 +1,8 @@
 'use client';
 
-import { useActionState } from 'react';
 import type { AuthSettings, Locale } from '@/sdk';
 import { forgotPasswordAction, type ForgotState } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface ForgotPasswordFormProps {
   method: 'sms' | 'email';
@@ -12,7 +12,7 @@ interface ForgotPasswordFormProps {
 }
 
 export function ForgotPasswordForm({ method, phone, locale, labels }: ForgotPasswordFormProps) {
-  const [state, action, pending] = useActionState<ForgotState, FormData>(forgotPasswordAction, {});
+  const [state, action, pending] = useSafeActionState<ForgotState>(forgotPasswordAction, {}, locale);
   const errors = state.fieldErrors ?? {};
   const isPhone = method === 'sms';
 

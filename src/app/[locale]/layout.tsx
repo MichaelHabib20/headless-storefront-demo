@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Barlow, Barlow_Condensed, Cairo } from 'next/font/google';
-import { cookies } from 'next/headers';
-import { notFound } from 'next/navigation';
+import { cookies, headers } from 'next/headers';
+import { notFound, redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { getLocations, getMe, isApiError, isLocale, type Layout, type Locale, type Locations, type Me } from '@/sdk';
+import { getLocations, isApiError, isLocale, type Layout, type Locale, type Locations, type Me } from '@/sdk';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 import { MarketingTags } from '@/components/layout/MarketingTags';
 import { requestMetadataBase, SiteJsonLd } from '@/lib/jsonld';
@@ -27,7 +27,8 @@ import { routes } from '@/lib/routing';
 import { titleTemplate } from '@/lib/seo';
 import { APP_BANNER_COOKIE, FLOATING_BANNER_COOKIE, floatingBannerDismissed } from '@/lib/shell';
 import { chooseAreaAction, readMiniCart } from '@/lib/shell.actions';
-import { shopperContext } from '@/lib/shopper.server';
+import { readShopper } from '@/lib/session';
+import { PATH_HEADER, SESSION_CHECKED_COOKIE, sessionEndUrl } from '@/lib/session-cookies';
 import { loadLayout, storefrontClient } from '@/lib/storefront.server';
 import '../globals.css';
 
@@ -53,14 +54,17 @@ async function safeLayout(locale: Locale): Promise<LayoutLoad> {
   }
 }
 
-/** Who is shopping + header counts. Never creates a guest; null when it fails (header renders without badges). */
+/**
+ * Who is shopping + header counts. Never creates a guest; null when it fails (header renders without
+ * badges). A customer token the backend refuses (signed out on another device, expired) can't be
+ * dropped while rendering: the shopper goes through the session route handler, which drops it and
+ * comes back to this page as a guest. Unless that handler just found the token working or could not
+ * check it (SESSION_CHECKED_COOKIE): then the page renders as it is, so nothing can loop.
+ */
 async function safeMe(locale: Locale): Promise<Me | null> {
-  try {
-    return await getMe(storefrontClient(), await shopperContext(locale));
-  } catch (error) {
-    console.error('me failed to load', error);
-    return null;
-  }
+  const { me, session } = await readShopper(locale);
+  if (session === 'dead' && !(await cookies()).get(SESSION_CHECKED_COOKIE)) redirect(sessionEndUrl((await headers()).get(PATH_HEADER), locale));
+  return me;
 }
 
 /** The cities and areas of the area chooser (multi-inventory stores only); null when they can't be loaded. */

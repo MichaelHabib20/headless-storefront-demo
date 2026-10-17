@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+
 import type { Locale } from '@/sdk';
 import { verifyEmailAction, type VerifyEmailState } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface VerifyEmailFormProps {
   locale: Locale;
@@ -14,7 +15,7 @@ interface VerifyEmailFormProps {
 }
 
 export function VerifyEmailForm({ locale, email, token, accountHref, labels }: VerifyEmailFormProps) {
-  const [state, action, pending] = useActionState<VerifyEmailState, FormData>(verifyEmailAction, {});
+  const [state, action, pending] = useSafeActionState<VerifyEmailState>(verifyEmailAction, {}, locale);
 
   if (state.done) {
     return (

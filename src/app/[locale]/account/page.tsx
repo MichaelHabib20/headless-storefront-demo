@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { isLocale } from '@/sdk';
+import { AccountLinks } from '@/components/account/AccountLinks';
 import { AccountLoadError } from '@/components/account/AccountStates';
 import { AuthPage } from '@/components/auth/AuthPage';
 import { signOutAction } from '@/lib/auth.actions';
@@ -40,51 +40,22 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const { customer } = result.data;
 
   return (
-    <AuthPage title={`${customer.firstName} ${customer.lastName}`.trim()} lead={t('accountSignedInAs')} testId="account-page">
-      <nav aria-label={t('account')} data-testid="account-links">
-        <ul>
-          <li>
-            <Link href={routes.profile(locale)}>{t('accountProfileLink')}</Link>
-          </li>
-          <li>
-            <Link href={routes.orders(locale)}>{t('accountOrdersLink')}</Link>
-          </li>
-          <li>
-            <Link href={routes.addresses(locale)}>{t('accountAddressesLink')}</Link>
-          </li>
-          <li>
-            <Link href={routes.notifications(locale)}>{t('accountNotificationsLink')}</Link>
-          </li>
-          {loyalty && (
-            <li>
-              <Link href={routes.points(locale)}>{t('accountPointsLink')}</Link>
-            </li>
-          )}
-          {wallet && (
-            <li>
-              <Link href={routes.wallet(locale)}>{t('accountWalletLink')}</Link>
-            </li>
-          )}
-          {vouchers && (
-            <li>
-              <Link href={routes.myVouchers(locale)}>{t('accountVouchersLink')}</Link>
-            </li>
-          )}
-          {insurance && (
-            <li>
-              <Link href={routes.insurance(locale)}>{t('accountInsuranceLink')}</Link>
-            </li>
-          )}
-          {bankDetails && (
-            <li>
-              <Link href={routes.bankDetails(locale)}>{t('accountBankDetailsLink')}</Link>
-            </li>
-          )}
-          <li>
-            <Link href={routes.changePassword(locale)}>{t('accountPasswordLink')}</Link>
-          </li>
-        </ul>
-      </nav>
+    <AuthPage title={`${customer.firstName} ${customer.lastName}`.trim()} lead={t('accountSignedInAs')} testId="account-page" wide>
+      <AccountLinks
+        label={t('account')}
+        links={[
+          { href: routes.profile(locale), label: t('accountProfileLink'), kind: 'person' },
+          { href: routes.orders(locale), label: t('accountOrdersLink'), kind: 'history' },
+          { href: routes.addresses(locale), label: t('accountAddressesLink'), kind: 'location' },
+          { href: routes.notifications(locale), label: t('accountNotificationsLink'), kind: 'notifications' },
+          ...(loyalty ? [{ href: routes.points(locale), label: t('accountPointsLink'), kind: 'points' as const }] : []),
+          ...(wallet ? [{ href: routes.wallet(locale), label: t('accountWalletLink'), kind: 'wallet' as const }] : []),
+          ...(vouchers ? [{ href: routes.myVouchers(locale), label: t('accountVouchersLink'), kind: 'voucher' as const }] : []),
+          ...(insurance ? [{ href: routes.insurance(locale), label: t('accountInsuranceLink'), kind: 'insurance' as const }] : []),
+          ...(bankDetails ? [{ href: routes.bankDetails(locale), label: t('accountBankDetailsLink'), kind: 'bank' as const }] : []),
+          { href: routes.changePassword(locale), label: t('accountPasswordLink'), kind: 'lock' },
+        ]}
+      />
       <dl>
         <dt>{t('authCompleteEmail')}</dt>
         <dd>{customer.email ?? '–'}</dd>

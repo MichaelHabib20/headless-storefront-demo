@@ -1,10 +1,10 @@
 'use client';
 
-import { useActionState } from 'react';
 import type { AuthSettings, Locale } from '@/sdk';
 import { PasswordInput } from '@/components/auth/PasswordInput';
 import type { FormState } from '@/lib/form';
 import { resetPasswordAction } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface ResetPasswordFormProps {
   method: 'sms' | 'email';
@@ -17,7 +17,7 @@ interface ResetPasswordFormProps {
 }
 
 export function ResetPasswordForm({ method, phone, token, phoneRules, locale, labels }: ResetPasswordFormProps) {
-  const [state, action, pending] = useActionState<FormState, FormData>(resetPasswordAction, {});
+  const [state, action, pending] = useSafeActionState<FormState>(resetPasswordAction, {}, locale);
   const errors = state.fieldErrors ?? {};
 
   return (

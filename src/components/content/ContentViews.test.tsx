@@ -142,6 +142,28 @@ describe('forms drawn from the API', () => {
     expect(screen.getByLabelText('First name')).toHaveFocus();
   });
 
+  it.each([
+    ['en', 'We could not send this. Check your connection and try again.'],
+    ['ar', 'تعذر الإرسال. تحقق من اتصالك وحاول مرة أخرى.'],
+  ] as const)('a request that fails (offline, an error page) shows a message and keeps what was typed (%s)', async (locale, message) => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const form = contactPageFixture(locale).contact!;
+    const action = vi.fn(async (): Promise<ContentFormState> => {
+      throw new TypeError('Failed to fetch');
+    });
+    render(<ContentForm locale={locale} fields={form.fields} action={action} submitLabel="Send" idPrefix="c" testId="contact-form" />);
+    for (const field of form.fields) {
+      const input = document.getElementById(`c-${field.name}`) as HTMLInputElement | null;
+      if (input && input.tagName !== 'SELECT') fireEvent.change(input, { target: { value: field.kind === 'email' ? 'mona@example.com' : field.kind === 'phone' ? '01000000001' : 'Hello' } });
+    }
+    fireEvent.submit(screen.getByTestId('contact-form'));
+    expect(await screen.findByTestId('contact-form-message')).toHaveTextContent(message);
+    expect(action).toHaveBeenCalledOnce();
+    const typed = document.getElementById(`c-${form.fields[0].name}`) as HTMLInputElement;
+    expect(typed.value).not.toBe('');
+    log.mockRestore();
+  });
+
   it('marks fields to fill with a required input and the others as optional', () => {
     const form = merchantFormFixture('ar');
     render(<ContentForm locale="ar" fields={form.fields} action={vi.fn()} submitLabel={form.submitLabel} idPrefix="f" testId="merchant-form" upload={vi.fn()} />);
@@ -167,6 +189,18 @@ describe('forms drawn from the API', () => {
       await waitFor(() => expect(screen.getByTestId('field-error')).toHaveTextContent(message));
       expect(screen.getByTestId('file-field1')).toHaveAttribute('aria-invalid', 'true');
       expect(action).not.toHaveBeenCalled();
+    });
+
+    it.each(['en', 'ar'] as const)('the "attach an image" message goes once a file is attached (%s)', async (locale) => {
+      Object.assign(URL, { createObjectURL: vi.fn(() => 'blob:preview-2'), revokeObjectURL: vi.fn() });
+      const upload = vi.fn(async () => ({ ok: true as const, id: 'mock-upload-8', name: 'rx.png' }));
+      render(<ContentForm locale={locale} fields={optionalUpload(locale)} action={vi.fn()} submitLabel="Send" upload={upload} idPrefix="f" testId="merchant-form" />);
+      fireEvent.submit(screen.getByTestId('merchant-form'));
+      await waitFor(() => expect(screen.getByTestId('field-error')).toBeInTheDocument());
+
+      fireEvent.change(screen.getByTestId('file-field1'), { target: { files: [new File(['x'], 'rx.png', { type: 'image/png' })] } });
+      await waitFor(() => expect(screen.queryByTestId('field-error')).toBeNull());
+      expect(screen.getByTestId('file-field1')).not.toHaveAttribute('aria-invalid');
     });
 
     it('shows the chosen picture in the tile and sends once a file is uploaded', async () => {

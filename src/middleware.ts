@@ -5,6 +5,7 @@ import { answerPath } from '@/lib/resolve.server';
 import { interimRedirect, isPrivatePath, isStorefrontPath, retiredAccountPage } from '@/lib/routing';
 import { CLICK_IDS_COOKIE, CLICK_IDS_MAX_AGE, clickIdsCookie } from '@/lib/click-ids';
 import { shouldNoindex } from '@/lib/indexing.server';
+import { CUSTOMER_COOKIE, malformedSessionCookies, PATH_HEADER, TOKEN_COOKIE } from '@/lib/session-cookies';
 
 const LOCALES = ['en', 'ar'];
 
@@ -19,7 +20,13 @@ const LOCALES = ['en', 'ar'];
  *    by the backend before rendering: 301/302, 410 (the catch-all page draws it) or 404.
  */
 export async function middleware(request: NextRequest) {
-  return marketingAndRobots(request, await route(request));
+  // Session cookies that can't be a session (a token that is no token, an unreadable sc_customer):
+  // dropped from this request (RequestCookies.delete rewrites its cookie header) and from the browser.
+  const broken = malformedSessionCookies(request.cookies.get(TOKEN_COOKIE)?.value, request.cookies.get(CUSTOMER_COOKIE)?.value);
+  for (const name of broken) request.cookies.delete(name);
+  const response = await marketingAndRobots(request, await route(request));
+  for (const name of broken) response.cookies.delete(name);
+  return response;
 }
 
 /**
@@ -57,6 +64,9 @@ async function route(request: NextRequest): Promise<NextResponse> {
 
   const headers = new Headers(request.headers);
   headers.delete(RESOLUTION_HEADER);
+  // 8. The page's own URL goes along for server code that must come back to it (the layout ending
+  //    a dead customer session, src/lib/session-cookies.ts).
+  headers.set(PATH_HEADER, pathname + search);
 
   if (isPrivatePath(pathname)) {
     const alias = pathname.match(/^\/(en|ar)\/orders(\/.*)?$/);

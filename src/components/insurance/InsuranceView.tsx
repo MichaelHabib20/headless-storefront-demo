@@ -1,11 +1,12 @@
 'use client';
 
-import { useActionState, useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import type { InsurancePage, InsuranceProfile, Locale } from '@/sdk';
 import { FormFields, type UploadFileAction } from '@/components/content/FormFields';
 import { translator } from '@/lib/i18n';
 import type { DeleteInsuranceAction, InsuranceFormState, SaveInsuranceAction } from './types';
 import styles from './Insurance.module.css';
+import { callAction, useSafeActionState } from '@/lib/safe-action';
 
 interface InsuranceViewProps {
   locale: Locale;
@@ -27,7 +28,7 @@ export function InsuranceView({ locale, page: first, saveAction, deleteAction, u
   const t = translator(locale);
   const [page, setPage] = useState(first);
   const [editing, setEditing] = useState<InsuranceProfile | null>(null);
-  const [state, action, pending] = useActionState(saveAction, INITIAL);
+  const [state, action, pending] = useSafeActionState(saveAction, INITIAL, locale);
   const [notice, setNotice] = useState<string | null>(null);
   const [deleting, startDelete] = useTransition();
 
@@ -45,7 +46,7 @@ export function InsuranceView({ locale, page: first, saveAction, deleteAction, u
 
   function remove(profile: InsuranceProfile) {
     startDelete(async () => {
-      const answer = await deleteAction(locale, profile.id);
+      const answer = await callAction(() => deleteAction(locale, profile.id), { ok: false as const, message: t('formSendFailed') });
       setNotice(answer.message);
       if (answer.ok) setPage(answer.page);
     });

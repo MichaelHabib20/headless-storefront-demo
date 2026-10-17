@@ -5,7 +5,7 @@ import { AuthPage } from '@/components/auth/AuthPage';
 import { loadAuthSettings } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
 import { routes, signInReturn } from '@/lib/routing';
-import { readSession } from '@/lib/session';
+import { readShopper } from '@/lib/session';
 import { SignInForm, type SignInLabels } from './SignInForm';
 
 export const dynamic = 'force-dynamic';
@@ -46,7 +46,9 @@ export default async function SignInPage({ params, searchParams }: Props) {
   // come back to; anything else is ignored.
   const query = await searchParams;
   const next = signInReturn(locale, query.returnUrl ?? query.next);
-  if (await readSession()) redirect(next ?? routes.account(locale));
+  // Only a session the backend accepts skips the form: a dead token (signed out elsewhere, expired)
+  // or a backend that can't be asked shows the form, so sign-in and the account never bounce.
+  if ((await readShopper(locale)).session === 'live') redirect(next ?? routes.account(locale));
   const result = await loadAuthSettings(locale);
 
   return (

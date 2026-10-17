@@ -235,3 +235,24 @@ describe('mock password reset, profile and password', () => {
     expect(call('POST', '/auth/sign-in', { ...SIGN_IN, password: 'newsecret1' }).status).toBe(200);
   });
 });
+
+describe('mock auth: a session ended elsewhere', () => {
+  it('POST /__session {revoke}: the token answers 401 on every path, GET /me included (signed out on another device)', () => {
+    const { auth, call, use } = api('ar');
+    use('test-customer');
+    expect(call('GET', '/account/profile').status).toBe(200);
+    expect(auth.control('POST', '/__session', { revoke: 'test-customer' })).toEqual([200, { revoked: ['test-customer'] }]);
+    const refused = auth.handle({ method: 'GET', pathname: '/me', query: new URLSearchParams(), token: 'test-customer', locale: 'ar', body: null });
+    expect(refused).toEqual([401, { error: { code: 'unauthenticated', message: 'يرجى بدء جلسة أولاً.' } }]);
+    expect(call('GET', '/account/profile').status).toBe(401);
+    expect(auth.control('POST', '/__session', {})[0]).toBe(422);
+    expect(auth.control('GET', '/__other', null)).toBeNull();
+  });
+
+  it('an expired (unknown) token: anonymous on GET /me, 401 on the customer endpoints', () => {
+    const { call, me, use } = api();
+    use('expired-token');
+    expect(me()).toMatchObject({ authenticated: false, customer: null });
+    expect(call('GET', '/account/profile').status).toBe(401);
+  });
+});

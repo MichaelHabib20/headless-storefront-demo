@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react';
 import type { Locale } from '@/sdk';
 import { formatDate } from '@/lib/dates';
 import { translator } from '@/lib/i18n';
+import { callAction } from '@/lib/safe-action';
 import { CopyButton } from './CopyButton';
 import type { RedeemAction, RedeemResult } from './types';
 import styles from './Loyalty.module.css';
@@ -54,7 +55,7 @@ export function RedeemReward({ locale, rewardId, canRedeem, redeemAction, timeZo
           data-testid="redeem"
           onClick={() =>
             startTransition(async () => {
-              const answer = await redeemAction(locale, rewardId);
+              const answer = await callAction(() => redeemAction(locale, rewardId), { ok: false as const, message: t('formSendFailed') });
               setResult(answer);
               router.refresh();
             })

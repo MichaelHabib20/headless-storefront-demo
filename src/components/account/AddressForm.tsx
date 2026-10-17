@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
+import { startTransition, useEffect, useRef, useState, type FormEvent } from 'react';
 import type { Address, Locale, Locations } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import type { AddressReturn } from '@/lib/routing';
@@ -9,6 +9,7 @@ import { choose, errorFor, FIELD_PREFIX, formLevels, inputAttributes, LEVEL_INPU
 import type { AddressForm as AddressFormDescription, Level } from './address-form';
 import type { AddressFormState, SaveAddressAction } from './types';
 import styles from './Account.module.css';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface AddressFormProps {
   locale: Locale;
@@ -32,7 +33,7 @@ const NOTHING_YET: AddressFormState = {};
  */
 export function AddressForm({ locale, form, locations, address, next, cancelHref, action }: AddressFormProps) {
   const t = translator(locale);
-  const [state, dispatch, pending] = useActionState(action, NOTHING_YET);
+  const [state, dispatch, pending] = useSafeActionState(action, NOTHING_YET, locale);
   const [selection, setSelection] = useState(() => selectionOf(address));
   const formRef = useRef<HTMLFormElement>(null);
   const levels = formLevels(form);

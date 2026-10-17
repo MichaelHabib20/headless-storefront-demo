@@ -1,11 +1,12 @@
 'use client';
 
-import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
+import { startTransition, useEffect, useRef, useState, type FormEvent } from 'react';
 import type { FormField, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
 import { checkForm, type ContentFormState } from './form-values';
 import { FormFields, type UploadFileAction } from './FormFields';
 import styles from './Content.module.css';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface ContentFormProps {
   locale: Locale;
@@ -30,7 +31,7 @@ const NOTHING_YET: ContentFormState = {};
  */
 export function ContentForm({ locale, fields, action, submitLabel, hidden = {}, upload, idPrefix, testId }: ContentFormProps) {
   const t = translator(locale);
-  const [answered, dispatch, pending] = useActionState(action, NOTHING_YET);
+  const [answered, dispatch, pending] = useSafeActionState(action, NOTHING_YET, locale);
   // what the checks made before sending found (null once the form was sent)
   const [checked, setChecked] = useState<ContentFormState | null>(null);
   const state = checked ?? answered;

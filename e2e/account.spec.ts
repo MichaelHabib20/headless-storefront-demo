@@ -334,3 +334,31 @@ test.describe('on a phone (360 px)', () => {
     await expect(page.getByRole('button', { name: 'Cancel order' })).toBeFocused();
   });
 });
+
+test.describe('account home', () => {
+  test.beforeEach(async ({ page, context }) => {
+    await resetMock(page);
+    await acceptCookies(page);
+    await signInAsCustomer(context);
+  });
+
+  for (const locale of ['en', 'ar'] as const) {
+    test(`the account menu: icon cards with names, a grid on a desktop (${locale})`, async ({ page }) => {
+      await open(page, `/${locale}/account`);
+      const nav = page.getByTestId('account-links');
+      await expect(nav).toHaveAttribute('aria-label', locale === 'en' ? 'Account' : 'الحساب');
+      const links = nav.getByRole('link');
+      await expect(links.first()).toHaveAttribute('href', `/${locale}/account/profile`);
+      expect(await links.count()).toBeGreaterThanOrEqual(5);
+      // no bullets, no underline: cards with an icon and a chevron
+      await expect(nav.getByRole('list')).toHaveCSS('list-style-type', 'none');
+      await expect(links.first()).toHaveCSS('text-decoration-line', 'none');
+      expect(await links.first().locator('svg').count()).toBe(2);
+      const [first, second] = [await links.nth(0).boundingBox(), await links.nth(1).boundingBox()];
+      // two columns side by side, the first on the start side (right in Arabic)
+      expect(Math.abs(first!.y - second!.y)).toBeLessThan(2);
+      if (locale === 'en') expect(first!.x).toBeLessThan(second!.x);
+      else expect(first!.x).toBeGreaterThan(second!.x);
+    });
+  }
+});

@@ -50,8 +50,14 @@
   border-inline-start: 4px solid var(--color-sale);
 }
 
-/* The table scrolls sideways inside its box on small screens; the page never does. */
+/*
+ * The table scrolls sideways inside its box on small screens; the page never does. `position:
+ * relative` makes the box the containing block of the visually hidden labels inside the cards
+ * (absolutely positioned, e.g. the icon-only "Add to cart" on touch screens): without it they hang
+ * off the page body at their place in the scrolled table and widen the whole page on a phone.
+ */
 .scroller {
+  position: relative;
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-x: contain;

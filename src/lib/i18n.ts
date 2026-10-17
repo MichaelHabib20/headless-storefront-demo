@@ -25,6 +25,7 @@ import { shellMessages } from './messages/shell';
  */
 const en = {
   skipToContent: 'Skip to content',
+  formSendFailed: 'We could not send this. Check your connection and try again.',
   menu: 'Menu',
   closeMenu: 'Close menu',
   search: 'Search',
@@ -82,6 +83,7 @@ const en = {
 
 const coreAr: Record<keyof typeof en, string> = {
   skipToContent: 'تخطى إلى المحتوى',
+  formSendFailed: 'تعذر الإرسال. تحقق من اتصالك وحاول مرة أخرى.',
   menu: 'القائمة',
   closeMenu: 'إغلاق القائمة',
   search: 'بحث',

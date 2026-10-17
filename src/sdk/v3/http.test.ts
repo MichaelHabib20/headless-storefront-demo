@@ -85,3 +85,29 @@ describe('storefront client: checkout errors and uploads', () => {
     expect(init?.headers).not.toHaveProperty('Content-Type');
   });
 });
+
+describe('onTokenRefused', () => {
+  const refused = { error: { code: 'unauthenticated', message: 'Please start a session first.' } };
+
+  it('tells the app which token the backend refused (401), then throws as before', async () => {
+    const onTokenRefused = vi.fn();
+    const client = createStorefrontClient({ baseUrl: 'https://api.test', fetch: mockFetch(401, refused), onTokenRefused });
+    await expect(client.request('GET', 'cart', { locale: 'en', token: 'revoked.token' })).rejects.toMatchObject({ kind: 'unauthenticated' });
+    expect(onTokenRefused).toHaveBeenCalledWith('revoked.token');
+  });
+
+  it('is not called without a token, for other failures, or for wrong credentials', async () => {
+    const onTokenRefused = vi.fn();
+    const call = (status: number, body: unknown, token: string | null) =>
+      createStorefrontClient({ baseUrl: 'https://api.test', fetch: mockFetch(status, body), onTokenRefused }).request('GET', 'me', { locale: 'en', token }).catch(() => null);
+    await call(401, refused, null);
+    await call(500, { error: { code: 'server_error', message: 'Down' } }, 't.1');
+    await call(401, { error: { code: 'invalid_credentials', message: 'Wrong password' } }, 't.1');
+    expect(onTokenRefused).not.toHaveBeenCalled();
+  });
+
+  it('its own failure never hides the 401', async () => {
+    const client = createStorefrontClient({ baseUrl: 'https://api.test', fetch: mockFetch(401, refused), onTokenRefused: () => Promise.reject(new Error('read-only cookies')) });
+    await expect(client.request('GET', 'cart', { locale: 'en', token: 't.1' })).rejects.toMatchObject({ kind: 'unauthenticated' });
+  });
+});
