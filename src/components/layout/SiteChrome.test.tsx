@@ -45,6 +45,21 @@ describe('site chrome', () => {
     }
   });
 
+  it("links the footer's account column like the old storefront: my profile and my orders, no sign-in", () => {
+    const { unmount } = render(<SiteFooter layout={layoutFixture('en')} locale="en" />);
+    expect(screen.getByTestId('footer-profile')).toHaveAttribute('href', '/en/account/profile');
+    expect(screen.getByTestId('footer-profile')).toHaveTextContent('My profile');
+    expect(screen.getByTestId('footer-orders')).toHaveAttribute('href', '/en/account/order-history');
+    expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
+    unmount();
+
+    render(<SiteFooter layout={layoutFixture('ar')} locale="ar" />);
+    expect(screen.getByTestId('footer-profile')).toHaveAttribute('href', '/ar/account/profile');
+    expect(screen.getByTestId('footer-profile')).toHaveTextContent('الملف الشخصي');
+    expect(screen.getByTestId('footer-orders')).toHaveAttribute('href', '/ar/account/order-history');
+    expect(screen.getByTestId('footer-orders')).toHaveTextContent('طلباتي');
+  });
+
   it('renders the Arabic chrome', () => {
     render(<SiteHeader layout={layoutFixture('ar')} locale="ar" />);
     expect(screen.getByLabelText('السلة')).toHaveAttribute('href', '/ar/cart');

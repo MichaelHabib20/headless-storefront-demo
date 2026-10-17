@@ -153,20 +153,32 @@ test.describe('sign up', () => {
     expect(await form.locator('input:not([type=hidden])').evaluateAll((inputs) => inputs.map((i) => (i as HTMLInputElement).name))).toEqual(['firstName', 'lastName', 'phone', 'email', 'password', 'passwordConfirmation', 'birthdate']);
     await expect(form.getByLabel(/Email/)).not.toHaveAttribute('required', '');
 
+    // QA 2026-10-17: every simple mistake at once (ours, checked before sending), nothing typed is lost
     await form.locator('input[name="firstName"]').fill('Sara');
-    await form.locator('input[name="phone"]').fill('123');
-    await form.locator('input[name="password"]').fill('longenough');
+    await form.locator('input[name="email"]').fill('sara-at-example');
+    await form.locator('input[name="phone"]').fill('01');
+    await form.locator('input[name="password"]').fill('12');
     await form.locator('input[name="passwordConfirmation"]').fill('different');
     await form.getByRole('button', { name: 'Create account' }).click();
-    await expect(page.getByText('The passwords do not match.')).toBeVisible(); // ours: checked before the backend
-    // passwords are never sent back to the page, so both inputs are typed again
+    await expect(form.locator('[data-field="lastName"]')).toContainText('This field is required.');
+    await expect(form.locator('[data-field="email"]')).toContainText('Enter a valid e-mail address.');
+    await expect(form.locator('[data-field="phone"]')).toContainText('Enter a 11-digit phone number.');
+    await expect(form.locator('[data-field="password"]')).toContainText('Use at least 8 characters.');
+    await expect(page.getByText('The passwords do not match.')).toBeVisible();
+    for (const [name, value] of [['firstName', 'Sara'], ['email', 'sara-at-example'], ['phone', '01'], ['password', '12'], ['passwordConfirmation', 'different']]) {
+      await expect(form.locator(`input[name="${name}"]`)).toHaveValue(value);
+    }
+
+    // the backend's messages, under the fields by their v3 names; what was typed stays
+    await form.locator('input[name="lastName"]').fill('Hassan');
+    await form.locator('input[name="email"]').fill('');
+    await form.locator('input[name="phone"]').fill('12345678901');
     await form.locator('input[name="password"]').fill('longenough');
     await form.locator('input[name="passwordConfirmation"]').fill('longenough');
     await form.getByRole('button', { name: 'Create account' }).click();
-    // the backend's messages, under the fields by their v3 names
-    await expect(form.locator('[data-field="lastName"]')).toContainText('Last name is required.');
     await expect(form.locator('[data-field="phone"]')).toContainText('Enter a mobile number of 11 digits.');
     await expect(form.locator('input[name="firstName"]')).toHaveValue('Sara');
+    await expect(form.locator('input[name="password"]')).toHaveValue('longenough');
 
     await form.locator('input[name="lastName"]').fill('Hassan');
     await form.locator('input[name="phone"]').fill('01555555555');
@@ -178,6 +190,18 @@ test.describe('sign up', () => {
     await expect(page.getByTestId('account-page')).toContainText('Sara Hassan');
     const token = (await cookie(context, 'sc_token'))!;
     expect((await me(request, token)).customer?.firstName).toBe('Sara');
+  });
+
+  test('sign-up mistakes in Arabic on a phone, all at once', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await open(page, '/ar/session/signup');
+    const form = page.getByTestId('sign-up-form');
+    await form.locator('input[name="phone"]').fill('01');
+    await form.locator('button[type="submit"]').click();
+    await expect(form.locator('[data-field="firstName"]')).toContainText('هذا الحقل مطلوب.');
+    await expect(form.locator('[data-field="phone"]')).toContainText('أدخل رقم هاتف مكوّنًا من 11 رقمًا.');
+    await expect(form.locator('input[name="phone"]')).toHaveValue('01');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   });
 
   test('sends the new customer to verify the phone when the store asks for it', async ({ page, request }) => {
@@ -454,6 +478,43 @@ test.describe('profile and password', () => {
     await form.locator('input[name="passwordConfirmation"]').fill('newsecret1');
     await form.getByRole('button', { name: 'Change password' }).click();
     await expect(page.getByTestId('password-changed')).toHaveText('Your password was changed.');
+  });
+
+  // QA 2026-10-17: a refused submit emptied the three fields, and errors came one at a time
+  test('change password: every mistake at once, and what was typed stays', async ({ page }) => {
+    await open(page, '/en/account/change-password');
+    const form = page.getByTestId('password-form');
+    await form.getByRole('button', { name: 'Change password' }).click();
+    await expect(form.getByTestId('field-error')).toHaveText(['This field is required.', 'This field is required.', 'This field is required.']);
+
+    await form.locator('input[name="currentPassword"]').fill('x');
+    await form.locator('input[name="newPassword"]').fill('NewPass1234');
+    await form.locator('input[name="passwordConfirmation"]').fill('Different1234');
+    await form.getByRole('button', { name: 'Change password' }).click();
+    await expect(form.getByTestId('field-error')).toHaveText(['The passwords do not match.']);
+    for (const [name, value] of [['currentPassword', 'x'], ['newPassword', 'NewPass1234'], ['passwordConfirmation', 'Different1234']]) {
+      await expect(form.locator(`input[name="${name}"]`)).toHaveValue(value);
+    }
+
+    // refused by the backend: the fields stay too
+    await form.locator('input[name="passwordConfirmation"]').fill('NewPass1234');
+    await form.getByRole('button', { name: 'Change password' }).click();
+    await expect(form.getByRole('alert')).toHaveText('The current password is not correct.');
+    for (const [name, value] of [['currentPassword', 'x'], ['newPassword', 'NewPass1234'], ['passwordConfirmation', 'NewPass1234']]) {
+      await expect(form.locator(`input[name="${name}"]`)).toHaveValue(value);
+    }
+  });
+
+  test('change password in Arabic on a phone', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await open(page, '/ar/account/change-password');
+    const form = page.getByTestId('password-form');
+    await form.locator('input[name="newPassword"]').fill('short');
+    await form.locator('input[name="passwordConfirmation"]').fill('other');
+    await form.locator('button[type="submit"]').click();
+    await expect(form.getByTestId('field-error')).toHaveText(['هذا الحقل مطلوب.', 'استخدم 8 أحرف على الأقل.', 'كلمتا المرور غير متطابقتين.']);
+    await expect(form.locator('input[name="newPassword"]')).toHaveValue('short');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   });
 
   test('a guest gets the sign-in prompt on the account pages, without a guest session being started', async ({ page, context }) => {

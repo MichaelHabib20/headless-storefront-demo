@@ -50,7 +50,7 @@
 
 .about {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-muted-on-surface);
   font-size: 0.875rem;
 }
 

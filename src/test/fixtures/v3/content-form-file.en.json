@@ -4,13 +4,13 @@
   "title": "Prescriptions",
   "showTitle": false,
   "submitLabel": "Prescriptions",
-  "requiresSignIn": true,
+  "requiresSignIn": false,
   "fields": [
    {
     "name": "field1",
     "label": "Prescriptions",
     "kind": "file",
-    "required": true,
+    "required": false,
     "placeholder": null,
     "options": [],
     "multiple": false,

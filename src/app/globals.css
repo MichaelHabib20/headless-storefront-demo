@@ -3,6 +3,8 @@
   --color-bg: #ffffff;
   --color-text: #000000;
   --color-muted: #767677;
+  /* Secondary text on --color-surface: #767677 is 3.9:1 there, this one 5.8:1 (WCAG AA 4.5:1). */
+  --color-muted-on-surface: #5c5d5e;
   --color-surface: #eceff1;
   --color-border: #d3d7da;
   --color-primary: #ef6b01;

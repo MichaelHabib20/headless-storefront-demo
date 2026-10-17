@@ -3,8 +3,8 @@ import { defineMessages } from './define';
 /**
  * UI strings of the auth pages (sign in / up / out, OTP, social, password reset, phone and e-mail
  * verification, waiting for approval), the account menu, the profile and password pages. Owned by
- * the auth agent. Field labels, every validation message and every refusal text come from the API —
- * they are not here. Keep en and ar in sync.
+ * the auth agent. Field labels, the API's validation messages and every refusal text come from the
+ * API — they are not here; only the few checks made before sending (`authCheck*`). Keep en and ar in sync.
  */
 export const authMessages = defineMessages({
   en: {
@@ -43,6 +43,11 @@ export const authMessages = defineMessages({
     authSignUpClosed: 'This store does not accept new accounts at the moment.',
     authConfirmPassword: 'Confirm password',
     authPasswordsMismatch: 'The passwords do not match.',
+    // checks made before sending (src/lib/form-checks.ts); the API's own messages are shown as they come
+    authCheckRequired: 'This field is required.',
+    authCheckTooShort: 'Use at least {count} characters.',
+    authCheckEmail: 'Enter a valid e-mail address.',
+    authCheckPhone: 'Enter a {count}-digit phone number.',
     authCreateButton: 'Create account',
     authCreating: 'Creating your account…',
     authOptional: '(optional)',
@@ -170,6 +175,10 @@ export const authMessages = defineMessages({
     authSignUpClosed: 'هذا المتجر لا يقبل حسابات جديدة حالياً.',
     authConfirmPassword: 'تأكيد كلمة المرور',
     authPasswordsMismatch: 'كلمتا المرور غير متطابقتين.',
+    authCheckRequired: 'هذا الحقل مطلوب.',
+    authCheckTooShort: 'استخدم {count} أحرف على الأقل.',
+    authCheckEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.',
+    authCheckPhone: 'أدخل رقم هاتف مكوّنًا من {count} رقمًا.',
     authCreateButton: 'إنشاء الحساب',
     authCreating: 'جارٍ إنشاء حسابك…',
     authOptional: '(اختياري)',

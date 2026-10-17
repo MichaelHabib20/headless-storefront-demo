@@ -10,6 +10,14 @@ const setMode = (page: Page, mode: Record<string, boolean>) => page.request.post
 
 test.skip(live, 'the shell keys are not deployed on staging yet (mock only)');
 
+/** The add-to-cart message and the WhatsApp button (both shown) do not overlap. */
+async function expectClearOfWhatsApp(page: Page) {
+  const toast = (await page.getByTestId('cart-toast').boundingBox())!;
+  const chat = (await page.getByTestId('whatsapp').boundingBox())!;
+  const overlaps = toast.x < chat.x + chat.width && chat.x < toast.x + toast.width && toast.y < chat.y + chat.height && chat.y < toast.y + toast.height;
+  expect(overlaps, `toast ${JSON.stringify(toast)} vs WhatsApp ${JSON.stringify(chat)}`).toBe(false);
+}
+
 test.beforeEach(async ({ request }) => {
   await request.post(`${MOCK_API}/__reset`);
 });
@@ -24,11 +32,23 @@ test.describe('desktop', () => {
     await expect(toast).toHaveText('Added to cart.');
     await expect(page.getByTestId('mini-cart')).toHaveCount(0);
     await expect(page.getByRole('banner').getByRole('link', { name: 'Cart, 1 item' })).toBeVisible();
-    // bottom inline end (right in English), then it goes away by itself
+    // bottom inline end (right in English), above the WhatsApp button, then it goes away by itself
     const box = (await toast.boundingBox())!;
     expect(box.x + box.width).toBeGreaterThan(1440 - 40);
-    expect(box.y + box.height).toBeGreaterThan(900 - 80);
+    expect(box.y + box.height).toBeGreaterThan(900 - 160);
+    await expectClearOfWhatsApp(page);
     await expect(toast).toHaveCount(0, { timeout: 8000 });
+  });
+
+  test('Arabic: the add-to-cart message is bottom left, above the WhatsApp button, never on it', async ({ page }) => {
+    await page.goto('/ar');
+    await page.getByTestId('product-card').first().getByRole('button', { name: 'أضف إلى السلة' }).click();
+    const toast = page.getByTestId('cart-toast');
+    await expect(toast).toHaveText('تمت الإضافة إلى السلة.');
+    const box = (await toast.boundingBox())!;
+    expect(box.x).toBeLessThan(40);
+    expect(box.y + box.height).toBeGreaterThan(900 - 160);
+    await expectClearOfWhatsApp(page);
   });
 
   test('bottom nav is for phones only; legal links and the app banner are in the page', async ({ page }) => {
@@ -40,6 +60,30 @@ test.describe('desktop', () => {
     await expect(legal.getByRole('link', { name: 'Cookie policy' })).toHaveAttribute('href', '/en/cookie-policy');
     await expect(page.getByTestId('app-banner')).toContainText('Download App Now');
     await expect(page.getByTestId('usp-strip').getByRole('listitem')).toHaveCount(4);
+  });
+
+  test("footer account column like the old storefront (signed in, EN + AR); the store's own titles", async ({ page, context }) => {
+    await signInAsCustomer(context);
+    await page.goto('/en');
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.getByRole('link', { name: 'Sign in' })).toHaveCount(0);
+    await expect(footer.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/en/account/profile');
+    await expect(footer.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/order-history');
+    // home: the backend's title, and the store name as the one h1
+    await expect(page).toHaveTitle('Any time Any where');
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveText('Seif Pharmacies');
+
+    await page.goto('/ar/account');
+    await expect(page).toHaveTitle('حسابي - صيدليات سيف');
+    const arFooter = page.getByRole('contentinfo');
+    await expect(arFooter.getByRole('link', { name: 'الملف الشخصي' })).toHaveAttribute('href', '/ar/account/profile');
+    await expect(arFooter.getByRole('link', { name: 'طلباتي' })).toHaveAttribute('href', '/ar/account/order-history');
+    await page.goto('/ar');
+    await expect(page.locator('h1')).toHaveText('صيدليات سيف');
+
+    await page.goto('/en/cart');
+    await expect(page).toHaveTitle(/ - Seif Pharmacies$/);
   });
 
   test('app banner dismissal is remembered', async ({ page }) => {
@@ -182,5 +226,6 @@ test.describe('phone (360 px)', () => {
     expect(box.y + box.height).toBeLessThanOrEqual(nav.y);
     expect(box.x).toBeLessThan(40);
     expect(box.width).toBeLessThanOrEqual(360);
+    await expectClearOfWhatsApp(page);
   });
 });

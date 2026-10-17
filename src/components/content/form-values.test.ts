@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { merchantFormFixture } from '@/test/shell-fixtures';
-import { formValues, inputAttributes, textValues } from './form-values';
+import { fileFormFixture, merchantFormFixture } from '@/test/shell-fixtures';
+import { checkForm, formValues, inputAttributes, mustFill, textValues } from './form-values';
 
 describe('backend form values', () => {
   const fields = merchantFormFixture('en').fields;
@@ -22,6 +22,30 @@ describe('backend form values', () => {
 
   it('text values only (contact messages)', () => {
     expect(textValues({ name: 'A', topics: ['x'] })).toEqual({ name: 'A' });
+  });
+
+  const messages = { required: 'Required.', attach: 'Attach.', email: 'Email.', empty: 'Empty.' };
+
+  it('checks before sending: every empty field to fill and a malformed e-mail, at once', () => {
+    const data = new FormData();
+    data.set('v.phone', '0100');
+    data.set('v.email', 'not-an-email');
+    expect(checkForm(fields, data, messages)).toEqual({ fieldErrors: { firstName: 'Required.', email: 'Email.', field1: 'Required.', field3: 'Required.' } });
+  });
+
+  it('a form with only optional fields is not sent empty', () => {
+    const optional = fields.map((field) => ({ ...field, required: false }));
+    expect(checkForm(optional, new FormData(), messages)).toEqual({ message: 'Empty.' });
+    const data = new FormData();
+    data.set('v.field3', 'Hi');
+    expect(checkForm(optional, data, messages)).toEqual({});
+  });
+
+  it('the only field of a form must be filled; a file asks for an attachment', () => {
+    const [upload] = fileFormFixture('en').fields.map((field) => ({ ...field, required: false }));
+    expect(mustFill(upload, [upload])).toBe(true);
+    expect(mustFill(upload, [upload, upload])).toBe(false);
+    expect(checkForm([upload], new FormData(), messages)).toEqual({ fieldErrors: { field1: 'Attach.' } });
   });
 
   it('input types by kind; unknown kinds are text', () => {

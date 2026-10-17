@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/sdk';
 import { ContentForm } from '@/components/content/ContentForm';
@@ -7,8 +6,8 @@ import { MessageBlock } from '@/components/layout/StoreUnavailable';
 import { loadForm, slugParam } from '@/lib/content.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { seoMetadata } from '@/lib/seo';
-import { shopperContext } from '@/lib/shopper.server';
+import { contentPageSeo, seoMetadata } from '@/lib/seo';
+import { loadLayout } from '@/lib/storefront.server';
 import styles from '@/components/content/Content.module.css';
 import { submitFormAction, uploadFormFileAction } from './actions';
 
@@ -19,14 +18,17 @@ type Params = Promise<{ locale: string; slug: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const result = await loadForm(locale, slugParam(slug));
-  return result.status === 'ok' ? seoMetadata(result.data.seo, locale) : { robots: { index: false } };
+  const [result, layout] = await Promise.all([loadForm(locale, slugParam(slug)), loadLayout(locale).catch(() => null)]);
+  if (result.status !== 'ok') return { robots: { index: false } };
+  return seoMetadata(contentPageSeo(result.data.seo, result.data.title, layout?.store.name), locale);
 }
 
 /**
- * A merchant form (`GET /forms/{slug}`), drawn from its `fields`. When the API says it needs a
- * session (`requiresSignIn`) and the visitor has none, a sign-in prompt is shown instead: rendering
- * never starts a guest session.
+ * A merchant form (`GET /forms/{slug}`), drawn from its `fields`, open to every visitor like the old
+ * storefront. `requiresSignIn` means "needs a shopper session" and a guest session is enough (the
+ * backend's FormsController / UploadsController take a guest token): the upload and send server
+ * actions start the guest session (`withShopper`), so rendering still never creates one.
+ * The title is always shown: on its own the form (one upload tile) does not say what it is for.
  */
 export default async function MerchantFormPage({ params }: { params: Params }) {
   const { locale, slug: raw } = await params;
@@ -35,26 +37,15 @@ export default async function MerchantFormPage({ params }: { params: Params }) {
   const result = await loadForm(locale, slug);
   if (result.status === 'not-found') notFound();
   const t = translator(locale);
-  const here = routes.form(locale, slug);
   if (result.status === 'error') {
-    return <MessageBlock title={t('errorTitle')} text={t('contentPageLoadError')} cta={{ href: here, label: t('contentRetry') }} />;
+    return <MessageBlock title={t('errorTitle')} text={t('contentPageLoadError')} cta={{ href: routes.form(locale, slug), label: t('contentRetry') }} />;
   }
 
   const form = result.data;
-  const signedOut = form.requiresSignIn && !(await shopperContext(locale)).token;
-
   return (
-    <article className={`container ${styles.page}`} data-testid="merchant-form-page">
-      <h1 className={form.showTitle ? styles.title : 'visually-hidden'}>{form.title}</h1>
-      {signedOut ? (
-        <div className={styles.signIn} data-testid="form-sign-in">
-          <h2 className={styles.subtitle}>{t('contentFormSignInTitle')}</h2>
-          <p>{t('contentFormSignInText')}</p>
-          <Link href={routes.signIn(locale, here)} className={styles.primary}>
-            {t('contentFormSignInCta')}
-          </Link>
-        </div>
-      ) : (
+    <article className={`container ${styles.page} ${styles.formPage}`} data-testid="merchant-form-page">
+      <h1 className={styles.title}>{form.title}</h1>
+      <div className={styles.formCard}>
         <ContentForm
           locale={locale}
           fields={form.fields}
@@ -65,7 +56,7 @@ export default async function MerchantFormPage({ params }: { params: Params }) {
           idPrefix={`form-${form.slug}`}
           testId="merchant-form"
         />
-      )}
+      </div>
     </article>
   );
 }

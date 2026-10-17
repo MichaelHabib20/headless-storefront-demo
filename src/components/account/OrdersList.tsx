@@ -12,7 +12,7 @@ import styles from './Account.module.css';
 interface OrdersListProps {
   orders: OrdersPage;
   locale: Locale;
-  /** For stable dates in tests; the page uses the server's. */
+  /** Forces a time zone (tests); by default dates are on the store's clock (src/lib/dates.ts). */
   timeZone?: string;
 }
 

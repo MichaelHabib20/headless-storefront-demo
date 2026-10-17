@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import type { FormField, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
-import { fieldShown, inputAttributes, inputName, VALUE_PREFIX, watchedValues } from './form-values';
+import { fieldShown, inputAttributes, inputName, mustFill, VALUE_PREFIX, watchedValues } from './form-values';
 import styles from './Content.module.css';
 
 /** Uploads one file (POST /uploads through a server action) and answers its id. */
@@ -39,13 +39,12 @@ export function FormFields({ locale, fields, errors = {}, values = {}, upload, i
     if (name && watched.includes(name)) setCurrent((before) => ({ ...before, [name]: String(target.value ?? '') }));
   }
 
+  const shown = fields.filter((field) => fieldShown(field, current));
   return (
     <div className={styles.fields} onChange={watched.length ? changed : undefined}>
-      {fields
-        .filter((field) => fieldShown(field, current))
-        .map((field) => (
-          <Field key={field.name} locale={locale} field={field} error={errors[field.name]} value={values[field.name]} upload={upload} id={`${idPrefix}-${field.name}`} />
-        ))}
+      {shown.map((field) => (
+        <Field key={field.name} locale={locale} field={field} toFill={mustFill(field, shown)} error={errors[field.name]} value={values[field.name]} upload={upload} id={`${idPrefix}-${field.name}`} />
+      ))}
     </div>
   );
 }
@@ -53,19 +52,21 @@ export function FormFields({ locale, fields, errors = {}, values = {}, upload, i
 interface FieldProps {
   locale: Locale;
   field: FormField;
+  /** `mustFill()`: the backend's `required`, or the only field of the form. */
+  toFill: boolean;
   error: string | undefined;
   value: string | string[] | undefined;
   upload?: UploadFileAction;
   id: string;
 }
 
-function Field({ locale, field, error, value, upload, id }: FieldProps) {
+function Field({ locale, field, toFill, error, value, upload, id }: FieldProps) {
   const t = translator(locale);
   const describedBy = [field.hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(' ') || undefined;
   const common = {
     id,
     name: inputName(field),
-    required: field.required,
+    required: toFill,
     'aria-invalid': error ? true : undefined,
     'aria-describedby': describedBy,
   } as const;
@@ -98,9 +99,9 @@ function Field({ locale, field, error, value, upload, id }: FieldProps) {
     );
   } else if (field.kind === 'file') {
     control = field.multiple ? (
-      <FilesInput locale={locale} field={field} upload={upload} id={id} required={field.required} describedBy={describedBy} invalid={Boolean(error)} />
+      <FilesInput locale={locale} field={field} upload={upload} id={id} required={toFill} describedBy={describedBy} invalid={Boolean(error)} />
     ) : (
-      <FileInput locale={locale} field={field} upload={upload} id={id} required={field.required} describedBy={describedBy} invalid={Boolean(error)} />
+      <FileInput locale={locale} field={field} upload={upload} id={id} required={toFill} describedBy={describedBy} invalid={Boolean(error)} />
     );
   } else {
     control = (
@@ -117,9 +118,10 @@ function Field({ locale, field, error, value, upload, id }: FieldProps) {
 
   return (
     <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
+      {/* a field to fill gets the old storefront's "*" (drawn by CSS, not read out: the input is `required`) */}
+      <label htmlFor={id} className={toFill ? `${styles.label} ${styles.requiredLabel}` : styles.label}>
         {field.label}
-        {!field.required && <span className={styles.optional}> {t('contentOptional')}</span>}
+        {!toFill && <span className={styles.optional}> {t('contentOptional')}</span>}
       </label>
       {control}
       <FieldNotes id={id} hint={field.hint} error={error} />
@@ -154,18 +156,58 @@ interface FileInputProps {
   invalid: boolean;
 }
 
+/** A picture of the chosen file for the tile: the image itself (a local `blob:` URL), or nothing for a PDF. */
+function usePreview(): [string | null, (file: File | null) => void] {
+  const [preview, setPreview] = useState<string | null>(null);
+  useEffect(() => () => {
+    if (preview) URL.revokeObjectURL(preview);
+  }, [preview]);
+  const show = (file: File | null) => setPreview(file && file.type.startsWith('image/') && typeof URL.createObjectURL === 'function' ? URL.createObjectURL(file) : null);
+  return [preview, show];
+}
+
+/**
+ * The picker tile (like the old storefront's image uploader): a square that opens the file chooser
+ * and shows the chosen picture. The real control is the file input before it (visually hidden,
+ * keyboard-focusable); the tile is only its larger click target, so it is hidden from screen readers.
+ */
+function PickerTile({ inputId, title, preview, fileName, busy, invalid }: { inputId: string; title: string; preview: string | null; fileName: string | null; busy: boolean; invalid: boolean }) {
+  const classes = [styles.tile, invalid ? styles.tileInvalid : '', busy ? styles.tileBusy : ''].filter(Boolean).join(' ');
+  return (
+    <label htmlFor={inputId} className={classes} title={title} aria-hidden="true" data-testid="file-tile">
+      {preview ? (
+        <span className={styles.tilePreview} style={{ backgroundImage: `url("${preview}")` }} data-testid="file-preview" />
+      ) : fileName ? (
+        <span className={styles.tileName}>{fileName}</span>
+      ) : (
+        <svg className={styles.tileIcon} viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm1 2v9.6l3.3-3.3a1 1 0 0 1 1.4 0l2.8 2.8 1.8-1.8a1 1 0 0 1 1.4 0L19 16.6V6H5Zm10 1.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+        </svg>
+      )}
+    </label>
+  );
+}
+
 /** Uploads the chosen file right away; the form then sends the file's id, never the file or a URL. */
 function FileInput({ locale, field, upload, id, required, describedBy, invalid }: FileInputProps) {
   const t = translator(locale);
   const [state, setState] = useState<{ status: 'idle' | 'uploading' | 'done' | 'failed'; id?: string; name?: string; message?: string }>({ status: 'idle' });
+  const [preview, showPreview] = usePreview();
 
   async function choose(file: File | undefined) {
     if (!file || !upload) return;
     setState({ status: 'uploading' });
+    showPreview(file);
     const form = new FormData();
     form.set('file', file);
     const result = await upload(locale, form).catch(() => ({ ok: false as const, message: t('contentFormUploadFailed') }));
     setState(result.ok ? { status: 'done', id: result.id, name: result.name } : { status: 'failed', message: result.message });
+    if (!result.ok) showPreview(null);
+  }
+
+  function remove() {
+    setState({ status: 'idle' });
+    showPreview(null);
   }
 
   return (
@@ -173,14 +215,25 @@ function FileInput({ locale, field, upload, id, required, describedBy, invalid }
       <input
         id={id}
         type="file"
-        className={styles.fileInput}
+        className={`${styles.fileInput} visually-hidden`}
         accept="image/jpeg,image/png,image/webp,application/pdf"
         required={required && state.status !== 'done'}
         aria-invalid={invalid || state.status === 'failed' ? true : undefined}
         aria-describedby={describedBy}
         disabled={!upload || state.status === 'uploading'}
-        onChange={(event) => choose(event.currentTarget.files?.[0])}
+        onChange={(event) => {
+          void choose(event.currentTarget.files?.[0]);
+          event.currentTarget.value = '';
+        }}
         data-testid={`file-${field.name}`}
+      />
+      <PickerTile
+        inputId={id}
+        title={state.status === 'done' ? t('contentFormChangeFile') : t('contentFormPickFile')}
+        preview={preview}
+        fileName={state.status === 'done' ? (state.name ?? null) : null}
+        busy={state.status === 'uploading'}
+        invalid={invalid || state.status === 'failed'}
       />
       {/* the id the API issued for the uploaded file */}
       <input type="hidden" name={inputName(field)} value={state.status === 'done' ? (state.id ?? '') : ''} />
@@ -189,6 +242,11 @@ function FileInput({ locale, field, upload, id, required, describedBy, invalid }
         {state.status === 'done' && t('contentFormUploaded').replace('{name}', state.name ?? '')}
         {state.status === 'failed' && state.message}
       </p>
+      {state.status === 'done' && (
+        <button type="button" className={styles.fileRemove} onClick={remove}>
+          {t('contentFormRemoveFile').replace('{name}', state.name ?? '')}
+        </button>
+      )}
     </div>
   );
 }
@@ -222,7 +280,7 @@ function FilesInput({ locale, field, upload, id, required, describedBy, invalid 
       <input
         id={id}
         type="file" multiple
-        className={styles.fileInput}
+        className={`${styles.fileInput} visually-hidden`}
         accept="image/jpeg,image/png,image/webp,application/pdf"
         required={required && files.length === 0}
         aria-invalid={invalid || status.message ? true : undefined}
@@ -234,6 +292,7 @@ function FilesInput({ locale, field, upload, id, required, describedBy, invalid 
         }}
         data-testid={`file-${field.name}`}
       />
+      <PickerTile inputId={id} title={t('contentFormPickFile')} preview={null} fileName={null} busy={status.uploading} invalid={invalid || Boolean(status.message)} />
       {files.length > 0 && (
         <ul className={styles.fileList} data-testid={`files-${field.name}`}>
           {files.map((file) => (

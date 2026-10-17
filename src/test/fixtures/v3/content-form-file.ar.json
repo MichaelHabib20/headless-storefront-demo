@@ -4,13 +4,13 @@
   "title": "الوصفات الطبية",
   "showTitle": false,
   "submitLabel": "الوصفات الطبية",
-  "requiresSignIn": true,
+  "requiresSignIn": false,
   "fields": [
    {
     "name": "field1",
     "label": "الوصفات الطبية",
     "kind": "file",
-    "required": true,
+    "required": false,
     "placeholder": null,
     "options": [],
     "multiple": false,

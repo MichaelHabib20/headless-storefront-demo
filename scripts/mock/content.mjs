@@ -39,8 +39,9 @@ const PAGES = {
   'about-us': {
     title: { en: 'About Us', ar: 'عن الشركة' },
     html: {
-      en: '<h2>Who we are</h2><p>Seif Pharmacies is one of the <strong>leading</strong> pharmacy chains in Egypt.</p><ul><li>Over 60 branches</li><li>Licensed pharmacists</li></ul><p><a href="https://example.com/story" target="_blank" rel="noreferrer noopener">Our story</a></p>',
-      ar: '<h2>من نحن</h2><p>تُعد صيدليات سيف واحدة من <strong>السلاسل الصيدلية الرائدة</strong> في مصر.</p><ul><li>أكثر من 60 فرعًا</li><li>صيادلة مرخصون</li></ul>',
+      // An h1 in the text, like the staging CMS ("About Us – Seif Pharmacies"): shown as an h2.
+      en: '<h1>About Us – Seif Pharmacies</h1><h2>Who we are</h2><p>Seif Pharmacies is one of the <strong>leading</strong> pharmacy chains in Egypt.</p><ul><li>Over 60 branches</li><li>Licensed pharmacists</li></ul><p><a href="https://example.com/story" target="_blank" rel="noreferrer noopener">Our story</a></p>',
+      ar: '<h1>من نحن – صيدليات سيف</h1><h2>من نحن</h2><p>تُعد صيدليات سيف واحدة من <strong>السلاسل الصيدلية الرائدة</strong> في مصر.</p><ul><li>أكثر من 60 فرعًا</li><li>صيادلة مرخصون</li></ul>',
     },
     showTitle: true,
     about: null,
@@ -91,7 +92,8 @@ const FORMS = {
     title: { en: 'Prescriptions', ar: 'الوصفات الطبية' },
     showTitle: false,
     submit: { en: 'Prescriptions', ar: 'الوصفات الطبية' },
-    fields: [{ name: 'field1', kind: 'file', label: { en: 'Prescriptions', ar: 'الوصفات الطبية' }, required: true }],
+    // like staging: the merchant left the one upload optional (the storefront still refuses an empty answer)
+    fields: [{ name: 'field1', kind: 'file', label: { en: 'Prescriptions', ar: 'الوصفات الطبية' }, required: false }],
   },
 };
 
@@ -159,7 +161,7 @@ export function form(slug, locale) {
   const row = FORMS[slug];
   if (!row) return null;
   return {
-    slug, title: row.title[locale], showTitle: row.showTitle, submitLabel: row.submit[locale], requiresSignIn: true,
+    slug, title: row.title[locale], showTitle: row.showTitle, submitLabel: row.submit[locale], requiresSignIn: false,
     fields: row.fields.map((field) => formField(field, locale)),
     seo: seo(locale, row.title[locale], { type: 'form', slug }),
   };

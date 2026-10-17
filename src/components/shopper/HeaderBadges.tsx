@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { Layout, Locale, Me } from '@/sdk';
@@ -6,6 +8,7 @@ import { routes } from '@/lib/routing';
 import { Icon } from '../ui/Icon';
 import { badgeText, countLabel } from './labels';
 import { ShopperIcon } from './ShopperIcon';
+import { useShopperMe } from './ShopperStateProvider';
 import styles from './HeaderBadges.module.css';
 
 interface HeaderBadgesProps {
@@ -15,9 +18,13 @@ interface HeaderBadgesProps {
   features: Pick<Layout['features'], 'wishlist' | 'compare' | 'notifications'>;
 }
 
-/** Header icons with the shopper's counts from `GET /me`. Entry points follow `layout.features`. */
-export function HeaderBadges({ locale, me, features }: HeaderBadgesProps) {
+/**
+ * Header icons with the shopper's counts from `GET /me`. Entry points follow `layout.features`.
+ * Inside ShopperStateProvider the counts are its latest `GET /me` (updated right after add to cart).
+ */
+export function HeaderBadges({ locale, me: rendered, features }: HeaderBadgesProps) {
   const t = translator(locale);
+  const me = useShopperMe(rendered);
   const counts = me?.counts;
 
   return (

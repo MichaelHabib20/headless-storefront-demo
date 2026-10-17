@@ -4,7 +4,7 @@
   "title": "رأيك يهمنا",
   "showTitle": true,
   "submitLabel": "أرسل رأيك",
-  "requiresSignIn": true,
+  "requiresSignIn": false,
   "fields": [
    {
     "name": "firstName",

@@ -9,7 +9,7 @@ import { formatQuantity, stepDown, stepUp, type QuantityLimits } from '../cart/q
 import { useMiniCart } from '../layout/MiniCart';
 import { withCount } from '../shopper/labels';
 import { ShopperIcon } from '../shopper/ShopperIcon';
-import { useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
+import { useCartChanged, useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
 import type { ProductShopperState } from '../shopper/state';
 import { Icon } from '../ui/Icon';
 import styles from './ProductActions.module.css';
@@ -53,6 +53,8 @@ type Pending = ReturnType<typeof addToCartAction>;
 
 interface Step {
   field: Field;
+  /** Shown before the backend answered (rolled back when it refuses). */
+  optimistic: boolean;
   /** The new state after success (applied immediately for optimistic toggles). */
   change: Partial<ProductShopperState>;
   /** What to put back if an optimistic toggle fails. */
@@ -63,7 +65,8 @@ interface Step {
 /**
  * Add to cart, wishlist and compare buttons for a product card or the product page. The starting
  * state comes from `GET /me` (ShopperStateProvider). Wishlist/compare toggle optimistically and roll
- * back when the server action fails; the action revalidates the layout, which refreshes the provider.
+ * back when the server action fails; they revalidate the layout, which refreshes the provider. Add to
+ * cart hands the provider the action's `GET /me` (cartChanged), then the page refreshes in the background.
  */
 export function ProductActions({ productId, productName, locale, canAddToCart, addQuantity, labels, quantity }: ProductActionsProps) {
   const { features, ...server } = useProductShopperState(productId);
@@ -83,14 +86,12 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
   const [status, setStatus] = useState<{ text: string; error: boolean } | null>(null);
   const focusCartLink = useRef(false);
   const runInOrder = useRunInOrder();
+  const cartChanged = useCartChanged();
   const miniCart = useMiniCart();
 
   const track = (field: Field, delta: number) => setPending((current) => ({ ...current, [field]: Math.max(0, (current[field] ?? 0) + delta) }));
 
-  async function perform({ field, change, undo, call }: Step) {
-    // The cart is not optimistic: the "In cart" link appears once the backend accepted it.
-    const optimistic = field !== 'cartQuantity';
-
+  async function perform({ field, optimistic, change, undo, call }: Step) {
     track(field, 1);
     setStatus(null);
     if (optimistic) setState((current) => ({ ...current, ...change }));
@@ -102,7 +103,10 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     let shownByShell = false;
     if (result.ok) {
       setState((current) => ({ ...current, ...change }));
-      if (!optimistic) {
+      // Only the cart: compare is not optimistic when adding either, but it has no cart counts.
+      if (field === 'cartQuantity') {
+        // Header / card counts from the action's GET /me now; the page refreshes in the background.
+        cartChanged(result.me, result.rendered);
         focusCartLink.current = true;
         shownByShell = miniCart.added(result.message ?? '');
       }
@@ -113,22 +117,29 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     track(field, -1);
   }
 
+  // The cart is not optimistic: the "In cart" link appears once the backend accepted it.
   const putInCart = (cartQuantity: number) =>
-    perform({ field: 'cartQuantity', change: { cartQuantity }, undo: {}, call: () => addToCartAction(locale, productId, cartQuantity) });
+    perform({ field: 'cartQuantity', optimistic: false, change: { cartQuantity }, undo: {}, call: () => addToCartAction(locale, productId, cartQuantity) });
   const toggleWishlist = () =>
     perform({
       field: 'inWishlist',
+      optimistic: true,
       change: { inWishlist: !state.inWishlist },
       undo: { inWishlist: state.inWishlist },
       call: () => toggleWishlistAction(locale, productId, !state.inWishlist),
     });
-  const toggleCompare = () =>
-    perform({
+  // Adding to compare waits for the backend: the list has a maximum (409 compare_full), so a button
+  // is pressed only for a product that is really in the compare list. Taking one out is optimistic.
+  const toggleCompare = () => {
+    if (pending.inCompare) return;
+    return perform({
       field: 'inCompare',
+      optimistic: state.inCompare,
       change: { inCompare: !state.inCompare },
       undo: { inCompare: state.inCompare },
       call: () => toggleCompareAction(locale, productId, !state.inCompare),
     });
+  };
 
   const cartLink = (className: string) => (
     <Link

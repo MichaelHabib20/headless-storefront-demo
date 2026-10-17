@@ -5,6 +5,7 @@ import { after } from 'next/server';
 import {
   addToCompare,
   addToWishlist,
+  getMe,
   isApiError,
   isLocale,
   removeFromCompare,
@@ -12,10 +13,12 @@ import {
   setCartItem,
   type ApiErrorKind,
   type Locale,
+  type Me,
   type ShopperContext,
 } from '@/sdk';
 import { translator, type MessageKey } from './i18n';
 import { trackServerEvent } from './marketing.server';
+import { shopperToken } from './shopper.server';
 import { withShopper } from './shopper.write';
 import { storefrontClient } from './storefront.server';
 
@@ -23,6 +26,13 @@ import { storefrontClient } from './storefront.server';
 export interface ShopperActionResult {
   ok: boolean;
   message?: string;
+  /** Add to cart: `GET /me` read right after the write (null when it could not be read). */
+  me?: Me | null;
+  /**
+   * Add to cart: this answer already carries the re-rendered page, because the action started the
+   * guest session (Next re-renders the page when an action sets a cookie): no refresh needed after it.
+   */
+  rendered?: boolean;
 }
 
 type Operation = (ctx: ShopperContext) => Promise<unknown>;
@@ -58,11 +68,32 @@ async function perform(locale: Locale, operation: Operation, success: MessageKey
   return { ok: true, message: translator(locale)(success) };
 }
 
-/** Puts a product in the cart with the quantity the backend allows as a minimum (`purchase.minQuantity`). */
+/**
+ * Puts a product in the cart with the quantity the backend allows as a minimum (`purchase.minQuantity`).
+ * No layout revalidation here: that re-rendered the whole page inside this answer (seconds on a
+ * product page). The answer carries `GET /me` read after the write instead; the shell shows its counts
+ * at once and refreshes the page in the background (ShopperStateProvider.cartChanged). The visitor's
+ * first write starts the guest session: setting that cookie makes Next re-render the page in this
+ * answer anyway (`rendered`); the result still arrives before that render (the toast doesn't wait).
+ */
 export async function addToCartAction(rawLocale: Locale, productId: number, quantity: number): Promise<ShopperActionResult> {
   const locale = localeOf(rawLocale);
   if (!isProductId(productId) || !isQuantity(quantity)) return failure(locale);
-  return tracked(locale, 'add_to_cart', productId, await perform(locale, (ctx) => setCartItem(storefrontClient(), ctx, productId, quantity), 'statusAddedToCart'));
+  const startsSession = !(await shopperToken());
+  let me: Me | null;
+  try {
+    me = await withShopper(locale, async (ctx) => {
+      await setCartItem(storefrontClient(), ctx, productId, quantity);
+      // Never fails the write (and is never retried as one): without it the background refresh brings the counts.
+      return getMe(storefrontClient(), ctx).catch((error: unknown) => {
+        console.error('me failed to load after add to cart', error);
+        return null;
+      });
+    });
+  } catch (error) {
+    return failure(locale, error);
+  }
+  return tracked(locale, 'add_to_cart', productId, { ok: true, message: translator(locale)('statusAddedToCart'), me, ...(startsSession ? { rendered: true } : {}) });
 }
 
 /** After a successful write: the server-side marketing event (POST /events), sent after the answer; never fails the action. */

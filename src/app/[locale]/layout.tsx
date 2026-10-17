@@ -24,6 +24,7 @@ import { ShopperStateProvider } from '@/components/shopper/ShopperStateProvider'
 import { NextStepGate } from '@/components/auth/NextStepGate';
 import { direction, translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
+import { titleTemplate } from '@/lib/seo';
 import { APP_BANNER_COOKIE, FLOATING_BANNER_COOKIE, floatingBannerDismissed } from '@/lib/shell';
 import { chooseAreaAction, readMiniCart } from '@/lib/shell.actions';
 import { shopperContext } from '@/lib/shopper.server';
@@ -80,7 +81,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const layout = 'layout' in load ? load.layout : null;
   return {
     metadataBase: await requestMetadataBase(),
-    title: { default: layout?.store.name ?? 'Store', template: `%s | ${layout?.store.name ?? 'Store'}` },
+    // Our pages: "<page> - <store>" like the old storefront; backend titles (`seoMetadata`) are absolute.
+    title: { default: layout?.store.name ?? 'Store', template: titleTemplate(layout?.store.name ?? 'Store') },
     description: layout?.store.slogan ?? undefined,
     icons: layout?.store.favicon ? [{ url: layout.store.favicon }] : undefined,
     // No `alternates` here: every page inherits them, so a page without its own would claim the home
@@ -109,7 +111,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           {t('skipToContent')}
         </a>
         {layout ? (
-          <>
+          // Header badges, the bottom nav and product cards read the shopper's counts and cart/wishlist/compare state from here.
+          <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
             {layout.topBanner && <TopBanner banner={layout.topBanner} locale={locale} label={t('topBannerLabel')} />}
             {showAppBanner && layout.appBanner && (
               <AppBanner
@@ -122,28 +125,25 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <SiteHeader layout={layout} locale={locale} me={me} />
             {layout.areaSelection && <AreaChooser locale={locale} selection={layout.areaSelection} me={me} locations={locations} choose={chooseAreaAction} />}
             <StoreClosedNotice status={layout.storeStatus} locale={locale} />
-            {/* Product cards on any page read the shopper's cart/wishlist/compare state from here. */}
-            <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
-              {/* Me.next: the waiting-for-approval gate and the verify-phone / complete-profile banners. */}
-              <NextStepGate
-                next={me?.next ?? null}
-                hrefs={{ verifyPhone: routes.verifyPhone(locale), completeProfile: routes.completeProfile(locale), waitingApproval: routes.waitingApproval(locale) }}
-                labels={{
-                  verifyBanner: t('authVerifyBanner'),
-                  verifyLink: t('authVerifyBannerLink'),
-                  dismiss: t('authVerifyDismiss'),
-                  completeBanner: t('authCompleteBanner'),
-                  completeLink: t('authCompleteBannerLink'),
-                  waitingTitle: t('authWaitingTitle'),
-                  waitingText: t('authWaitingPending'),
-                  waitingLink: t('authWaitingTitle'),
-                }}
-              >
-                <MiniCartProvider locale={locale} readCart={readMiniCart}>
-                  <main id="main">{children}</main>
-                </MiniCartProvider>
-              </NextStepGate>
-            </ShopperStateProvider>
+            {/* Me.next: the waiting-for-approval gate and the verify-phone / complete-profile banners. */}
+            <NextStepGate
+              next={me?.next ?? null}
+              hrefs={{ verifyPhone: routes.verifyPhone(locale), completeProfile: routes.completeProfile(locale), waitingApproval: routes.waitingApproval(locale) }}
+              labels={{
+                verifyBanner: t('authVerifyBanner'),
+                verifyLink: t('authVerifyBannerLink'),
+                dismiss: t('authVerifyDismiss'),
+                completeBanner: t('authCompleteBanner'),
+                completeLink: t('authCompleteBannerLink'),
+                waitingTitle: t('authWaitingTitle'),
+                waitingText: t('authWaitingPending'),
+                waitingLink: t('authWaitingTitle'),
+              }}
+            >
+              <MiniCartProvider locale={locale} readCart={readMiniCart}>
+                <main id="main">{children}</main>
+              </MiniCartProvider>
+            </NextStepGate>
             <UspStrip locale={locale} />
             <SiteFooter layout={layout} locale={locale} />
             <WhatsAppButton whatsapp={layout.whatsapp} label={t('chatOnWhatsapp')} />
@@ -157,7 +157,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             )}
             <MarketingTags marketing={layout.marketing} consentRequired={layout.features.cookieConsent} />
             <SiteJsonLd locale={locale} />
-          </>
+          </ShopperStateProvider>
         ) : (
           <main id="main">{'maintenance' in load ? <StoreUnavailable locale={locale} maintenance={load.maintenance} /> : <StoreUnavailable locale={locale} />}</main>
         )}
