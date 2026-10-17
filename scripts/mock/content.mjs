@@ -161,7 +161,7 @@ export function form(slug, locale) {
   const row = FORMS[slug];
   if (!row) return null;
   return {
-    slug, title: row.title[locale], showTitle: row.showTitle, submitLabel: row.submit[locale], requiresSignIn: true,
+    slug, title: row.title[locale], showTitle: row.showTitle, submitLabel: row.submit[locale], requiresSignIn: false,
     fields: row.fields.map((field) => formField(field, locale)),
     seo: seo(locale, row.title[locale], { type: 'form', slug }),
   };
