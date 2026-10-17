@@ -4,7 +4,7 @@ import type { Seo } from '@/sdk';
 import { productsFixture } from '@/test/fixtures';
 import { productFixture } from '@/test/product-fixtures';
 import { routes } from './routing';
-import { ownPageAlternates, paginationHrefs, SeoLinks, seoMetadata } from './seo';
+import { contentPageSeo, ownPageAlternates, paginationHrefs, SeoLinks, seoMetadata, titleTemplate } from './seo';
 
 const seo: Seo = {
   title: 'Controloc 40 mg',
@@ -75,5 +75,25 @@ describe('ownPageAlternates (our pages without a backend Seo: brands, categories
       canonical: '/ar/all-categories',
       languages: { en: '/en/all-categories', ar: '/ar/all-categories', 'x-default': '/ar/all-categories' },
     });
+  });
+});
+
+describe('content page titles (the old storefront: "<page> - <store>")', () => {
+  const page = (title: string): Seo => ({ ...seo, title, openGraph: null });
+
+  it('adds the store name when the backend title is the page name, in English and Arabic', () => {
+    expect(contentPageSeo(page('About Us'), 'About Us', 'Seif Pharmacies').title).toBe('About Us - Seif Pharmacies');
+    expect(contentPageSeo(page('عن الشركة'), 'عن الشركة', 'صيدليات سيف').title).toBe('عن الشركة - صيدليات سيف');
+    expect(seoMetadata(contentPageSeo(page('About Us'), 'About Us', 'Seif Pharmacies'), 'en').title).toEqual({ absolute: 'About Us - Seif Pharmacies' });
+  });
+
+  it("keeps the merchant's own SEO title, and adds nothing without a store name", () => {
+    expect(contentPageSeo(page('Who we are at Seif'), 'About Us', 'Seif Pharmacies').title).toBe('Who we are at Seif');
+    expect(contentPageSeo(page('About Us'), 'About Us', null).title).toBe('About Us');
+    expect(contentPageSeo(page('Seif Pharmacies'), 'Seif Pharmacies', 'Seif Pharmacies').title).toBe('Seif Pharmacies');
+  });
+
+  it('gives our own pages the same pattern', () => {
+    expect(titleTemplate('Seif Pharmacies')).toBe('%s - Seif Pharmacies');
   });
 });

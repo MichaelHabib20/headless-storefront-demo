@@ -24,6 +24,7 @@ import { ShopperStateProvider } from '@/components/shopper/ShopperStateProvider'
 import { NextStepGate } from '@/components/auth/NextStepGate';
 import { direction, translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
+import { titleTemplate } from '@/lib/seo';
 import { APP_BANNER_COOKIE, FLOATING_BANNER_COOKIE, floatingBannerDismissed } from '@/lib/shell';
 import { chooseAreaAction, readMiniCart } from '@/lib/shell.actions';
 import { shopperContext } from '@/lib/shopper.server';
@@ -80,7 +81,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const layout = 'layout' in load ? load.layout : null;
   return {
     metadataBase: await requestMetadataBase(),
-    title: { default: layout?.store.name ?? 'Store', template: `%s | ${layout?.store.name ?? 'Store'}` },
+    // Our pages: "<page> - <store>" like the old storefront; backend titles (`seoMetadata`) are absolute.
+    title: { default: layout?.store.name ?? 'Store', template: titleTemplate(layout?.store.name ?? 'Store') },
     description: layout?.store.slogan ?? undefined,
     icons: layout?.store.favicon ? [{ url: layout.store.favicon }] : undefined,
     // No `alternates` here: every page inherits them, so a page without its own would claim the home

@@ -5,7 +5,7 @@ import { branchesFixture, contactPageFixture, contentPageFixture, fileFormFixtur
 import { BranchesList } from './BranchesList';
 import { ContactDetails } from './ContactDetails';
 import { ContentForm } from './ContentForm';
-import { ContentPageView } from './ContentPageView';
+import { ContentPageView, withoutH1 } from './ContentPageView';
 import type { ContentFormState } from './form-values';
 
 describe('CMS page', () => {
@@ -18,6 +18,26 @@ describe('CMS page', () => {
 
     render(<ContentPageView page={contentPageFixture('ar')} locale="ar" />);
     expect(screen.getByRole('heading', { level: 1, name: 'عن الشركة' })).toBeInTheDocument();
+  });
+
+  it('keeps one h1: headings level 1 in the merchant text become h2 (EN and AR)', () => {
+    const content = { html: '<h1 class="x">About Us – Seif Pharmacies</h1><p>Text</p><H1>Second</H1>' };
+    const { container, unmount } = render(<ContentPageView page={{ ...contentPageFixture('en'), content }} locale="en" />);
+    expect(container.querySelectorAll('h1')).toHaveLength(1);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('About Us');
+    expect(screen.getByRole('heading', { level: 2, name: 'About Us – Seif Pharmacies' })).toHaveClass('x');
+    unmount();
+
+    const ar = render(<ContentPageView page={{ ...contentPageFixture('ar'), content: { html: '<h1>Cookie Policy</h1>' } }} locale="ar" />);
+    expect(ar.container.querySelectorAll('h1')).toHaveLength(1);
+    expect(screen.getByRole('heading', { level: 1, name: 'عن الشركة' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Cookie Policy' })).toBeInTheDocument();
+  });
+
+  it('leaves text without an h1 as it is', () => {
+    const value = { html: '<h2>Who</h2><p>h1 is a word</p><h10>x</h10>' };
+    expect(withoutH1(value)).toBe(value);
+    expect(withoutH1(null)).toBeNull();
   });
 
   it('keeps a hidden title for screen readers only', () => {

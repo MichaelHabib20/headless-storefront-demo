@@ -9,7 +9,7 @@ import { HomeSection } from '@/components/home/sections/HomeSection';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { PROMO_PLACEMENTS, promoFor } from '@/lib/home';
 import { translator } from '@/lib/i18n';
-import { loadHome } from '@/lib/storefront.server';
+import { loadHome, loadLayout } from '@/lib/storefront.server';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/lib/jsonld';
 import { seoMetadata } from '@/lib/seo';
@@ -41,10 +41,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   }
 
   const t = translator(locale);
+  // The page's one h1 is the store's name, like the old storefront (not a call to action).
+  const storeName = (await loadLayout(locale).catch(() => null))?.store.name;
 
   return (
     <>
-      <h1 className="visually-hidden">{t('shopNow')}</h1>
+      <h1 className="visually-hidden">{storeName || home.seo?.title}</h1>
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.top)} locale={locale} priority />
       <CategoryTiles tiles={home.featuredCategories} locale={locale} />
       {home.sections.map((section, index) => (

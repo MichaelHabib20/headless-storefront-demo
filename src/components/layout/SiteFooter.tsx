@@ -86,13 +86,14 @@ export function SiteFooter({ layout, locale }: { layout: Layout; locale: Locale 
         <div className={styles.column}>
           <h2 className={styles.heading}>{t('footerAccount')}</h2>
           <ul className={styles.list}>
+            {/* The old storefront's "My Profile / My Orders"; signed out, those pages offer sign-in and come back. */}
             <li>
-              <Link href={routes.signIn(locale)} className={styles.link}>
-                {t('signIn')}
+              <Link href={routes.profile(locale)} className={styles.link} data-testid="footer-profile">
+                {t('myProfile')}
               </Link>
             </li>
             <li>
-              <Link href={routes.account(locale)} className={styles.link}>
+              <Link href={routes.orders(locale)} className={styles.link} data-testid="footer-orders">
                 {t('myOrders')}
               </Link>
             </li>

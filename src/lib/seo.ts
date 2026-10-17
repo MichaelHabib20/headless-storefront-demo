@@ -42,6 +42,27 @@ export function seoMetadata(seo: Seo, locale: Locale): Metadata {
 }
 
 /**
+ * The `Seo` of a content page (CMS page, contact, branches, merchant form) with the old storefront's
+ * title rule: the merchant's own SEO title stays as it is; without one the backend's title is the
+ * page name, and the old storefront wrote "<page name> - <store name>" (static-page.component.ts).
+ * `pageTitle` is the page's name from the API, `storeName` is `Layout.store.name`.
+ */
+export function contentPageSeo(seo: Seo, pageTitle: string | null | undefined, storeName: string | null | undefined): Seo {
+  if (!storeName || !pageTitle || seo.title !== pageTitle || seo.title === storeName) return seo;
+  return { ...seo, title: pageTitleWithStore(seo.title, storeName) };
+}
+
+/** "<page> - <store>": the old storefront's title of its own pages (sign in, cart, CMS pages...). */
+export function pageTitleWithStore(title: string, storeName: string): string {
+  return `${title} - ${storeName}`;
+}
+
+/** The layout's title template for pages that set a plain `title` (ours): "<page> - <store>". */
+export function titleTemplate(storeName: string): string {
+  return pageTitleWithStore('%s', storeName);
+}
+
+/**
  * Canonical and hreflang of a page of ours that has no backend `Seo` and the same address in every
  * language (the brands and categories indexes): itself, each language, x-default the Arabic page
  * (like the old storefront and `seoMetadata`). `href` builds the page's URL in a language.

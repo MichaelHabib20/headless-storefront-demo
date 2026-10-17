@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { isLocale } from '@/sdk';
@@ -14,6 +15,12 @@ import { vouchersOn } from '@/lib/vouchers.server';
 import { walletOn } from '@/lib/wallet.server';
 
 export const dynamic = 'force-dynamic';
+
+/** Its own title like every other account page ("My account - <store>"), not the bare store name. */
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return isLocale(locale) ? { title: translator(locale)('accountOverview'), robots: { index: false } } : {};
+}
 
 /** The account's front page: who is signed in (from the API), the account links and sign-out. */
 export default async function AccountPage({ params }: { params: Promise<{ locale: string }> }) {

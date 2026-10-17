@@ -22,11 +22,16 @@ test.describe('CMS pages', () => {
     await expect(body.getByRole('heading', { level: 2, name: 'Who we are' })).toBeVisible();
     await expect(body.getByRole('listitem')).toHaveCount(2);
     await expect(body.getByRole('link', { name: 'Our story' })).toHaveAttribute('href', 'https://example.com/story');
-    await expect(page).toHaveTitle(/About Us/);
+    // the old storefront's title: "<page> - <store>"; one h1 (the text's own h1 is shown as an h2)
+    await expect(page).toHaveTitle('About Us - Seif Pharmacies');
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(body.getByRole('heading', { level: 2, name: 'About Us – Seif Pharmacies' })).toBeVisible();
 
     await page.goto('/ar/pages/about-us');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByRole('heading', { level: 1, name: 'عن الشركة' })).toBeVisible();
+    await expect(page).toHaveTitle('عن الشركة - صيدليات سيف');
+    await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.getByTestId('content-body')).toContainText('صيدليات سيف');
   });
 

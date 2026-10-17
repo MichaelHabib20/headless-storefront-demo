@@ -7,8 +7,9 @@ import { MessageBlock } from '@/components/layout/StoreUnavailable';
 import { loadForm, slugParam } from '@/lib/content.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { seoMetadata } from '@/lib/seo';
+import { contentPageSeo, seoMetadata } from '@/lib/seo';
 import { shopperContext } from '@/lib/shopper.server';
+import { loadLayout } from '@/lib/storefront.server';
 import styles from '@/components/content/Content.module.css';
 import { submitFormAction, uploadFormFileAction } from './actions';
 
@@ -19,8 +20,9 @@ type Params = Promise<{ locale: string; slug: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const result = await loadForm(locale, slugParam(slug));
-  return result.status === 'ok' ? seoMetadata(result.data.seo, locale) : { robots: { index: false } };
+  const [result, layout] = await Promise.all([loadForm(locale, slugParam(slug)), loadLayout(locale).catch(() => null)]);
+  if (result.status !== 'ok') return { robots: { index: false } };
+  return seoMetadata(contentPageSeo(result.data.seo, result.data.title, layout?.store.name), locale);
 }
 
 /**

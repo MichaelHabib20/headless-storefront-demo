@@ -151,7 +151,7 @@ a.link:hover .title {
 
 .time {
   font-size: 0.8125rem;
-  color: var(--color-muted);
+  color: var(--color-muted-on-surface);
 }
 
 .item[data-read='true'] .title {

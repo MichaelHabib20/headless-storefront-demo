@@ -9,7 +9,7 @@ adds a fact of its own.
 
 | Backend | Where it ends up | Code |
 |---|---|---|
-| `Seo.title / description / canonical / alternates / index` (every page with a `seo`) | `<title>` (the whole title: no "\| store" added), meta description, `<link rel=canonical>`, hreflang, `robots: noindex` | `seoMetadata(seo, locale)` in `src/lib/seo.ts`, from each page's `generateMetadata` |
+| `Seo.title / description / canonical / alternates / index` (every page with a `seo`) | `<title>` (the whole title: no "\| store" added; content pages: see below), meta description, `<link rel=canonical>`, hreflang, `robots: noindex` | `seoMetadata(seo, locale)` in `src/lib/seo.ts`, from each page's `generateMetadata` |
 | `Seo.openGraph` | `og:title/description/image/url/locale/type`, Twitter card (null members fall back to title / description) | `seoMetadata` |
 | `Seo.openGraph.type = product` | `<meta property="og:type" content="product">` (Next.js cannot write it) | `SeoLinks` in `src/lib/seo.ts` (rendered by `<JsonLd>`) |
 | `Seo.pagination.prev/next` | `<link rel="prev|next">` = canonical page + `page` | `paginationHrefs` / `SeoLinks` |
@@ -67,7 +67,11 @@ password, verify phone / e-mail, waiting approval — and track-order): `Disallo
 - Write `application/ld+json` anywhere but `src/lib/jsonld.ts` (rule `jsonld-one-place`).
 - Invent a fact (a rating, a price, an availability, an address) or a default for a null one.
 - Hardcode the store's host or build URLs from slugs: Targets go through `resolveTarget()`.
-- Add "| Store name" to a backend title (the backend already decided it).
+- Add "| Store name" to a backend title (the backend already decided it). The one exception is the
+  old storefront's content-page rule, in one place: `contentPageSeo(seo, page.title, store.name)`
+  (CMS pages, contact, branches, forms) writes "<page> - <store>" only when the backend's title is the
+  page name (no merchant SEO title). Our own pages get "<page> - <store>" from the layout's
+  `titleTemplate`.
 
 ## Tests to update
 

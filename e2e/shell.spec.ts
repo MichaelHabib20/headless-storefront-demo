@@ -42,6 +42,30 @@ test.describe('desktop', () => {
     await expect(page.getByTestId('usp-strip').getByRole('listitem')).toHaveCount(4);
   });
 
+  test("footer account column like the old storefront (signed in, EN + AR); the store's own titles", async ({ page, context }) => {
+    await signInAsCustomer(context);
+    await page.goto('/en');
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.getByRole('link', { name: 'Sign in' })).toHaveCount(0);
+    await expect(footer.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/en/account/profile');
+    await expect(footer.getByRole('link', { name: 'My orders' })).toHaveAttribute('href', '/en/account/order-history');
+    // home: the backend's title, and the store name as the one h1
+    await expect(page).toHaveTitle('Any time Any where');
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveText('Seif Pharmacies');
+
+    await page.goto('/ar/account');
+    await expect(page).toHaveTitle('حسابي - صيدليات سيف');
+    const arFooter = page.getByRole('contentinfo');
+    await expect(arFooter.getByRole('link', { name: 'الملف الشخصي' })).toHaveAttribute('href', '/ar/account/profile');
+    await expect(arFooter.getByRole('link', { name: 'طلباتي' })).toHaveAttribute('href', '/ar/account/order-history');
+    await page.goto('/ar');
+    await expect(page.locator('h1')).toHaveText('صيدليات سيف');
+
+    await page.goto('/en/cart');
+    await expect(page).toHaveTitle(/ - Seif Pharmacies$/);
+  });
+
   test('app banner dismissal is remembered', async ({ page }) => {
     await page.goto('/en');
     await page.getByTestId('app-banner').getByRole('button', { name: 'Dismiss' }).click();
