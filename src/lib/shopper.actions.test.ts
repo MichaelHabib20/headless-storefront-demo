@@ -21,6 +21,7 @@ vi.mock('./shopper.server', () => ({
     if (!env.customer && !env.guest) env.guest = `guest-${++env.guests}`;
     return { locale, token: env.customer ?? env.guest };
   }),
+  shopperToken: vi.fn(async () => env.customer ?? env.guest),
   guestToken: vi.fn(async () => env.guest),
   forgetGuest: vi.fn(async () => {
     env.guest = null;
@@ -56,14 +57,35 @@ beforeEach(() => {
 });
 
 describe('shopper server actions', () => {
-  it('starts a guest session on the first action, sets the quantity and revalidates the layout', async () => {
-    env.fetch = vi.fn<typeof fetch>(async () => reply(200, { data: {} }));
+  it('starts a guest session on the first action, sets the quantity and answers with GET /me read after it (no page re-render)', async () => {
+    const me = { authenticated: true, isGuest: true, counts: { cart: 1, wishlist: 0, compare: 0, unreadNotifications: 0 }, cartQuantities: { '7346': 1 } };
+    env.fetch = vi.fn<typeof fetch>(async (input) => reply(200, { data: String(input).endsWith('/me') ? me : {} }));
 
-    await expect(addToCartAction('en', 7346, 1)).resolves.toEqual({ ok: true, message: 'Added to cart.' });
+    await expect(addToCartAction('en', 7346, 1)).resolves.toEqual({
+      ok: true,
+      message: 'Added to cart.',
+      me: expect.objectContaining({ counts: me.counts }),
+      // Setting the guest cookie made Next re-render the page in this answer: no refresh needed after it.
+      rendered: true,
+    });
 
     expect(ensureShopperContext).toHaveBeenCalledWith('en');
-    expect(calls()).toEqual([{ url: 'cart/items/7346', method: 'PUT', auth: 'Bearer guest-1', body: { quantity: 1 } }]);
-    expect(revalidatePath).toHaveBeenCalledWith('/[locale]', 'layout');
+    expect(calls()).toEqual([
+      { url: 'cart/items/7346', method: 'PUT', auth: 'Bearer guest-1', body: { quantity: 1 } },
+      { url: 'me', method: 'GET', auth: 'Bearer guest-1', body: undefined },
+    ]);
+    // The shell shows these counts and refreshes the page in the background (ShopperStateProvider).
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it('still reports the add when GET /me fails after it, and does not write again', async () => {
+    env.fetch = vi.fn<typeof fetch>(async (input) => (String(input).endsWith('/me') ? reply(500, { error: { code: 'server_error', message: 'x' } }) : reply(200, { data: {} })));
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    env.guest = 'guest-known';
+
+    // A shopper with a session: no cookie set, so no `rendered` (the shell refreshes the page in the background).
+    await expect(addToCartAction('en', 7346, 2)).resolves.toEqual({ ok: true, message: 'Added to cart.', me: null });
+    expect(calls().map(({ method, url }) => `${method} ${url}`)).toEqual(['PUT cart/items/7346', 'GET me']);
   });
 
   it('uses the signed-in customer token when there is one', async () => {
