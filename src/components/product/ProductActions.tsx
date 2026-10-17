@@ -9,7 +9,7 @@ import { formatQuantity, stepDown, stepUp, type QuantityLimits } from '../cart/q
 import { useMiniCart } from '../layout/MiniCart';
 import { withCount } from '../shopper/labels';
 import { ShopperIcon } from '../shopper/ShopperIcon';
-import { useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
+import { useCartChanged, useProductShopperState, useRunInOrder } from '../shopper/ShopperStateProvider';
 import type { ProductShopperState } from '../shopper/state';
 import { Icon } from '../ui/Icon';
 import styles from './ProductActions.module.css';
@@ -63,7 +63,8 @@ interface Step {
 /**
  * Add to cart, wishlist and compare buttons for a product card or the product page. The starting
  * state comes from `GET /me` (ShopperStateProvider). Wishlist/compare toggle optimistically and roll
- * back when the server action fails; the action revalidates the layout, which refreshes the provider.
+ * back when the server action fails; they revalidate the layout, which refreshes the provider. Add to
+ * cart hands the provider the action's `GET /me` (cartChanged), then the page refreshes in the background.
  */
 export function ProductActions({ productId, productName, locale, canAddToCart, addQuantity, labels, quantity }: ProductActionsProps) {
   const { features, ...server } = useProductShopperState(productId);
@@ -83,6 +84,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
   const [status, setStatus] = useState<{ text: string; error: boolean } | null>(null);
   const focusCartLink = useRef(false);
   const runInOrder = useRunInOrder();
+  const cartChanged = useCartChanged();
   const miniCart = useMiniCart();
 
   const track = (field: Field, delta: number) => setPending((current) => ({ ...current, [field]: Math.max(0, (current[field] ?? 0) + delta) }));
@@ -103,6 +105,8 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     if (result.ok) {
       setState((current) => ({ ...current, ...change }));
       if (!optimistic) {
+        // Header / card counts from the action's GET /me now; the page refreshes in the background.
+        cartChanged(result.me, result.rendered);
         focusCartLink.current = true;
         shownByShell = miniCart.added(result.message ?? '');
       }

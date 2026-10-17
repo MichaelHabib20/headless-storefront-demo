@@ -111,7 +111,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           {t('skipToContent')}
         </a>
         {layout ? (
-          <>
+          // Header badges, the bottom nav and product cards read the shopper's counts and cart/wishlist/compare state from here.
+          <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
             {layout.topBanner && <TopBanner banner={layout.topBanner} locale={locale} label={t('topBannerLabel')} />}
             {showAppBanner && layout.appBanner && (
               <AppBanner
@@ -124,28 +125,25 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <SiteHeader layout={layout} locale={locale} me={me} />
             {layout.areaSelection && <AreaChooser locale={locale} selection={layout.areaSelection} me={me} locations={locations} choose={chooseAreaAction} />}
             <StoreClosedNotice status={layout.storeStatus} locale={locale} />
-            {/* Product cards on any page read the shopper's cart/wishlist/compare state from here. */}
-            <ShopperStateProvider me={me} features={{ wishlist: layout.features.wishlist, compare: layout.features.compare }}>
-              {/* Me.next: the waiting-for-approval gate and the verify-phone / complete-profile banners. */}
-              <NextStepGate
-                next={me?.next ?? null}
-                hrefs={{ verifyPhone: routes.verifyPhone(locale), completeProfile: routes.completeProfile(locale), waitingApproval: routes.waitingApproval(locale) }}
-                labels={{
-                  verifyBanner: t('authVerifyBanner'),
-                  verifyLink: t('authVerifyBannerLink'),
-                  dismiss: t('authVerifyDismiss'),
-                  completeBanner: t('authCompleteBanner'),
-                  completeLink: t('authCompleteBannerLink'),
-                  waitingTitle: t('authWaitingTitle'),
-                  waitingText: t('authWaitingPending'),
-                  waitingLink: t('authWaitingTitle'),
-                }}
-              >
-                <MiniCartProvider locale={locale} readCart={readMiniCart}>
-                  <main id="main">{children}</main>
-                </MiniCartProvider>
-              </NextStepGate>
-            </ShopperStateProvider>
+            {/* Me.next: the waiting-for-approval gate and the verify-phone / complete-profile banners. */}
+            <NextStepGate
+              next={me?.next ?? null}
+              hrefs={{ verifyPhone: routes.verifyPhone(locale), completeProfile: routes.completeProfile(locale), waitingApproval: routes.waitingApproval(locale) }}
+              labels={{
+                verifyBanner: t('authVerifyBanner'),
+                verifyLink: t('authVerifyBannerLink'),
+                dismiss: t('authVerifyDismiss'),
+                completeBanner: t('authCompleteBanner'),
+                completeLink: t('authCompleteBannerLink'),
+                waitingTitle: t('authWaitingTitle'),
+                waitingText: t('authWaitingPending'),
+                waitingLink: t('authWaitingTitle'),
+              }}
+            >
+              <MiniCartProvider locale={locale} readCart={readMiniCart}>
+                <main id="main">{children}</main>
+              </MiniCartProvider>
+            </NextStepGate>
             <UspStrip locale={locale} />
             <SiteFooter layout={layout} locale={locale} />
             <WhatsAppButton whatsapp={layout.whatsapp} label={t('chatOnWhatsapp')} />
@@ -159,7 +157,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             )}
             <MarketingTags marketing={layout.marketing} consentRequired={layout.features.cookieConsent} />
             <SiteJsonLd locale={locale} />
-          </>
+          </ShopperStateProvider>
         ) : (
           <main id="main">{'maintenance' in load ? <StoreUnavailable locale={locale} maintenance={load.maintenance} /> : <StoreUnavailable locale={locale} />}</main>
         )}

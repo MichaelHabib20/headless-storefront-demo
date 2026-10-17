@@ -21,6 +21,12 @@ const store = createShopperStore();
 const modules = createModules(store);
 let fail = false;
 let delayMs = 0; // simulate a slow backend (races only show up when writes overlap)
+/** [`METHOD /path-prefix`, ms] pairs: the first that matches a request (after /api/customer/v3) sets its latency. */
+let delays = [];
+const delayOf = (method, pathname) => delays.find(([key]) => {
+  const [m, prefix] = key.split(' ');
+  return m === method && pathname.startsWith(`/api/customer/v3${prefix}`);
+})?.[1] ?? 0;
 
 /** The request body as text (`raw`, e.g. a multipart upload) and as JSON (`json`, null when it is not JSON). */
 function readRequest(req) {
@@ -54,6 +60,8 @@ http
         fail = Boolean(mode.fail);
         delayMs = Math.max(0, Number(mode.delayMs ?? 0));
       }
+      // per-endpoint latency, e.g. {"delays": {"PUT /cart": 370, "GET /me": 250}} (performance runs); {} clears it
+      if ('delays' in mode) delays = Object.entries(mode.delays ?? {}).map(([key, ms]) => [key, Math.max(0, Number(ms) || 0)]);
       // module switches, e.g. {"auth": {"otpLogin": true}} (auth.mjs), {"banners": true} (shell.mjs)
       const switches = Object.assign({}, ...modules.map((part) => part.mode?.(mode) ?? {}));
       return send(200, { fail, delayMs, ...switches });
@@ -63,9 +71,12 @@ http
       for (const part of modules) part.reset?.();
       fail = false;
       delayMs = 0;
+      delays = [];
       return send(200, { reset: true });
     }
     if (delayMs && url.pathname.startsWith('/api/')) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    const latency = delays.length ? delayOf(req.method, url.pathname) : 0;
+    if (latency) await new Promise((resolve) => setTimeout(resolve, latency));
     if (url.pathname === '/health') return send(200, { ok: true });
     // Test controls of the modules (e.g. GET /__events, POST /__seo of scripts/mock/seo.mjs).
     if (url.pathname.startsWith('/__')) {

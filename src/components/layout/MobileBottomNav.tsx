@@ -12,6 +12,7 @@ import { OPEN_AREA_EVENT } from '@/lib/shell';
 import { Icon } from '../ui/Icon';
 import { LocaleLink } from './LanguageSwitch';
 import { NavIcon } from './NavIcon';
+import { useShopperMe } from '../shopper/ShopperStateProvider';
 import styles from './MobileBottomNav.module.css';
 
 interface MobileBottomNavProps {
@@ -25,7 +26,9 @@ interface MobileBottomNavProps {
  * The phone's bottom bar and its "more" sheet, exactly as `Layout.mobileNav` describes them (items,
  * order, labels, icons, badges). Hidden from tablet width up (CSS).
  */
-export function MobileBottomNav({ nav, locale, me }: MobileBottomNavProps) {
+export function MobileBottomNav({ nav, locale, me: rendered }: MobileBottomNavProps) {
+  // Inside ShopperStateProvider: its latest `GET /me` (updated right after add to cart).
+  const me = useShopperMe(rendered);
   const t = translator(locale);
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname() ?? routes.home(locale);
