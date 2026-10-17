@@ -10,6 +10,14 @@ const setMode = (page: Page, mode: Record<string, boolean>) => page.request.post
 
 test.skip(live, 'the shell keys are not deployed on staging yet (mock only)');
 
+/** The add-to-cart message and the WhatsApp button (both shown) do not overlap. */
+async function expectClearOfWhatsApp(page: Page) {
+  const toast = (await page.getByTestId('cart-toast').boundingBox())!;
+  const chat = (await page.getByTestId('whatsapp').boundingBox())!;
+  const overlaps = toast.x < chat.x + chat.width && chat.x < toast.x + toast.width && toast.y < chat.y + chat.height && chat.y < toast.y + toast.height;
+  expect(overlaps, `toast ${JSON.stringify(toast)} vs WhatsApp ${JSON.stringify(chat)}`).toBe(false);
+}
+
 test.beforeEach(async ({ request }) => {
   await request.post(`${MOCK_API}/__reset`);
 });
@@ -24,11 +32,23 @@ test.describe('desktop', () => {
     await expect(toast).toHaveText('Added to cart.');
     await expect(page.getByTestId('mini-cart')).toHaveCount(0);
     await expect(page.getByRole('banner').getByRole('link', { name: 'Cart, 1 item' })).toBeVisible();
-    // bottom inline end (right in English), then it goes away by itself
+    // bottom inline end (right in English), above the WhatsApp button, then it goes away by itself
     const box = (await toast.boundingBox())!;
     expect(box.x + box.width).toBeGreaterThan(1440 - 40);
-    expect(box.y + box.height).toBeGreaterThan(900 - 80);
+    expect(box.y + box.height).toBeGreaterThan(900 - 160);
+    await expectClearOfWhatsApp(page);
     await expect(toast).toHaveCount(0, { timeout: 8000 });
+  });
+
+  test('Arabic: the add-to-cart message is bottom left, above the WhatsApp button, never on it', async ({ page }) => {
+    await page.goto('/ar');
+    await page.getByTestId('product-card').first().getByRole('button', { name: 'أضف إلى السلة' }).click();
+    const toast = page.getByTestId('cart-toast');
+    await expect(toast).toHaveText('تمت الإضافة إلى السلة.');
+    const box = (await toast.boundingBox())!;
+    expect(box.x).toBeLessThan(40);
+    expect(box.y + box.height).toBeGreaterThan(900 - 160);
+    await expectClearOfWhatsApp(page);
   });
 
   test('bottom nav is for phones only; legal links and the app banner are in the page', async ({ page }) => {
@@ -182,5 +202,6 @@ test.describe('phone (360 px)', () => {
     expect(box.y + box.height).toBeLessThanOrEqual(nav.y);
     expect(box.x).toBeLessThan(40);
     expect(box.width).toBeLessThanOrEqual(360);
+    await expectClearOfWhatsApp(page);
   });
 });

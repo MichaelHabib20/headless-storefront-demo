@@ -19,6 +19,8 @@ const port = Number(process.env.E2E_PORT ?? 3200);
  * host; requests on 127.0.0.1 are a test host of the same deployment.
  */
 const sitePort = Number(process.env.E2E_SITE_PORT ?? port + 1);
+/** Hosting runs in UTC: dates must show the store's clock anyway (src/lib/dates.ts), so the servers run in UTC here too. */
+const SERVER_TZ = process.env.E2E_SERVER_TZ ?? 'UTC';
 
 export default defineConfig({
   testDir: './e2e',
@@ -45,7 +47,7 @@ export default defineConfig({
       url: `http://127.0.0.1:${port}/en`,
       reuseExistingServer: false,
       timeout: 120_000,
-      env: { SC_API_URL: apiUrl, SC_API_KEY: '', SC_REVALIDATE_SECONDS: '0' },
+      env: { SC_API_URL: apiUrl, SC_API_KEY: '', SC_REVALIDATE_SECONDS: '0', TZ: SERVER_TZ },
     },
     ...(live
       ? []
@@ -55,7 +57,7 @@ export default defineConfig({
             url: `http://127.0.0.1:${sitePort}/en`,
             reuseExistingServer: false,
             timeout: 120_000,
-            env: { SC_API_URL: apiUrl, SC_API_KEY: '', SC_REVALIDATE_SECONDS: '0', SC_SITE_URL: SITE_URL },
+            env: { SC_API_URL: apiUrl, SC_API_KEY: '', SC_REVALIDATE_SECONDS: '0', SC_SITE_URL: SITE_URL, TZ: SERVER_TZ },
           },
         ]),
   ],

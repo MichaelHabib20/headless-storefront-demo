@@ -1,10 +1,11 @@
 /* Mini cart drawer: slides in from the inline end (right in LTR, left in RTL). Above the bottom nav. */
 
-/* Add-to-cart message: bottom inline end, above the bottom nav and the WhatsApp button, like the old storefront. */
+/* Add-to-cart message: bottom inline end like the old storefront, stacked above the bottom nav and the
+   WhatsApp button (--floating-actions-space, set by FloatingActions.module.css when the button is there). */
 .toastRegion {
   position: fixed;
   inset-inline-end: var(--space-4);
-  inset-block-end: calc(var(--bottom-nav-space, 0px) + var(--space-4));
+  inset-block-end: calc(var(--bottom-nav-space, 0px) + var(--floating-actions-space, 0px) + var(--space-4));
   z-index: 85;
   max-inline-size: min(360px, calc(100vw - 2 * var(--space-4)));
   pointer-events: none;

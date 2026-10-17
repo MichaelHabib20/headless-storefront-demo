@@ -12,6 +12,11 @@
   color: #ffffff;
   box-shadow: 0 6px 16px rgb(0 0 0 / 20%);
 }
+/* Room the button takes at the bottom inline end; other fixed messages there (the add-to-cart toast)
+   sit above it instead of on it. */
+:global(body):has(.whatsapp) {
+  --floating-actions-space: calc(56px + var(--space-3));
+}
 .whatsapp:hover {
   transform: translateY(-2px);
 }
@@ -26,6 +31,7 @@
     height: 48px;
   }
   :global(body):has(.whatsapp) {
+    --floating-actions-space: calc(48px + var(--space-3));
     padding-block-end: calc(var(--bottom-nav-space, 0px) + 48px + 2 * var(--space-3));
   }
   /* Text that can sit at the bottom of the first screen (the product title under the gallery) keeps its

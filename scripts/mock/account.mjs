@@ -95,7 +95,8 @@ const SEEDED_RATING = { rating: 5, driverRating: null, feedback: { en: 'Quick an
 const SEEDED_ORDERS = [
   {
     number: '48201',
-    placedAt: '2026-09-28T09:30:00Z',
+    // Like the backend: the store's clock with its offset. Just after midnight in Cairo = the day before in UTC.
+    placedAt: '2026-09-28T01:10:11+03:00',
     status: 'processing',
     steps: [['placed', 'done'], ['confirmed', 'done'], ['preparing', 'current'], ['onTheWay'], ['delivered']],
     fulfilment: 'delivery',
@@ -242,7 +243,7 @@ export function createAccountModule(shopper) {
     return {
       id: `mock-order-${spec.number}`,
       number: spec.number,
-      placedAt: new Date(spec.placedAt).toISOString(),
+      placedAt: spec.placedAt,
       status: status(spec.status, locale),
       timeline: timeline(spec.steps, locale),
       fulfilment:

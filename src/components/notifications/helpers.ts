@@ -1,6 +1,7 @@
 import type { Locale } from '@/sdk';
 import { INTL_LOCALE, formatNumber } from '@/lib/numbers';
 import { routes } from '@/lib/routing';
+import { formatStoreTime } from '@/lib/dates';
 
 /**
  * Display helpers for the notifications page. Everything here is presentation only:
@@ -39,8 +40,9 @@ export function formatNotificationDate(
   if (Number.isNaN(date.getTime())) return { label: iso, absolute: iso };
 
   const intl = locale === 'ar' ? INTL_LOCALE.ar : 'en';
-  const absolute = new Intl.DateTimeFormat(intl, { dateStyle: 'long', timeStyle: 'short', timeZone }).format(date);
-  const shortDate = new Intl.DateTimeFormat(intl, { day: 'numeric', month: 'short', year: 'numeric', timeZone }).format(date);
+  // On the store's clock (see src/lib/dates.ts), not the server's.
+  const absolute = formatStoreTime(iso, intl, { dateStyle: 'long', timeStyle: 'short' }, timeZone);
+  const shortDate = formatStoreTime(iso, intl, { day: 'numeric', month: 'short', year: 'numeric' }, timeZone);
 
   // Seconds since it arrived; a slightly-future timestamp (clock skew) counts as "now".
   const seconds = Math.max(0, Math.round((now.getTime() - date.getTime()) / 1000));
