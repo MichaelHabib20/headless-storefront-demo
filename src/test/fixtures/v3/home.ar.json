@@ -9,7 +9,7 @@
      "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/140045-1777463405.jpeg",
      "alt": null
     },
-    "title": null,
+    "title": "الاعلان العلوي",
     "target": {
      "type": "form",
      "slug": "prescriptions"
@@ -23,7 +23,7 @@
      "desktop": "https://cdn.supercommerce.io/seif-pharmacies/uploads/140045-1777463439.jpeg",
      "alt": null
     },
-    "title": null,
+    "title": "الاعلان السفلي",
     "target": {
      "type": "form",
      "slug": "prescriptions"

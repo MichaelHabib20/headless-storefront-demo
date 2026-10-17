@@ -289,8 +289,18 @@
   }
 }
 
+/*
+ * Like the old storefront's form button: the store's primary colour (--color-primary when the theme
+ * sets one; black otherwise), rounded like the card, and the merchant's label as written ("Prescriptions",
+ * not upper-cased).
+ */
 .formCard .primary {
   justify-self: stretch;
+  border-radius: 8px;
+  background: var(--color-primary, var(--color-inverse-bg));
+  color: var(--color-on-primary, var(--color-inverse-text));
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 /* ---------------------------------------------------------------- branches */

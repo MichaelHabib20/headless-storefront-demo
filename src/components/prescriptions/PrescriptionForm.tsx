@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useId } from 'react';
+import { useId } from 'react';
 import type { Locale, PrescriptionForm as PrescriptionFormData } from '@/sdk';
 import { FormFields, type UploadFileAction } from '@/components/content/FormFields';
 import { RichText } from '@/components/ui/RichText';
@@ -9,6 +9,7 @@ import { translator } from '@/lib/i18n';
 import { prescriptionStepHref, routes } from '@/lib/routing';
 import type { PrescriptionFormState, SendPrescriptionAction } from './types';
 import styles from './Prescriptions.module.css';
+import { useSafeActionState } from '@/lib/safe-action';
 
 const INITIAL: PrescriptionFormState = {};
 
@@ -27,7 +28,7 @@ interface PrescriptionFormProps {
  */
 export function PrescriptionForm({ locale, form, sendAction, uploadAction }: PrescriptionFormProps) {
   const t = translator(locale);
-  const [state, action, pending] = useActionState(sendAction, INITIAL);
+  const [state, action, pending] = useSafeActionState(sendAction, INITIAL, locale);
   const addressLegend = useId();
   const errors = state.fieldErrors ?? {};
 

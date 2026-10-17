@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useId, useState, type FormEvent } from 'react';
 import type { Checkout, CheckoutContactInput, CheckoutSettings, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
+import { callAction } from '@/lib/safe-action';
 import { routes } from '@/lib/routing';
 import type { ContactResult } from './types';
 import styles from './Checkout.module.css';
@@ -48,7 +49,7 @@ export function ContactSection({ checkout, settings, locale, busy, onSave }: Con
     setSaving(true);
     setErrors({});
     setMessage(null);
-    const result = await onSave({ firstName: values.firstName, lastName: values.lastName, phone: values.phone, email: showEmail && values.email.trim() ? values.email : null });
+    const result = await callAction(() => onSave({ firstName: values.firstName, lastName: values.lastName, phone: values.phone, email: showEmail && values.email.trim() ? values.email : null }), { ok: false, message: t('formSendFailed') } as ContactResult);
     setSaving(false);
     if (result.ok) {
       setEditing(false);

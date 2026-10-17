@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { callAction } from '@/lib/safe-action';
 import type { AuthSettings, Locale, SocialProvider } from '@/sdk';
 
 export interface SocialSignInResult {
@@ -80,7 +81,7 @@ export function SocialButtons({ social, locale, next, labels, action }: SocialBu
   const submit = (provider: SocialProvider, token: string, name: string | null) => {
     setError(null);
     startTransition(async () => {
-      const result = await action(locale, provider, token, name, next);
+      const result = await callAction(() => action(locale, provider, token, name, next), { ok: false, message: labels.failed });
       if (!result.ok) setError(result.message ?? labels.failed);
     });
   };

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import type { AreaSelection, Locale, Locations, ShopperArea } from '@/sdk';
 import { translator } from '@/lib/i18n';
+import { callAction } from '@/lib/safe-action';
 import type { AreaResult } from '@/lib/shell.actions';
 import { areaChooserForced, OPEN_AREA_EVENT } from '@/lib/shell';
 import { Icon } from '../ui/Icon';
@@ -123,7 +124,7 @@ function AreaDialog({ locale, selection, area, locations, onClose, onSave }: Are
               if (!areaId) return;
               setMessage(null);
               startTransition(async () => {
-                const result = await onSave(areaId);
+                const result = await callAction(() => onSave(areaId), { ok: false as const, message: t('formSendFailed') });
                 if (!result.ok) setMessage(result.message);
               });
             }}

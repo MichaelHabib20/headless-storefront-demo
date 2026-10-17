@@ -1,6 +1,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import { createGuestSession, type Locale, type ShopperContext } from '@/sdk';
+import { GUEST_COOKIE, TOKEN_COOKIE } from './session-cookies';
 import { storefrontClient } from './storefront.server';
 
 /**
@@ -9,13 +10,11 @@ import { storefrontClient } from './storefront.server';
  * - `sc_guest`: guest session, created on the FIRST action that needs one (add to cart,
  *   wishlist, compare). Rendering a page never creates a guest.
  */
-const CUSTOMER_COOKIE = 'sc_token';
-const GUEST_COOKIE = 'sc_guest';
 const GUEST_MAX_AGE = 60 * 60 * 24 * 90;
 
 export async function shopperToken(): Promise<string | null> {
   const jar = await cookies();
-  return jar.get(CUSTOMER_COOKIE)?.value ?? jar.get(GUEST_COOKIE)?.value ?? null;
+  return jar.get(TOKEN_COOKIE)?.value ?? jar.get(GUEST_COOKIE)?.value ?? null;
 }
 
 export async function guestToken(): Promise<string | null> {

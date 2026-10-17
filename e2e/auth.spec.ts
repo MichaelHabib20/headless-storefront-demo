@@ -254,6 +254,106 @@ test.describe('sign out', () => {
   });
 });
 
+/**
+ * A session ended elsewhere (signed out on another device: the backend revokes every older token) or
+ * expired leaves a stale cookie behind. It must never bounce the shopper between the account and the
+ * sign-in page: the cookie goes, the shopper is a guest, and the sign-in form is there.
+ */
+test.describe('a session that ended elsewhere', () => {
+  const endedBy = {
+    'signed out on another device': async (request: APIRequestContext) => {
+      // browser B signs out with its own copy of the token: the mock revokes it like the backend does
+      await request.post(`${MOCK_API}/__session`, { data: { revoke: 'test-customer' } });
+      return 'test-customer';
+    },
+    expired: async () => 'expired-token',
+  };
+
+  async function staleSession(context: BrowserContext, token: string) {
+    await context.addCookies([
+      { name: 'sc_token', value: token, domain: '127.0.0.1', path: '/', httpOnly: true, sameSite: 'Lax' },
+      { name: 'sc_customer', value: encodeURIComponent(JSON.stringify({ id: 4550965, firstName: 'Test' })), domain: '127.0.0.1', path: '/', httpOnly: true, sameSite: 'Lax' },
+    ]);
+  }
+
+  for (const [how, end] of Object.entries(endedBy)) {
+    test(`${how}: the account sends to the sign-in form once, the cookies go, and signing in works again`, async ({ page, context, request }) => {
+      await staleSession(context, await end(request));
+      const response = await open(page, '/en/account');
+      expect(response?.ok()).toBe(true);
+      await expect(page.getByTestId('sign-in-form')).toBeVisible();
+      expect(await cookie(context, 'sc_token')).toBeNull();
+      expect(await cookie(context, 'sc_customer')).toBeNull();
+      await page.getByTestId('account-menu-trigger').click();
+      await expect(page.getByTestId('menu-sign-in')).toBeVisible();
+
+      await signIn(page);
+      await expect(page).toHaveURL(/\/en\/account$/);
+      await expect(page.getByTestId('account-page')).toBeVisible();
+    });
+  }
+
+  test('the sign-in page itself shows the form for a dead token (Arabic, phone width)', async ({ page, context, request }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await staleSession(context, await endedBy['signed out on another device'](request));
+    const response = await open(page, '/ar/session/signin?returnUrl=%2Far%2Faccount%2Fprofile');
+    expect(response?.ok()).toBe(true);
+    await expect(page).toHaveURL(/\/ar\/session\/signin\?returnUrl=%2Far%2Faccount%2Fprofile$/);
+    await expect(page.getByTestId('sign-in-form')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('تسجيل الدخول');
+    expect(await cookie(context, 'sc_token')).toBeNull();
+  });
+
+  test('a private page shows the sign-in card in place and the cookie goes (no loop)', async ({ page, context }) => {
+    await staleSession(context, 'expired-token');
+    await open(page, '/en/account/profile');
+    await expect(page).toHaveURL(/\/en\/account\/profile$/);
+    await expect(page.getByTestId('account-sign-in')).toBeVisible();
+    expect(await cookie(context, 'sc_token')).toBeNull();
+  });
+
+  test('a malformed cookie is dropped before the page renders', async ({ page, context }) => {
+    await context.addCookies([
+      { name: 'sc_token', value: '%7Bnot%20a%20token%7D', domain: '127.0.0.1', path: '/' },
+      { name: 'sc_customer', value: '%7Bbroken', domain: '127.0.0.1', path: '/' },
+    ]);
+    await open(page, '/en/session/signin');
+    await expect(page.getByTestId('sign-in-form')).toBeVisible();
+    expect(await cookie(context, 'sc_token')).toBeNull();
+    expect(await cookie(context, 'sc_customer')).toBeNull();
+  });
+
+  test('a backend that is down signs nobody out: the account shows its error and the cookie stays', async ({ page, context, request }) => {
+    await staleSession(context, 'test-customer');
+    // the shopper's calls fail (500); the store's layout still loads
+    await request.post(`${MOCK_API}/__mode`, { data: { failPaths: ['/me', '/account/'] } });
+    try {
+      await page.goto('/en/account');
+      await expect(page.getByTestId('account-error')).toBeVisible();
+      await expect(page).toHaveURL(/\/en\/account$/);
+      expect(await cookie(context, 'sc_token')).toBe('test-customer');
+      await page.goto('/en/session/signin');
+      await expect(page).toHaveURL(/\/en\/session\/signin$/);
+      expect(await cookie(context, 'sc_token')).toBe('test-customer');
+    } finally {
+      await request.post(`${MOCK_API}/__mode`, { data: { failPaths: [] } });
+    }
+    // back up: the session still works
+    await open(page, '/en/account');
+    await expect(page.getByTestId('account-page')).toBeVisible();
+  });
+
+  test('a cart write with a dead token goes on as a guest', async ({ page, context, request }) => {
+    await staleSession(context, await endedBy['signed out on another device'](request));
+    await context.addCookies([{ name: 'sc_session_checked', value: '1', domain: '127.0.0.1', path: '/' }]);
+    await open(page, '/en/products');
+    await page.getByRole('button', { name: /add to cart/i }).first().click();
+    await expect(page.getByRole('status').filter({ hasText: /added to (your )?cart/i }).first()).toBeVisible();
+    expect(await cookie(context, 'sc_token')).toBeNull();
+    expect(await cookie(context, 'sc_guest')).not.toBeNull();
+  });
+});
+
 test.describe('password reset', () => {
   test('by SMS: forgot → code + new password → signed in', async ({ page }) => {
     await open(page, '/en/session/signin');

@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
 import type { AuthSettings, Locale } from '@/sdk';
 import { PasswordInput } from '@/components/auth/PasswordInput';
 import { SocialButtons } from '@/components/auth/SocialButtons';
 import type { FormState } from '@/lib/form';
 import { sendOtpAction, signInAction, signInWithOtpAction, socialSignInAction, type OtpState } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 export interface SignInLabels {
   identifierPhone: string;
@@ -65,7 +66,7 @@ export function SignInForm({ settings, locale, next, forgotHref, labels }: SignI
 }
 
 function PasswordForm({ settings, locale, next, forgotHref, labels, isPhone }: SignInFormProps & { isPhone: boolean }) {
-  const [state, action, pending] = useActionState<FormState, FormData>(signInAction, {});
+  const [state, action, pending] = useSafeActionState<FormState>(signInAction, {}, locale);
   const errors = state.fieldErrors ?? {};
 
   return (
@@ -115,8 +116,8 @@ function PasswordForm({ settings, locale, next, forgotHref, labels, isPhone }: S
 }
 
 function OtpForm({ settings, locale, next, labels }: Omit<SignInFormProps, 'forgotHref'>) {
-  const [sendState, sendAction, sending] = useActionState<OtpState, FormData>(sendOtpAction, {});
-  const [verifyState, verifyAction, verifying] = useActionState<OtpState, FormData>(signInWithOtpAction, {});
+  const [sendState, sendAction, sending] = useSafeActionState<OtpState>(sendOtpAction, {}, locale);
+  const [verifyState, verifyAction, verifying] = useSafeActionState<OtpState>(signInWithOtpAction, {}, locale);
   const [phoneAgain, setPhoneAgain] = useState(false);
   const sent = !phoneAgain && (verifyState.sent ?? sendState.sent);
 

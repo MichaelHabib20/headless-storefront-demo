@@ -1,10 +1,10 @@
 'use client';
 
-import { useActionState } from 'react';
 import type { Locale, ProfileField } from '@/sdk';
 import { AuthFields } from '@/components/auth/AuthFields';
 import type { FormState } from '@/lib/form';
 import { updateProfileAction } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface ProfileFormProps {
   /** `Profile.fields`: the form with the current values and what may be changed. */
@@ -14,7 +14,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ fields, locale, labels }: ProfileFormProps) {
-  const [state, action, pending] = useActionState<FormState, FormData>(updateProfileAction, {});
+  const [state, action, pending] = useSafeActionState<FormState>(updateProfileAction, {}, locale);
 
   return (
     <form action={action} noValidate data-testid="profile-form">

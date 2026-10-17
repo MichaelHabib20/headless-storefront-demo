@@ -1,12 +1,13 @@
 'use client';
 
-import { startTransition, useActionState, useState, type FormEvent } from 'react';
+import { startTransition, useState, type FormEvent } from 'react';
 import type { FormField, Locale } from '@/sdk';
 import { AuthFields } from '@/components/auth/AuthFields';
 import { PasswordInput } from '@/components/auth/PasswordInput';
 import type { FormState } from '@/lib/form';
 import { checkFields, checkMessages, formTexts, unplacedErrors, type FieldCheck } from '@/lib/form-checks';
 import { signUpAction } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 export interface SignUpLabels {
   submit: string;
@@ -53,7 +54,7 @@ export function signUpChecks(fields: readonly FormField[], phoneLength?: number 
  * (React resets a form after its action).
  */
 export function SignUpForm({ fields, locale, labels, phoneLength }: SignUpFormProps) {
-  const [state, dispatch, pending] = useActionState<FormState, FormData>(signUpAction, {});
+  const [state, dispatch, pending] = useSafeActionState<FormState>(signUpAction, {}, locale);
   const [checked, setChecked] = useState<Record<string, string> | null>(null);
   const errors = checked ?? state.fieldErrors ?? {};
   const unplaced = checked ? [] : unplacedErrors(state.fieldErrors ?? {}, [...fields.map((field) => field.name), CONFIRMATION]);

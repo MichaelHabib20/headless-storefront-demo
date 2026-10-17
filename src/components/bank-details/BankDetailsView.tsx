@@ -1,10 +1,10 @@
 'use client';
 
-import { useActionState } from 'react';
 import type { BankDetails, Locale } from '@/sdk';
 import { FormFields } from '@/components/content/FormFields';
 import { translator } from '@/lib/i18n';
 import styles from '@/components/insurance/Insurance.module.css';
+import { useSafeActionState } from '@/lib/safe-action';
 
 /** What saving answers to the page: the backend's message and page, or its reasons per field. */
 export interface BankDetailsState {
@@ -12,6 +12,8 @@ export interface BankDetailsState {
   message?: string;
   fieldErrors?: Record<string, string>;
   details?: BankDetails;
+  /** What was typed, shown again when the send failed. */
+  values?: Record<string, string>;
 }
 
 export type SaveBankDetailsAction = (state: BankDetailsState, form: FormData) => Promise<BankDetailsState>;
@@ -24,7 +26,7 @@ const INITIAL: BankDetailsState = {};
  */
 export function BankDetailsView({ locale, details: first, saveAction }: { locale: Locale; details: BankDetails; saveAction: SaveBankDetailsAction }) {
   const t = translator(locale);
-  const [state, action, pending] = useActionState(saveAction, INITIAL);
+  const [state, action, pending] = useSafeActionState(saveAction, INITIAL, locale);
   const details = state.ok && state.details ? state.details : first;
   const errors = state.ok ? {} : (state.fieldErrors ?? {});
 
@@ -64,7 +66,7 @@ export function BankDetailsView({ locale, details: first, saveAction }: { locale
               {state.message}
             </p>
           )}
-          <FormFields locale={locale} fields={details.fields} errors={errors} idPrefix="bank" />
+          <FormFields locale={locale} fields={details.fields} errors={errors} values={state.ok ? undefined : state.values} idPrefix="bank" />
           <div className={styles.actions}>
             <button type="submit" className={styles.primary} disabled={pending}>
               {pending ? t('insuranceSaving') : t('insuranceSave')}

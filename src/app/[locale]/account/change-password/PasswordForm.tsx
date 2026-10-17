@@ -1,10 +1,11 @@
 'use client';
 
-import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
+import { startTransition, useEffect, useRef, useState, type FormEvent } from 'react';
 import type { Locale } from '@/sdk';
 import { PasswordInput } from '@/components/auth/PasswordInput';
 import { checkFields, checkMessages, formTexts, unplacedErrors, type FieldCheck } from '@/lib/form-checks';
 import { changePasswordAction, type PasswordState } from './actions';
+import { useSafeActionState } from '@/lib/safe-action';
 
 interface PasswordFormProps {
   locale: Locale;
@@ -27,7 +28,7 @@ const CHECKS: FieldCheck[] = [
  * action, which React would reset.
  */
 export function PasswordForm({ locale, labels }: PasswordFormProps) {
-  const [state, dispatch, pending] = useActionState<PasswordState, FormData>(changePasswordAction, {});
+  const [state, dispatch, pending] = useSafeActionState<PasswordState>(changePasswordAction, {}, locale);
   const [checked, setChecked] = useState<Record<string, string> | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const errors = checked ?? state.fieldErrors ?? {};

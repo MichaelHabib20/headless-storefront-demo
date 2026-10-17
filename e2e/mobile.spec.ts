@@ -157,4 +157,63 @@ test.describe('mobile', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
+
+  // A touch phone shows the icon-only "Add to cart" (its label visually hidden, absolutely placed):
+  // those labels used to hang off the page from the scrolled table and widen the whole page.
+  test('compare with 4 products on a phone: the table scrolls inside its box, the page never does (en and ar)', async ({ page, context }) => {
+    test.skip(live, 'needs the mock API');
+    await page.request.post(`${MOCK_API}/__reset`);
+    await signInAsCustomer(context);
+    const headers = { Authorization: 'Bearer test-customer', Accept: 'application/json' };
+    const listing = await (await page.request.get(`${MOCK_API}/api/customer/v3/products?perPage=8`, { headers })).json();
+    for (const product of listing.data.items.slice(0, 6)) await page.request.put(`${MOCK_API}/api/customer/v3/compare/items/${product.id}`, { headers });
+    for (const locale of ['en', 'ar']) {
+      await page.goto(`/${locale}/compare`);
+      await expect(page.getByTestId('compare-product')).toHaveCount(4);
+      // what a store's card adds on a touch phone: a visually hidden label (absolutely placed) in each column
+      await page.evaluate(() => {
+        for (const cell of document.querySelectorAll('[data-testid="compare-product"]')) {
+          const label = document.createElement('span');
+          label.className = 'visually-hidden';
+          label.textContent = 'Add to cart';
+          cell.append(label);
+        }
+      });
+      const scroller = page.getByTestId('compare-scroller');
+      expect(await scroller.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+      // the phone keeps its own width (a wide page makes it lay the page out wider) and nothing sticks out
+      expect(await page.evaluate(() => window.innerWidth)).toBe(page.viewportSize()!.width);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      const box = await page.getByRole('heading', { level: 1 }).boundingBox();
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(page.viewportSize()!.width);
+    }
+    await page.request.post(`${MOCK_API}/__reset`);
+  });
+
+  test('the account menu on a phone: one column of icon rows, RTL too', async ({ page, context }) => {
+    test.skip(live, 'needs the mock API');
+    await signInAsCustomer(context);
+    for (const locale of ['en', 'ar']) {
+      await page.goto(`/${locale}/account`);
+      const links = page.getByTestId('account-links').getByRole('link');
+      await expect(links.first()).toBeVisible();
+      const [first, second] = [await links.nth(0).boundingBox(), await links.nth(1).boundingBox()];
+      expect(second!.y).toBeGreaterThan(first!.y + first!.height - 1);
+      expect(Math.abs(second!.x - first!.x)).toBeLessThan(2);
+      expect(await links.nth(0).locator('svg').count()).toBe(2);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+  });
+
+  test('a session ended on another device: the sign-in form on a phone, no redirect loop (ar)', async ({ page, context }) => {
+    test.skip(live, 'needs the mock API');
+    await page.request.post(`${MOCK_API}/__reset`);
+    await signInAsCustomer(context);
+    await page.request.post(`${MOCK_API}/__session`, { data: { revoke: 'test-customer' } });
+    expect((await page.goto('/ar/account'))?.ok()).toBe(true);
+    await expect(page.getByTestId('sign-in-form')).toBeVisible();
+    expect((await context.cookies()).some((cookie) => cookie.name === 'sc_token')).toBe(false);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.request.post(`${MOCK_API}/__reset`);
+  });
 });

@@ -464,6 +464,19 @@ export function createAuthModule(store) {
   return {
     handle,
     reset,
+    /**
+     * Test control `POST /__session {"revoke": "<token>"}`: the customer signed out on another device
+     * (the backend's sign-out revokes every token issued before it): that token answers 401 on every
+     * v3 path from now on, `GET /me` included. An expired or unknown token needs no control: any
+     * token the mock never issued reads as anonymous on `GET /me` and 401 on the customer's endpoints.
+     */
+    control(method, pathname, body) {
+      if (method !== 'POST' || pathname !== '/__session') return null;
+      const token = typeof body?.revoke === 'string' ? body.revoke : '';
+      if (!token) return [422, { error: { code: 'validation_failed', message: 'revoke: a token' } }];
+      revoked.add(token);
+      return [200, { revoked: [...revoked] }];
+    },
     mode: (modeBody) => setMode(modeBody?.auth),
     /** For tests: the customer behind a token. */
     customerOf: (token) => tokens.get(token) ?? null,

@@ -5,7 +5,7 @@ import { AuthPage } from '@/components/auth/AuthPage';
 import { loadAuthSettings } from '@/lib/auth.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { readSession } from '@/lib/session';
+import { readShopper } from '@/lib/session';
 import { SignUpForm } from './SignUpForm';
 
 export const dynamic = 'force-dynamic';
@@ -20,7 +20,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SignUpPage({ params }: Props) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  if (await readSession()) redirect(routes.account(locale));
+  // a dead token (signed out elsewhere, expired) or an unreachable backend shows the form
+  if ((await readShopper(locale)).session === 'live') redirect(routes.account(locale));
   const t = translator(locale);
   const result = await loadAuthSettings(locale);
 
