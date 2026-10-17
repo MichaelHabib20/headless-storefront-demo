@@ -3987,21 +3987,6 @@
      ]
     },
     "children": []
-   },
-   {
-    "id": "prescriptions",
-    "name": "Prescription",
-    "image": {
-     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/prescription_3974864-1772472071.png",
-     "alt": "Prescription"
-    },
-    "target": {
-     "type": "category",
-     "path": [
-      "prescriptions"
-     ]
-    },
-    "children": []
    }
   ]
  }

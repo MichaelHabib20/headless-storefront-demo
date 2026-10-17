@@ -1555,7 +1555,7 @@ export interface components {
         /** @enum {string} */
         Locale: "en" | "ar";
         /** @description Where a click goes. `null` wherever a Target is optional means "not clickable". */
-        Target: components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"] | components["schemas"]["VendorTarget"];
+        Target: components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"] | components["schemas"]["VendorTarget"] | components["schemas"]["StorePageTarget"];
         ProductTarget: {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -1670,8 +1670,18 @@ export interface components {
             type: "vendor";
             id: number;
         };
+        /** @description One of the storefront's own pages: the old storefront opened these links as they are (`/{l}/prescriptions`, `/{l}/cart`...), not as a category listing. Storefronts skip a page they don't know. prescriptions is private (sign-in) and only exists while Layout.features.prescriptions is on. */
+        StorePageTarget: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "store_page";
+            /** @enum {string} */
+            page: "prescriptions" | "cart" | "wishlist" | "compare" | "notifications" | "categories" | "brands" | "vendors" | "account" | "orders" | "track_order" | "sign_in" | "sign_up";
+        };
         /** @description A Target, or null when not clickable. */
-        NullableTarget: (components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"] | components["schemas"]["VendorTarget"]) | null;
+        NullableTarget: (components["schemas"]["ProductTarget"] | components["schemas"]["CategoryTarget"] | components["schemas"]["BrandTarget"] | components["schemas"]["ListTarget"] | components["schemas"]["PageTarget"] | components["schemas"]["LandingPageTarget"] | components["schemas"]["FormTarget"] | components["schemas"]["DealsTarget"] | components["schemas"]["HomeTarget"] | components["schemas"]["UrlTarget"] | components["schemas"]["TagTarget"] | components["schemas"]["SearchTarget"] | components["schemas"]["VendorTarget"] | components["schemas"]["StorePageTarget"]) | null;
         Image: {
             url: string;
             alt: string | null;

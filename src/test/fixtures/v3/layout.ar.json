@@ -4119,10 +4119,8 @@
    {
     "label": "الروشتة الالكترونية",
     "target": {
-     "type": "category",
-     "path": [
-      "prescriptions"
-     ]
+     "type": "store_page",
+     "page": "prescriptions"
     },
     "image": "https://cdn.supercommerce.io/seif-pharmacies/uploads/prescription_3974864-1772472071.png",
     "badge": null,

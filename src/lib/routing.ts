@@ -186,10 +186,36 @@ export function resolveTarget(target: Target | null | undefined, locale: Locale)
       return isSafeUrl(target.url) ? { href: target.url, external: true } : null;
     case 'vendor':
       return target.id > 0 ? internal(routes.vendor(locale, target.id)) : null;
+    case 'store_page': {
+      const page = Object.hasOwn(STORE_PAGES, target.page) ? STORE_PAGES[target.page] : null;
+      return page ? internal(page(locale)) : null;
+    }
     default:
       return null;
   }
 }
+
+type StorePage = Extract<Target, { type: 'store_page' }>['page'];
+
+/**
+ * `store_page` Targets: the old storefront's own pages a merchant link names (/prescriptions,
+ * /cart...), opened as they are. A page this storefront doesn't know is skipped.
+ */
+const STORE_PAGES: Record<StorePage, (locale: Locale) => string> = {
+  prescriptions: (locale) => routes.prescriptions(locale),
+  cart: routes.cart,
+  wishlist: routes.wishlist,
+  compare: routes.compare,
+  notifications: routes.notifications,
+  categories: routes.categories,
+  brands: routes.brands,
+  vendors: routes.vendors,
+  account: routes.account,
+  orders: routes.orders,
+  track_order: routes.trackOrder,
+  sign_in: (locale) => routes.signIn(locale),
+  sign_up: routes.signUp,
+};
 
 /**
  * Which page of ours a Target opens, as the data that page is read from: a content page, form or

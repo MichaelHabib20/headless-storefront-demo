@@ -1890,6 +1890,7 @@ components:
         - $ref: '#/components/schemas/TagTarget'
         - $ref: '#/components/schemas/SearchTarget'
         - $ref: '#/components/schemas/VendorTarget'
+        - $ref: '#/components/schemas/StorePageTarget'
       discriminator:
         propertyName: type
         mapping:
@@ -1906,6 +1907,7 @@ components:
           tag: '#/components/schemas/TagTarget'
           search: '#/components/schemas/SearchTarget'
           vendor: '#/components/schemas/VendorTarget'
+          store_page: '#/components/schemas/StorePageTarget'
     ProductTarget:
       type: object
       required: [type, slug]
@@ -2010,6 +2012,17 @@ components:
       properties:
         type: { type: string, enum: [vendor] }
         id: { type: integer, minimum: 1 }
+    StorePageTarget:
+      description: >-
+        One of the storefront's own pages: the old storefront opened these links as they are
+        (`/{l}/prescriptions`, `/{l}/cart`...), not as a category listing. Storefronts skip a page they don't know.
+        prescriptions is private (sign-in) and only exists while Layout.features.prescriptions is on.
+      type: object
+      required: [type, page]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [store_page] }
+        page: { type: string, enum: [prescriptions, cart, wishlist, compare, notifications, categories, brands, vendors, account, orders, track_order, sign_in, sign_up] }
 
     NullableTarget:
       description: A Target, or null when not clickable.
@@ -2028,6 +2041,7 @@ components:
         - $ref: '#/components/schemas/TagTarget'
         - $ref: '#/components/schemas/SearchTarget'
         - $ref: '#/components/schemas/VendorTarget'
+        - $ref: '#/components/schemas/StorePageTarget'
 
     Image:
       type: object
