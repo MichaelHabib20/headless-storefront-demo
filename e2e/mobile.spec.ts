@@ -133,6 +133,10 @@ test.describe('mobile', () => {
       await expect(toast).toHaveText(locale === 'en' ? 'Added to cart.' : 'تمت الإضافة إلى السلة.');
       await expect(page.getByTestId('mini-cart')).toHaveCount(0);
       await expect(toast).toBeInViewport();
+      // above the WhatsApp button, never on it
+      const box = (await toast.boundingBox())!;
+      const chat = (await page.getByTestId('whatsapp').boundingBox())!;
+      expect(box.y + box.height).toBeLessThanOrEqual(chat.y);
     });
 
     test(`password reset without an online method: the contact note on a phone (${locale})`, async ({ page }) => {

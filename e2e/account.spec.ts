@@ -182,7 +182,9 @@ test.describe('orders', () => {
     await expect(first.getByTestId('order-status')).toHaveText('Being prepared');
     await expect(first.getByTestId('order-total')).toHaveText('408.00 EGP');
     await expect(first.getByTestId('order-item-count')).toHaveText('3');
+    // placed 01:10 store time (22:10 UTC the day before): the store's date, whatever the server's time zone
     await expect(first).toContainText('September 28, 2026');
+    await expect(first.locator('time')).toHaveAttribute('datetime', '2026-09-28T01:10:11+03:00');
 
     await page.getByRole('navigation', { name: 'Order pages' }).getByRole('link', { name: 'Next' }).click();
     await expect(page).toHaveURL(/\/en\/account\/order-history\?page=2$/);
@@ -193,6 +195,7 @@ test.describe('orders', () => {
     await open(page, '/en/account/order-history/mock-order-48201');
 
     await expect(page.getByRole('heading', { level: 1, name: 'Order #48201' })).toBeVisible();
+    await expect(page.locator('time[datetime="2026-09-28T01:10:11+03:00"]')).toHaveText('September 28, 2026');
     await expect(page.getByTestId('order-status')).toHaveText('Being prepared');
     await expect(page.getByTestId('order-timeline').locator('[aria-current="step"]')).toContainText('Being prepared');
     await expect(page.getByTestId('order-fulfilment')).toContainText('12, 12 Abbas El Akkad St, Nasr City, Cairo');

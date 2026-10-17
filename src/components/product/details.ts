@@ -1,6 +1,7 @@
 import type { Locale, ProductCard, ProductDetails, ProductOption } from '@/sdk';
 import type { Translator } from '@/lib/i18n';
 import { INTL_LOCALE, formatNumber } from '@/lib/numbers';
+import { formatStoreTime } from '@/lib/dates';
 import type { QuantityLimits } from '../cart/quantity';
 
 /**
@@ -45,11 +46,9 @@ export function reviewCountLabel(count: number, locale: Locale, t: Translator): 
   return count === 1 ? t('productReviewCountOne') : fillTemplate(t('productReviewCount'), { count: formatNumber(count, locale) });
 }
 
-/** The date a review was written, e.g. "Sep 28, 2026" / "28 سبتمبر 2026". `timeZone` is for tests. */
+/** The date a review was written on the store's clock, e.g. "Sep 28, 2026" / "28 سبتمبر 2026". `timeZone` is for tests. */
 export function reviewDate(iso: string, locale: Locale, timeZone?: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale === 'ar' ? INTL_LOCALE.ar : 'en', { dateStyle: 'medium', timeZone }).format(date);
+  return formatStoreTime(iso, locale === 'ar' ? INTL_LOCALE.ar : 'en', { dateStyle: 'medium' }, timeZone);
 }
 
 /** The video link is opened in a new tab; only web addresses are followed. */
