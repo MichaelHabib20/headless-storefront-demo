@@ -4,6 +4,7 @@ import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
 import { Icon, isIconName } from '../ui/Icon';
 import { TargetLink } from '../ui/TargetLink';
+import { HideOnHome } from './HideOnHome';
 import { LegalLinks } from './LegalLinks';
 import { NewsletterForm } from './NewsletterForm';
 import styles from './SiteFooter.module.css';
@@ -17,12 +18,14 @@ export function SiteFooter({ layout, locale }: { layout: Layout; locale: Locale 
   return (
     <footer className={styles.footer}>
       {features.newsletter && (
-        <div className={styles.newsletter}>
-          <div className={`container ${styles.newsletterInner}`}>
-            <h2 className={styles.newsletterTitle}>{footer.newsletter.text ?? t('newsletterTitle')}</h2>
-            <NewsletterForm labels={{ email: t('newsletterEmail'), submit: t('newsletterSubmit'), soon: t('newsletterSoon') }} />
+        <HideOnHome locale={locale}>
+          <div className={styles.newsletter}>
+            <div className={`container ${styles.newsletterInner}`}>
+              <h2 className={styles.newsletterTitle}>{footer.newsletter.text ?? t('newsletterTitle')}</h2>
+              <NewsletterForm labels={{ email: t('newsletterEmail'), submit: t('newsletterSubmit'), soon: t('newsletterSoon') }} />
+            </div>
           </div>
-        </div>
+        </HideOnHome>
       )}
 
       <div className={`container ${styles.columns}`}>
