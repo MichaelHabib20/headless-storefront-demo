@@ -549,6 +549,18 @@ test.describe('profile and password', () => {
     await expect(page.getByTestId('email-verified')).toHaveText('Your e-mail address was confirmed.');
   });
 
+  test('the Arabic profile and sign-up count the phone digits right: «11 رقمًا» (round 5, N4)', async ({ page }) => {
+    await open(page, '/ar/account/profile');
+    const phone = page.getByTestId('profile-form').locator('input[name="phone"]');
+    await expect(phone).toHaveAccessibleDescription(/11 رقمًا/);
+    await expect(page.getByTestId('profile-form')).not.toContainText('أرقام');
+
+    await page.context().clearCookies();
+    await open(page, '/ar/session/signup');
+    await expect(page.getByTestId('sign-up-form').locator('input[name="phone"]')).toHaveAccessibleDescription(/11 رقمًا/);
+    await expect(page.getByTestId('sign-up-form')).not.toContainText('أرقام');
+  });
+
   test('a changed phone (e-mail login stores) must be verified again', async ({ page, request }) => {
     await mode(request, { loginMethod: 'email' });
     await open(page, '/en/account/profile');

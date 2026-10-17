@@ -13,11 +13,7 @@ import { resolveTarget } from './routing';
  */
 export function seoMetadata(seo: Seo, locale: Locale): Metadata {
   const canonical = resolveTarget(seo.canonical, locale)?.href;
-  const languages: Record<string, string> = {};
-  for (const alternate of seo.alternates) {
-    const link = resolveTarget(alternate.target, alternate.locale);
-    if (link && !link.external) languages[alternate.locale] = link.href;
-  }
+  const languages: Record<string, string> = { ...alternateHrefs(seo) };
   // x-default: the Arabic page, like the old storefront
   if (languages.ar) languages['x-default'] = languages.ar;
 
@@ -39,6 +35,19 @@ export function seoMetadata(seo: Seo, locale: Locale): Metadata {
     meta.twitter = { card: images ? 'summary_large_image' : 'summary', title, description, images };
   }
   return meta;
+}
+
+/**
+ * The page's address in each language, from `Seo.alternates` (our URLs; external ones left out):
+ * the hreflang links and the language switch (<PageAlternates>) both use it.
+ */
+export function alternateHrefs(seo: Seo): Partial<Record<Locale, string>> {
+  const hrefs: Partial<Record<Locale, string>> = {};
+  for (const alternate of seo.alternates) {
+    const link = resolveTarget(alternate.target, alternate.locale);
+    if (link && !link.external) hrefs[alternate.locale] = link.href;
+  }
+  return hrefs;
 }
 
 /**

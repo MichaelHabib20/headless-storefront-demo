@@ -38,6 +38,8 @@ const en = {
   languageLabel: 'Switch language',
   hotline: 'Hotline',
   shopNow: 'Shop now',
+  /** The name of an image-only banner link the API gave no name and whose page has no title. */
+  bannerLabel: 'Banner',
   viewAll: 'View all',
   shopByCategory: 'Shop by category',
   brands: 'Brands',
@@ -96,6 +98,7 @@ const coreAr: Record<keyof typeof en, string> = {
   languageLabel: 'تغيير اللغة',
   hotline: 'الخط الساخن',
   shopNow: 'تسوق الآن',
+  bannerLabel: 'بانر إعلاني',
   viewAll: 'عرض الكل',
   shopByCategory: 'تسوق حسب الفئة',
   brands: 'الماركات',

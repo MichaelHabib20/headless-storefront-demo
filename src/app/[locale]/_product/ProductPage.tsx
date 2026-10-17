@@ -8,7 +8,8 @@ import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { positiveIntParam } from '@/components/ui/Pagination';
 import { translator } from '@/lib/i18n';
 import { resolveTarget } from '@/lib/routing';
-import { seoMetadata } from '@/lib/seo';
+import { alternateHrefs, seoMetadata } from '@/lib/seo';
+import { PageAlternates } from '@/components/layout/PageAlternates';
 import { JsonLd } from '@/lib/jsonld';
 import { viewItemEvent } from '@/lib/marketing';
 import { TrackEvent } from '@/components/marketing/TrackEvent';
@@ -83,6 +84,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
   return (
     <>
     <JsonLd seo={details.seo} locale={locale} />
+    <PageAlternates hrefs={alternateHrefs(details.seo)} />
     <TrackEvent locale={locale} event={viewItemEvent(details)} />
     <ProductView
       details={details}

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { isLocale, type Home } from '@/sdk';
+import { isLocale, type Home, type Locale } from '@/sdk';
 import { BrandRail } from '@/components/home/BrandRail';
 import { CategoryTiles } from '@/components/home/CategoryTiles';
 import { PopupHost } from '@/components/home/PopupHost';
@@ -7,6 +7,7 @@ import { PromoStrip } from '@/components/home/PromoStrip';
 import { VendorRail } from '@/components/home/VendorRail';
 import { HomeSection } from '@/components/home/sections/HomeSection';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
+import { withBannerNames } from '@/lib/banner-names.server';
 import { PROMO_PLACEMENTS, promoFor } from '@/lib/home';
 import { translator } from '@/lib/i18n';
 import { loadHome, loadLayout } from '@/lib/storefront.server';
@@ -34,7 +35,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   let home: Home;
   try {
-    home = await loadHome(locale);
+    home = await withHomeBannerNames(await loadHome(locale), locale);
   } catch (error) {
     console.error('home failed to load', error);
     return <StoreUnavailable locale={locale} />;
@@ -55,8 +56,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <BrandRail brands={home.featuredBrands} locale={locale} />
       <VendorRail block={home.featuredVendors} locale={locale} />
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.bottom)} locale={locale} />
-      <PopupHost popups={home.popups} locale={locale} closeLabel={t('close')} />
+      <PopupHost popups={home.popups} locale={locale} closeLabel={t('close')} bannerLabel={t('bannerLabel')} />
       <JsonLd seo={home.seo} locale={locale} />
     </>
   );
+}
+
+/**
+ * Every image-only link of the home page gets a name: banners without alt text or a name from the
+ * API are named after the page they open (src/lib/banner-names.server.ts).
+ */
+async function withHomeBannerNames(home: Home, locale: Locale): Promise<Home> {
+  const [sections, promoBanners, popups] = await Promise.all([
+    Promise.all(home.sections.map(async (section) => ({ ...section, banners: await withBannerNames(section.banners, locale) }))),
+    withBannerNames(home.promoBanners, locale),
+    withBannerNames(home.popups, locale),
+  ]);
+  return { ...home, sections, promoBanners, popups };
 }

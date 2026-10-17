@@ -9,7 +9,8 @@ import { MessageBlock } from '@/components/layout/StoreUnavailable';
 import { loadBranches, loadPage, slugParam } from '@/lib/content.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { contentPageSeo, seoMetadata } from '@/lib/seo';
+import { alternateHrefs, contentPageSeo, seoMetadata } from '@/lib/seo';
+import { PageAlternates } from '@/components/layout/PageAlternates';
 import { loadLayout } from '@/lib/storefront.server';
 import styles from '@/components/content/Content.module.css';
 import { sendContactAction } from './actions';
@@ -45,6 +46,7 @@ export default async function CmsPage({ params }: { params: Params }) {
   const page = result.data;
   return (
     <ContentPageView page={page} locale={locale}>
+      <PageAlternates hrefs={alternateHrefs(page.seo)} />
       {page.kind === 'contact' && <ContactBlock page={page} locale={locale} />}
       {page.kind === 'branches' && <BranchesBlock locale={locale} />}
     </ContentPageView>

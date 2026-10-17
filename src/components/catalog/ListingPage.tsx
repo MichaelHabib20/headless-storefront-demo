@@ -5,6 +5,8 @@ import { loadCategoryTree, loadListing } from '@/lib/catalog.server';
 import { categoryFilters, findCategoryChain, type CategoryFilters } from '@/lib/category-filters';
 import { translator } from '@/lib/i18n';
 import { JsonLd } from '@/lib/jsonld';
+import { alternateHrefs } from '@/lib/seo';
+import { PageAlternates } from '@/components/layout/PageAlternates';
 import { linksWithSearch, listingHref, toSearchParams, type PageParams } from '@/lib/listing';
 import { ListingView } from './ListingView';
 import type { ListingLinks } from './ListingFilters';
@@ -34,6 +36,7 @@ export async function ListingPage({ locale, scope, params, links: routeLinks }: 
     return (
       <>
         <JsonLd seo={result.listing.seo} locale={locale} />
+        <PageAlternates hrefs={alternateHrefs(result.listing.seo)} />
         <ListingView listing={result.listing} locale={locale} links={links} current={current} categories={categories} />
       </>
     );

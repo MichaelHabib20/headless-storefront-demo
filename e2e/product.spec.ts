@@ -235,6 +235,28 @@ test.describe('product page', () => {
     expect(decodeURIComponent(new URL(page.url()).pathname)).toBe(`/ar/${slugOf(7346, 'ar')}`);
   });
 
+  test('the language switch opens the product at its own slug in the other language, both ways, client-side (round 5, N1)', async ({ page }) => {
+    const english = `/en/${slugOf(7346, 'en')}`;
+    const arabic = `/ar/${slugOf(7346, 'ar')}`;
+    expect(english).not.toBe(arabic.replace('/ar/', '/en/')); // the slugs differ per language
+    const switchLink = page.getByRole('link', { name: /^(Switch language|تغيير اللغة)$/ }).first();
+    const pathOf = (url: string) => decodeURIComponent(new URL(url, APP_URL).pathname);
+
+    await open(page, path(7346, 'ar'));
+    await expect.poll(async () => pathOf((await switchLink.getAttribute('href'))!)).toBe(english);
+    await page.evaluate(() => ((window as unknown as { __sameDocument: boolean }).__sameDocument = true));
+    await switchLink.click();
+    await expect.poll(() => pathOf(page.url())).toBe(english);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    // a client-side navigation (no reload), and the switch now points back at the Arabic slug
+    expect(await page.evaluate(() => (window as unknown as { __sameDocument?: boolean }).__sameDocument)).toBe(true);
+    await expect.poll(async () => pathOf((await switchLink.getAttribute('href'))!)).toBe(arabic);
+
+    await switchLink.click();
+    await expect.poll(() => pathOf(page.url())).toBe(arabic);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+  });
+
   test('reviews: pages from the API, and none when the store switched them off', async ({ page, request }) => {
     const second = await api<{ items: { comment: string | null; author: string | null }[] }>(request, `products/${encodeURIComponent(slugOf(9822))}/reviews?page=2&perPage=5`);
     await open(page, path(9822));

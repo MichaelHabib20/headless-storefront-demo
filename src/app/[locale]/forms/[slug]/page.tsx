@@ -6,7 +6,8 @@ import { MessageBlock } from '@/components/layout/StoreUnavailable';
 import { loadForm, slugParam } from '@/lib/content.server';
 import { translator } from '@/lib/i18n';
 import { routes } from '@/lib/routing';
-import { contentPageSeo, seoMetadata } from '@/lib/seo';
+import { alternateHrefs, contentPageSeo, seoMetadata } from '@/lib/seo';
+import { PageAlternates } from '@/components/layout/PageAlternates';
 import { loadLayout } from '@/lib/storefront.server';
 import styles from '@/components/content/Content.module.css';
 import { submitFormAction, uploadFormFileAction } from './actions';
@@ -44,6 +45,7 @@ export default async function MerchantFormPage({ params }: { params: Params }) {
   const form = result.data;
   return (
     <article className={`container ${styles.page} ${styles.formPage}`} data-testid="merchant-form-page">
+      <PageAlternates hrefs={alternateHrefs(form.seo)} />
       <h1 className={styles.title}>{form.title}</h1>
       <div className={styles.formCard}>
         <ContentForm

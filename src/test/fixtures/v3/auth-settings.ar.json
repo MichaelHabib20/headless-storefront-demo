@@ -34,7 +34,7 @@
      "placeholder": "01xxxxxxxxx",
      "options": [],
      "multiple": false,
-     "hint": "11 أرقام",
+     "hint": "11 رقمًا",
      "maxLength": 11
     },
     {

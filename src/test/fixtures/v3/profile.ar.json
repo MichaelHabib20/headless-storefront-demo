@@ -47,7 +47,7 @@
     "placeholder": null,
     "options": [],
     "multiple": false,
-    "hint": "11 أرقام",
+    "hint": "11 رقمًا",
     "maxLength": 11,
     "value": "01222353123",
     "editable": false

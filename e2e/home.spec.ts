@@ -82,6 +82,23 @@ test.describe('home page', () => {
     await expect(page.getByRole('heading', { level: 1, name })).toBeVisible();
   });
 
+  test('every image-only link has a name, in both languages (round 5, N3)', async ({ page }) => {
+    await acceptCookies(page);
+    for (const [locale, prescriptions] of [['en', 'Prescriptions'], ['ar', 'الوصفات الطبية']] as const) {
+      await page.goto(`/${locale}`);
+      const unnamed = await page.locator('main a').evaluateAll((links) =>
+        links
+          .filter((link) => link.querySelector('img') && !link.textContent?.trim() && !link.getAttribute('aria-label')?.trim())
+          .filter((link) => [...link.querySelectorAll('img')].every((img) => !img.getAttribute('alt')?.trim()))
+          .map((link) => link.getAttribute('href')),
+      );
+      expect(unnamed, `${locale}: image links without a name`).toEqual([]);
+      // the full-width banner to the prescriptions form: no alt text, no name from the API → the form's title
+      const wide = page.locator('[data-layout="wide_banner"] a[href$="/forms/prescriptions"]').first();
+      await expect(wide).toHaveAccessibleName(prescriptions);
+    }
+  });
+
   test('switches language on the same page', async ({ page }) => {
     await acceptCookies(page);
     await page.goto('/en/products/deals');

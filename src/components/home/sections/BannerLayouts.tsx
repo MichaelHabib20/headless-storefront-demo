@@ -12,10 +12,19 @@ export interface BannerLayoutProps {
   priority?: boolean;
 }
 
+/**
+ * The image is the link's only content, so its alt text is the link's name: the merchant's alt
+ * text, else the banner's name, else the title of the page it opens (filled in by the page,
+ * withBannerNames), else "Banner": never an unnamed link.
+ */
+export function bannerName(banner: Banner, locale: Locale): string {
+  return banner.image.alt?.trim() || banner.title?.trim() || translator(locale)('bannerLabel');
+}
+
 function BannerLink({ banner, locale, priority }: { banner: Banner; locale: Locale; priority?: boolean }) {
   return (
     <TargetLink target={banner.target} locale={locale} className={styles.banner}>
-      <ResponsiveImage image={banner.image} priority={priority} className={styles.image} />
+      <ResponsiveImage image={{ ...banner.image, alt: bannerName(banner, locale) }} priority={priority} className={styles.image} />
     </TargetLink>
   );
 }

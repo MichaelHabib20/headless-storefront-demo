@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { isLocale, type CategoryNode, type CategoryTree as Tree, type Locale } from '@/sdk';
 import { CategoryTree } from '@/components/catalog/CategoryTree';
 import styles from '@/components/catalog/Catalog.module.css';
+import { PageAlternates } from '@/components/layout/PageAlternates';
 import { StoreUnavailable } from '@/components/layout/StoreUnavailable';
 import { TargetLink } from '@/components/ui/TargetLink';
 import { loadCategoryTree } from '@/lib/catalog.server';
@@ -85,8 +86,10 @@ export default async function CategoryViewPage({ params }: { params: Params }) {
   const t = translator(locale);
   const { node, tree } = view;
   const items = node ? node.children : tree.items;
+  const { en, ar } = await languages(locale, view);
   return (
     <div className={`container ${styles.page}`} data-testid="category-view">
+      <PageAlternates hrefs={{ en, ar }} />
       <h1 className={styles.title}>{node ? node.name : t('catalogCategoriesTitle')}</h1>
       {node && (
         <TargetLink target={node.target} locale={locale}>

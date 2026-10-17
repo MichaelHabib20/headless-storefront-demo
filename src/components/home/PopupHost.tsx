@@ -32,7 +32,7 @@ function writeMemory(memory: PopupMemory) {
 }
 
 /** Shows at most one merchant popup per page view, respecting its frequency. */
-export function PopupHost({ popups, locale, closeLabel }: { popups: Popup[]; locale: Locale; closeLabel: string }) {
+export function PopupHost({ popups, locale, closeLabel, bannerLabel }: { popups: Popup[]; locale: Locale; closeLabel: string; /** the image link's name when the popup has no alt text or title */ bannerLabel: string }) {
   const [popup, setPopup] = useState<Popup | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
 
@@ -59,7 +59,7 @@ export function PopupHost({ popups, locale, closeLabel }: { popups: Popup[]; loc
         <Icon name="close" />
       </button>
       <TargetLink target={popup.target} locale={locale} className={styles.link}>
-        <ResponsiveImage image={popup.image} />
+        <ResponsiveImage image={{ ...popup.image, alt: popup.image.alt?.trim() || popup.title?.trim() || bannerLabel }} />
       </TargetLink>
       {(popup.title || popup.description) && (
         <div className={styles.body}>

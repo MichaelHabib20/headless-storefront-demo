@@ -15,11 +15,13 @@ const banner = (patch: Partial<PromoBanner> = {}, alt: string | null = null): Pr
 });
 
 describe('PromoStrip', () => {
-  it('names the image link: the merchant alt, else the ad name, else the slot', () => {
-    expect(promoName(banner({ title: 'Top AD' }, 'Send your prescription'))).toBe('Send your prescription');
-    expect(promoName(banner({ title: 'Top AD' }))).toBe('Top AD');
-    expect(promoName(banner({ title: '  ' }, ' '))).toBe('Top ad');
-    expect(promoName(banner({ placement: 'ad-7' }))).toBe('Ad 7');
+  it('names the image link: the merchant alt, else the ad name, else the slot, else "Banner"', () => {
+    expect(promoName(banner({ title: 'Top AD' }, 'Send your prescription'), 'en')).toBe('Send your prescription');
+    expect(promoName(banner({ title: 'Top AD' }), 'en')).toBe('Top AD');
+    expect(promoName(banner({ title: '  ' }, ' '), 'en')).toBe('Top ad');
+    expect(promoName(banner({ placement: 'ad-7' }), 'en')).toBe('Ad 7');
+    expect(promoName(banner({ placement: '--' }, ''), 'en')).toBe('Banner');
+    expect(promoName(banner({ placement: '' }, ''), 'ar')).toBe('بانر إعلاني');
   });
 
   it('the recorded home banners are links with a name, in both languages', () => {
