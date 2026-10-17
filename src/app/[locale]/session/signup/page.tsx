@@ -42,6 +42,7 @@ export default async function SignUpPage({ params }: Props) {
       <SignUpForm
         fields={result.settings.signup.fields}
         locale={locale}
+        phoneLength={result.settings.phone.length}
         labels={{ submit: t('authCreateButton'), submitting: t('authCreating'), confirmPassword: t('authConfirmPassword'), optional: t('authOptional'), choose: t('authChoose'), notEditable: t('profileNotEditable'), showPassword: t('authShowPassword') }}
       />
     );

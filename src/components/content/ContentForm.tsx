@@ -1,9 +1,9 @@
 'use client';
 
-import { startTransition, useActionState, useEffect, useRef, type FormEvent } from 'react';
+import { startTransition, useActionState, useEffect, useRef, useState, type FormEvent } from 'react';
 import type { FormField, Locale } from '@/sdk';
 import { translator } from '@/lib/i18n';
-import type { ContentFormState } from './form-values';
+import { checkForm, type ContentFormState } from './form-values';
 import { FormFields, type UploadFileAction } from './FormFields';
 import styles from './Content.module.css';
 
@@ -24,15 +24,26 @@ interface ContentFormProps {
 const NOTHING_YET: ContentFormState = {};
 
 /**
- * A form drawn from a backend description and sent through a server action. The backend validates;
- * its messages show next to the fields, its "thank you" replaces nothing (the form is emptied).
+ * A form drawn from a backend description and sent through a server action. Empty fields that must be
+ * filled (`mustFill`) are refused before sending, all at once; the backend validates the rest and its
+ * messages show next to the fields; its "thank you" replaces nothing (the form is emptied).
  */
 export function ContentForm({ locale, fields, action, submitLabel, hidden = {}, upload, idPrefix, testId }: ContentFormProps) {
   const t = translator(locale);
-  const [state, dispatch, pending] = useActionState(action, NOTHING_YET);
+  const [answered, dispatch, pending] = useActionState(action, NOTHING_YET);
+  // what the checks made before sending found (null once the form was sent)
+  const [checked, setChecked] = useState<ContentFormState | null>(null);
+  const state = checked ?? answered;
+  // Every accepted answer draws the fields afresh (uploads too); a refusal keeps them as they are.
+  const [seen, setSeen] = useState(answered);
+  const [sends, setSends] = useState(0);
+  if (seen !== answered) {
+    setSeen(answered);
+    if (answered.ok) setSends((count) => count + 1);
+  }
   const formRef = useRef<HTMLFormElement>(null);
 
-  // After an answer, move focus to the message (or the first refused field) for keyboard and screen reader users.
+  // After an answer (or a refused check), move focus to the message or the first refused field for keyboard and screen reader users.
   useEffect(() => {
     if (state === NOTHING_YET) return;
     if (state.ok) formRef.current?.reset();
@@ -42,6 +53,13 @@ export function ContentForm({ locale, fields, action, submitLabel, hidden = {}, 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const found = checkForm(fields, data, { required: t('contentFormRequired'), attach: t('contentFormAttach'), email: t('contentFormEmail'), empty: t('contentFormEmpty') });
+    if (found.fieldErrors || found.message) {
+      // what was typed stays: the inputs are uncontrolled and are not re-mounted
+      setChecked({ ok: false, ...found });
+      return;
+    }
+    setChecked(null);
     startTransition(() => dispatch(data));
   }
 
@@ -59,7 +77,7 @@ export function ContentForm({ locale, fields, action, submitLabel, hidden = {}, 
           {state.message}
         </p>
       )}
-      <FormFields key={state.ok ? 'sent' : 'editing'} locale={locale} fields={fields} errors={errors} values={state.ok ? {} : state.values} upload={upload} idPrefix={idPrefix} />
+      <FormFields key={`sent-${sends}`} locale={locale} fields={fields} errors={errors} values={state.ok ? {} : state.values} upload={upload} idPrefix={idPrefix} />
       <button type="submit" className={styles.primary} disabled={pending}>
         {pending ? t('contentSending') : submitLabel}
       </button>

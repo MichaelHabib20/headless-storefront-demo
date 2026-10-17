@@ -35,6 +35,49 @@ export function fieldShown(field: Pick<FormField, 'showWhen'>, current: Readonly
   return (field.showWhen ?? []).every((condition) => condition.values.includes(current[condition.field] ?? ''));
 }
 
+/**
+ * Whether the shopper must fill a field before sending: the backend's `required`, or the only field
+ * shown (an answer with nothing in it says nothing — e.g. a prescriptions form whose one upload the
+ * merchant left optional).
+ */
+export function mustFill(field: Pick<FormField, 'required'>, shown: readonly unknown[]): boolean {
+  return field.required || shown.length === 1;
+}
+
+export interface FormCheckMessages {
+  required: string;
+  /** For an empty file field. */
+  attach: string;
+  /** An e-mail field whose text has no address shape. */
+  email: string;
+  /** Nothing at all was filled in a form whose fields are all optional. */
+  empty: string;
+}
+
+/**
+ * Checks made before a backend-described form is sent, so every simple mistake shows at once: each
+ * field the shopper must fill (`mustFill`) and is empty gets a message, and a form with nothing at
+ * all filled in is not sent. The backend still validates everything else.
+ */
+export function checkForm(fields: readonly FormField[], data: FormData, messages: FormCheckMessages): Pick<ContentFormState, 'fieldErrors' | 'message'> {
+  const current: Record<string, string> = {};
+  for (const field of fields) {
+    const value = data.get(inputName(field));
+    current[field.name] = typeof value === 'string' ? value : '';
+  }
+  const shown = fields.filter((field) => fieldShown(field, current));
+  const values = formValues(shown, data);
+  const fieldErrors: Record<string, string> = {};
+  for (const field of shown) {
+    const value = values[field.name];
+    if (mustFill(field, shown) && value === undefined) fieldErrors[field.name] = field.kind === 'file' ? messages.attach : messages.required;
+    else if (field.kind === 'email' && typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fieldErrors[field.name] = messages.email;
+  }
+  if (Object.keys(fieldErrors).length) return { fieldErrors };
+  if (shown.length && !Object.keys(values).length) return { message: messages.empty };
+  return {};
+}
+
 /** The starting values of the select fields other fields depend on: what was typed before, else the backend's `selected` option. */
 export function watchedValues(fields: readonly FormField[], values: Readonly<Record<string, string | string[]>> = {}): Record<string, string> {
   const watched = new Set(fields.flatMap((field) => (field.showWhen ?? []).map((condition) => condition.field)));

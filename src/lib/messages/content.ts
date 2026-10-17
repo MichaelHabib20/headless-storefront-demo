@@ -3,7 +3,8 @@ import { defineMessages } from './define';
 /**
  * UI strings of the content pages: CMS pages, contact, branches, landing pages and merchant forms.
  * Owned by the shell agent. Page titles, page text, form labels, branch names and every answer of
- * the API (validation messages, "thank you") come from the backend — they are not here.
+ * the API (validation messages, "thank you") come from the backend — they are not here; only the
+ * few checks made before sending (`contentFormRequired` / `Attach` / `Empty`).
  */
 export const contentMessages = defineMessages({
   en: {
@@ -22,10 +23,14 @@ export const contentMessages = defineMessages({
     contentBranchPhone: 'Phone',
     contentBranchEmail: 'E-mail',
     contentBranchMap: 'Open in maps',
-    contentFormSignInTitle: 'Sign in to fill in this form',
-    contentFormSignInText: 'Your answers are sent with your account so the store can get back to you.',
-    contentFormSignInCta: 'Sign in',
     contentFormChoose: 'Choose…',
+    // checks made before sending (the backend still validates; its messages are shown as they come)
+    contentFormRequired: 'This field is required.',
+    contentFormAttach: 'Please attach at least one image.',
+    contentFormEmail: 'Enter a valid e-mail address.',
+    contentFormEmpty: 'Fill in the form before sending it.',
+    contentFormPickFile: 'Choose a photo or a PDF',
+    contentFormChangeFile: 'Change the file',
     contentFormUploading: 'Uploading…',
     contentFormUploadFailed: 'The file could not be uploaded. Please try another file.',
     contentFormUploaded: 'Uploaded: {name}',
@@ -52,10 +57,13 @@ export const contentMessages = defineMessages({
     contentBranchPhone: 'الهاتف',
     contentBranchEmail: 'البريد الإلكتروني',
     contentBranchMap: 'افتح في الخرائط',
-    contentFormSignInTitle: 'سجّل الدخول لملء هذا النموذج',
-    contentFormSignInText: 'تُرسل إجاباتك مع حسابك حتى يتمكن المتجر من الرد عليك.',
-    contentFormSignInCta: 'تسجيل الدخول',
     contentFormChoose: 'اختر…',
+    contentFormRequired: 'هذا الحقل مطلوب.',
+    contentFormAttach: 'يرجى إرفاق صورة واحدة على الأقل.',
+    contentFormEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.',
+    contentFormEmpty: 'املأ النموذج قبل إرساله.',
+    contentFormPickFile: 'اختر صورة أو ملف PDF',
+    contentFormChangeFile: 'تغيير الملف',
     contentFormUploading: 'جارٍ الرفع…',
     contentFormUploadFailed: 'تعذر رفع الملف. جرّب ملفًا آخر.',
     contentFormUploaded: 'تم الرفع: {name}',

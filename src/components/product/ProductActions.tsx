@@ -53,6 +53,8 @@ type Pending = ReturnType<typeof addToCartAction>;
 
 interface Step {
   field: Field;
+  /** Shown before the backend answered (rolled back when it refuses). */
+  optimistic: boolean;
   /** The new state after success (applied immediately for optimistic toggles). */
   change: Partial<ProductShopperState>;
   /** What to put back if an optimistic toggle fails. */
@@ -87,10 +89,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
 
   const track = (field: Field, delta: number) => setPending((current) => ({ ...current, [field]: Math.max(0, (current[field] ?? 0) + delta) }));
 
-  async function perform({ field, change, undo, call }: Step) {
-    // The cart is not optimistic: the "In cart" link appears once the backend accepted it.
-    const optimistic = field !== 'cartQuantity';
-
+  async function perform({ field, optimistic, change, undo, call }: Step) {
     track(field, 1);
     setStatus(null);
     if (optimistic) setState((current) => ({ ...current, ...change }));
@@ -102,7 +101,7 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     let shownByShell = false;
     if (result.ok) {
       setState((current) => ({ ...current, ...change }));
-      if (!optimistic) {
+      if (field === 'cartQuantity') {
         focusCartLink.current = true;
         shownByShell = miniCart.added(result.message ?? '');
       }
@@ -113,22 +112,29 @@ export function ProductActions({ productId, productName, locale, canAddToCart, a
     track(field, -1);
   }
 
+  // The cart is not optimistic: the "In cart" link appears once the backend accepted it.
   const putInCart = (cartQuantity: number) =>
-    perform({ field: 'cartQuantity', change: { cartQuantity }, undo: {}, call: () => addToCartAction(locale, productId, cartQuantity) });
+    perform({ field: 'cartQuantity', optimistic: false, change: { cartQuantity }, undo: {}, call: () => addToCartAction(locale, productId, cartQuantity) });
   const toggleWishlist = () =>
     perform({
       field: 'inWishlist',
+      optimistic: true,
       change: { inWishlist: !state.inWishlist },
       undo: { inWishlist: state.inWishlist },
       call: () => toggleWishlistAction(locale, productId, !state.inWishlist),
     });
-  const toggleCompare = () =>
-    perform({
+  // Adding to compare waits for the backend: the list has a maximum (409 compare_full), so a button
+  // is pressed only for a product that is really in the compare list. Taking one out is optimistic.
+  const toggleCompare = () => {
+    if (pending.inCompare) return;
+    return perform({
       field: 'inCompare',
+      optimistic: state.inCompare,
       change: { inCompare: !state.inCompare },
       undo: { inCompare: state.inCompare },
       call: () => toggleCompareAction(locale, productId, !state.inCompare),
     });
+  };
 
   const cartLink = (className: string) => (
     <Link
