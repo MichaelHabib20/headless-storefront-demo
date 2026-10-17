@@ -122,8 +122,7 @@ test.describe('shopper actions', () => {
     for (const index of [3, 4]) {
       const button = card(page, index).getByRole('button', { name: 'Compare', exact: true });
       await button.click();
-      await expect(button).toHaveAttribute('aria-pressed', 'true');
-      await expect(card(page, index).getByRole('status')).toHaveText('Added to compare.');
+      await expect(button).toHaveAttribute('aria-pressed', 'true');      await expect(card(page, index).getByRole('status')).toHaveText('Added to compare.');
     }
     await expect(header(page).getByRole('link', { name: 'Compare, 4 products' })).toBeVisible();
 
@@ -133,6 +132,47 @@ test.describe('shopper actions', () => {
     await expect(fifth.getByRole('status')).toHaveText('You can compare up to 4 products.');
     await expect(button).toHaveAttribute('aria-pressed', 'false');
     await expect(header(page).getByRole('link', { name: 'Compare, 4 products' })).toBeVisible();
+  });
+
+  // QA 2026-10-17: six quick Compare clicks — the ones past the backend maximum (4) stayed pressed
+  // although /compare held 4. The buttons must end up showing the real compare list.
+  for (const signedIn of [false, true]) {
+    test(`quick compare clicks past the maximum end unpressed (${signedIn ? 'customer' : 'guest'})`, async ({ page, request }) => {
+      if (signedIn) {
+        await signInAsTestCustomer(page);
+        // Start from an empty list like the guest.
+        for (const id of [36480, 8412]) await request.delete(`${MOCK}/api/customer/v3/compare/items/${id}`, { headers: { Authorization: 'Bearer test-customer' } });
+      }
+      await request.post(`${MOCK}/__mode`, { data: { delayMs: 300 } });
+      await page.goto('/en');
+      await page.waitForLoadState('networkidle');
+
+      const buttons = [0, 1, 2, 3, 4, 5].map((index) => card(page, index).getByRole('button', { name: 'Compare', exact: true }));
+      for (const button of buttons) await button.click();
+
+      await expect(header(page).getByRole('link', { name: 'Compare, 4 products' })).toBeVisible({ timeout: 20_000 });
+      for (const index of [4, 5]) await expect(card(page, index).getByRole('status')).toHaveText('You can compare up to 4 products.', { timeout: 20_000 });
+      for (const [index, button] of buttons.entries()) await expect(button).toHaveAttribute('aria-pressed', index < 4 ? 'true' : 'false');
+      await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+
+      await request.post(`${MOCK}/__mode`, { data: { delayMs: 0 } });
+      await page.goto('/en/compare');
+      await expect(page.getByTestId('compare-note')).toHaveText('Comparing 4 of 4 products');
+    });
+  }
+
+  test('a refused compare on a phone in Arabic stays unpressed', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await signInAsTestCustomer(page);
+    await page.goto('/ar');
+    for (const index of [3, 4]) {
+      await card(page, index).getByRole('button', { name: 'قارن', exact: true }).click();
+      await expect(card(page, index).getByRole('button', { name: 'قارن', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    }
+    const fifth = card(page, 5).getByRole('button', { name: 'قارن', exact: true });
+    await fifth.click();
+    await expect(card(page, 5).getByRole('status')).toHaveText('يمكنك مقارنة 4 منتجات كحد أقصى.');
+    await expect(fifth).toHaveAttribute('aria-pressed', 'false');
   });
 
   test('works in Arabic', async ({ page }) => {

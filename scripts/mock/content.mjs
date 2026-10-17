@@ -92,7 +92,8 @@ const FORMS = {
     title: { en: 'Prescriptions', ar: 'الوصفات الطبية' },
     showTitle: false,
     submit: { en: 'Prescriptions', ar: 'الوصفات الطبية' },
-    fields: [{ name: 'field1', kind: 'file', label: { en: 'Prescriptions', ar: 'الوصفات الطبية' }, required: true }],
+    // like staging: the merchant left the one upload optional (the storefront still refuses an empty answer)
+    fields: [{ name: 'field1', kind: 'file', label: { en: 'Prescriptions', ar: 'الوصفات الطبية' }, required: false }],
   },
 };
 

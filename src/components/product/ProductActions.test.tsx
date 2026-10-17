@@ -150,18 +150,60 @@ describe('ProductActions', () => {
     expect(heart).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('rolls compare back and shows the backend message when the list is full', async () => {
+  // QA 2026-10-17: buttons past the compare maximum looked pressed while /compare held 4 products.
+  it('presses compare only once the backend accepted it; a full list leaves it unpressed', async () => {
+    const pending = deferred();
+    vi.mocked(toggleCompareAction).mockReturnValue(pending.promise);
+    const { group } = renderCard(product(9822));
+    const compare = within(group).getByRole('button', { name: 'Compare' });
+    const user = userEvent.setup();
+
+    await user.click(compare);
+    expect(compare).toHaveAttribute('aria-pressed', 'false');
+    expect(compare).toHaveAttribute('aria-busy', 'true');
+    // a second click while the first is on its way sends nothing more
+    await user.click(compare);
+    expect(toggleCompareAction).toHaveBeenCalledTimes(1);
+
+    await act(async () => pending.resolve({ ok: false, message: 'You can compare up to 4 products.' }));
+    expect(compare).toHaveAttribute('aria-pressed', 'false');
+    expect(compare).not.toHaveAttribute('aria-busy');
+    expect(within(group).getByRole('status')).toHaveTextContent('You can compare up to 4 products.');
+  });
+
+  it('presses compare after the backend added the product', async () => {
     const pending = deferred();
     vi.mocked(toggleCompareAction).mockReturnValue(pending.promise);
     const { group } = renderCard(product(9822));
     const compare = within(group).getByRole('button', { name: 'Compare' });
 
     await userEvent.setup().click(compare);
-    expect(compare).toHaveAttribute('aria-pressed', 'true');
-
-    await act(async () => pending.resolve({ ok: false, message: 'You can compare up to 4 products.' }));
     expect(compare).toHaveAttribute('aria-pressed', 'false');
-    expect(within(group).getByRole('status')).toHaveTextContent('You can compare up to 4 products.');
+    await act(async () => pending.resolve({ ok: true, message: 'Added to compare.' }));
+    expect(compare).toHaveAttribute('aria-pressed', 'true');
+    expect(within(group).getByRole('status')).toHaveTextContent('Added to compare.');
+  });
+
+  it('takes a product out of compare optimistically and puts it back when refused', async () => {
+    const pending = deferred();
+    vi.mocked(toggleCompareAction).mockReturnValue(pending.promise);
+    const { group } = renderCard(product(8412), { me: meFixture('en') });
+    const compare = within(group).getByRole('button', { name: 'Compare' });
+
+    await userEvent.setup().click(compare);
+    expect(toggleCompareAction).toHaveBeenCalledWith('en', 8412, false);
+    expect(compare).toHaveAttribute('aria-pressed', 'false');
+    await act(async () => pending.resolve({ ok: false, message: 'Something went wrong. Please try again.' }));
+    expect(compare).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('a refused compare stays unpressed in Arabic', async () => {
+    vi.mocked(toggleCompareAction).mockResolvedValue({ ok: false, message: 'يمكنك مقارنة 4 منتجات كحد أقصى.' });
+    const { group } = renderCard(product(9822, 'ar'), { locale: 'ar' });
+    const compare = within(group).getByRole('button', { name: 'قارن' });
+    await userEvent.setup().click(compare);
+    expect(compare).toHaveAttribute('aria-pressed', 'false');
+    expect(within(group).getByRole('status')).toHaveTextContent('يمكنك مقارنة 4 منتجات كحد أقصى.');
   });
 
   it('rolls back with a generic message when the action cannot run', async () => {
