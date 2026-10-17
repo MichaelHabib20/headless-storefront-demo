@@ -62,6 +62,41 @@ test.describe('mobile', () => {
     }
   });
 
+  // The menu item's raw link is /prescriptions: a store page (StorePageTarget), never /product/prescriptions.
+  test('prescriptions from the menu drawer and the bottom nav: the sign-in card signed out, the page signed in (en, ar)', async ({ page, context }) => {
+    test.skip(live, 'needs the mock API');
+    await page.request.post(`${MOCK_API}/__reset`);
+    const text = {
+      en: { menu: 'Menu', item: 'Prescription', more: /More/, sheetItem: /Prescription/ },
+      ar: { menu: 'القائمة', item: 'الروشتة الالكترونية', more: /المزيد/, sheetItem: /الوصفات الطبية/ },
+    } as const;
+    const landed = async (locale: string, signedIn: boolean) => {
+      await expect(page).toHaveURL(new RegExp(`/${locale}/prescriptions$`));
+      await expect(page.getByTestId(signedIn ? 'prescription-form' : 'account-sign-in')).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    };
+    for (const signedIn of [false, true]) {
+      if (signedIn) await signInAsCustomer(context);
+      for (const locale of ['en', 'ar'] as const) {
+        const t = text[locale];
+        // the menu drawer
+        await page.goto(`/${locale}`);
+        await page.getByRole('button', { name: t.menu, exact: true }).click();
+        const link = page.getByRole('dialog', { name: t.menu }).getByRole('link', { name: t.item, exact: true });
+        await expect(link).toHaveAttribute('href', `/${locale}/prescriptions`);
+        await link.click();
+        await landed(locale, signedIn);
+        // the bottom nav's "more" sheet
+        await page.goto(`/${locale}`);
+        await page.getByTestId('mobile-bottom-nav').getByRole('button', { name: t.more }).click();
+        const item = page.getByTestId('more-sheet').getByRole('link', { name: t.sheetItem });
+        await expect(item).toHaveAttribute('href', `/${locale}/prescriptions`);
+        await item.click();
+        await landed(locale, signedIn);
+      }
+    }
+  });
+
   test('loyalty on a phone: the bottom nav opens the points page, both languages fit', async ({ page, context }) => {
     test.skip(live, 'needs the mock API');
     await page.request.post(`${MOCK_API}/__reset`);

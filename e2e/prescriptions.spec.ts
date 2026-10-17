@@ -41,6 +41,26 @@ test('a visitor is asked to sign in, and no guest session is created', async ({ 
   expect(response.headers()['x-robots-tag']).toContain('noindex');
 });
 
+// The menu item's raw link is /prescriptions: a store page (StorePageTarget), never /product/prescriptions.
+test('the menu item "Prescription" opens the prescriptions page: the sign-in card signed out, the page signed in (en, ar)', async ({ page, context }) => {
+  const labels = { en: 'Prescription', ar: 'الروشتة الالكترونية' } as const;
+  for (const signedIn of [false, true]) {
+    if (signedIn) await signInAsCustomer(context);
+    for (const locale of ['en', 'ar'] as const) {
+      await open(page, `/${locale}`);
+      const item = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: labels[locale], exact: true });
+      await expect(item).toHaveAttribute('href', `/${locale}/prescriptions`);
+      await item.click();
+      await expect(page).toHaveURL(new RegExp(`/${locale}/prescriptions$`));
+      if (signedIn) {
+        await expect(page.getByTestId('prescription-form')).toBeVisible();
+      } else {
+        await expect(page.getByTestId('account-sign-in')).toBeVisible();
+      }
+    }
+  }
+});
+
 test('sends a prescription with photos, then sees it first in the list', async ({ page, context, request }) => {
   await signInAsCustomer(context);
   await open(page, '/en/prescriptions');

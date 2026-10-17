@@ -57,6 +57,32 @@ describe('resolveTarget', () => {
     expect(resolveTarget({ type: 'gift_card', slug: 'x' } as unknown as Target, 'en')).toBeNull();
     expect(resolveTarget({ type: 'list', slug: null, id: null }, 'en')).toBeNull();
   });
+
+  it('opens the store pages a merchant link names as they are (never /product/prescriptions)', () => {
+    const pages: Array<[Extract<Target, { type: 'store_page' }>['page'], string]> = [
+      ['prescriptions', '/prescriptions'],
+      ['cart', '/cart'],
+      ['wishlist', '/favorites'],
+      ['compare', '/compare'],
+      ['notifications', '/notifications'],
+      ['categories', '/categories'],
+      ['brands', '/brands'],
+      ['vendors', '/vendors'],
+      ['account', '/account'],
+      ['orders', '/account/order-history'],
+      ['track_order', '/account/track-your-order'],
+      ['sign_in', '/session/signin'],
+      ['sign_up', '/session/signup'],
+    ];
+    for (const [page, path] of pages) {
+      for (const locale of ['en', 'ar'] as const) {
+        expect(resolveTarget({ type: 'store_page', page }, locale)).toEqual({ href: `/${locale}${path}`, external: false });
+      }
+    }
+    expect(resolveTarget({ type: 'store_page', page: 'gift_cards' } as unknown as Target, 'en')).toBeNull();
+    expect(resolveTarget({ type: 'store_page', page: 'toString' } as unknown as Target, 'en')).toBeNull();
+    expect(targetPage({ type: 'store_page', page: 'prescriptions' })).toBeNull();
+  });
 });
 
 describe('isStorefrontPath', () => {

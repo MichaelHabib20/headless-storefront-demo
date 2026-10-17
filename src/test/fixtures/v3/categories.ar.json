@@ -3987,21 +3987,6 @@
      ]
     },
     "children": []
-   },
-   {
-    "id": "prescriptions",
-    "name": "الروشتة الالكترونية",
-    "image": {
-     "url": "https://cdn.supercommerce.io/seif-pharmacies/uploads/prescription_3974864-1772472071.png",
-     "alt": "الروشتة الالكترونية"
-    },
-    "target": {
-     "type": "category",
-     "path": [
-      "prescriptions"
-     ]
-    },
-    "children": []
    }
   ]
  }
