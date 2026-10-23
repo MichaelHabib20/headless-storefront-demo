@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { isLocale, type Home, type Locale } from '@/sdk';
 import { BrandRail } from '@/components/home/BrandRail';
 import { CategoryTiles } from '@/components/home/CategoryTiles';
+import { EndOfPageCart } from '@/components/home/EndOfPageCart';
 import { PopupHost } from '@/components/home/PopupHost';
 import { PromoStrip } from '@/components/home/PromoStrip';
 import { VendorRail } from '@/components/home/VendorRail';
@@ -56,6 +57,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <BrandRail brands={home.featuredBrands} locale={locale} />
       <VendorRail block={home.featuredVendors} locale={locale} />
       <PromoStrip banner={promoFor(home, PROMO_PLACEMENTS.bottom)} locale={locale} />
+      <EndOfPageCart locale={locale} />
       <PopupHost popups={home.popups} locale={locale} closeLabel={t('close')} bannerLabel={t('bannerLabel')} />
       <JsonLd seo={home.seo} locale={locale} />
     </>

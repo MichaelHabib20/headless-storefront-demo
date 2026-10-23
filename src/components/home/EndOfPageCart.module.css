@@ -1,0 +1,71 @@
+.section {
+  padding-block: var(--space-6);
+}
+
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-5);
+  background: var(--color-inverse-bg);
+  color: var(--color-inverse-text);
+  border-block-end: var(--space-2) solid var(--color-primary);
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-text);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.text {
+  margin: 0;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--space-7);
+  padding-inline: var(--space-5);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.button:hover {
+  background: var(--color-primary);
+}
+
+@media (min-width: 1024px) {
+  .card {
+    justify-content: space-between;
+    padding-inline: var(--space-7);
+    text-align: start;
+  }
+
+  .copy {
+    flex: 1;
+  }
+}
