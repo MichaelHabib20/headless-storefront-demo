@@ -34,7 +34,8 @@ const schema = {
       minItems: 1,
       items: {
         type: 'object',
-        required: ['key', 'name_en', 'name_ar', 'needs'],
+        // legacy_image_type: without it the backend cannot tell when an old-form edit replaces the design
+        required: ['key', 'name_en', 'name_ar', 'needs', 'legacy_image_type'],
         additionalProperties: false,
         properties: {
           key: { type: 'string', pattern: '^[a-z][a-z0-9_]{1,63}$' },
