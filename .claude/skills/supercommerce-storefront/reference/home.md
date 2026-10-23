@@ -48,9 +48,13 @@ interface Section {
 ### Designs (`src/designs/sections.json`)
 
 - The storefront owns the design list: `src/designs/sections.json` (`key`, `name_en`, `name_ar`,
-  `needs: {products, banners_min, banners_max}`, `legacy_image_type`). The backend stores it
+  `needs: {products, banners_min, banners_max}`, `legacy_image_type`, optional `legacy_image_type_by_banners`
+  — banner count → old image type, e.g. `{"2": 5, "3": 6, "4": 7}`). The backend stores it
   (`npm run designs:register` with `SC_API_URL` + `STOREFRONT_DESIGNS_KEY`) and the admin lets the merchant
   pick one per section; the section then comes with `design`.
+- Today a design controls the **banner area only**: the section title and the product row are drawn the same
+  for every design (`HomeSection.tsx`). `needs.products` means "this design can show the product row" (not
+  "products are required"); `banners_min/max` are how many banners it draws (what the admin lets the merchant add).
 - Each key is drawn by one entry in `sectionDesigns` (`BannerLayouts.tsx`). The first six keys are the layout
   names. A section whose `design` is null or not in `sectionDesigns` is drawn by its `layout`, as before.
 - **New kind of section** → a new component + a new entry in `sectionDesigns` + a new entry in
