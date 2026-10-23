@@ -1,14 +1,14 @@
 /** @vitest-environment jsdom */
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { ImageBlockData, LeafBlock, Locale, SectionBlock, Target } from '@/sdk';
+import type { SectionBlockImage, SectionBlockLeaf, Locale, SectionBlock, Target } from '@/sdk';
 import { homeFixture } from '@/test/fixtures';
 import { BlockRenderer, blockComponents } from './BlockRenderer';
 
 const LIST: Target = { type: 'list', slug: null, id: 125 };
 const products = homeFixture('en').sections.find((s) => s.products.length > 0)!.products;
 
-const image = (over: Partial<ImageBlockData> = {}): ImageBlockData => ({
+const image = (over: Partial<SectionBlockImage> = {}): SectionBlockImage => ({
   type: 'image',
   media: { desktop: 'https://img.test/d.jpg', mobile: 'https://img.test/m.jpg', desktop_ar: null, mobile_ar: null },
   alt: 'Summer sale',
@@ -153,7 +153,7 @@ describe('BlockRenderer: unknown data is skipped, never guessed', () => {
   it('skips node types it does not know, at the top and inside containers', () => {
     draw([
       { type: 'video', url: 'https://v.test/x.mp4' },
-      { type: 'grid', columns: { mobile: 1, desktop: 2 }, items: [{ type: 'countdown', until: '2027-01-01' } as unknown as LeafBlock, image()] },
+      { type: 'grid', columns: { mobile: 1, desktop: 2 }, items: [{ type: 'countdown', until: '2027-01-01' } as unknown as SectionBlockLeaf, image()] },
       { type: 'text', text: 'Still here', style: 'body' },
       {} as Record<string, unknown>,
       { type: 'constructor' },
@@ -163,7 +163,7 @@ describe('BlockRenderer: unknown data is skipped, never guessed', () => {
   });
 
   it('skips a container inside a container (v1 trees are one level deep)', () => {
-    draw([{ type: 'row', items: [{ type: 'slider', items: [image()] } as unknown as LeafBlock, { type: 'text', text: 'Leaf', style: 'body' }] }]);
+    draw([{ type: 'row', items: [{ type: 'slider', items: [image()] } as unknown as SectionBlockLeaf, { type: 'text', text: 'Leaf', style: 'body' }] }]);
     expect(root().querySelector('[data-block="slider"]')).toBeNull();
     expect(screen.getByText('Leaf')).toBeInTheDocument();
   });

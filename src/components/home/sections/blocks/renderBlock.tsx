@@ -1,11 +1,11 @@
 import type { ComponentType } from 'react';
-import type { LeafBlock, SectionBlock } from '@/sdk';
+import type { SectionBlockLeaf, SectionBlock } from '@/sdk';
 import type { BlockContext, BlockProps, BlockType } from './types';
 
-const LEAF_TYPES: readonly string[] = ['image', 'text', 'button', 'product_list'] satisfies LeafBlock['type'][];
+const LEAF_TYPES: readonly string[] = ['image', 'text', 'button', 'product_list'] satisfies SectionBlockLeaf['type'][];
 
 /** Whether a leaf has something to show (containers drop the others, so no empty slide or cell is drawn). */
-function leafHasContent(block: LeafBlock, context: BlockContext): boolean {
+function leafHasContent(block: SectionBlockLeaf, context: BlockContext): boolean {
   switch (block.type) {
     case 'image':
       return Boolean(block.media?.desktop);
@@ -21,12 +21,12 @@ function leafHasContent(block: LeafBlock, context: BlockContext): boolean {
 }
 
 /** The leaves of a container worth drawing: known leaf types (no container inside a container) with content. */
-export function drawableLeaves(items: LeafBlock[] | undefined, context: BlockContext): LeafBlock[] {
+export function drawableLeaves(items: SectionBlockLeaf[] | undefined, context: BlockContext): SectionBlockLeaf[] {
   return (items ?? []).filter((item) => typeof item?.type === 'string' && LEAF_TYPES.includes(item.type) && Object.hasOwn(context.components, item.type) && leafHasContent(item, context));
 }
 
 /** One node, drawn by the component of its type. Types this storefront doesn't know are skipped. */
-export function renderBlock(block: SectionBlock | LeafBlock, context: BlockContext, index: number, priority?: boolean) {
+export function renderBlock(block: SectionBlock | SectionBlockLeaf, context: BlockContext, index: number, priority?: boolean) {
   const type = block?.type;
   if (typeof type !== 'string' || !Object.hasOwn(context.components, type)) return null;
   const Component = context.components[type as BlockType] as ComponentType<BlockProps<BlockType>>;

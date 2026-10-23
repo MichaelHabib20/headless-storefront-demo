@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { ImageBlockData, Section } from '@/sdk';
+import type { SectionBlockImage, Section } from '@/sdk';
 import { homeBlocksFixture, homeFixture } from '@/test/fixtures';
 import { blockImage, sectionBlocks } from './blocks';
 
-const image = (media: Partial<ImageBlockData['media']>): ImageBlockData => ({
+const image = (media: Partial<SectionBlockImage['media']>): SectionBlockImage => ({
   type: 'image',
   media: { desktop: 'd.jpg', mobile: null, desktop_ar: null, mobile_ar: null, ...media },
   alt: null,

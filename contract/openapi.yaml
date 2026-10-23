@@ -2430,13 +2430,13 @@ components:
           type: array
           items: { $ref: '#/components/schemas/ProductCard' }
         viewAll: { $ref: '#/components/schemas/NullableTarget' }
-        # ---- section blocks (optional: older recordings lack it)
         blocks:
-          description: 'What the merchant built for this section (slider / grid / row of images, texts, buttons, its product list), resolved for drawing: image URLs, texts in the request language, links as Targets. Null = no blocks (draw `banners` / `products` as before). When present and not empty, draw the blocks instead of `banners` and `products`. Skip node types you do not know.'
           nullable: true
           allOf: [{ $ref: '#/components/schemas/SectionBlocks' }]
+          description: The section's content as blocks (slider / grid / row of images, text, buttons, the section's own products), set by the AI editor. Absent when the store has section blocks switched off; null when this section has none. When non-null, render the blocks instead of `banners` by `layout`; `products` stays the section's product source (a `product_list` block shows it). Links are resolved (`target`, null = not clickable), texts are in the request language and images are URLs. Skip node types you do not know.
 
     SectionBlocks:
+      description: A section's blocks, resolved for rendering (1 to 4 top-level blocks, no container inside a container).
       type: object
       required: [version, blocks]
       additionalProperties: false
@@ -2444,71 +2444,77 @@ components:
         version: { type: integer, enum: [1] }
         blocks:
           type: array
+          minItems: 1
           maxItems: 4
           items: { $ref: '#/components/schemas/SectionBlock' }
 
     SectionBlock:
-      description: A top-level node. Containers (slider, grid, row) hold leaves only.
       oneOf:
-        - $ref: '#/components/schemas/SliderBlock'
-        - $ref: '#/components/schemas/GridBlock'
-        - $ref: '#/components/schemas/RowBlock'
-        - $ref: '#/components/schemas/ImageBlock'
-        - $ref: '#/components/schemas/TextBlock'
-        - $ref: '#/components/schemas/ButtonBlock'
-        - $ref: '#/components/schemas/ProductListBlock'
+        - $ref: '#/components/schemas/SectionBlockSlider'
+        - $ref: '#/components/schemas/SectionBlockGrid'
+        - $ref: '#/components/schemas/SectionBlockRow'
+        - $ref: '#/components/schemas/SectionBlockImage'
+        - $ref: '#/components/schemas/SectionBlockText'
+        - $ref: '#/components/schemas/SectionBlockButton'
+        - $ref: '#/components/schemas/SectionBlockProductList'
       discriminator:
         propertyName: type
         mapping:
-          slider: '#/components/schemas/SliderBlock'
-          grid: '#/components/schemas/GridBlock'
-          row: '#/components/schemas/RowBlock'
-          image: '#/components/schemas/ImageBlock'
-          text: '#/components/schemas/TextBlock'
-          button: '#/components/schemas/ButtonBlock'
-          product_list: '#/components/schemas/ProductListBlock'
+          slider: '#/components/schemas/SectionBlockSlider'
+          grid: '#/components/schemas/SectionBlockGrid'
+          row: '#/components/schemas/SectionBlockRow'
+          image: '#/components/schemas/SectionBlockImage'
+          text: '#/components/schemas/SectionBlockText'
+          button: '#/components/schemas/SectionBlockButton'
+          product_list: '#/components/schemas/SectionBlockProductList'
 
-    LeafBlock:
+    SectionBlockLeaf:
+      description: A block inside a container.
       oneOf:
-        - $ref: '#/components/schemas/ImageBlock'
-        - $ref: '#/components/schemas/TextBlock'
-        - $ref: '#/components/schemas/ButtonBlock'
-        - $ref: '#/components/schemas/ProductListBlock'
+        - $ref: '#/components/schemas/SectionBlockImage'
+        - $ref: '#/components/schemas/SectionBlockText'
+        - $ref: '#/components/schemas/SectionBlockButton'
+        - $ref: '#/components/schemas/SectionBlockProductList'
       discriminator:
         propertyName: type
         mapping:
-          image: '#/components/schemas/ImageBlock'
-          text: '#/components/schemas/TextBlock'
-          button: '#/components/schemas/ButtonBlock'
-          product_list: '#/components/schemas/ProductListBlock'
+          image: '#/components/schemas/SectionBlockImage'
+          text: '#/components/schemas/SectionBlockText'
+          button: '#/components/schemas/SectionBlockButton'
+          product_list: '#/components/schemas/SectionBlockProductList'
 
-    SliderBlock:
+    SectionBlockId:
+      description: Optional id of a block (for targeted edits).
+      type: string
+      pattern: '^[a-z0-9_-]{1,32}$'
+
+    SectionBlockSlider:
       type: object
       required: [type, items]
       additionalProperties: false
       properties:
         type: { type: string, enum: [slider] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
         items:
           type: array
           minItems: 1
           maxItems: 12
-          items: { $ref: '#/components/schemas/LeafBlock' }
+          items: { $ref: '#/components/schemas/SectionBlockLeaf' }
         autoplay: { type: boolean }
         interval_ms: { type: integer, minimum: 2000, maximum: 15000 }
 
-    GridBlock:
+    SectionBlockGrid:
       type: object
       required: [type, items, columns]
       additionalProperties: false
       properties:
         type: { type: string, enum: [grid] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
         items:
           type: array
           minItems: 1
           maxItems: 12
-          items: { $ref: '#/components/schemas/LeafBlock' }
+          items: { $ref: '#/components/schemas/SectionBlockLeaf' }
         columns:
           type: object
           required: [mobile, desktop]
@@ -2518,29 +2524,29 @@ components:
             desktop: { type: integer, minimum: 1, maximum: 6 }
         gap: { type: string, enum: [s, m, l] }
 
-    RowBlock:
+    SectionBlockRow:
       type: object
       required: [type, items]
       additionalProperties: false
       properties:
         type: { type: string, enum: [row] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
         items:
           type: array
           minItems: 1
           maxItems: 12
-          items: { $ref: '#/components/schemas/LeafBlock' }
+          items: { $ref: '#/components/schemas/SectionBlockLeaf' }
         align: { type: string, enum: [start, center, space] }
 
-    ImageBlock:
+    SectionBlockImage:
       type: object
       required: [type, media, alt, target]
       additionalProperties: false
       properties:
         type: { type: string, enum: [image] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
         media:
-          description: Image URLs. Missing variants are null (fall back to `desktop`; Arabic pages prefer the `_ar` ones).
+          description: Image URLs; null = use `desktop` (or the English one for `*_ar`).
           type: object
           required: [desktop, mobile, desktop_ar, mobile_ar]
           additionalProperties: false
@@ -2549,39 +2555,39 @@ components:
             mobile: { type: string, nullable: true }
             desktop_ar: { type: string, nullable: true }
             mobile_ar: { type: string, nullable: true }
-        alt: { type: string, nullable: true, description: In the request language }
+        alt: { type: string, nullable: true }
         target: { $ref: '#/components/schemas/NullableTarget' }
 
-    TextBlock:
+    SectionBlockText:
       type: object
       required: [type, text, style]
       additionalProperties: false
       properties:
         type: { type: string, enum: [text] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
-        text: { type: string, description: In the request language }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
+        text: { type: string, maxLength: 300 }
         style: { type: string, enum: [heading, body, caption] }
         align: { type: string, enum: [start, center, end] }
 
-    ButtonBlock:
+    SectionBlockButton:
       type: object
       required: [type, label, target, variant]
       additionalProperties: false
       properties:
         type: { type: string, enum: [button] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
-        label: { type: string, description: In the request language }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
+        label: { type: string, maxLength: 40 }
         target: { $ref: '#/components/schemas/NullableTarget' }
         variant: { type: string, enum: [primary, secondary] }
 
-    ProductListBlock:
-      description: The section's own products (`Section.products`), at most `limit`.
+    SectionBlockProductList:
+      description: The section's own products (`Section.products`), at most `limit` of them.
       type: object
       required: [type, display, limit]
       additionalProperties: false
       properties:
         type: { type: string, enum: [product_list] }
-        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        id: { $ref: '#/components/schemas/SectionBlockId' }
         display: { type: string, enum: [rail, grid] }
         limit: { type: integer, minimum: 1, maximum: 20 }
 

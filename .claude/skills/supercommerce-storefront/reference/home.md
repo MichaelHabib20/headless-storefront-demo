@@ -63,7 +63,7 @@ interface Section {
   (sections in the backend point at it). `src/designs/sections.test.ts` checks the file and that every key has
   a renderer.
 
-### Blocks (`Section.blocks`)
+### Blocks (`Section.blocks`; absent when the store has blocks switched off)
 
 - A section may come with `blocks` (`{version: 1, blocks: [...]}`): a tree the merchant (or the AI editor) built —
   containers `slider` / `grid` / `row` holding leaves `image` / `text` / `button` / `product_list`, already resolved:

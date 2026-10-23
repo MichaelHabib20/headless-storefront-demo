@@ -1,4 +1,4 @@
-import type { ImageBlockData, Locale, ResponsiveImage, Section, SectionBlock } from '@/sdk';
+import type { SectionBlockImage, Locale, ResponsiveImage, Section, SectionBlock } from '@/sdk';
 
 /**
  * The section's blocks to draw, or null: draw the section as before (banners + products).
@@ -15,7 +15,7 @@ export function sectionBlocks(section: Section): SectionBlock[] | null {
  * picture (wrong-language text in an image is worse than a wider crop). Missing variants fall back
  * to the desktop one.
  */
-export function blockImage(block: ImageBlockData, locale: Locale, alt: string): ResponsiveImage {
+export function blockImage(block: SectionBlockImage, locale: Locale, alt: string): ResponsiveImage {
   const { desktop, mobile, desktop_ar: desktopAr, mobile_ar: mobileAr } = block.media;
   if (locale === 'ar' && (desktopAr || mobileAr)) {
     return { desktop: desktopAr || desktop, mobile: mobileAr || desktopAr || mobile || desktop, alt };
