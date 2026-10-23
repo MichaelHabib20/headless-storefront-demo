@@ -76,6 +76,7 @@ interface Section {
   section's own `products` (at most `limit`) through `ProductCard` (prices: the money components).
 - A design may restyle blocks: add its key to `blockDesigns` (`BlockRenderer.tsx`) with the block components it draws
   its own way; types it leaves out use the defaults.
+- A slider with autoplay gets a visible pause/play button (Rail `autoplay` prop, labels `pauseSlides` / `playSlides`).
 - Arabic pages use the `_ar` artwork when there is some (`blockImage` in `src/lib/blocks.ts`).
 - Editor previews: env `SC_PREVIEW_TOKEN` (server-only) → the SDK sends `x-preview-token` and caches nothing; the
   backend then shows unpublished section drafts. Never set it on a live site.

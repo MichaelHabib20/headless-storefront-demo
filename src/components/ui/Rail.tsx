@@ -13,16 +13,24 @@ interface RailProps {
   /** Visible items per row on desktop (1: one full-width slide, on phones too) */
   perView?: 1 | 2 | 3 | 4 | 5 | 6;
   /**
-   * Move forward on its own every `autoplayMs` (back to the first item after the last). Pauses while the
-   * pointer or the keyboard focus is in the rail or the tab is hidden; off when the visitor prefers reduced motion.
+   * Move forward on its own every `ms` (back to the first item after the last), with a visible pause/play
+   * button (WCAG 2.2.2) named by `pauseLabel` / `playLabel`. Also pauses while the pointer or the keyboard
+   * focus is in the rail (except on that button) or the tab is hidden; off when the visitor prefers reduced motion.
    */
-  autoplayMs?: number;
+  autoplay?: { ms: number; pauseLabel: string; playLabel: string };
 }
 
 /** Horizontally scrolling row with scroll-snap and arrow buttons (RTL aware). */
-export function Rail({ children, label, previousLabel, nextLabel, perView = 4, autoplayMs }: RailProps) {
+export function Rail({ children, label, previousLabel, nextLabel, perView = 4, autoplay }: RailProps) {
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLUListElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const autoplayMs = autoplay?.ms;
+  // Autoplay runs only after mount and without reduced motion; `stopped` = the visitor pressed pause.
+  const [moving, setMoving] = useState(false);
+  const [stopped, setStopped] = useState(false);
+  const stoppedRef = useRef(false);
+  stoppedRef.current = stopped;
   const [edges, setEdges] = useState({ start: true, end: false });
 
   const update = useCallback(() => {
@@ -57,13 +65,18 @@ export function Rail({ children, label, previousLabel, nextLabel, perView = 4, a
     const el = track.current;
     if (!autoplayMs || !box || !el) return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    setMoving(true);
     let paused = false;
-    const pause = () => (paused = true);
+    const pause = (event?: Event) => {
+      // focus on the pause/play button itself does not pause: pressing "play" must play
+      if (event?.type === 'focusin' && event.target === toggle.current) return;
+      paused = true;
+    };
     const resume = () => (paused = false);
-    const events: [string, () => void][] = [['mouseenter', pause], ['mouseleave', resume], ['focusin', pause], ['focusout', resume]];
+    const events: [string, (event?: Event) => void][] = [['mouseenter', pause], ['mouseleave', resume], ['focusin', pause], ['focusout', resume]];
     for (const [name, fn] of events) box.addEventListener(name, fn);
     const timer = window.setInterval(() => {
-      if (paused || document.hidden) return;
+      if (paused || stoppedRef.current || document.hidden) return;
       const atEnd = Math.abs(el.scrollLeft) + el.clientWidth >= el.scrollWidth - 4;
       if (atEnd) el.scrollTo({ left: 0, behavior: 'smooth' });
       else scroll(true);
@@ -71,6 +84,7 @@ export function Rail({ children, label, previousLabel, nextLabel, perView = 4, a
     return () => {
       window.clearInterval(timer);
       for (const [name, fn] of events) box.removeEventListener(name, fn);
+      setMoving(false);
     };
   }, [autoplayMs, scroll]);
 
@@ -79,6 +93,18 @@ export function Rail({ children, label, previousLabel, nextLabel, perView = 4, a
       <ul ref={track} className={styles.track} aria-label={label}>
         {children}
       </ul>
+      {autoplay && moving && (
+        <button
+          ref={toggle}
+          type="button"
+          className={`${styles.button} ${styles.toggle}`}
+          onClick={() => setStopped((s) => !s)}
+          aria-label={stopped ? autoplay.playLabel : autoplay.pauseLabel}
+          data-testid="rail-autoplay"
+        >
+          <Icon name={stopped ? 'play' : 'pause'} size={20} />
+        </button>
+      )}
       <div className={styles.controls}>
         <button type="button" className={styles.button} onClick={() => scroll(false)} disabled={edges.start} aria-label={previousLabel}>
           <Icon name="arrow" directional className={styles.back} />

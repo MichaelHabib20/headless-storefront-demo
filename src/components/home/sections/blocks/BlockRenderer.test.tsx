@@ -103,7 +103,7 @@ describe('BlockRenderer: leaves', () => {
   });
 
   it('product_list as a grid', () => {
-    draw([{ type: 'product_list', display: 'grid', limit: 20 }]);
+    draw([{ type: 'product_list', display: 'grid', limit: 10 }]);
     const list = screen.getByRole('list', { name: 'Baby Care' });
     expect(list).toHaveAttribute('data-variant', 'grid');
     expect(within(list).getAllByTestId('product-card')).toHaveLength(products.length);
@@ -121,8 +121,14 @@ describe('BlockRenderer: containers', () => {
     expect(within(slider as HTMLElement).getAllByRole('link')).toHaveLength(2);
   });
 
-  it('slider buttons are in Arabic on Arabic pages', () => {
-    draw([{ type: 'slider', items: [image(), image()] }], { locale: 'ar' });
+  it('slider without autoplay has no pause button', () => {
+    draw([{ type: 'slider', items: [image(), image()] }]);
+    expect(screen.queryByRole('button', { name: 'Pause slideshow' })).toBeNull();
+  });
+
+  it('slider buttons (pause, previous, next) are in Arabic on Arabic pages', () => {
+    draw([{ type: 'slider', autoplay: true, items: [image(), image()] }], { locale: 'ar' });
+    expect(screen.getByRole('button', { name: 'إيقاف العرض التلقائي' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'السابق' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'التالي' })).toBeInTheDocument();
   });

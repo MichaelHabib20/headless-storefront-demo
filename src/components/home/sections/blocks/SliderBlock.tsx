@@ -12,7 +12,7 @@ export function SliderBlock({ block, context, priority }: BlockProps<'slider'>) 
   if (items.length === 0) return null;
   return (
     <div data-block="slider">
-      <Rail label={context.label} previousLabel={t('previous')} nextLabel={t('next')} perView={1} autoplayMs={block.autoplay ? block.interval_ms || DEFAULT_INTERVAL_MS : undefined}>
+      <Rail label={context.label} previousLabel={t('previous')} nextLabel={t('next')} perView={1} autoplay={block.autoplay ? { ms: block.interval_ms || DEFAULT_INTERVAL_MS, pauseLabel: t('pauseSlides'), playLabel: t('playSlides') } : undefined}>
         {items.map((item, i) => (
           <RailItem key={i}>{item}</RailItem>
         ))}
