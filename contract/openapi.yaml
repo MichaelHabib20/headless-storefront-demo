@@ -2422,9 +2422,7 @@ components:
         design:
           type: string
           nullable: true
-          description: >-
-            The storefront design the merchant picked (a key from the storefront's src/designs/sections.json,
-            registered with POST /api/storefront-designs/register). Null or unknown → draw by `layout`.
+          description: The storefront design the merchant chose (a key of the storefront's src/designs/sections.json). Null = none; render by `layout`. Unknown key → render by `layout`.
         banners:
           type: array
           items: { $ref: '#/components/schemas/Banner' }

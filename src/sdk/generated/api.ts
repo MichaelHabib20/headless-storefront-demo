@@ -1948,7 +1948,7 @@ export interface components {
             /** @description Null when the title is hidden */
             title: string | null;
             layout: components["schemas"]["SectionLayout"];
-            /** @description The storefront design the merchant picked (a key from the storefront's src/designs/sections.json, registered with POST /api/storefront-designs/register). Null or unknown → draw by `layout`. */
+            /** @description The storefront design the merchant chose (a key of the storefront's src/designs/sections.json). Null = none; render by `layout`. Unknown key → render by `layout`. */
             design?: string | null;
             banners: components["schemas"]["Banner"][];
             products: components["schemas"]["ProductCard"][];
