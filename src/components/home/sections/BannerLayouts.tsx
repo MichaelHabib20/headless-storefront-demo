@@ -92,3 +92,12 @@ export const bannerLayouts: Record<SectionLayout, (props: BannerLayoutProps) => 
   banner_grid: Grid,
   banner_rows: Rows,
 };
+
+/**
+ * How each design in src/designs/sections.json is drawn, by design key. The first six keys are the
+ * layout names, drawn like their layout. A new design = a new component here + a new entry in
+ * sections.json (never rename or remove a key). A section whose design isn't here is drawn by its layout.
+ */
+export const sectionDesigns: Record<string, (props: BannerLayoutProps) => React.ReactNode> = {
+  ...bannerLayouts,
+};

@@ -50,6 +50,30 @@ describe('HomeSection', () => {
     expect(screen.getByTestId('home-section')).toHaveAttribute('data-layout', 'banner_grid');
   });
 
+  it('draws by the design when the storefront knows it, over the layout', () => {
+    const base = homeFixture('en').sections.find((s) => s.banners.length > 1)!;
+    render(<HomeSection section={{ ...base, layout: 'banner_grid', design: 'single_banner' }} locale="en" />);
+    const node = screen.getByTestId('home-section');
+    expect(node).toHaveAttribute('data-design', 'single_banner');
+    expect(node).toHaveAttribute('data-layout', 'banner_grid');
+    expect(node.querySelectorAll('picture')).toHaveLength(1);
+  });
+
+  it.each([['an unknown', 'not_built_here'], ['no', null], ['a missing', undefined]] as const)(
+    'with %s design it draws by the layout, exactly as before designs',
+    (_, design) => {
+      const base = homeFixture('en').sections.find((s) => s.banners.length > 1)!;
+      const { container: before, unmount } = render(<HomeSection section={{ ...base, layout: 'single_banner' }} locale="en" />);
+      const html = before.innerHTML;
+      unmount();
+      render(<HomeSection section={{ ...base, layout: 'single_banner', design }} locale="en" />);
+      const node = screen.getByTestId('home-section');
+      expect(node).not.toHaveAttribute('data-design');
+      expect(node.querySelectorAll('picture')).toHaveLength(1);
+      expect(node.parentElement!.innerHTML).toBe(html);
+    },
+  );
+
   it.each<SectionLayout>(['single_banner', 'banner_carousel', 'wide_banner', 'banner_grid', 'banner_rows'])(
     'every image link of the %s layout has a name: alt, else the banner name, else "Banner" (EN + AR)',
     (layout) => {

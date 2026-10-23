@@ -31,6 +31,7 @@ interface Section {
   id: number;
   title: string | null;          // null → no heading
   layout: SectionLayout;         // products_only | single_banner | banner_carousel | wide_banner | banner_grid | banner_rows
+  design?: string | null;        // the merchant's pick from src/designs/sections.json (null → draw by layout)
   banners: Banner[];             // { id, image: {mobile, desktop, alt}, title, target }
   products: ProductCard[];
   viewAll: Target | null;        // only when the section has products
@@ -43,6 +44,19 @@ interface Section {
   To restyle a layout, change its component/CSS. To support a new layout added to the
   contract, add one entry. Unknown layouts are drawn as `banner_grid` (`normalizeLayout`).
 - Images: `<ResponsiveImage image={banner.image} />` picks mobile/desktop artwork.
+
+### Designs (`src/designs/sections.json`)
+
+- The storefront owns the design list: `src/designs/sections.json` (`key`, `name_en`, `name_ar`,
+  `needs: {products, banners_min, banners_max}`, `legacy_image_type`). The backend stores it
+  (`npm run designs:register` with `SC_API_URL` + `STOREFRONT_DESIGNS_KEY`) and the admin lets the merchant
+  pick one per section; the section then comes with `design`.
+- Each key is drawn by one entry in `sectionDesigns` (`BannerLayouts.tsx`). The first six keys are the layout
+  names. A section whose `design` is null or not in `sectionDesigns` is drawn by its `layout`, as before.
+- **New kind of section** → a new component + a new entry in `sectionDesigns` + a new entry in
+  `sections.json`. **Change how a design looks** → its component/CSS. Never rename or remove a key
+  (sections in the backend point at it). `src/designs/sections.test.ts` checks the file and that every key has
+  a renderer.
 
 ## Product card (`ProductCard.tsx`)
 
