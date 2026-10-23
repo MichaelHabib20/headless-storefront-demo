@@ -2419,6 +2419,12 @@ components:
         id: { type: integer }
         title: { type: string, nullable: true, description: Null when the title is hidden }
         layout: { $ref: '#/components/schemas/SectionLayout' }
+        design:
+          type: string
+          nullable: true
+          description: >-
+            The storefront design the merchant picked (a key from the storefront's src/designs/sections.json,
+            registered with POST /api/storefront-designs/register). Null or unknown → draw by `layout`.
         banners:
           type: array
           items: { $ref: '#/components/schemas/Banner' }
