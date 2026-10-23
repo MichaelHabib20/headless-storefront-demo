@@ -75,8 +75,9 @@ export const RULES = [
     applies: (f) => f.startsWith('src/') && !inMoney(f) && !isTest(f),
     patterns: [
       // price.display, total?.display — but not CSS: style.display, styles.display, getComputedStyle(el).display,
-      // nor the drawing hint of a filter or a product option: facet.display, option.display ('list' | 'color' | …)
-      /(?<!\b(?:style|styles|css|\w*[Ff]acet|\w*[Oo]ption)\??|getComputedStyle\([^)]*\))\.display\b/,
+      // nor the drawing hint of a filter, a product option or a section block: facet.display, option.display
+      // ('list' | 'color' | …), block.display (a product_list block: 'rail' | 'grid')
+      /(?<!\b(?:style|styles|css|\w*[Ff]acet|\w*[Oo]ption|block)\??|getComputedStyle\([^)]*\))\.display\b/,
       /\b(compareAtDisplay|discountLabel)\b/,
       /\[\s*['"`](display|compareAtDisplay|discountLabel)['"`]\s*\]/,
       // destructuring: const { display } = total;  ({ amount, display }) => …;  ({ display }: Money)

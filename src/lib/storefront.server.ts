@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { createStorefrontClient, getHome, getLayout, type Locale, type StorefrontClient } from '@/sdk';
 import { CUSTOMER_COOKIE, TOKEN_COOKIE } from './session-cookies';
 
-/** Server-side v3 client from environment variables. The api-key never reaches the browser. */
+/** Server-side v3 client from environment variables. The api-key and the preview token never reach the browser. */
 export function storefrontClient(): StorefrontClient {
   const baseUrl = process.env.SC_API_URL;
   if (!baseUrl) throw new Error('SC_API_URL is not set. Copy .env.example to .env.local and fill it in.');
@@ -12,6 +12,8 @@ export function storefrontClient(): StorefrontClient {
     baseUrl,
     apiKey: process.env.SC_API_KEY || undefined,
     revalidate: Number(process.env.SC_REVALIDATE_SECONDS ?? 60),
+    // Set only on an editor preview: the backend then overlays section drafts; never cached, never sent to the browser.
+    previewToken: process.env.SC_PREVIEW_TOKEN || undefined,
     onTokenRefused: forgetRefusedToken,
   });
 }

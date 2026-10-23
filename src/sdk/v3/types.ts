@@ -16,6 +16,17 @@ export type Home = Schemas['Home'];
 export type Section = Schemas['Section'];
 export type SectionLayout = Schemas['SectionLayout'];
 export type Banner = Schemas['Banner'];
+// section blocks (Section.blocks): a merchant-built tree, resolved for drawing
+export type SectionBlocks = Schemas['SectionBlocks'];
+export type SectionBlock = Schemas['SectionBlock'];
+export type LeafBlock = Schemas['LeafBlock'];
+export type SliderBlockData = Schemas['SliderBlock'];
+export type GridBlockData = Schemas['GridBlock'];
+export type RowBlockData = Schemas['RowBlock'];
+export type ImageBlockData = Schemas['ImageBlock'];
+export type TextBlockData = Schemas['TextBlock'];
+export type ButtonBlockData = Schemas['ButtonBlock'];
+export type ProductListBlockData = Schemas['ProductListBlock'];
 export type PromoBanner = Schemas['PromoBanner'];
 export type Popup = Schemas['Popup'];
 export type Tile = Schemas['Tile'];

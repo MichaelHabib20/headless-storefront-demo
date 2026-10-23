@@ -1953,6 +1953,110 @@ export interface components {
             banners: components["schemas"]["Banner"][];
             products: components["schemas"]["ProductCard"][];
             viewAll: components["schemas"]["NullableTarget"];
+            /** @description What the merchant built for this section (slider / grid / row of images, texts, buttons, its product list), resolved for drawing: image URLs, texts in the request language, links as Targets. Null = no blocks (draw `banners` / `products` as before). When present and not empty, draw the blocks instead of `banners` and `products`. Skip node types you do not know. */
+            blocks?: components["schemas"]["SectionBlocks"] | null;
+        };
+        SectionBlocks: {
+            /** @enum {integer} */
+            version: 1;
+            blocks: components["schemas"]["SectionBlock"][];
+        };
+        /** @description A top-level node. Containers (slider, grid, row) hold leaves only. */
+        SectionBlock: components["schemas"]["SliderBlock"] | components["schemas"]["GridBlock"] | components["schemas"]["RowBlock"] | components["schemas"]["ImageBlock"] | components["schemas"]["TextBlock"] | components["schemas"]["ButtonBlock"] | components["schemas"]["ProductListBlock"];
+        LeafBlock: components["schemas"]["ImageBlock"] | components["schemas"]["TextBlock"] | components["schemas"]["ButtonBlock"] | components["schemas"]["ProductListBlock"];
+        SliderBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "slider";
+            id?: string;
+            items: components["schemas"]["LeafBlock"][];
+            autoplay?: boolean;
+            interval_ms?: number;
+        };
+        GridBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "grid";
+            id?: string;
+            items: components["schemas"]["LeafBlock"][];
+            columns: {
+                mobile: number;
+                desktop: number;
+            };
+            /** @enum {string} */
+            gap?: "s" | "m" | "l";
+        };
+        RowBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "row";
+            id?: string;
+            items: components["schemas"]["LeafBlock"][];
+            /** @enum {string} */
+            align?: "start" | "center" | "space";
+        };
+        ImageBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "image";
+            id?: string;
+            /** @description Image URLs. Missing variants are null (fall back to `desktop`; Arabic pages prefer the `_ar` ones). */
+            media: {
+                desktop: string;
+                mobile: string | null;
+                desktop_ar: string | null;
+                mobile_ar: string | null;
+            };
+            /** @description In the request language */
+            alt: string | null;
+            target: components["schemas"]["NullableTarget"];
+        };
+        TextBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "text";
+            id?: string;
+            /** @description In the request language */
+            text: string;
+            /** @enum {string} */
+            style: "heading" | "body" | "caption";
+            /** @enum {string} */
+            align?: "start" | "center" | "end";
+        };
+        ButtonBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "button";
+            id?: string;
+            /** @description In the request language */
+            label: string;
+            target: components["schemas"]["NullableTarget"];
+            /** @enum {string} */
+            variant: "primary" | "secondary";
+        };
+        /** @description The section's own products (`Section.products`), at most `limit`. */
+        ProductListBlock: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "product_list";
+            id?: string;
+            /** @enum {string} */
+            display: "rail" | "grid";
+            limit: number;
         };
         Tile: {
             id: number;

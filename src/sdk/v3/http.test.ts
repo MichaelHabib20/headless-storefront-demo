@@ -52,6 +52,40 @@ describe('storefront client', () => {
   });
 });
 
+describe('storefront client: preview of section drafts', () => {
+  type NextInit = RequestInit & { next?: { revalidate: number } };
+
+  it('without a preview token: no header, store content cached for `revalidate`', async () => {
+    const fetch = mockFetch(200, { data: { sections: [] } });
+    await getHome(createStorefrontClient({ baseUrl: 'https://api.test', fetch, revalidate: 60 }), 'en');
+    const init = fetch.mock.calls[0][1] as NextInit;
+    expect(init.headers).not.toHaveProperty('x-preview-token');
+    expect(init.next).toEqual({ revalidate: 60 });
+    expect(init.cache).toBeUndefined();
+  });
+
+  it('with a preview token: sends x-preview-token on every v3 request and caches nothing', async () => {
+    const fetch = mockFetch(200, { data: { sections: [] } });
+    const client = createStorefrontClient({ baseUrl: 'https://api.test', apiKey: 'k', fetch, revalidate: 60, previewToken: 'p-123' });
+    await getHome(client, 'ar');
+    await getLayout(client, 'en');
+    await client.request('POST', 'cart/items', { locale: 'en', token: 't', body: {} });
+    for (const [, init] of fetch.mock.calls) {
+      expect((init as NextInit).headers).toMatchObject({ 'x-preview-token': 'p-123', 'api-key': 'k' });
+      expect((init as NextInit).next).toBeUndefined();
+      expect((init as NextInit).cache).toBe('no-store');
+    }
+  });
+
+  it('an empty preview token is no preview', async () => {
+    const fetch = mockFetch(200, { data: { sections: [] } });
+    await getHome(createStorefrontClient({ baseUrl: 'https://api.test', fetch, revalidate: 60, previewToken: '' }), 'en');
+    const init = fetch.mock.calls[0][1] as NextInit;
+    expect(init.headers).not.toHaveProperty('x-preview-token');
+    expect(init.next).toEqual({ revalidate: 60 });
+  });
+});
+
 describe('storefront client: checkout errors and uploads', () => {
   it('keeps what the backend sent next to the error (the fresh checkout)', async () => {
     const body = { error: { code: 'total_changed', message: 'The total changed.' }, checkout: { canPlaceOrder: true } };

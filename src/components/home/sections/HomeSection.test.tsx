@@ -2,7 +2,7 @@
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import type { Section, SectionLayout } from '@/sdk';
-import { homeFixture } from '@/test/fixtures';
+import { homeBlocksFixture, homeFixture } from '@/test/fixtures';
 import { HomeSection } from './HomeSection';
 
 describe('HomeSection', () => {
@@ -98,5 +98,72 @@ describe('HomeSection', () => {
     for (const link of screen.getByTestId('home-section').querySelectorAll('a')) {
       expect(link.querySelector('img')?.getAttribute('alt')?.trim()).toBeTruthy();
     }
+  });
+
+  describe('with blocks', () => {
+    it.each([['null', null], ['an empty tree', { version: 1, blocks: [] }]] as const)(
+      'blocks %s: drawn exactly as a section without the field',
+      (_, blocks) => {
+        for (const locale of ['en', 'ar'] as const) {
+          for (const section of homeFixture(locale).sections) {
+            const { container, unmount } = render(<HomeSection section={section} locale={locale} priority />);
+            const html = container.innerHTML;
+            unmount();
+            const { container: withField, unmount: done } = render(<HomeSection section={{ ...section, blocks: blocks as Section['blocks'] }} locale={locale} priority />);
+            expect(withField.innerHTML).toBe(html);
+            expect(withField.querySelector('[data-blocks]')).toBeNull();
+            done();
+          }
+        }
+      },
+    );
+
+    it('draws the blocks instead of the banners and the product row, under the same heading', () => {
+      const section = homeBlocksFixture('en').sections[1];
+      render(<HomeSection section={section} locale="en" />);
+      const node = screen.getByTestId('home-section');
+      expect(node).toHaveAttribute('data-blocks');
+      expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(section.title!);
+      expect(screen.getByRole('link', { name: 'View all' })).toBeInTheDocument();
+      expect(within(node).getByTestId('section-blocks')).toBeInTheDocument();
+      // grid of 3 images + a text + the products as a rail (limit 4 of the section's 10)
+      expect(Array.from(within(node).getByTestId('section-blocks').children, (c) => c.getAttribute('data-block'))).toEqual(['grid', 'text', 'product_list']);
+      expect(node.querySelectorAll('[data-block="grid"] picture')).toHaveLength(3);
+      expect(within(node).getAllByTestId('product-card')).toHaveLength(4);
+    });
+
+    it('renders every section of the blocks fixture, in English and Arabic', () => {
+      for (const locale of ['en', 'ar'] as const) {
+        for (const section of homeBlocksFixture(locale).sections) {
+          const { unmount } = render(<HomeSection section={section} locale={locale} />);
+          const node = screen.getByTestId('home-section');
+          expect(node).toHaveAttribute('data-blocks');
+          // every link has a name, and target-null images/buttons are not links
+          for (const link of node.querySelectorAll('a')) expect(link.textContent?.trim() || link.querySelector('img')?.getAttribute('alt')?.trim()).toBeTruthy();
+          unmount();
+        }
+      }
+    });
+
+    it('the Arabic page shows the Arabic texts and artwork', () => {
+      const section = homeBlocksFixture('ar').sections[0];
+      render(<HomeSection section={section} locale="ar" />);
+      // untitled section: its heading block is the h2
+      expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('كل ما يحتاجه طفلك');
+      expect(screen.getByRole('link', { name: 'تسوق منتجات الأطفال' })).toHaveAttribute('href', expect.stringMatching(/^\/ar\//));
+      expect(screen.queryByRole('link', { name: 'كل العروض' })).toBeNull(); // its target was deleted
+      const first = screen.getByTestId('home-section').querySelector('picture')!;
+      expect(first.querySelector('img')?.getAttribute('src')).toMatch(/-ar\.\w+$/);
+    });
+
+    it('a design with no block styles of its own draws blocks the default way', () => {
+      const section = homeBlocksFixture('en').sections[1];
+      const { container, unmount } = render(<HomeSection section={section} locale="en" />);
+      const html = container.querySelector('[data-testid="section-blocks"]')!.outerHTML;
+      unmount();
+      render(<HomeSection section={{ ...section, design: 'banner_grid' }} locale="en" />);
+      expect(screen.getByTestId('home-section')).toHaveAttribute('data-design', 'banner_grid');
+      expect(screen.getByTestId('section-blocks').outerHTML).toBe(html);
+    });
   });
 });

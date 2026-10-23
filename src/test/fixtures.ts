@@ -12,6 +12,8 @@ import compareAr from './fixtures/v3/compare.ar.json';
 import compareEn from './fixtures/v3/compare.en.json';
 import homeAr from './fixtures/v3/home.ar.json';
 import homeEn from './fixtures/v3/home.en.json';
+import homeBlocksAr from './fixtures/v3/home-blocks.ar.json';
+import homeBlocksEn from './fixtures/v3/home-blocks.en.json';
 import layoutAr from './fixtures/v3/layout.ar.json';
 import layoutEn from './fixtures/v3/layout.en.json';
 import meAnonymous from './fixtures/v3/me.anonymous.json';
@@ -37,6 +39,8 @@ type ByLocale<T> = Record<Locale, T>;
 const pick = <T,>(files: ByLocale<{ data: unknown }>, locale: Locale): T => structuredClone(files[locale].data) as T;
 
 export const homeFixture = (locale: Locale = 'en') => pick<Home>({ en: homeEn, ar: homeAr }, locale);
+/** The recorded home with section blocks on its sections (scripts/build-home-blocks-fixture.mjs). */
+export const homeBlocksFixture = (locale: Locale = 'en') => pick<Home>({ en: homeBlocksEn, ar: homeBlocksAr }, locale);
 export const layoutFixture = (locale: Locale = 'en') => pick<Layout>({ en: layoutEn, ar: layoutAr }, locale);
 export const meFixture = (locale: Locale = 'en') => pick<Me>({ en: meEn, ar: meAr }, locale);
 export const anonymousMeFixture = () => structuredClone(meAnonymous.data) as Me;

@@ -2430,6 +2430,160 @@ components:
           type: array
           items: { $ref: '#/components/schemas/ProductCard' }
         viewAll: { $ref: '#/components/schemas/NullableTarget' }
+        # ---- section blocks (optional: older recordings lack it)
+        blocks:
+          description: 'What the merchant built for this section (slider / grid / row of images, texts, buttons, its product list), resolved for drawing: image URLs, texts in the request language, links as Targets. Null = no blocks (draw `banners` / `products` as before). When present and not empty, draw the blocks instead of `banners` and `products`. Skip node types you do not know.'
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/SectionBlocks' }]
+
+    SectionBlocks:
+      type: object
+      required: [version, blocks]
+      additionalProperties: false
+      properties:
+        version: { type: integer, enum: [1] }
+        blocks:
+          type: array
+          maxItems: 4
+          items: { $ref: '#/components/schemas/SectionBlock' }
+
+    SectionBlock:
+      description: A top-level node. Containers (slider, grid, row) hold leaves only.
+      oneOf:
+        - $ref: '#/components/schemas/SliderBlock'
+        - $ref: '#/components/schemas/GridBlock'
+        - $ref: '#/components/schemas/RowBlock'
+        - $ref: '#/components/schemas/ImageBlock'
+        - $ref: '#/components/schemas/TextBlock'
+        - $ref: '#/components/schemas/ButtonBlock'
+        - $ref: '#/components/schemas/ProductListBlock'
+      discriminator:
+        propertyName: type
+        mapping:
+          slider: '#/components/schemas/SliderBlock'
+          grid: '#/components/schemas/GridBlock'
+          row: '#/components/schemas/RowBlock'
+          image: '#/components/schemas/ImageBlock'
+          text: '#/components/schemas/TextBlock'
+          button: '#/components/schemas/ButtonBlock'
+          product_list: '#/components/schemas/ProductListBlock'
+
+    LeafBlock:
+      oneOf:
+        - $ref: '#/components/schemas/ImageBlock'
+        - $ref: '#/components/schemas/TextBlock'
+        - $ref: '#/components/schemas/ButtonBlock'
+        - $ref: '#/components/schemas/ProductListBlock'
+      discriminator:
+        propertyName: type
+        mapping:
+          image: '#/components/schemas/ImageBlock'
+          text: '#/components/schemas/TextBlock'
+          button: '#/components/schemas/ButtonBlock'
+          product_list: '#/components/schemas/ProductListBlock'
+
+    SliderBlock:
+      type: object
+      required: [type, items]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [slider] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        items:
+          type: array
+          minItems: 1
+          maxItems: 12
+          items: { $ref: '#/components/schemas/LeafBlock' }
+        autoplay: { type: boolean }
+        interval_ms: { type: integer, minimum: 2000, maximum: 15000 }
+
+    GridBlock:
+      type: object
+      required: [type, items, columns]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [grid] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        items:
+          type: array
+          minItems: 1
+          maxItems: 12
+          items: { $ref: '#/components/schemas/LeafBlock' }
+        columns:
+          type: object
+          required: [mobile, desktop]
+          additionalProperties: false
+          properties:
+            mobile: { type: integer, minimum: 1, maximum: 3 }
+            desktop: { type: integer, minimum: 1, maximum: 6 }
+        gap: { type: string, enum: [s, m, l] }
+
+    RowBlock:
+      type: object
+      required: [type, items]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [row] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        items:
+          type: array
+          minItems: 1
+          maxItems: 12
+          items: { $ref: '#/components/schemas/LeafBlock' }
+        align: { type: string, enum: [start, center, space] }
+
+    ImageBlock:
+      type: object
+      required: [type, media, alt, target]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [image] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        media:
+          description: Image URLs. Missing variants are null (fall back to `desktop`; Arabic pages prefer the `_ar` ones).
+          type: object
+          required: [desktop, mobile, desktop_ar, mobile_ar]
+          additionalProperties: false
+          properties:
+            desktop: { type: string }
+            mobile: { type: string, nullable: true }
+            desktop_ar: { type: string, nullable: true }
+            mobile_ar: { type: string, nullable: true }
+        alt: { type: string, nullable: true, description: In the request language }
+        target: { $ref: '#/components/schemas/NullableTarget' }
+
+    TextBlock:
+      type: object
+      required: [type, text, style]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [text] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        text: { type: string, description: In the request language }
+        style: { type: string, enum: [heading, body, caption] }
+        align: { type: string, enum: [start, center, end] }
+
+    ButtonBlock:
+      type: object
+      required: [type, label, target, variant]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [button] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        label: { type: string, description: In the request language }
+        target: { $ref: '#/components/schemas/NullableTarget' }
+        variant: { type: string, enum: [primary, secondary] }
+
+    ProductListBlock:
+      description: The section's own products (`Section.products`), at most `limit`.
+      type: object
+      required: [type, display, limit]
+      additionalProperties: false
+      properties:
+        type: { type: string, enum: [product_list] }
+        id: { type: string, pattern: '^[a-z0-9_-]{1,32}$' }
+        display: { type: string, enum: [rail, grid] }
+        limit: { type: integer, minimum: 1, maximum: 20 }
 
     Tile:
       type: object

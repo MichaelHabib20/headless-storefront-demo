@@ -107,10 +107,12 @@ describe('architecture rules', () => {
       "const swatches = facet.display === 'color';",
       '<ValueMark hint={facet.display} value={value} />',
       "if (option.display === 'dropdown') {",
+      // a section block's drawing hint (product_list: rail | grid)
+      "if (block.display === 'grid') {",
     ];
     for (const line of passes) expect(rulesHit('src/components/cart/X.tsx', line), line).toEqual([]);
     // …but only under that name: a price, or a list of options, is still caught
-    for (const line of ['const text = options.display;', 'const text = optionPrice.display;', '<span>{product.price.display}</span>']) {
+    for (const line of ['const text = options.display;', 'const text = optionPrice.display;', '<span>{product.price.display}</span>', '<span>{blockPrice.display}</span>', '<span>{block.price.display}</span>']) {
       expect(rulesHit('src/components/product/X.tsx', line), line).toContain('money-via-components');
     }
     // the money components themselves, and tests checking what the API sent

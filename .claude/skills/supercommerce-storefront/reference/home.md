@@ -35,6 +35,7 @@ interface Section {
   banners: Banner[];             // { id, image: {mobile, desktop, alt}, title, target }
   products: ProductCard[];
   viewAll: Target | null;        // only when the section has products
+  blocks?: SectionBlocks | null; // merchant-built blocks; when non-empty they replace banners + products (see Blocks)
 }
 ```
 
@@ -61,6 +62,25 @@ interface Section {
   `sections.json`. **Change how a design looks** → its component/CSS. Never rename or remove a key
   (sections in the backend point at it). `src/designs/sections.test.ts` checks the file and that every key has
   a renderer.
+
+### Blocks (`Section.blocks`)
+
+- A section may come with `blocks` (`{version: 1, blocks: [...]}`): a tree the merchant (or the AI editor) built —
+  containers `slider` / `grid` / `row` holding leaves `image` / `text` / `button` / `product_list`, already resolved:
+  image URLs (`media.desktop|mobile|desktop_ar|mobile_ar`), texts in the page's language, links as `target`
+  (`null` = not clickable: draw it, but not as a link).
+- Non-empty `blocks` → `HomeSection` draws the heading, then `<BlockRenderer>` **instead of** `banners` + `products`.
+  `null` / missing / empty → today's path, unchanged.
+- Each type is drawn by one component in `src/components/home/sections/blocks/` (`blockComponents` in
+  `BlockRenderer.tsx`). Unknown types — and a container inside a container — are skipped. `product_list` shows the
+  section's own `products` (at most `limit`) through `ProductCard` (prices: the money components).
+- A design may restyle blocks: add its key to `blockDesigns` (`BlockRenderer.tsx`) with the block components it draws
+  its own way; types it leaves out use the defaults.
+- Arabic pages use the `_ar` artwork when there is some (`blockImage` in `src/lib/blocks.ts`).
+- Editor previews: env `SC_PREVIEW_TOKEN` (server-only) → the SDK sends `x-preview-token` and caches nothing; the
+  backend then shows unpublished section drafts. Never set it on a live site.
+- Fixture: `homeBlocksFixture()` (`scripts/build-home-blocks-fixture.mjs`). Tests: `blocks/BlockRenderer.test.tsx`,
+  `HomeSection.test.tsx`.
 
 ## Product card (`ProductCard.tsx`)
 
