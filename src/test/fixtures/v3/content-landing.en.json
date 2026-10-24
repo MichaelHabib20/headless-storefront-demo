@@ -83,7 +83,8 @@
      }
     ],
     "products": [],
-    "viewAll": null
+    "viewAll": null,
+    "blocks": null
    },
    {
     "id": 36,
@@ -529,7 +530,8 @@
      "type": "list",
      "slug": null,
      "id": 125
-    }
+    },
+    "blocks": null
    }
   ]
  }

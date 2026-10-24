@@ -1953,8 +1953,8 @@ export interface components {
             banners: components["schemas"]["Banner"][];
             products: components["schemas"]["ProductCard"][];
             viewAll: components["schemas"]["NullableTarget"];
-            /** @description The section's content as blocks (slider / grid / row of images, text, buttons, the section's own products), set by the AI editor. Absent when the store has section blocks switched off; null when this section has none. When non-null, render the blocks instead of `banners` by `layout`; `products` stays the section's product source (a `product_list` block shows it). Links are resolved (`target`, null = not clickable), texts are in the request language and images are URLs. Skip node types you do not know. */
-            blocks?: components["schemas"]["SectionBlocks"] | null;
+            /** @description The section's content as blocks (slider / grid / row of images, text, buttons, the section's own products), set by the AI editor. Always present; null when this section has none. When non-null, render the blocks instead of `banners` by `layout`; `products` stays the section's product source (a `product_list` block shows it). Links are resolved (`target`, null = not clickable), texts are in the request language and images are URLs. Skip node types you do not know. */
+            blocks: components["schemas"]["SectionBlocks"] | null;
         };
         /** @description A section's blocks, resolved for rendering (1 to 4 top-level blocks, no container inside a container). */
         SectionBlocks: {

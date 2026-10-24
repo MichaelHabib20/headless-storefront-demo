@@ -35,7 +35,7 @@ interface Section {
   banners: Banner[];             // { id, image: {mobile, desktop, alt}, title, target }
   products: ProductCard[];
   viewAll: Target | null;        // only when the section has products
-  blocks?: SectionBlocks | null; // merchant-built blocks; when non-empty they replace banners + products (see Blocks)
+  blocks: SectionBlocks | null;  // merchant-built blocks; when non-empty they replace banners + products (see Blocks)
 }
 ```
 
@@ -63,7 +63,7 @@ interface Section {
   (sections in the backend point at it). `src/designs/sections.test.ts` checks the file and that every key has
   a renderer.
 
-### Blocks (`Section.blocks`; absent when the store has blocks switched off)
+### Blocks (`Section.blocks`; always present, null when the section has none)
 
 - A section may come with `blocks` (`{version: 1, blocks: [...]}`): a tree the merchant (or the AI editor) built —
   containers `slider` / `grid` / `row` holding leaves `image` / `text` / `button` / `product_list`, already resolved:
