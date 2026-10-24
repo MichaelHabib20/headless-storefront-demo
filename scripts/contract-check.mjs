@@ -40,6 +40,17 @@ for (const endpoint of Object.keys(SCHEMA)) {
   }
 }
 
+// 1a. hand-written {data} fixtures of features no recorded store has yet (scripts/build-home-blocks-fixture.mjs)
+const DATA_FIXTURES = { 'home-blocks': 'Home' };
+for (const [name, schema] of Object.entries(DATA_FIXTURES)) {
+  for (const locale of ['en', 'ar']) {
+    const body = JSON.parse(fs.readFileSync(path.join(root, `src/test/fixtures/v3/${name}.${locale}.json`), 'utf8'));
+    const errors = body && typeof body === 'object' && 'data' in body ? validate(schema, body.data) : ['not a {data} envelope'];
+    if (errors.length) failures.push(`fixture ${name}.${locale}:\n    ${errors.slice(0, 15).join('\n    ')}`);
+    else console.log(`✓ fixture ${name}.${locale} matches the contract`);
+  }
+}
+
 // 1b. shopper fixtures (whole response bodies)
 const RESPONSE_SCHEMA = {
   me: 'MeResponse',

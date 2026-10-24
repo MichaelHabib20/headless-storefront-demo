@@ -1948,9 +1948,115 @@ export interface components {
             /** @description Null when the title is hidden */
             title: string | null;
             layout: components["schemas"]["SectionLayout"];
+            /** @description The storefront design the merchant chose (a key of the storefront's src/designs/sections.json). Null = none; render by `layout`. Unknown key → render by `layout`. */
+            design?: string | null;
             banners: components["schemas"]["Banner"][];
             products: components["schemas"]["ProductCard"][];
             viewAll: components["schemas"]["NullableTarget"];
+            /** @description The section's content as blocks (slider / grid / row of images, text, buttons, the section's own products), set by the AI editor. Always present; null when this section has none. When non-null, render the blocks instead of `banners` by `layout`; `products` stays the section's product source (a `product_list` block shows it). Links are resolved (`target`, null = not clickable), texts are in the request language and images are URLs. Skip node types you do not know. */
+            blocks: components["schemas"]["SectionBlocks"] | null;
+        };
+        /** @description A section's blocks, resolved for rendering (1 to 4 top-level blocks, no container inside a container). */
+        SectionBlocks: {
+            /** @enum {integer} */
+            version: 1;
+            blocks: components["schemas"]["SectionBlock"][];
+        };
+        SectionBlock: components["schemas"]["SectionBlockSlider"] | components["schemas"]["SectionBlockGrid"] | components["schemas"]["SectionBlockRow"] | components["schemas"]["SectionBlockImage"] | components["schemas"]["SectionBlockText"] | components["schemas"]["SectionBlockButton"] | components["schemas"]["SectionBlockProductList"];
+        /** @description A block inside a container. */
+        SectionBlockLeaf: components["schemas"]["SectionBlockImage"] | components["schemas"]["SectionBlockText"] | components["schemas"]["SectionBlockButton"] | components["schemas"]["SectionBlockProductList"];
+        /** @description Optional id of a block (for targeted edits). */
+        SectionBlockId: string;
+        SectionBlockSlider: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "slider";
+            id?: components["schemas"]["SectionBlockId"];
+            items: components["schemas"]["SectionBlockLeaf"][];
+            autoplay?: boolean;
+            interval_ms?: number;
+        };
+        SectionBlockGrid: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "grid";
+            id?: components["schemas"]["SectionBlockId"];
+            items: components["schemas"]["SectionBlockLeaf"][];
+            columns: {
+                mobile: number;
+                desktop: number;
+            };
+            /** @enum {string} */
+            gap?: "s" | "m" | "l";
+        };
+        SectionBlockRow: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "row";
+            id?: components["schemas"]["SectionBlockId"];
+            items: components["schemas"]["SectionBlockLeaf"][];
+            /** @enum {string} */
+            align?: "start" | "center" | "space";
+        };
+        SectionBlockImage: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "image";
+            id?: components["schemas"]["SectionBlockId"];
+            /** @description Image URLs; null = use `desktop` (or the English one for `*_ar`). */
+            media: {
+                desktop: string;
+                mobile: string | null;
+                desktop_ar: string | null;
+                mobile_ar: string | null;
+            };
+            alt: string | null;
+            target: components["schemas"]["NullableTarget"];
+        };
+        SectionBlockText: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "text";
+            id?: components["schemas"]["SectionBlockId"];
+            text: string;
+            /** @enum {string} */
+            style: "heading" | "body" | "caption";
+            /** @enum {string} */
+            align?: "start" | "center" | "end";
+        };
+        SectionBlockButton: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "button";
+            id?: components["schemas"]["SectionBlockId"];
+            label: string;
+            target: components["schemas"]["NullableTarget"];
+            /** @enum {string} */
+            variant: "primary" | "secondary";
+        };
+        /** @description The section's own products (`Section.products`), at most `limit` of them. */
+        SectionBlockProductList: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "product_list";
+            id?: components["schemas"]["SectionBlockId"];
+            /** @enum {string} */
+            display: "rail" | "grid";
+            limit: number;
         };
         Tile: {
             id: number;

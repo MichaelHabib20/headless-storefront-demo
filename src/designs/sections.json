@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "designs": [
+    {
+      "key": "products_only",
+      "name_en": "Products only",
+      "name_ar": "منتجات فقط",
+      "needs": { "products": true, "banners_min": 0, "banners_max": 0 },
+      "legacy_image_type": 1
+    },
+    {
+      "key": "single_banner",
+      "name_en": "One banner",
+      "name_ar": "صورة واحدة",
+      "needs": { "products": true, "banners_min": 1, "banners_max": 1 },
+      "legacy_image_type": 2
+    },
+    {
+      "key": "banner_carousel",
+      "name_en": "Sliding banners",
+      "name_ar": "صور متحركة",
+      "needs": { "products": true, "banners_min": 5, "banners_max": 5 },
+      "legacy_image_type": 3
+    },
+    {
+      "key": "wide_banner",
+      "name_en": "Full-width banner",
+      "name_ar": "صورة بعرض الصفحة",
+      "needs": { "products": true, "banners_min": 1, "banners_max": 1 },
+      "legacy_image_type": 4
+    },
+    {
+      "key": "banner_grid",
+      "name_en": "Banners side by side",
+      "name_ar": "صور جنبًا إلى جنب",
+      "needs": { "products": true, "banners_min": 2, "banners_max": 4 },
+      "legacy_image_type": 5,
+      "legacy_image_type_by_banners": { "2": 5, "3": 6, "4": 7 }
+    },
+    {
+      "key": "banner_rows",
+      "name_en": "Banners in rows",
+      "name_ar": "صور في صفوف",
+      "needs": { "products": true, "banners_min": 5, "banners_max": 5 },
+      "legacy_image_type": 8
+    }
+  ]
+}

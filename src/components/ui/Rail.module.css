@@ -29,6 +29,11 @@
   }
 }
 
+/* one full-width slide (a slider), on phones too */
+.single .track {
+  grid-auto-columns: 100%;
+}
+
 .item {
   scroll-snap-align: start;
   min-width: 0;
@@ -63,6 +68,23 @@
 .button:disabled {
   opacity: 0.3;
   cursor: default;
+}
+
+/* pause/play of an autoplaying rail: on the slides, on every screen size */
+.toggle {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
+  z-index: 1;
+  opacity: 0.85;
+}
+.toggle:hover,
+.toggle:focus-visible {
+  opacity: 1;
+}
+.toggle:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
 }
 
 .back {

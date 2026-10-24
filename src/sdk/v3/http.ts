@@ -11,6 +11,11 @@ export interface StorefrontClientOptions {
   revalidate?: number;
   timeoutMs?: number;
   /**
+   * Preview of unpublished section drafts (the AI editor's preview): sent as `x-preview-token` on every
+   * request, and then nothing is cached (drafts change between two reloads). Server-side only, like `apiKey`.
+   */
+  previewToken?: string;
+  /**
    * Called when the backend refuses the shopper token a request carried (401 `unauthenticated`:
    * expired, revoked by a sign-out, or unknown), before the ApiError is thrown. The app drops its
    * session cookie here. Its own failures are ignored.
@@ -131,6 +136,7 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
     // device-type: web → the store applies its website rules (e.g. default area for new guests).
     const headers: Record<string, string> = { ...extraHeaders, Accept: 'application/json', 'Accept-Language': locale, 'device-type': 'web' };
     if (options.apiKey) headers['api-key'] = options.apiKey;
+    if (options.previewToken) headers['x-preview-token'] = options.previewToken;
     if (token) headers.Authorization = `Bearer ${token}`;
     if (json) headers['Content-Type'] = 'application/json';
 
@@ -140,7 +146,7 @@ export function createStorefrontClient(options: StorefrontClientOptions): Storef
       body,
       signal: AbortSignal.timeout(options.timeoutMs ?? 15_000),
     };
-    if (method === 'GET' && !token && options.revalidate !== undefined) init.next = { revalidate: options.revalidate };
+    if (method === 'GET' && !token && !options.previewToken && options.revalidate !== undefined) init.next = { revalidate: options.revalidate };
     else init.cache = 'no-store';
 
     const search = query ? new URLSearchParams(Object.entries(query).filter(([, v]) => v !== undefined && v !== null).map(([k, v]) => [k, String(v)])).toString() : '';

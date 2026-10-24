@@ -31,9 +31,11 @@ interface Section {
   id: number;
   title: string | null;          // null → no heading
   layout: SectionLayout;         // products_only | single_banner | banner_carousel | wide_banner | banner_grid | banner_rows
+  design?: string | null;        // the merchant's pick from src/designs/sections.json (null → draw by layout)
   banners: Banner[];             // { id, image: {mobile, desktop, alt}, title, target }
   products: ProductCard[];
   viewAll: Target | null;        // only when the section has products
+  blocks: SectionBlocks | null;  // merchant-built blocks; when non-empty they replace banners + products (see Blocks)
 }
 ```
 
@@ -43,6 +45,43 @@ interface Section {
   To restyle a layout, change its component/CSS. To support a new layout added to the
   contract, add one entry. Unknown layouts are drawn as `banner_grid` (`normalizeLayout`).
 - Images: `<ResponsiveImage image={banner.image} />` picks mobile/desktop artwork.
+
+### Designs (`src/designs/sections.json`)
+
+- The storefront owns the design list: `src/designs/sections.json` (`key`, `name_en`, `name_ar`,
+  `needs: {products, banners_min, banners_max}`, `legacy_image_type`, optional `legacy_image_type_by_banners`
+  — banner count → old image type, e.g. `{"2": 5, "3": 6, "4": 7}`). The backend stores it
+  (`npm run designs:register` with `SC_API_URL` + `STOREFRONT_DESIGNS_KEY`) and the admin lets the merchant
+  pick one per section; the section then comes with `design`.
+- Today a design controls the **banner area only**: the section title and the product row are drawn the same
+  for every design (`HomeSection.tsx`). `needs.products` means "this design can show the product row" (not
+  "products are required"); `banners_min/max` are how many banners it draws (what the admin lets the merchant add).
+- Each key is drawn by one entry in `sectionDesigns` (`BannerLayouts.tsx`). The first six keys are the layout
+  names. A section whose `design` is null or not in `sectionDesigns` is drawn by its `layout`, as before.
+- **New kind of section** → a new component + a new entry in `sectionDesigns` + a new entry in
+  `sections.json`. **Change how a design looks** → its component/CSS. Never rename or remove a key
+  (sections in the backend point at it). `src/designs/sections.test.ts` checks the file and that every key has
+  a renderer.
+
+### Blocks (`Section.blocks`; always present, null when the section has none)
+
+- A section may come with `blocks` (`{version: 1, blocks: [...]}`): a tree the merchant (or the AI editor) built —
+  containers `slider` / `grid` / `row` holding leaves `image` / `text` / `button` / `product_list`, already resolved:
+  image URLs (`media.desktop|mobile|desktop_ar|mobile_ar`), texts in the page's language, links as `target`
+  (`null` = not clickable: draw it, but not as a link).
+- Non-empty `blocks` → `HomeSection` draws the heading, then `<BlockRenderer>` **instead of** `banners` + `products`.
+  `null` / missing / empty → today's path, unchanged.
+- Each type is drawn by one component in `src/components/home/sections/blocks/` (`blockComponents` in
+  `BlockRenderer.tsx`). Unknown types — and a container inside a container — are skipped. `product_list` shows the
+  section's own `products` (at most `limit`) through `ProductCard` (prices: the money components).
+- A design may restyle blocks: add its key to `blockDesigns` (`BlockRenderer.tsx`) with the block components it draws
+  its own way; types it leaves out use the defaults.
+- A slider with autoplay gets a visible pause/play button (Rail `autoplay` prop, labels `pauseSlides` / `playSlides`).
+- Arabic pages use the `_ar` artwork when there is some (`blockImage` in `src/lib/blocks.ts`).
+- Editor previews: env `SC_PREVIEW_TOKEN` (server-only) → the SDK sends `x-preview-token` and caches nothing; the
+  backend then shows unpublished section drafts. Never set it on a live site.
+- Fixture: `homeBlocksFixture()` (`scripts/build-home-blocks-fixture.mjs`). Tests: `blocks/BlockRenderer.test.tsx`,
+  `HomeSection.test.tsx`.
 
 ## Product card (`ProductCard.tsx`)
 
